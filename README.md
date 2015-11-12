@@ -16,4 +16,4 @@ app.use(require('forest-express-sequelize').init({
 
 # License
 
-[GPL v3](https://github.com/SeyZ/forest-express-sequelize/blob/master/LICENSE)
+[GPL v3](https://github.com/ForestAdmin/forest-express-sequelize/blob/master/LICENSE)
