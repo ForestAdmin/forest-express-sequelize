@@ -6,7 +6,6 @@ var cors = require('express-cors');
 var bodyParser = require('body-parser');
 var jwt = require('express-jwt');
 var ResourcesRoutes = require('./routes/resources');
-var StripeRoutes = require('./routes/stripe');
 var StatRoutes = require('./routes/stats');
 var Schemas = require('./generators/schemas');
 var SchemaAdapter = require('./adapters/sequelize');
@@ -63,10 +62,6 @@ exports.init = function (opts) {
     .each(function (model) {
       new ResourcesRoutes(app, model, opts).perform();
       new StatRoutes(app, model, opts).perform();
-    })
-    .then(function (models) {
-      new StripeRoutes(app, opts).perform();
-      return models;
     })
     .then(function (models) {
       if (opts.jwtSigningKey) {

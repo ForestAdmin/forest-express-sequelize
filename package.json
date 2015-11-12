@@ -1,6 +1,6 @@
 {
   "name": "forest-express-sequelize",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Forest Liana for Expressjs and Sequelize",
   "main": "index.js",
   "scripts": {
