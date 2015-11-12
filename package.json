@@ -1,0 +1,35 @@
+{
+  "name": "forest-express-sequelize",
+  "version": "0.0.1",
+  "description": "Forest Liana for Expressjs and Sequelize",
+  "main": "index.js",
+  "scripts": {
+  },
+  "author": "Sandro Munda <sandro@munda.me>",
+  "license": "GPL",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/ForestAdmin/forest-express-sequelize.git"
+  },
+  "dependencies": {
+    "bluebird": "^2.9.25",
+    "body-parser": "^1.13.1",
+    "express": "^4.12.4",
+    "express-cors": "0.0.3",
+    "express-jwt": "^3.0.1",
+    "flat": "^1.6.0",
+    "humps": "^0.6.0",
+    "inflected": "^1.1.6",
+    "jsonapi-serializer": "2.0.4",
+    "lodash": "^3.9.3",
+    "node-uuid": "^1.4.3",
+    "semver": "^4.3.6",
+    "stripe": "^4.0.0",
+    "superagent": "^1.4.0",
+    "winston": "^1.0.2"
+  },
+  "devDependencies": {
+    "chai": "^2.3.0",
+    "mocha": "^2.2.5"
+  }
+}
