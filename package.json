@@ -3,8 +3,7 @@
   "version": "0.0.2",
   "description": "Forest Liana for Expressjs and Sequelize",
   "main": "index.js",
-  "scripts": {
-  },
+  "scripts": {},
   "author": "Sandro Munda <sandro@munda.me>",
   "license": "GPL",
   "repository": {
@@ -22,8 +21,10 @@
     "inflected": "^1.1.6",
     "jsonapi-serializer": "2.0.4",
     "lodash": "^3.9.3",
+    "moment": "^2.10.6",
     "node-uuid": "^1.4.3",
     "semver": "^4.3.6",
+    "sequelize": "^3.14.2",
     "stripe": "^4.0.0",
     "superagent": "^1.4.0",
     "winston": "^1.0.2"

@@ -1,10 +1,24 @@
 'use strict';
 var P = require('bluebird');
+var OperatorValueParser = require('./operator-value-parser');
 
 // jshint sub: true
 function LineStatFinder(model, params, opts) {
   function getAggregateField() {
     return params['aggregate_field'] || 'id';
+  }
+
+  function getFilters() {
+    var filters = {};
+
+    if (params.filters) {
+      params.filters.forEach(function (filter) {
+        filters[filter.field] = new OperatorValueParser(opts).perform(model,
+          filter.field, filter.value);
+      });
+    }
+
+    return filters;
   }
 
   this.perform = function () {
@@ -21,6 +35,7 @@ function LineStatFinder(model, params, opts) {
           'value'
         ]
       ],
+      where: getFilters(),
       group: ['date'],
       order: ['date']
     })
