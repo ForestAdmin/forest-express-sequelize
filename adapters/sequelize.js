@@ -2,6 +2,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var logger = require('../services/logger');
+var Inflector = require('inflected');
 
 module.exports = function (model, opts) {
   var fields = [];
@@ -35,6 +36,26 @@ module.exports = function (model, opts) {
     }
   }
 
+  function getInverseOf(association) {
+    var associationName = association.source.name;
+
+    // InverseOf belongsTo?
+    var inverseOf = _.find(association.target.associations,
+      function (value, key) { return key === associationName; });
+
+    // InverseOf hasMany?
+    if (!inverseOf) {
+      associationName = Inflector.pluralize(associationName);
+      inverseOf = _.find(association.target.associations, function (value, key) {
+        return key === associationName;
+      });
+
+      if (!inverseOf) { return null; }
+    }
+
+    return Inflector.camelize(associationName, false);
+  }
+
   function getSchemaForColumn(column) {
     var schema = { field: column.fieldName, type: getTypeFor(column) };
     return schema;
@@ -44,7 +65,8 @@ module.exports = function (model, opts) {
     var schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
-      reference: association.target.name + '.id'
+      reference: Inflector.camelize(association.target.name, false) + '.id',
+      inverseOf: getInverseOf(association)
     };
 
     return schema;
@@ -70,7 +92,7 @@ module.exports = function (model, opts) {
   return P.all([columns, associations])
     .then(function () {
       logger.debug('---------------------------------------');
-      return { name: model.name, fields: fields };
+      return { name: Inflector.underscore(model.name), fields: fields };
     });
 };
 

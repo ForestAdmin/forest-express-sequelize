@@ -12,6 +12,7 @@ var SchemaAdapter = require('./adapters/sequelize');
 var JSONAPISerializer = require('jsonapi-serializer');
 var request = require('superagent');
 var logger = require('./services/logger');
+var Inflector = require('inflected');
 
 function mapSeries(things, fn) {
   var results = [];
@@ -73,11 +74,15 @@ exports.init = function (opts) {
             id: 'name',
             attributes: ['name', 'fields'],
             fields: {
-              attributes: ['field', 'type', 'collection_name']
+              attributes: ['field', 'type', 'reference', 'inverseOf',
+                'collection_name']
             },
             meta: {
               'liana': 'forest-express-sequelize',
               'liana_version': require('./package.json').version
+            },
+            keyForAttribute: function (key) {
+              return Inflector.camelize(key, false);
             }
           });
         })
