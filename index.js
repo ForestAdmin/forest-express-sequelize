@@ -6,13 +6,16 @@ var cors = require('express-cors');
 var bodyParser = require('body-parser');
 var jwt = require('express-jwt');
 var ResourcesRoutes = require('./routes/resources');
+var AssociationsRoutes = require('./routes/associations');
 var StatRoutes = require('./routes/stats');
+var SessionRoute = require('./routes/sessions');
 var Schemas = require('./generators/schemas');
 var SchemaAdapter = require('./adapters/sequelize');
-var JSONAPISerializer = require('jsonapi-serializer');
+var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var request = require('superagent');
 var logger = require('./services/logger');
 var Inflector = require('inflected');
+var allowedUsers = require('./services/auth').allowedUsers;
 
 function mapSeries(things, fn) {
   var results = [];
@@ -26,12 +29,19 @@ function mapSeries(things, fn) {
 exports.init = function (opts) {
   var app = express();
 
+  if (opts.jwtSigningKey) {
+    console.warn('DEPRECATION WARNING: the use of jwtSigningKey option is ' +
+    'deprecated. Use secret_key and auth_key instead. More info at: ' +
+    'https://github.com/ForestAdmin/forest-express-sequelize/releases/tag/0.1.0');
+    opts.authKey = opts.jwtSigningKey;
+    opts.secretKey = opts.jwtSigningKey;
+  }
+
   // CORS
   app.use(cors({
-    allowedOrigins: ['http://localhost:4200', 'https://www.forestadmin.com',
-      'http://www.forestadmin.com'],
+    allowedOrigins: ['localhost:4200', '*.forestadmin.com'],
       headers: ['Authorization', 'X-Requested-With', 'Content-Type',
-        'Stripe-Secret-Key', 'Stripe-Reference']
+        'Stripe-Reference']
   }));
 
   // Mime type
@@ -39,18 +49,11 @@ exports.init = function (opts) {
 
   // Authentication
   app.use(jwt({
-    secret: opts.jwtSigningKey,
+    secret: opts.authKey,
     credentialsRequired: false
   }));
 
-  // Default override middleware.
-  var middleware = function (req, res, next) { next(); };
-  if (!opts.resources) { opts.resources = {}; }
-  if (!opts.resources.list) { opts.resources.list = middleware; }
-  if (!opts.resources.get) { opts.resources.get = middleware; }
-  if (!opts.resources.create) { opts.resources.create = middleware; }
-  if (!opts.resources.update) { opts.resources.update = middleware; }
-  if (!opts.resources.remove) { opts.resources.remove = middleware; }
+  new SessionRoute(app, opts).perform();
 
   // Init
   new P(function (resolve) { resolve(opts.sequelize.models); })
@@ -62,10 +65,11 @@ exports.init = function (opts) {
     })
     .each(function (model) {
       new ResourcesRoutes(app, model, opts).perform();
+      new AssociationsRoutes(app, model, opts).perform();
       new StatRoutes(app, model, opts).perform();
     })
     .then(function (models) {
-      if (opts.jwtSigningKey) {
+      if (opts.secretKey) {
         mapSeries(models, function (model) {
           return new SchemaAdapter(model, opts);
         })
@@ -93,12 +97,19 @@ exports.init = function (opts) {
           request
             .post(forestUrl + '/forest/apimaps')
               .send(json)
-              .set('forest-secret-key', opts.jwtSigningKey)
+              .set('forest-secret-key', opts.secretKey)
               .end(function(err, res) {
-                if (res.status !== 204) {
+                if (res.status !== 200) {
                   logger.debug('Forest cannot find your project secret key. ' +
                     'Please, ensure you have installed the Forest Liana ' +
                     'correctly.');
+                } else {
+                  res.body.data.forEach(function (d) {
+                    var user = d.attributes;
+                    user.id = d.id;
+
+                    allowedUsers.push(user);
+                  });
                 }
               });
         });

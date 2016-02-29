@@ -1,15 +1,13 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
-var logger = require('../services/logger');
 var Inflector = require('inflected');
 
 module.exports = function (model, opts) {
   var fields = [];
-  var DataTypes = opts.sequelize.dialect.DataTypes;
+  var DataTypes = opts.sequelize.Sequelize;
 
   function getTypeFor(column) {
-
     if (column.type instanceof DataTypes.STRING) {
       return 'String';
     } else if (column.type instanceof DataTypes.BOOLEAN) {
@@ -37,23 +35,7 @@ module.exports = function (model, opts) {
   }
 
   function getInverseOf(association) {
-    var associationName = association.source.name;
-
-    // InverseOf belongsTo?
-    var inverseOf = _.find(association.target.associations,
-      function (value, key) { return key === associationName; });
-
-    // InverseOf hasMany?
-    if (!inverseOf) {
-      associationName = Inflector.pluralize(associationName);
-      inverseOf = _.find(association.target.associations, function (value, key) {
-        return key === associationName;
-      });
-
-      if (!inverseOf) { return null; }
-    }
-
-    return Inflector.camelize(associationName, false);
+    return association.source.options.name.pluralize;
   }
 
   function getSchemaForColumn(column) {
@@ -65,34 +47,33 @@ module.exports = function (model, opts) {
     var schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
-      reference: Inflector.camelize(association.target.name, false) + '.id',
+      reference: association.target.options.name.plural + '.id',
       inverseOf: getInverseOf(association)
     };
 
     return schema;
   }
 
-  logger.debug('Analyzing model: ' + model.name + '...');
   var columns = P
     .each(_.values(model.attributes), function (column) {
       if (column.references) { return; }
 
       var schema = getSchemaForColumn(column);
-      logger.debug(schema);
       fields.push(schema);
     });
 
   var associations = P
     .each(_.values(model.associations), function (association) {
       var schema = getSchemaForAssociation(association);
-      logger.debug(schema);
       fields.push(schema);
     });
 
   return P.all([columns, associations])
     .then(function () {
-      logger.debug('---------------------------------------');
-      return { name: Inflector.underscore(model.name), fields: fields };
+      return {
+        name: Inflector.pluralize(Inflector.underscore(model.name)),
+        fields: fields
+      };
     });
 };
 

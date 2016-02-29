@@ -1,5 +1,5 @@
 'use strict';
-var JSONAPISerializer = require('jsonapi-serializer');
+var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var uuid = require('node-uuid');
 
 function StatSerializer(stat) {

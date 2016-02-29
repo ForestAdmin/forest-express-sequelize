@@ -9,7 +9,8 @@ The official Express/Sequelize liana for Forest.
 ```javascript
 app.use(require('forest-express-sequelize').init({
   modelsDir: __dirname + '/models',  // The directory where all of your Sequelize models are defined.
-  jwtSigningKey: 'ultrasecretkey', // The secret key given my Forest.
+  secretKey: 'ultrasecretkey', // The secret key given my Forest.
+  authKey: 'catsOnKeyboard', // Choose a secret authentication key.
   sequelize: require('sequelize') // The sequelize instance given by require('sequelize').
 }));
 ```

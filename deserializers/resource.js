@@ -5,7 +5,7 @@ var humps = require('humps');
 var Schemas = require('../generators/schemas');
 
 function ResourceDeserializer(model, params) {
-  var schema = Schemas.schemas[model.name];
+  var schema = Schemas.schemas[model.tableName];
 
   function extractAttributes() {
     return new P(function (resolve) {

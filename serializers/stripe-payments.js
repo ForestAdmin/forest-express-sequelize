@@ -1,6 +1,6 @@
 'use strict';
 var _ = require('lodash');
-var JSONAPISerializer = require('jsonapi-serializer');
+var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var Inflector = require('inflected');
 var Schemas = require('../generators/schemas');
 

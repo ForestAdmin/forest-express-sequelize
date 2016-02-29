@@ -1,5 +1,4 @@
 'use strict';
-var Inflector = require('inflected');
 var ResourcesFinder = require('../services/resources-finder');
 var ResourceFinder = require('../services/resource-finder');
 var ResourceCreator = require('../services/resource-creator');
@@ -80,22 +79,21 @@ module.exports = function (app, model, opts) {
   };
 
   this.perform = function () {
-    var modelName = Inflector.underscore(Inflector.pluralize(model.name))
-      .toLowerCase();
+    var modelName = model.tableName;
 
     app.get('/forest/' + modelName, auth.ensureAuthenticated,
-      opts.resources.list, this.list);
+      this.list);
 
     app.get('/forest/' + modelName + '/:recordId', auth.ensureAuthenticated,
-      opts.resources.get, this.get);
+      this.get);
 
     app.post('/forest/' + modelName, auth.ensureAuthenticated,
-      opts.resources.create, this.create);
+      this.create);
 
     app.put('/forest/' + modelName + '/:recordId', auth.ensureAuthenticated,
-      opts.resources.update, this.update);
+      this.update);
 
     app.delete('/forest/' + modelName + '/:recordId', auth.ensureAuthenticated,
-      opts.resources.remove, this.remove);
+      this.remove);
   };
 };
