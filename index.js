@@ -1,6 +1,8 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
+var path = require('path');
+var fs = P.promisifyAll(require('fs'));
 var express = require('express');
 var cors = require('express-cors');
 var bodyParser = require('body-parser');
@@ -10,20 +12,19 @@ var AssociationsRoutes = require('./routes/associations');
 var StatRoutes = require('./routes/stats');
 var SessionRoute = require('./routes/sessions');
 var Schemas = require('./generators/schemas');
-var SchemaAdapter = require('./adapters/sequelize');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var request = require('superagent');
 var logger = require('./services/logger');
 var Inflector = require('inflected');
 var allowedUsers = require('./services/auth').allowedUsers;
 
-function mapSeries(things, fn) {
-  var results = [];
-  return P.each(things, function (value, index, length) {
-    var ret = fn(value, index, length);
-    results.push(ret);
-    return ret;
-  }).thenReturn(results).all();
+function requireAllModels(modelsDir) {
+  return fs.readdirAsync(modelsDir)
+    .each(function (file) {
+      try {
+        require(path.join(modelsDir, file));
+      } catch (e) { }
+    });
 }
 
 exports.init = function (opts) {
@@ -60,6 +61,10 @@ exports.init = function (opts) {
     .then(function (models) {
       return Schemas.perform(models, opts)
         .then(function () {
+          var absModelDirs = path.resolve('.', opts.modelsDir);
+          return requireAllModels(absModelDirs + '/forest');
+        })
+        .then(function () {
           return _.values(models);
         });
     })
@@ -68,55 +73,66 @@ exports.init = function (opts) {
       new AssociationsRoutes(app, model, opts).perform();
       new StatRoutes(app, model, opts).perform();
     })
-    .then(function (models) {
+    .then(function () {
       if (opts.secretKey) {
-        mapSeries(models, function (model) {
-          return new SchemaAdapter(model, opts);
-        })
-        .then(function (collections) {
-          return new JSONAPISerializer('collections', collections, {
-            id: 'name',
-            attributes: ['name', 'fields'],
-            fields: {
-              attributes: ['field', 'type', 'reference', 'inverseOf',
-                'collection_name']
-            },
-            meta: {
-              'liana': 'forest-express-sequelize',
-              'liana_version': require('./package.json').version
-            },
-            keyForAttribute: function (key) {
-              return Inflector.camelize(key, false);
-            }
-          });
-        })
-        .then(function (json) {
-          var forestUrl = process.env.FOREST_URL ||
-            'https://forestadmin-server.herokuapp.com';
+        var collections = _.values(Schemas.schemas);
 
-          request
-            .post(forestUrl + '/forest/apimaps')
-              .send(json)
-              .set('forest-secret-key', opts.secretKey)
-              .end(function(err, res) {
-                if (res.status !== 200) {
-                  logger.debug('Forest cannot find your project secret key. ' +
-                    'Please, ensure you have installed the Forest Liana ' +
-                    'correctly.');
-                } else {
-                  res.body.data.forEach(function (d) {
-                    var user = d.attributes;
-                    user.id = d.id;
-
-                    allowedUsers.push(user);
-                  });
-                }
-              });
+        var json = new JSONAPISerializer('collections', collections, {
+          id: 'name',
+          attributes: ['name', 'fields', 'actions'],
+          fields: {
+            attributes: ['field', 'type', 'reference', 'inverseOf',
+              'collection_name']
+          },
+          actions: {
+            ref: 'name',
+            attributes: ['name', 'endpoint', 'httpMethod']
+          },
+          meta: {
+            'liana': 'forest-express-sequelize',
+            'liana_version': require('./package.json').version
+          },
+          keyForAttribute: function (key) {
+            return Inflector.camelize(key, false);
+          }
         });
+
+        var forestUrl = process.env.FOREST_URL ||
+          'https://forestadmin-server.herokuapp.com';
+
+        request
+          .post(forestUrl + '/forest/apimaps')
+            .send(json)
+            .set('forest-secret-key', opts.secretKey)
+            .end(function(err, res) {
+              if (res.status !== 200) {
+                logger.debug('Forest cannot find your project secret key. ' +
+                  'Please, ensure you have installed the Forest Liana ' +
+                  'correctly.');
+              } else {
+                res.body.data.forEach(function (d) {
+                  var user = d.attributes;
+                  user.id = d.id;
+
+                  allowedUsers.push(user);
+                });
+              }
+            });
       }
     });
 
   return app;
+};
+
+exports.collection = function (name, opts) {
+  var collection = _.find(Schemas.schemas, { name: name });
+
+  if (!collection) {
+    opts.name = name;
+    Schemas.schemas[name] = opts;
+  } else {
+    Schemas.schemas[name].actions = opts.actions;
+  }
 };
 
 exports.ensureAuthenticated = require('./services/auth').ensureAuthenticated;

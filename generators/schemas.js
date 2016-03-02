@@ -3,7 +3,7 @@ var P = require('bluebird');
 var SchemaAdapter = require('../adapters/sequelize');
 
 module.exports = {
-  schemas: [],
+  schemas: {},
   perform: function (models, opts) {
     var that = this;
 
