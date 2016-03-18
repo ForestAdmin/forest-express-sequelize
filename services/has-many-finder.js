@@ -4,7 +4,7 @@ var P = require('bluebird');
 
 function HasManyFinder(model, association, opts, params) {
   function count() {
-    model.findById(params.recordId)
+    return model.findById(params.recordId)
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]();
       })
