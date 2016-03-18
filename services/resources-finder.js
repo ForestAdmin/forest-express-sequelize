@@ -119,7 +119,7 @@ function ResourcesFinder(model, opts, params) {
 
   function getLimit() {
     if (hasPagination()) {
-      return params.page.size || 10;
+      return parseInt(params.page.size) || 10;
     } else {
       return 10;
     }
