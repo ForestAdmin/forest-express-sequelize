@@ -1,11 +1,10 @@
 'use strict';
 var _ = require('lodash');
 var JSONAPISerializer = require('jsonapi-serializer').Serializer;
-var Inflector = require('inflected');
 var Schemas = require('../generators/schemas');
 
 function ResourceSerializer(model, records, opts, meta) {
-  var schema = Schemas.schemas[model.tableName];
+  var schema = Schemas.schemas[model.name];
 
   this.perform = function () {
     var typeForAttributes = {};
@@ -30,7 +29,7 @@ function ResourceSerializer(model, records, opts, meta) {
             relationshipLinks: {
               related: function (dataSet, relationship) {
                 var ret = {
-                  href: '/forest/' + model.tableName + '/' +
+                  href: '/forest/' + model.name + '/' +
                     dataSet.id + '/' + field.field,
                 };
 
@@ -54,7 +53,7 @@ function ResourceSerializer(model, records, opts, meta) {
     var serializationOptions = {
       attributes: _.map(schema.fields, 'field'),
       keyForAttribute: function (key) {
-        return Inflector.underscore(key);
+        return key;
       },
       typeForAttribute: function (attribute) {
         return typeForAttributes[attribute] || attribute;

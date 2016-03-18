@@ -4,12 +4,12 @@ var P = require('bluebird');
 var Schemas = require('../generators/schemas');
 
 function ResourceDeserializer(model, params) {
-  var schema = Schemas.schemas[model.tableName];
+  var schema = Schemas.schemas[model.name];
 
   function extractAttributes() {
     return new P(function (resolve) {
       var attributes = params.data.attributes;
-      attributes.id = params.data.id;
+      if (params.data.id) { attributes.id = params.data.id; }
       resolve(attributes);
     });
   }

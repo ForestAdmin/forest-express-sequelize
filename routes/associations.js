@@ -1,6 +1,5 @@
 'use strict';
 var _ = require('lodash');
-var Inflector = require('inflected');
 var auth = require('../services/auth');
 var HasManyFinder = require('../services/has-many-finder');
 var ResourceSerializer = require('../serializers/resource');
@@ -9,11 +8,10 @@ var Schemas = require('../generators/schemas');
 module.exports = function (app, model, opts) {
 
   function getAssociationModel(associationName) {
-    var schema = Schemas.schemas[model.tableName];
+    var schema = Schemas.schemas[model.name];
     var field = _.findWhere(schema.fields, { field: associationName });
     if (field && field.reference) {
-      var referenceName = field.reference.split('.')[0];
-      return Inflector.camelize(Inflector.singularize(referenceName));
+      return field.reference.split('.')[0];
     }
   }
 
@@ -36,9 +34,7 @@ module.exports = function (app, model, opts) {
   }
 
   this.perform = function () {
-    var modelName = model.tableName;
-
-    app.get('/forest/' + modelName + '/:recordId/:associationName',
+    app.get('/forest/' + model.name + '/:recordId/:associationName',
       auth.ensureAuthenticated, index);
   };
 };

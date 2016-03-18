@@ -1,7 +1,6 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
-var Inflector = require('inflected');
 
 module.exports = function (model, opts) {
   var fields = [];
@@ -16,7 +15,8 @@ module.exports = function (model, opts) {
       return 'Date';
     } else if (column.type instanceof DataTypes.INTEGER ||
       column.type instanceof DataTypes.FLOAT ||
-      column.type instanceof DataTypes['DOUBLE PRECISION']) {
+      column.type instanceof DataTypes['DOUBLE PRECISION'] ||
+      column.type instanceof DataTypes.DECIMAL) {
       return 'Number';
     } else if (column.type.type) {
       return [getTypeFor({ type: column.type.type })];
@@ -34,10 +34,6 @@ module.exports = function (model, opts) {
     }
   }
 
-  function getInverseOf(association) {
-    return association.source.options.name.pluralize;
-  }
-
   function getSchemaForColumn(column) {
     var schema = { field: column.fieldName, type: getTypeFor(column) };
     return schema;
@@ -47,8 +43,8 @@ module.exports = function (model, opts) {
     var schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
-      reference: association.target.options.name.plural + '.id',
-      inverseOf: getInverseOf(association)
+      reference: association.target.name + '.id',
+      inverseOf: null
     };
 
     return schema;
@@ -71,7 +67,7 @@ module.exports = function (model, opts) {
   return P.all([columns, associations])
     .then(function () {
       return {
-        name: Inflector.pluralize(Inflector.underscore(model.name)),
+        name: model.name,
         fields: fields
       };
     });

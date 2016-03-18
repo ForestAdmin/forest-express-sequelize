@@ -23,7 +23,10 @@ function requireAllModels(modelsDir) {
     .each(function (file) {
       try {
         require(path.join(modelsDir, file));
-      } catch (e) { }
+      } catch (e) {
+      }
+    })
+    .catch(function () {
     });
 }
 
@@ -46,7 +49,7 @@ exports.init = function (opts) {
   }));
 
   // Mime type
-  app.use(bodyParser.json({type: 'application/vnd.api+json'}));
+  app.use(bodyParser.json());
 
   // Authentication
   app.use(jwt({

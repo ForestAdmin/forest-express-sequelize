@@ -79,21 +79,17 @@ module.exports = function (app, model, opts) {
   };
 
   this.perform = function () {
-    var modelName = model.tableName;
+    app.get('/forest/' + model.name, auth.ensureAuthenticated, this.list);
 
-    app.get('/forest/' + modelName, auth.ensureAuthenticated,
-      this.list);
-
-    app.get('/forest/' + modelName + '/:recordId', auth.ensureAuthenticated,
+    app.get('/forest/' + model.name + '/:recordId', auth.ensureAuthenticated,
       this.get);
 
-    app.post('/forest/' + modelName, auth.ensureAuthenticated,
-      this.create);
+    app.post('/forest/' + model.name, auth.ensureAuthenticated, this.create);
 
-    app.put('/forest/' + modelName + '/:recordId', auth.ensureAuthenticated,
+    app.put('/forest/' + model.name + '/:recordId', auth.ensureAuthenticated,
       this.update);
 
-    app.delete('/forest/' + modelName + '/:recordId', auth.ensureAuthenticated,
-      this.remove);
+    app.delete('/forest/' + model.name + '/:recordId',
+      auth.ensureAuthenticated, this.remove);
   };
 };
