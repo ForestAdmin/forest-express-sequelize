@@ -27,15 +27,11 @@ function ResourceSerializer(model, records, opts, meta) {
             ref: 'id',
             attributes: _.map(referenceSchema.fields, 'field'),
             relationshipLinks: {
-              related: function (dataSet, relationship) {
+              related: function (dataSet) {
                 var ret = {
                   href: '/forest/' + model.name + '/' +
                     dataSet.id + '/' + field.field,
                 };
-
-                if (_.isArray(field.type)) {
-                  ret.meta = { count: relationship.length || 0 };
-                }
 
                 return ret;
               }

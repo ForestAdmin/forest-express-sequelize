@@ -7,22 +7,11 @@ function ResourcesFinder(model, opts, params) {
   var schema = Schemas.schemas[model.name];
 
   function getIncludes() {
-    var includes = [{ all: true }];
+    var includes = [];
 
-    _.each(params.filter, function (value, key) {
-      if (key.indexOf(':') > -1) {
-        var splitted = key.split(':');
-        var associationName = splitted[0];
-        var fieldName = splitted[1];
-
-        var where = {};
-        where[fieldName] = new OperatorValueParser()
-          .perform(model, key, value);
-
-        includes.push({
-          model: model.associations[associationName].target,
-          where: where
-        });
+    _.values(model.associations).forEach(function (association) {
+      if (['hasOne', 'belongsTo'].indexOf(association.associationType) > -1) {
+        includes.push(association.target);
       }
     });
 
@@ -45,6 +34,22 @@ function ResourcesFinder(model, opts, params) {
     return sort;
   }
 
+  function getRecordsFromResult(result) {
+    return result.rows.map(function (r) {
+      r = r.toJSON();
+
+      // Ensure the Serializer set the relationship links on has many
+      // relationships by setting them to an empty array.
+      _.values(model.associations).forEach(function (association) {
+        if (['HasMany', 'BelongsToMany'].indexOf(association.associationType) > -1) {
+          r[association.associationAccessor] = [];
+        }
+      });
+
+      return r;
+    });
+  }
+
   function getRecords() {
     return model
       .findAndCountAll({
@@ -55,11 +60,7 @@ function ResourcesFinder(model, opts, params) {
         order: getOrder()
       })
       .then(function (result) {
-        var records = result.rows.map(function (r) {
-          return r.toJSON();
-        });
-
-        return [result.count, records];
+        return [result.count, getRecordsFromResult(result)];
       });
   }
 
