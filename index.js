@@ -16,7 +16,6 @@ var JSONAPISerializer = require('jsonapi-serializer').Serializer;
 var request = require('superagent');
 var logger = require('./services/logger');
 var Inflector = require('inflected');
-var allowedUsers = require('./services/auth').allowedUsers;
 
 function requireAllModels(modelsDir) {
   return fs.readdirAsync(modelsDir)
@@ -108,17 +107,10 @@ exports.init = function (opts) {
             .send(json)
             .set('forest-secret-key', opts.secretKey)
             .end(function(err, res) {
-              if (res.status !== 200) {
+              if (res.status !== 204) {
                 logger.debug('Forest cannot find your project secret key. ' +
                   'Please, ensure you have installed the Forest Liana ' +
                   'correctly.');
-              } else {
-                res.body.data.forEach(function (d) {
-                  var user = d.attributes;
-                  user.id = d.id;
-
-                  allowedUsers.push(user);
-                });
               }
             });
       }
