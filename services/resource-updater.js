@@ -1,5 +1,5 @@
 'use strict';
-var ResourceFinder = require('./resource-finder');
+var ResourceGetter = require('./resource-getter');
 
 function ResourceUpdater(model, params) {
 
@@ -9,7 +9,7 @@ function ResourceUpdater(model, params) {
         where: { id: params.id }
       })
       .then(function () {
-        return new ResourceFinder(model, { recordId: params.id }).perform();
+        return new ResourceGetter(model, { recordId: params.id }).perform();
       });
   };
 }

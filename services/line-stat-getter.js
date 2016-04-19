@@ -3,7 +3,7 @@ var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
 
 // jshint sub: true
-function PieStatFinder(model, params, opts) {
+function LineStatGetter(model, params, opts) {
   function getAggregateField() {
     return params['aggregate_field'] || 'id';
   }
@@ -24,7 +24,11 @@ function PieStatFinder(model, params, opts) {
   this.perform = function () {
     return model.findAll({
       attributes: [
-        params['group_by_field'],
+        [
+          opts.sequelize.fn('date_trunc', params['time_range'],
+          opts.sequelize.col(params['group_by_date_field'])),
+          'date'
+        ],
         [
           opts.sequelize.fn(params['aggregate'],
           opts.sequelize.col(getAggregateField())),
@@ -32,15 +36,16 @@ function PieStatFinder(model, params, opts) {
         ]
       ],
       where: getFilters(),
-      group: [params['group_by_field']]
+      group: ['date'],
+      order: ['date']
     })
     .then(function (records) {
       return P.map(records, function (record) {
         record = record.toJSON();
 
         return {
-          key: String(record[params['group_by_field']]),
-          value: record.value
+          label: record.date,
+          values: { value: record.value }
         };
       });
     })
@@ -50,4 +55,4 @@ function PieStatFinder(model, params, opts) {
   };
 }
 
-module.exports = PieStatFinder;
+module.exports = LineStatGetter;

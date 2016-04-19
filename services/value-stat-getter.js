@@ -1,8 +1,7 @@
 'use strict';
-//var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
 
-function ValueStatFinder(model, params, opts) {
+function ValueStatGetter(model, params, opts) {
   function getAggregateField() {
     // jshint sub: true
     return params['aggregate_field'] || 'id';
@@ -33,4 +32,4 @@ function ValueStatFinder(model, params, opts) {
   };
 }
 
-module.exports = ValueStatFinder;
+module.exports = ValueStatGetter;

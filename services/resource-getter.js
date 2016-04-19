@@ -1,13 +1,16 @@
 'use strict';
 var _ = require('lodash');
 
-function ResourceFinder(model, params) {
+function ResourceGetter(model, params) {
   function getIncludes() {
     var includes = [];
 
     _.values(model.associations).forEach(function (association) {
-      if (['hasOne', 'belongsTo'].indexOf(association.associationType) > -1) {
-        includes.push(association.target);
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        includes.push({
+          model: association.target,
+          as: association.associationAccessor
+        });
       }
     });
 
@@ -20,6 +23,8 @@ function ResourceFinder(model, params) {
         include: getIncludes()
       })
       .then(function (record) {
+        record = record.toJSON();
+
         // Ensure the Serializer set the relationship links on has many
         // relationships by setting them to an empty array.
         _.values(model.associations).forEach(function (association) {
@@ -28,9 +33,9 @@ function ResourceFinder(model, params) {
           }
         });
 
-        return record.toJSON();
+        return record;
       });
   };
 }
 
-module.exports = ResourceFinder;
+module.exports = ResourceGetter;

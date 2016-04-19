@@ -2,7 +2,22 @@
 var _ = require('lodash');
 var P = require('bluebird');
 
-function HasManyFinder(model, association, opts, params) {
+function HasManyGetter(model, association, opts, params) {
+  function getIncludes() {
+    var includes = [];
+
+    _.values(association.associations).forEach(function (association) {
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        includes.push({
+          model: association.target,
+          as: association.associationAccessor
+        });
+      }
+    });
+
+    return includes;
+  }
+
   function count() {
     return model.findById(params.recordId)
       .then(function (record) {
@@ -19,7 +34,13 @@ function HasManyFinder(model, association, opts, params) {
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           offset: getSkip(),
-          limit: getLimit()
+          limit: getLimit(),
+          include: getIncludes()
+        });
+      })
+      .then(function (records) {
+        return P.map(records, function (record) {
+          return record.toJSON();
         });
       });
   }
@@ -49,4 +70,4 @@ function HasManyFinder(model, association, opts, params) {
   };
 }
 
-module.exports = HasManyFinder;
+module.exports = HasManyGetter;

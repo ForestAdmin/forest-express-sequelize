@@ -1,12 +1,12 @@
 'use strict';
-var ResourceFinder = require('./resource-finder');
+var ResourceGetter = require('./resource-getter');
 
 function ResourceCreator(model, params) {
 
   this.perform = function () {
     return model.create(params)
       .then(function (record) {
-        return new ResourceFinder(model, { recordId: record.id });
+        return new ResourceGetter(model, { recordId: record.id });
       });
   };
 }

@@ -1,17 +1,20 @@
 'use strict';
 var _ = require('lodash');
 var OperatorValueParser = require('./operator-value-parser');
-var Schemas = require('../generators/schemas');
+var Interface = require('forest-express');
 
-function ResourcesFinder(model, opts, params) {
-  var schema = Schemas.schemas[model.name];
+function ResourcesGetter(model, opts, params) {
+  var schema = Interface.Schemas.schemas[model.name];
 
   function getIncludes() {
     var includes = [];
 
     _.values(model.associations).forEach(function (association) {
-      if (['hasOne', 'belongsTo'].indexOf(association.associationType) > -1) {
-        includes.push(association.target);
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        includes.push({
+          model: association.target,
+          as: association.associationAccessor
+        });
       }
     });
 
@@ -142,4 +145,4 @@ function ResourcesFinder(model, opts, params) {
   };
 }
 
-module.exports = ResourcesFinder;
+module.exports = ResourcesGetter;

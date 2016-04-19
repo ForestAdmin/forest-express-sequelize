@@ -7,7 +7,8 @@ module.exports = function (model, opts) {
   var DataTypes = opts.sequelize.Sequelize;
 
   function getTypeFor(column) {
-    if (column.type instanceof DataTypes.STRING) {
+    if (column.type instanceof DataTypes.STRING ||
+      column.type instanceof DataTypes.TEXT) {
       return 'String';
     } else if (column.type instanceof DataTypes.BOOLEAN) {
       return 'Boolean';
@@ -18,6 +19,8 @@ module.exports = function (model, opts) {
       column.type instanceof DataTypes['DOUBLE PRECISION'] ||
       column.type instanceof DataTypes.DECIMAL) {
       return 'Number';
+    } else if (column.type instanceof DataTypes.JSONB) {
+      return 'Json';
     } else if (column.type.type) {
       return [getTypeFor({ type: column.type.type })];
     }
@@ -66,10 +69,7 @@ module.exports = function (model, opts) {
 
   return P.all([columns, associations])
     .then(function () {
-      return {
-        name: model.name,
-        fields: fields
-      };
+      return { name: model.name, idField: 'id', fields: fields };
     });
 };
 
