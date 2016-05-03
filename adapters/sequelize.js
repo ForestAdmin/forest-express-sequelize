@@ -8,7 +8,8 @@ module.exports = function (model, opts) {
 
   function getTypeFor(column) {
     if (column.type instanceof DataTypes.STRING ||
-      column.type instanceof DataTypes.TEXT) {
+      column.type instanceof DataTypes.TEXT ||
+      column.type instanceof DataTypes.ENUM) {
       return 'String';
     } else if (column.type instanceof DataTypes.BOOLEAN) {
       return 'Boolean';
