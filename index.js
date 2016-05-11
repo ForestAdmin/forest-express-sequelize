@@ -10,6 +10,14 @@ exports.ResourceSerializer = Interface.ResourceSerializer;
 exports.init = function(opts) {
   exports.opts = opts;
 
+  exports.getLianaName = function () {
+    return 'forest-express-sequelize';
+  };
+
+  exports.getLianaVersion = function () {
+    return require('./package.json').version;
+  };
+
   exports.SchemaAdapter = require('./adapters/sequelize');
 
   exports.getModels = function () {
