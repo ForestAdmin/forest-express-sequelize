@@ -18,7 +18,7 @@
     "express-cors": "0.0.3",
     "express-jwt": "^3.0.1",
     "flat": "^1.6.0",
-    "forest-express": "^0.1.7",
+    "forest-express": "^0.1.8",
     "humps": "^0.6.0",
     "inflected": "^1.1.6",
     "jsonapi-serializer": "^3.2.0",
