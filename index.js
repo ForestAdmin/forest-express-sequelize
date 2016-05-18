@@ -63,6 +63,7 @@ exports.init = function(opts) {
         return customerModel
           .findOne({ where: query })
           .then(function (customer) {
+            if (!customer) { return null; }
             return customer.toJSON();
           });
     }
