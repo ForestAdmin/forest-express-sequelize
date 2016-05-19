@@ -1,6 +1,6 @@
 {
   "name": "forest-express-sequelize",
-  "version": "0.2.9",
+  "version": "0.2.10",
   "description": "Forest Liana for Expressjs and Sequelize",
   "main": "index.js",
   "scripts": {},
@@ -21,7 +21,7 @@
     "forest-express": "^0.1.9",
     "humps": "^0.6.0",
     "inflected": "^1.1.6",
-    "jsonapi-serializer": "^3.2.0",
+    "jsonapi-serializer": "^3.2.1",
     "jsonwebtoken": "^5.7.0",
     "lodash": "^3.9.3",
     "moment": "^2.10.6",
