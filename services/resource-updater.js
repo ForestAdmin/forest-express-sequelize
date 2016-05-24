@@ -6,7 +6,8 @@ function ResourceUpdater(model, params) {
   this.perform = function () {
     return model
       .update(params, {
-        where: { id: params.id }
+        where: { id: params.id },
+        individualHooks: true
       })
       .then(function () {
         return new ResourceGetter(model, { recordId: params.id }).perform();
