@@ -70,7 +70,7 @@ function OperatorValueParser() {
       value = value.substring(1);
       ret = { $like: '%' + value };
     } else if (value[value.length - 1] === '*') {
-      value = value.substring(1);
+      value = value.substring(0, value.length - 1);
       ret = { $like: value + '%' };
     } else if (value === '$present') {
       ret = { $ne: null };
