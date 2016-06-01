@@ -2,6 +2,10 @@
 var OperatorValueParser = require('./operator-value-parser');
 
 function ValueStatGetter(model, params, opts) {
+  function getAggregate() {
+    return params.aggregate.toLowerCase();
+  }
+
   function getAggregateField() {
     // jshint sub: true
     return params['aggregate_field'] || 'id';
@@ -22,8 +26,7 @@ function ValueStatGetter(model, params, opts) {
 
   this.perform = function () {
     return model
-      .aggregate(getAggregateField(), 'count', {
-        distinct: true,
+      .aggregate(getAggregateField(), getAggregate(), {
         where: getFilters()
       })
       .then(function (count) {

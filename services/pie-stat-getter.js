@@ -4,6 +4,10 @@ var OperatorValueParser = require('./operator-value-parser');
 
 // jshint sub: true
 function PieStatGetter(model, params, opts) {
+  function getAggregate() {
+    return params.aggregate.toLowerCase();
+  }
+
   function getAggregateField() {
     return params['aggregate_field'] || 'id';
   }
@@ -26,7 +30,7 @@ function PieStatGetter(model, params, opts) {
       attributes: [
         params['group_by_field'],
         [
-          opts.sequelize.fn(params['aggregate'],
+          opts.sequelize.fn(getAggregate(),
           opts.sequelize.col(getAggregateField())),
           'value'
         ]

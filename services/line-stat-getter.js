@@ -4,6 +4,10 @@ var OperatorValueParser = require('./operator-value-parser');
 
 // jshint sub: true
 function LineStatGetter(model, params, opts) {
+  function getAggregate() {
+    return params.aggregate.toLowerCase();
+  }
+
   function getAggregateField() {
     return params['aggregate_field'] || 'id';
   }
@@ -30,7 +34,7 @@ function LineStatGetter(model, params, opts) {
           'date'
         ],
         [
-          opts.sequelize.fn(params['aggregate'],
+          opts.sequelize.fn(getAggregate(),
           opts.sequelize.col(getAggregateField())),
           'value'
         ]
