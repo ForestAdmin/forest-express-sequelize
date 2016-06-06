@@ -6,13 +6,17 @@ function OperatorValueParser() {
     var ret = null;
 
     function isIntervalDateValue(value) {
-      return ['yesterday', 'lastWeek', 'last2Weeks', 'lastMonth',
-        'last3Months', 'lastYear'].indexOf(value) > -1;
+      return value === 'yesterday' || value.indexOf('last') === 0;
     }
 
     function getIntervalDateValue(value) {
       var from = null;
       var to = null;
+
+      let match = value.match(/^last(\d+)days$/);
+      if (match && match[1]) {
+        return { $gte: moment().subtract(match[1], 'days').toDate() };
+      }
 
       switch (value) {
         case 'yesterday':
