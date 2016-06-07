@@ -36,7 +36,8 @@ function PieStatGetter(model, params, opts) {
         ]
       ],
       where: getFilters(),
-      group: [params['group_by_field']]
+      group: [params['group_by_field']],
+      order: 'value DESC'
     })
     .then(function (records) {
       return P.map(records, function (record) {
