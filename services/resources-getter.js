@@ -109,10 +109,11 @@ function ResourcesGetter(model, opts, params) {
     _.each(params.filter, function (value, key) {
       var q = {};
 
-      if (key.indexOf(':') === -1) {
-        q[key] = new OperatorValueParser().perform(model, key, value);
+      if (key.indexOf(':') !== -1) {
+        key = '$' + key.replace(':', '.') + '$';
       }
 
+      q[key] = new OperatorValueParser().perform(model, key, value);
       and.push(q);
     });
 
