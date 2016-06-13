@@ -35,7 +35,8 @@ function HasManyGetter(model, association, opts, params) {
         return record['get' + _.capitalize(params.associationName)]({
           offset: getSkip(),
           limit: getLimit(),
-          include: getIncludes()
+          include: getIncludes(),
+          order: getOrder()
         });
       })
       .then(function (records) {
@@ -63,6 +64,22 @@ function HasManyGetter(model, association, opts, params) {
     } else {
       return 0;
     }
+  }
+
+  function getOrder() {
+    var sort = [];
+    if (params.sort) {
+      var order = 'ASC';
+
+      if (params.sort[0] === '-') {
+        params.sort = params.sort.substring(1);
+        order = 'DESC';
+      }
+
+      sort.push([params.sort, order]);
+    }
+
+    return sort;
   }
 
   this.perform = function () {
