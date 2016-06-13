@@ -13,7 +13,8 @@ function ResourcesGetter(model, opts, params) {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
         includes.push({
           model: association.target,
-          as: association.associationAccessor
+          as: association.associationAccessor,
+          required: true
         });
       }
     });
@@ -75,10 +76,26 @@ function ResourcesGetter(model, opts, params) {
       var q = {};
 
       if (field.type === 'String') {
-        q[field.field] = { $like: '%' + params.search + '%' };
+        q[field.field] = { $like: `%${params.search}%` };
       }
 
       or.push(q);
+    });
+
+    _.each(model.associations, function (association) {
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        let fieldsAssociation = Interface.Schemas
+          .schemas[association.associationAccessor].fields;
+        _.each(fieldsAssociation, function(field) {
+          var q = {};
+          if (field.type === 'String') {
+            q[`$${association.associationAccessor}.${field.field}$`] = {
+              $like: `%${params.search}%`
+            };
+            or.push(q);
+          }
+        });
+      }
     });
 
     where.$or = or;
