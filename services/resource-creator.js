@@ -22,7 +22,7 @@ function ResourceCreator(model, params) {
         return P.all(promises).thenReturn(record);
       })
       .then(function (record) {
-        return new ResourceGetter(model, { recordId: record.id });
+        return new ResourceGetter(model, { recordId: record.id }).perform();
       });
   };
 }
