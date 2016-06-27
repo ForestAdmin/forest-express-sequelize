@@ -36,7 +36,7 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getRecordsFromResult(result) {
-    return result.rows.map(function (r) {
+    return result.map(function (r) {
       r = r.toJSON();
 
       // Ensure the Serializer set the relationship links on has many
@@ -53,15 +53,21 @@ function ResourcesGetter(model, opts, params) {
 
   function getRecords() {
     return model
-      .findAndCountAll({
+      .findAll({
         include: getIncludes(),
         limit: getLimit(),
         offset: getSkip(),
         where: getWhere(),
         order: getOrder()
       })
-      .then(function (result) {
-        return [result.count, getRecordsFromResult(result)];
+      .then((result) => getRecordsFromResult(result));
+  }
+
+  function getCount() {
+    return model
+      .count({
+        include: getIncludes(),
+        where: getWhere()
       });
   }
 
@@ -77,6 +83,22 @@ function ResourcesGetter(model, opts, params) {
       }
 
       or.push(q);
+    });
+
+    _.each(model.associations, function (association) {
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        let fieldsAssociation = Interface.Schemas
+          .schemas[association.associationAccessor].fields;
+        _.each(fieldsAssociation, function(field) {
+          var q = {};
+          if (field.type === 'String') {
+            q[`$${association.associationAccessor}.${field.field}$`] = {
+              $like: `%${params.search}%`
+            };
+            or.push(q);
+          }
+        });
+      }
     });
 
     where.$or = or;
@@ -138,8 +160,9 @@ function ResourcesGetter(model, opts, params) {
 
   this.perform = function () {
     return getRecords()
-      .spread(function (count, records) {
-        return [count, records];
+      .then((records) => {
+        return getCount()
+          .then((count) => [count, records]);
       });
   };
 }
