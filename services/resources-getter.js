@@ -22,7 +22,6 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getOrder() {
-    var sort = [];
     if (params.sort) {
       var order = 'ASC';
 
@@ -31,10 +30,9 @@ function ResourcesGetter(model, opts, params) {
         order = 'DESC';
       }
 
-      sort.push([params.sort, order]);
+      return `"${params.sort.replace('.', '"."')}" ${order}`;
     }
-
-    return sort;
+    return [];
   }
 
   function getRecordsFromResult(result) {
