@@ -12,7 +12,7 @@ function ResourceUpdater(model, params) {
         individualHooks: true
       })
       .then(function () {
-        return model.findById(params.id);
+        return model.findById(params.id, { paranoid: false });
       })
       .then(function(record) {
         var promises = [];

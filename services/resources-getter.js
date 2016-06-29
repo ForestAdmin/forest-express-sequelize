@@ -58,7 +58,8 @@ function ResourcesGetter(model, opts, params) {
         limit: getLimit(),
         offset: getSkip(),
         where: getWhere(),
-        order: getOrder()
+        order: getOrder(),
+        paranoid: false
       })
       .then((result) => getRecordsFromResult(result));
   }
@@ -67,7 +68,8 @@ function ResourcesGetter(model, opts, params) {
     return model
       .count({
         include: getIncludes(),
-        where: getWhere()
+        where: getWhere(),
+        paranoid: false
       });
   }
 
