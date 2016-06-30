@@ -78,7 +78,11 @@ function ResourcesGetter(model, opts, params) {
     _.each(schema.fields, function (field) {
       var q = {};
 
-      if (field.type === 'String') {
+      if (field.field === 'id') {
+        if (parseInt(params.search, 10).toString() === params.search) {
+          q[field.field] = params.search;
+        }
+      } else if (field.type === 'String') {
         q[field.field] = { $like: `%${params.search}%` };
       }
 
