@@ -1,5 +1,7 @@
 'use strict';
+var moment = require('moment');
 var OperatorValueParser = require('./operator-value-parser');
+var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 
 function ValueStatGetter(model, params, opts) {
   function getAggregate() {
@@ -24,13 +26,50 @@ function ValueStatGetter(model, params, opts) {
     return filters;
   }
 
+  function getIntervalDateFilter() {
+    var intervalDateFilter;
+
+    params.filters.forEach(function (filter) {
+      var operatorValueParser =
+        new OperatorDateIntervalParser(filter.value.substring(1));
+      if (operatorValueParser.isIntervalDateValue()) {
+        intervalDateFilter = filter;
+      }
+    });
+    return intervalDateFilter;
+  }
+
   this.perform = function () {
+    var countCurrent;
+    var aggregateField = getAggregateField();
+    var aggregate = getAggregate();
+    var filters = getFilters();
+    var filterDateInterval = getIntervalDateFilter();
+
     return model
-      .aggregate(getAggregateField(), getAggregate(), {
-        where: getFilters()
+      .aggregate(aggregateField, aggregate, { where: filters })
+      .then((count) => {
+        countCurrent = count || 0;
+
+        if (filterDateInterval) {
+          var operatorValueParser = new OperatorDateIntervalParser(
+            filterDateInterval.value.substring(1)
+          );
+          filters[filterDateInterval.field] = operatorValueParser
+            .getIntervalDateFilterForPreviousInterval();
+          return model
+            .aggregate(aggregateField, aggregate, { where: filters })
+            .then(function (count) { return count || 0; });
+        }
+        return undefined;
       })
-      .then(function (count) {
-        return { value: count };
+      .then(function (countPrevious) {
+        return {
+          value: {
+            countCurrent: countCurrent,
+            countPrevious: countPrevious
+          }
+        };
       });
   };
 }
