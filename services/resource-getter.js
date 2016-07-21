@@ -20,7 +20,8 @@ function ResourceGetter(model, params) {
   this.perform = function () {
     return model
       .findById(params.recordId, {
-        include: getIncludes()
+        include: getIncludes(),
+        paranoid: false
       })
       .then(function (record) {
         record = record.toJSON();

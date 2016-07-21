@@ -19,7 +19,7 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   function count() {
-    return model.findById(params.recordId)
+    return model.findById(params.recordId, { paranoid: false })
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]();
       })
@@ -30,7 +30,7 @@ function HasManyGetter(model, association, opts, params) {
 
   function getRecords() {
     return model
-      .findById(params.recordId)
+      .findById(params.recordId, { paranoid: false })
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           offset: getSkip(),

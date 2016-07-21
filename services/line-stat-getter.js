@@ -41,7 +41,8 @@ function LineStatGetter(model, params, opts) {
       ],
       where: getFilters(),
       group: ['date'],
-      order: ['date']
+      order: ['date'],
+      paranoid: false
     })
     .then(function (records) {
       return P.map(records, function (record) {
