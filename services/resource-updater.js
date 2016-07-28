@@ -19,7 +19,7 @@ function ResourceUpdater(model, params) {
 
         if (model.associations) {
           _.forOwn(model.associations, function(association, name) {
-            if (['HasOne', 'HasMany', 'BelongsToMany']
+            if (['BelongsTo', 'HasOne', 'HasMany', 'BelongsToMany']
               .indexOf(association.associationType) > -1) {
               if (params[name]) {
                 promises.push(record[`set${_.capitalize(name)}`](params[name]));
