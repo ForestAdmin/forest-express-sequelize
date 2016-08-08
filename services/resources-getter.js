@@ -83,7 +83,11 @@ function ResourcesGetter(model, opts, params) {
           q[field.field] = params.search;
         }
       } else if (field.type === 'String') {
-        q[field.field] = { $like: `%${params.search}%` };
+        q = opts.sequelize.where(
+          opts.sequelize.literal(`LOWER("${schema.name}"."${field.field}")`),
+          ' LIKE ',
+          opts.sequelize.fn('LOWER', `%${params.search}%`)
+        );
       }
 
       or.push(q);
@@ -92,13 +96,15 @@ function ResourcesGetter(model, opts, params) {
     _.each(model.associations, function (association) {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
         let fieldsAssociation = Interface.Schemas
-          .schemas[association.associationAccessor].fields;
+          .schemas[association.target.name].fields;
         _.each(fieldsAssociation, function(field) {
           var q = {};
           if (field.type === 'String') {
-            q[`$${association.associationAccessor}.${field.field}$`] = {
-              $like: `%${params.search}%`
-            };
+            q = opts.sequelize.where(
+              opts.sequelize.literal(`LOWER("${association.associationAccessor}"."${field.field}")`),
+              ' LIKE ',
+              opts.sequelize.fn('LOWER', `%${params.search}%`)
+            );
             or.push(q);
           }
         });
