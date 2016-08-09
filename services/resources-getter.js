@@ -82,6 +82,12 @@ function ResourcesGetter(model, opts, params) {
         if (parseInt(params.search, 10).toString() === params.search) {
           q[field.field] = params.search;
         }
+      } else if (field.type === 'Enum') {
+        var enumSearch = _.capitalize(params.search.toLowerCase());
+
+        if (field.enums.indexOf(enumSearch) > -1) {
+          q[field.field] = enumSearch;
+        }
       } else if (field.type === 'String') {
         q = opts.sequelize.where(
           opts.sequelize.literal(`LOWER("${schema.name}"."${field.field}")`),

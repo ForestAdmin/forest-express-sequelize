@@ -8,9 +8,10 @@ module.exports = function (model, opts) {
 
   function getTypeFor(column) {
     if (column.type instanceof DataTypes.STRING ||
-      column.type instanceof DataTypes.TEXT ||
-      column.type instanceof DataTypes.ENUM) {
+      column.type instanceof DataTypes.TEXT) {
       return 'String';
+    } else if (column.type instanceof DataTypes.ENUM) {
+      return 'Enum';
     } else if (column.type instanceof DataTypes.BOOLEAN) {
       return 'Boolean';
     } else if (column.type instanceof DataTypes.DATE) {
@@ -39,7 +40,15 @@ module.exports = function (model, opts) {
   }
 
   function getSchemaForColumn(column) {
-    var schema = { field: column.fieldName, type: getTypeFor(column) };
+    var schema = {
+      field: column.fieldName,
+      type: getTypeFor(column)
+    };
+
+    if (schema.type === 'Enum') {
+      schema.enums = column.values;
+    }
+
     return schema;
   }
 
