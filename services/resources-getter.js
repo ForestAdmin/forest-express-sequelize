@@ -76,6 +76,9 @@ function ResourcesGetter(model, opts, params) {
     var or = [];
 
     _.each(schema.fields, function (field) {
+      // Ignore Smart field.
+      if (field.isVirtual) { return; }
+
       var q = {};
 
       if (field.field === 'id') {
