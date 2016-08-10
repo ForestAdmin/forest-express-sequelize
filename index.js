@@ -71,15 +71,13 @@ exports.init = function(opts) {
 
   exports.Intercom = {
     getCustomer: function (userModel, customerId) {
-      if (customerId) {
-        return userModel
-          .findById(customerId)
-          .then(function (customer) {
-            return customer;
-          });
-      } else {
-        return new P(function (resolve) { resolve(); });
-      }
+      return userModel.findById(customerId);
+    }
+  };
+
+  exports.Closeio = {
+    getCustomer: function (userModel, customerId) {
+      return userModel.findById(customerId);
     }
   };
 

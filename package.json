@@ -21,7 +21,7 @@
     "forest-express": "^0.1.22",
     "humps": "^0.6.0",
     "inflected": "^1.1.6",
-    "jsonapi-serializer": "^3.2.1",
+    "jsonapi-serializer": "^3.4.1",
     "jsonwebtoken": "^5.7.0",
     "lodash": "^3.9.3",
     "moment": "^2.10.6",

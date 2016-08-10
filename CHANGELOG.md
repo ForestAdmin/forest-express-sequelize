@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+- Integration - Add the Close.io integration
 
 ## [0.2.36] - 2016-09-26
 ### Added
