@@ -93,9 +93,9 @@ function ResourcesGetter(model, opts, params) {
         }
       } else if (field.type === 'String') {
         q = opts.sequelize.where(
-          opts.sequelize.literal(`LOWER("${schema.name}"."${field.field}")`),
+          opts.sequelize.fn('lower', opts.sequelize.col(`${schema.name}.${field.field}`)),
           ' LIKE ',
-          opts.sequelize.fn('LOWER', `%${params.search}%`)
+          opts.sequelize.fn('lower', `%${params.search}%`)
         );
       }
 
@@ -110,9 +110,9 @@ function ResourcesGetter(model, opts, params) {
           var q = {};
           if (field.type === 'String') {
             q = opts.sequelize.where(
-              opts.sequelize.literal(`LOWER("${association.associationAccessor}"."${field.field}")`),
+              opts.sequelize.fn('lower', opts.sequelize.col(`${association.associationAccessor}.${field.field}`)),
               ' LIKE ',
-              opts.sequelize.fn('LOWER', `%${params.search}%`)
+              opts.sequelize.fn('lower', `%${params.search}%`)
             );
             or.push(q);
           }
