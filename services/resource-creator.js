@@ -14,7 +14,7 @@ function ResourceCreator(model, params) {
           _.forOwn(model.associations, function(association, name) {
             if (['HasOne', 'HasMany', 'BelongsToMany']
               .indexOf(association.associationType) > -1) {
-              promises.push(record[`set${_.capitalize(name)}`](params[name]));
+              promises.push(record['set' + _.capitalize(name)](params[name]));
             }
           });
         }

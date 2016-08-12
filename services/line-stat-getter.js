@@ -22,9 +22,9 @@ function LineStatGetter(model, params, opts) {
           ];
         case 'week':
           return [
-            opts.sequelize.literal(`DATE_FORMAT(DATE_SUB(${column}, INTERVAL
-              ((7 + WEEKDAY(CONVERT_TZ(${column}, '+00:00', 'utc'))) % 7) DAY),
-              '%Y-%m-%d 00:00:00')`),
+            opts.sequelize.literal('DATE_FORMAT(DATE_SUB(' + column + ', ' +
+              'INTERVAL ((7 + WEEKDAY(' + column + ')) % 7) DAY), ' +
+              '\'%Y-%m-%d 00:00:00\')'),
             'date'
           ];
         case 'month':

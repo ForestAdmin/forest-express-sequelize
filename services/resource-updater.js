@@ -22,7 +22,7 @@ function ResourceUpdater(model, params) {
             if (['BelongsTo', 'HasOne', 'HasMany', 'BelongsToMany']
               .indexOf(association.associationType) > -1) {
               if (params[name]) {
-                promises.push(record[`set${_.capitalize(name)}`](params[name]));
+                promises.push(record['set' + _.capitalize(name)](params[name]));
               }
             }
           });

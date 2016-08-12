@@ -30,7 +30,7 @@ function ResourcesGetter(model, opts, params) {
         order = 'DESC';
       }
 
-      return `"${params.sort.replace('.', '"."')}" ${order}`;
+      return params.sort.replace('.', '"."') + ' ' + order;
     }
     return [];
   }
@@ -93,9 +93,10 @@ function ResourcesGetter(model, opts, params) {
         }
       } else if (field.type === 'String') {
         q = opts.sequelize.where(
-          opts.sequelize.fn('lower', opts.sequelize.col(`${schema.name}.${field.field}`)),
+          opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
+            field.field)),
           ' LIKE ',
-          opts.sequelize.fn('lower', `%${params.search}%`)
+          opts.sequelize.fn('lower', '%' + params.search + '%')
         );
       }
 
@@ -111,9 +112,9 @@ function ResourcesGetter(model, opts, params) {
           if (field.type === 'String') {
             q = opts.sequelize.where(
               opts.sequelize.fn('lower', opts.sequelize.col(
-              `${association.associationAccessor}.${field.field}`)),
+                association.associationAccessor + '.' + field.field)),
               ' LIKE ',
-              opts.sequelize.fn('lower', `%${params.search}%`)
+              opts.sequelize.fn('lower', '%' + params.search + '%')
             );
             or.push(q);
           }
