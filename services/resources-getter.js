@@ -110,7 +110,8 @@ function ResourcesGetter(model, opts, params) {
           var q = {};
           if (field.type === 'String') {
             q = opts.sequelize.where(
-              opts.sequelize.fn('lower', opts.sequelize.col(`${association.associationAccessor}.${field.field}`)),
+              opts.sequelize.fn('lower', opts.sequelize.col(
+              `${association.associationAccessor}.${field.field}`)),
               ' LIKE ',
               opts.sequelize.fn('lower', `%${params.search}%`)
             );
