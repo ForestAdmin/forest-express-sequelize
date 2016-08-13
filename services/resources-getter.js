@@ -30,8 +30,9 @@ function ResourcesGetter(model, opts, params) {
         order = 'DESC';
       }
 
-      return params.sort.replace('.', '"."') + ' ' + order;
+      return '"' + params.sort.replace('.', '"."') + '" ' + order;
     }
+
     return [];
   }
 
