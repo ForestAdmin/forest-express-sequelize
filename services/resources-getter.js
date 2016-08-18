@@ -84,7 +84,9 @@ function ResourcesGetter(model, opts, params) {
       var q = {};
 
       if (field.field === 'id') {
-        if (parseInt(params.search, 10).toString() === params.search) {
+        if (field.type === 'Number') {
+          q[field.field] = parseInt(params.search, 10) || 0;
+        } else {
           q[field.field] = params.search;
         }
       } else if (field.type === 'Enum') {
