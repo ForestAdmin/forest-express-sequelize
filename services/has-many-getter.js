@@ -52,9 +52,9 @@ function HasManyGetter(model, association, opts, params) {
 
   function getLimit() {
     if (hasPagination()) {
-      return parseInt(params.page.size) || 10;
+      return parseInt(params.page.size) || 5;
     } else {
-      return 10;
+      return 5;
     }
   }
 

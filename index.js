@@ -41,50 +41,45 @@ exports.init = function(opts) {
   exports.LineStatGetter = require('./services/line-stat-getter');
 
   exports.Stripe = {
-    getCustomer: function (customerModel, customerId) {
-        if (customerId) {
-          return customerModel
-            .findById(customerId)
-            .then(function (customer) {
-              return customer.toJSON();
-            });
-        } else {
-          return new P(function (resolve) { resolve(); });
-        }
-    },
-    getCustomerByUserField: function (customerModel, userField) {
-        if (!customerModel) {
-          return new P(function (resolve) { resolve(); });
-        }
-
-        var query = {};
-        query[opts.integrations.stripe.userField] = userField;
-
+    getCustomer: function (customerModel, customerField, customerId) {
+      if (customerId) {
         return customerModel
-          .findOne({ where: query })
+          .findById(customerId)
           .then(function (customer) {
-            if (!customer) { return null; }
             return customer.toJSON();
           });
+      } else {
+        return new P(function (resolve) { resolve(); });
+      }
+    },
+    getCustomerByUserField: function (customerModel, customerField, userField) {
+      if (!customerModel) {
+        return new P(function (resolve) { resolve(); });
+      }
+
+      var query = {};
+      query[customerField] = userField;
+
+      return customerModel
+        .findOne({ where: query })
+        .then(function (customer) {
+          if (!customer) { return null; }
+          return customer.toJSON();
+        });
     }
   };
 
   exports.Intercom = {
     getCustomer: function (userModel, customerId) {
-      return new P(function (resolve, reject) {
-        if (customerId) {
-          return userModel
+      if (customerId) {
+        return userModel
           .findById(customerId)
-          .lean()
-          .exec(function (err, customer) {
-            if (err) { return reject(err); }
-            if (!customer) { return reject(); }
-            resolve(customer);
+          .then(function (customer) {
+            return customer;
           });
-        } else {
-          resolve();
-        }
-      });
+      } else {
+        return new P(function (resolve) { resolve(); });
+      }
     }
   };
 
