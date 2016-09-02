@@ -83,7 +83,7 @@ function ResourcesGetter(model, opts, params) {
 
       var q = {};
 
-      if (field.field === 'id') {
+      if (field.field === schema.idField) {
         if (field.type === 'Number') {
           q[field.field] = parseInt(params.search, 10) || 0;
         } else {

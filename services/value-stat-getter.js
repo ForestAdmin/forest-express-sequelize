@@ -2,15 +2,18 @@
 var moment = require('moment');
 var OperatorValueParser = require('./operator-value-parser');
 var OperatorDateIntervalParser = require('./operator-date-interval-parser');
+var Interface = require('forest-express');
 
 function ValueStatGetter(model, params, opts) {
+  var schema = Interface.Schemas.schemas[model.name];
+
   function getAggregate() {
     return params.aggregate.toLowerCase();
   }
 
   function getAggregateField() {
     // jshint sub: true
-    return params['aggregate_field'] || 'id';
+    return params['aggregate_field'] || schema.idField;
   }
 
   function getFilters() {

@@ -79,7 +79,11 @@ module.exports = function (model, opts) {
 
   return P.all([columns, associations])
     .then(function () {
-      return { name: model.name, idField: 'id', fields: fields };
+      return {
+        name: model.name,
+        idField: _.keys(model.primaryKeys)[0],
+        fields: fields
+      };
     });
 };
 

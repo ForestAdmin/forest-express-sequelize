@@ -21,7 +21,7 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getAggregateField() {
-    return params['aggregate_field'] || 'id';
+    return params['aggregate_field'] || schema.idField;
   }
 
   function getFilters() {
@@ -41,7 +41,7 @@ function PieStatGetter(model, params, opts) {
     return associatedField || params['group_by_field'];
   }
 
-  function retrieveAssociatedValuesIfAny (records) {
+  function retrieveAssociatedValuesIfAny(records) {
     if (!associatedField) { return records; }
 
     var associatedIds = _.map(records, getGroupBy());

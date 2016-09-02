@@ -2,8 +2,10 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var ResourceGetter = require('./resource-getter');
+var Interface = require('forest-express');
 
 function ResourceCreator(model, params) {
+  var schema = Interface.Schemas.schemas[model.name];
 
   this.perform = function () {
     return model.create(params)
@@ -22,7 +24,9 @@ function ResourceCreator(model, params) {
         return P.all(promises).thenReturn(record);
       })
       .then(function (record) {
-        return new ResourceGetter(model, { recordId: record.id }).perform();
+        return new ResourceGetter(model, {
+          recordId: record[schema.idField]
+        }).perform();
       });
   };
 }
