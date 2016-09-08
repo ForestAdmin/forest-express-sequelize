@@ -2,11 +2,13 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
+var Interface = require('forest-express');
 
 // jshint sub: true
 function PieStatGetter(model, params, opts) {
   var associatedField;
   var associatedValues;
+  var schema = Interface.Schemas.schemas[model.name];
 
   function detectGroupByAssociationField() {
     _.values(model.associations).forEach(function (association) {
