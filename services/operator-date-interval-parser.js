@@ -11,6 +11,8 @@ function OperatorDateIntervalParser(value) {
     lastYear: { duration: 1, period: 'years' }
   };
 
+  var PERIODS_FROM_NOW = 'fromNow';
+  var PERIODS_TODAY = 'today';
   var PERIODS_LAST_X_DAYS = /^last(\d+)days$/;
 
   var PERIODS_VALUES = {
@@ -23,6 +25,21 @@ function OperatorDateIntervalParser(value) {
   this.isIntervalDateValue = function () {
     if (PERIODS[value]) { return true; }
 
+    if ([PERIODS_FROM_NOW, PERIODS_TODAY].indexOf(value) !== -1) {
+      return true;
+    }
+
+    var match = value.match(PERIODS_LAST_X_DAYS);
+    if (match && match[1]) { return true; }
+
+    return false;
+  };
+
+  this.hasPreviousInterval = function () {
+    if (PERIODS[value]) { return true; }
+
+    if (value === PERIODS_TODAY) { return true; }
+
     var match = value.match(PERIODS_LAST_X_DAYS);
     if (match && match[1]) { return true; }
 
@@ -32,9 +49,23 @@ function OperatorDateIntervalParser(value) {
   this.getIntervalDateFilter = function () {
     if (!this.isIntervalDateValue()) { return; }
 
+    if (value === PERIODS_FROM_NOW) {
+      return { $gte: moment().toDate() };
+    }
+
+    if (value === PERIODS_TODAY) {
+      return {
+        $gte: moment().startOf('day').toDate(),
+        $lte: moment().endOf('day').toDate()
+      };
+    }
+
     let match = value.match(PERIODS_LAST_X_DAYS);
     if (match && match[1]) {
-      return { $gte: moment().subtract(match[1], 'days').toDate() };
+      return {
+        $gte: moment().subtract(match[1], 'days').startOf('day').toDate(),
+        $lte: moment().subtract(1, 'days').endOf('day').toDate()
+      };
     }
 
     var duration = PERIODS[value].duration;
@@ -48,13 +79,20 @@ function OperatorDateIntervalParser(value) {
   };
 
   this.getIntervalDateFilterForPreviousInterval = function () {
-    if (!this.isIntervalDateValue()) { return; }
+    if (!this.hasPreviousInterval()) { return; }
+
+    if (value === PERIODS_TODAY) {
+      return {
+        $gte: moment().subtract(1, 'days').startOf('day').toDate(),
+        $lte: moment().subtract(1, 'days').endOf('day').toDate()
+      };
+    }
 
     let match = value.match(PERIODS_LAST_X_DAYS);
     if (match && match[1]) {
       return {
-        $gte: moment().subtract(match[1] * 2, 'days').toDate(),
-        $lte: moment().subtract(match[1], 'days').toDate()
+        $gte: moment().subtract(match[1] * 2, 'days').startOf('day').toDate(),
+        $lte: moment().subtract(match[1], 'days').endOf('day').toDate()
       };
     }
 

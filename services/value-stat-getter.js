@@ -29,13 +29,13 @@ function ValueStatGetter(model, params, opts) {
     return filters;
   }
 
-  function getIntervalDateFilter() {
+  function getIntervalDateFilterForPrevious() {
     var intervalDateFilter;
 
     params.filters.forEach(function (filter) {
       var operatorValueParser =
         new OperatorDateIntervalParser(filter.value.substring(1));
-      if (operatorValueParser.isIntervalDateValue()) {
+      if (operatorValueParser.hasPreviousInterval()) {
         intervalDateFilter = filter;
       }
     });
@@ -47,18 +47,18 @@ function ValueStatGetter(model, params, opts) {
     var aggregateField = getAggregateField();
     var aggregate = getAggregate();
     var filters = getFilters();
-    var filterDateInterval = getIntervalDateFilter();
+    var filterDateIntervalForPrevious = getIntervalDateFilterForPrevious();
 
     return model
       .aggregate(aggregateField, aggregate, { where: filters })
       .then((count) => {
         countCurrent = count || 0;
 
-        if (filterDateInterval) {
+        if (filterDateIntervalForPrevious) {
           var operatorValueParser = new OperatorDateIntervalParser(
-            filterDateInterval.value.substring(1)
+            filterDateIntervalForPrevious.value.substring(1)
           );
-          filters[filterDateInterval.field] = operatorValueParser
+          filters[filterDateIntervalForPrevious.field] = operatorValueParser
             .getIntervalDateFilterForPreviousInterval();
           return model
             .aggregate(aggregateField, aggregate, { where: filters })
