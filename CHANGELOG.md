@@ -4,6 +4,9 @@
 ### Added
 - Filters - Users want the OR filter operator with their conditions (restricted to simple conditions).
 
+### Fixed
+- Record Update - Fix the potential dissociations on record update.
+
 ## RELEASE 0.2.39 - 2016-09-29
 ### Fixed
 - Pagination - fix the hasMany number of records.
