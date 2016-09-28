@@ -68,7 +68,7 @@ function ResourcesGetter(model, opts, params) {
 
   function handleFilterParams() {
     var where = {};
-    var and = [];
+    var conditions = [];
 
     _.each(params.filter, function (value, key) {
       var q = {};
@@ -78,10 +78,10 @@ function ResourcesGetter(model, opts, params) {
       }
 
       q[key] = new OperatorValueParser().perform(model, key, value);
-      and.push(q);
+      conditions.push(q);
     });
 
-    where.$and = and;
+    where['$' + params.filterType] = conditions;
     return where;
   }
 
