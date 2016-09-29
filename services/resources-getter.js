@@ -48,6 +48,8 @@ function ResourcesGetter(model, opts, params) {
         let fieldsAssociation = Interface.Schemas
           .schemas[association.target.name].fields;
         _.each(fieldsAssociation, function(field) {
+          if (field.integration || field.isSearchable === false) { return; }
+
           var q = {};
           if (field.type === 'String') {
             q = opts.sequelize.where(

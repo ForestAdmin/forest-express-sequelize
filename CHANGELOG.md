@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Close.io - Fix the search regression.
 
 ## RELEASE 0.2.37 - 2016-09-28
 ### Added
