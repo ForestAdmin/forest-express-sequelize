@@ -1,6 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 0.2.39 - 2016-09-29
+### Fixed
+- Pagination - fix the hasMany number of records.
+
+## RELEASE 0.2.38 - 2016-09-29
 ### Fixed
 - Close.io - Fix the search regression.
 
