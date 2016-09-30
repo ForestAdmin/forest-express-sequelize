@@ -1,5 +1,4 @@
 'use strict';
-var moment = require('moment');
 var OperatorValueParser = require('./operator-value-parser');
 var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 var Interface = require('forest-express');
@@ -29,7 +28,7 @@ function ValueStatGetter(model, params, opts) {
       });
     }
 
-    where['$' + params.filterType] = conditions
+    if (params.filterType) { where['$' + params.filterType] = conditions; }
     return where;
   }
 

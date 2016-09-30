@@ -39,7 +39,7 @@ function PieStatGetter(model, params, opts) {
       });
     }
 
-    where['$' + params.filterType] = conditions
+    if (params.filterType) { where['$' + params.filterType] = conditions; }
     return where;
   }
 

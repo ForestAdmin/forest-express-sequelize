@@ -83,7 +83,7 @@ function ResourcesGetter(model, opts, params) {
       conditions.push(q);
     });
 
-    where['$' + params.filterType] = conditions;
+    if (params.filterType) { where['$' + params.filterType] = conditions; }
     return where;
   }
 

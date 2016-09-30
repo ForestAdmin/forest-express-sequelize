@@ -7,6 +7,14 @@ var OperatorValueParser = require('./operator-value-parser');
 // jshint sub: true
 function LineStatGetter(model, params, opts) {
 
+  function isMysql() {
+    return (['mysql', 'mariadb'].indexOf(opts.sequelize.options.dialect) > -1);
+  }
+
+  function getAggregateField() {
+    return params['aggregate_field'] || 'id';
+  }
+
   function getGroupByDateInterval() {
     var timeRange = params['time_range'].toLowerCase();
     var column = params['group_by_date_field'];
@@ -53,10 +61,6 @@ function LineStatGetter(model, params, opts) {
     }
   }
 
-  function isMysql() {
-    return (['mysql', 'mariadb'].indexOf(opts.sequelize.options.dialect) > -1);
-  }
-
   function fillEmptyDateInterval(records) {
     var firstDate = moment(records[0].label);
     var lastDate = moment(records[records.length - 1].label);
@@ -82,9 +86,6 @@ function LineStatGetter(model, params, opts) {
     ];
   }
 
-  function getAggregateField() {
-    return params['aggregate_field'] || 'id';
-  }
 
   function getFilters() {
     var where = {};
@@ -99,17 +100,8 @@ function LineStatGetter(model, params, opts) {
       });
     }
 
-    where['$' + params.filterType] = conditions
+    if (params.filterType) { where['$' + params.filterType] = conditions; }
     return where;
-  }
-
-  function getTimeRangeFormat() {
-    var timeRange = params['time_range'].toLowerCase();
-
-    switch (timeRange) {
-      case 'month':
-        return '%Y-%m-01';
-    }
   }
 
   this.perform = function () {
