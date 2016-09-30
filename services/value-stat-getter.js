@@ -17,16 +17,20 @@ function ValueStatGetter(model, params, opts) {
   }
 
   function getFilters() {
-    var filters = {};
+    var where = {};
+    var conditions = [];
 
     if (params.filters) {
       params.filters.forEach(function (filter) {
-        filters[filter.field] = new OperatorValueParser(opts).perform(model,
+        var condition = {};
+        condition[filter.field] = new OperatorValueParser(opts).perform(model,
           filter.field, filter.value);
+        conditions.push(condition);
       });
     }
 
-    return filters;
+    where['$' + params.filterType] = conditions
+    return where;
   }
 
   function getIntervalDateFilterForPrevious() {
