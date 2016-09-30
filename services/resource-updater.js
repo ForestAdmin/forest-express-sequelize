@@ -14,25 +14,6 @@ function ResourceUpdater(model, params) {
     return model
       .update(params, { where: where, individualHooks: true })
       .then(function () {
-        return model.findById(params[schema.idField]);
-      })
-      .then(function(record) {
-        var promises = [];
-
-        if (model.associations) {
-          _.forOwn(model.associations, function(association, name) {
-            if (['BelongsTo', 'HasOne', 'HasMany', 'BelongsToMany']
-              .indexOf(association.associationType) > -1) {
-              if (params[name]) {
-                promises.push(record['set' + _.capitalize(name)](params[name]));
-              }
-            }
-          });
-        }
-
-        return P.all(promises);
-      })
-      .then(function () {
         return new ResourceGetter(model, {
           recordId: params[schema.idField]
         }).perform();
