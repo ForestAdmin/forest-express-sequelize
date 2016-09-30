@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## RELEASE 0.3.2 - 2016-09-30
+### Fixed
+- hasMany - Fix the hasMany fetch when an integration is set
+
 ## RELEASE 0.3.1 - 2016-09-30
 ### Fixed
 - Filter - Support multiple filters on the same field.
