@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## RELEASE 0.3.1 - 2016-09-30
+### Fixed
+- Filter - Support multiple filters on the same field.
+
 ## RELEASE 0.3.0 - 2016-09-30
 ### Added
 - Filters - Users want the OR filter operator with their conditions (restricted to simple conditions).

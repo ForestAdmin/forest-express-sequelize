@@ -73,17 +73,19 @@ function ResourcesGetter(model, opts, params) {
     var conditions = [];
 
     _.each(params.filter, function (value, key) {
-      var q = {};
-
       if (key.indexOf(':') !== -1) {
         key = '$' + key.replace(':', '.') + '$';
       }
 
-      q[key] = new OperatorValueParser().perform(model, key, value);
-      conditions.push(q);
+      value.split(',').forEach(function (v) {
+        var q = {};
+        q[key] = new OperatorValueParser().perform(model, key, v);
+        conditions.push(q);
+      });
     });
 
     if (params.filterType) { where['$' + params.filterType] = conditions; }
+
     return where;
   }
 
