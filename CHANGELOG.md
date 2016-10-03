@@ -1,10 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- BelongsTo - Fix the belongsTo associations on record creation.
 
 ## RELEASE 0.3.2 - 2016-09-30
 ### Fixed
-- hasMany - Fix the hasMany fetch when an integration is set
+- HasMany - Fix the hasMany fetch when an integration is set
 
 ## RELEASE 0.3.1 - 2016-09-30
 ### Fixed
@@ -19,7 +21,7 @@
 
 ## RELEASE 0.2.39 - 2016-09-29
 ### Fixed
-- Pagination - fix the hasMany number of records.
+- Pagination - Fix the hasMany number of records.
 
 ## RELEASE 0.2.38 - 2016-09-29
 ### Fixed
