@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+ - ES5 - Secure the ES5 compatibility with a git hook.
+
 ### Fixed
 - BelongsTo - Fix the belongsTo associations on record creation.
 
