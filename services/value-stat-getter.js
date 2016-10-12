@@ -57,12 +57,19 @@ function ValueStatGetter(model, params, opts) {
       .then(function (count) {
         countCurrent = count || 0;
 
-        if (filterDateIntervalForPrevious) {
+        // NOTICE: Search for previous interval value only if the filterType is
+        //         'AND', it would not be pertinent for a 'OR' filterType.
+        if (filterDateIntervalForPrevious && params.filterType === 'and') {
           var operatorValueParser = new OperatorDateIntervalParser(
             filterDateIntervalForPrevious.value.substring(1)
           );
-          filters[filterDateIntervalForPrevious.field] = operatorValueParser
-            .getIntervalDateFilterForPreviousInterval();
+          var conditions = filters.$and;
+          conditions.forEach(function (condition) {
+            if (condition[filterDateIntervalForPrevious.field]) {
+              condition[filterDateIntervalForPrevious.field] =
+                operatorValueParser.getIntervalDateFilterForPreviousInterval();
+            }
+          });
           return model
             .aggregate(aggregateField, aggregate, { where: filters })
             .then(function (count) { return count || 0; });
