@@ -54,7 +54,7 @@ function ValueStatGetter(model, params, opts) {
 
     return model
       .aggregate(aggregateField, aggregate, { where: filters })
-      .then((count) => {
+      .then(function (count) {
         countCurrent = count || 0;
 
         if (filterDateIntervalForPrevious) {
