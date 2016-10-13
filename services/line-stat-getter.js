@@ -62,20 +62,24 @@ function LineStatGetter(model, params, opts) {
   }
 
   function fillEmptyDateInterval(records) {
-    var firstDate = moment(records[0].label);
-    var lastDate = moment(records[records.length - 1].label);
-    var timeRange = params['time_range'].toLowerCase();
+    if (records.length) {
+      var firstDate = moment(records[0].label);
+      var lastDate = moment(records[records.length - 1].label);
+      var timeRange = params['time_range'].toLowerCase();
 
-    for (var i = firstDate ; i.toDate() <= lastDate.toDate() ;
-      i = i.add(1, timeRange)) {
+      for (var i = firstDate ; i.toDate() <= lastDate.toDate() ;
+        i = i.add(1, timeRange)) {
 
-      var label = i.format('Y-MM-DD 00:00:00');
-      if (!_.find(records, { label: label })) {
-        records.push({ label: label, values: { value: 0 }});
+        var label = i.format('Y-MM-DD 00:00:00');
+        if (!_.find(records, { label: label })) {
+          records.push({ label: label, values: { value: 0 }});
+        }
       }
-    }
 
-    return _.sortBy(records, 'label');
+      return _.sortBy(records, 'label');
+    } else {
+      return records;
+    }
   }
 
   function getAggregate() {

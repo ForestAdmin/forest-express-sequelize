@@ -1,10 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Line Charts - Fix the line charts display if no records are found.
 
 ## RELEASE 0.3.3 - 2016-10-11
 ### Added
- - ES5 - Secure the ES5 compatibility with a git hook.
+- ES5 - Secure the ES5 compatibility with a git hook.
 
 ### Fixed
 - BelongsTo - Fix the belongsTo associations on record creation.
