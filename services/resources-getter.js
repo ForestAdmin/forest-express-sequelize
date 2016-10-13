@@ -45,7 +45,7 @@ function ResourcesGetter(model, opts, params) {
 
     _.each(model.associations, function (association) {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        let fieldsAssociation = Interface.Schemas
+        var fieldsAssociation = Interface.Schemas
           .schemas[association.target.name].fields;
         _.each(fieldsAssociation, function(field) {
           if (field.integration || field.isSearchable === false) { return; }
@@ -76,7 +76,6 @@ function ResourcesGetter(model, opts, params) {
       if (key.indexOf(':') !== -1) {
         key = '$' + key.replace(':', '.') + '$';
       }
-
       value.split(',').forEach(function (v) {
         var q = {};
         q[key] = new OperatorValueParser().perform(model, key, v);
@@ -155,29 +154,49 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getRecords() {
-    return model
-      .findAll({
-        include: getIncludes(),
-        limit: getLimit(),
-        offset: getSkip(),
-        where: getWhere(),
-        order: getOrder()
+    var findAllOpts = {
+      include: getIncludes(),
+      limit: getLimit(),
+      offset: getSkip(),
+      where: getWhere(),
+      order: getOrder()
+    };
+
+    if (params.search) {
+      _.each(schema.fields, function (field) {
+        if (field.search) {
+          field.search(findAllOpts, params.search);
+        }
       });
+    }
+
+    return model.findAll(findAllOpts);
   }
 
   function getCount() {
-    return model
-      .count({
-        include: getIncludes(),
-        where: getWhere()
+    var countOpts = {
+      include: getIncludes(),
+      where: getWhere()
+    };
+
+    if (params.search) {
+      _.each(schema.fields, function (field) {
+        if (field.search) {
+          field.search(countOpts, params.search);
+        }
       });
+    }
+
+    return model.count(countOpts);
   }
 
   this.perform = function () {
     return getRecords()
       .then(function (records) {
         return getCount()
-          .then(function (count) { return [count, records]; });
+          .then(function (count) {
+            return [count, records];
+          });
       });
   };
 }
