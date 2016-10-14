@@ -175,9 +175,9 @@ function ResourcesGetter(model, opts, params) {
 
   this.perform = function () {
     return getRecords()
-      .then((records) => {
+      .then(function (records) {
         return getCount()
-          .then((count) => [count, records]);
+          .then(function (count) { return [count, records]; });
       });
   };
 }

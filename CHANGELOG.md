@@ -10,6 +10,7 @@
 
 ### Fixed
 - BelongsTo - Fix the belongsTo associations on record creation.
+- ES5 - Fix ES5 compatibility.
 
 ## RELEASE 0.3.2 - 2016-09-30
 ### Fixed

@@ -1,6 +1,4 @@
 'use strict';
-var _ = require('lodash');
-var P = require('bluebird');
 var ResourceGetter = require('./resource-getter');
 var Interface = require('forest-express');
 

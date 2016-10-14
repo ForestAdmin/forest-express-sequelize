@@ -6,7 +6,9 @@ function HasManyAssociator(model, association, opts, params, data) {
     return model
       .findById(params.recordId)
       .then(function (record) {
-        var associatedIds = _.map(data.data, (value) => value.id);
+        var associatedIds = _.map(data.data, function (value) {
+          return value.id;
+        });
         return record['remove' + _.capitalize(params.associationName)](
           associatedIds);
       });
