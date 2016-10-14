@@ -60,7 +60,7 @@ function OperatorDateIntervalParser(value) {
       };
     }
 
-    let match = value.match(PERIODS_LAST_X_DAYS);
+    var match = value.match(PERIODS_LAST_X_DAYS);
     if (match && match[1]) {
       return {
         $gte: moment().subtract(match[1], 'days').startOf('day').toDate(),

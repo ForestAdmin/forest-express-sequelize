@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Line Charts - Fix the line charts display if no records are found.
+- Value Chart - Fix previous period count regression due to filterType introduction.
 
 ## RELEASE 0.3.3 - 2016-10-11
 ### Added
