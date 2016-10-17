@@ -3,7 +3,7 @@ var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 
 function OperatorValueParser() {
   this.perform = function (model, fieldName, value) {
-    var operatorDateIntervalParser = new OperatorDateIntervalParser(value.substring(1));
+    var operatorDateIntervalParser = new OperatorDateIntervalParser(value);
 
     if (value[0] === '!') {
       value = value.substring(1);
@@ -37,6 +37,8 @@ function OperatorValueParser() {
       return { $ne: null };
     } else if (value === '$blank') {
       return null;
+    } else if (operatorDateIntervalParser.isIntervalDateValue()) {
+      return operatorDateIntervalParser.getIntervalDateFilter();
     } else {
       return value;
     }
