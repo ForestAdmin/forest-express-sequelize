@@ -37,7 +37,7 @@ function ValueStatGetter(model, params, opts) {
 
     params.filters.forEach(function (filter) {
       var operatorValueParser =
-        new OperatorDateIntervalParser(filter.value.substring(1));
+        new OperatorDateIntervalParser(filter.value);
       if (operatorValueParser.hasPreviousInterval()) {
         intervalDateFilter = filter;
       }
@@ -61,7 +61,7 @@ function ValueStatGetter(model, params, opts) {
         //         'AND', it would not be pertinent for a 'OR' filterType.
         if (filterDateIntervalForPrevious && params.filterType === 'and') {
           var operatorValueParser = new OperatorDateIntervalParser(
-            filterDateIntervalForPrevious.value.substring(1)
+            filterDateIntervalForPrevious.value
           );
           var conditions = filters.$and;
           conditions.forEach(function (condition) {
