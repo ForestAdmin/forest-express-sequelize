@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Performance - Request only displayed fields in the records list.
 
 ## RELEASE 0.3.5 - 2016-10-28
 ### Changed
