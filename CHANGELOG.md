@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## RELEASE 0.3.5 - 2016-10-28
+### Changed
+- Filters - Add the new date filters protocol.
+
 ## RELEASE 0.3.4 - 2016-10-14
 ### Fixed
 - Line Charts - Fix the line charts display if no records are found.
