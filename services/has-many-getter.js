@@ -1,17 +1,30 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
+var Interface = require('forest-express');
 
 function HasManyGetter(model, association, opts, params) {
+  var schema = Interface.Schemas.schemas[association.name];
+
+  function getFieldNamesRequested() {
+    if (!params.fields || params.fields[association.name]) { return null; }
+    return params.fields[association.name].split(',');
+  }
+
   function getIncludes() {
     var includes = [];
+    var fieldNamesRequested = getFieldNamesRequested();
 
     _.values(association.associations).forEach(function (association) {
-      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        includes.push({
-          model: association.target,
-          as: association.associationAccessor
-        });
+      // NOTICE: Add all includes only for requested associations
+      if (!fieldNamesRequested ||
+        (fieldNamesRequested.indexOf(association.target.name) !== -1)) {
+        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+          includes.push({
+            model: association.target,
+            as: association.associationAccessor
+          });
+        }
       }
     });
 
@@ -28,22 +41,16 @@ function HasManyGetter(model, association, opts, params) {
       });
   }
 
-  function getRecords() {
-    return model
-      .findById(params.recordId)
-      .then(function (record) {
-        return record['get' + _.capitalize(params.associationName)]({
-          offset: getSkip(),
-          limit: getLimit(),
-          include: getIncludes(),
-          order: getOrder()
-        });
-      })
-      .then(function (records) {
-        return P.map(records, function (record) {
-          return record.toJSON();
-        });
-      });
+  function getSelect() {
+    var fieldNamesRequested = getFieldNamesRequested();
+    if (!fieldNamesRequested) { return null; }
+
+    var fieldsSchema = _.select(schema.fields, function (field) {
+      return !field.reference && !field.isVirtual;
+    });
+    var fieldNamesSchema = _.map(fieldsSchema, 'field');
+
+    return _.intersection(fieldNamesSchema, fieldNamesRequested);
   }
 
   function hasPagination() {
@@ -80,6 +87,25 @@ function HasManyGetter(model, association, opts, params) {
     }
 
     return sort;
+  }
+
+  function getRecords() {
+    return model
+      .findById(params.recordId)
+      .then(function (record) {
+        return record['get' + _.capitalize(params.associationName)]({
+          attributes: getSelect(),
+          offset: getSkip(),
+          limit: getLimit(),
+          include: getIncludes(),
+          order: getOrder()
+        });
+      })
+      .then(function (records) {
+        return P.map(records, function (record) {
+          return record.toJSON();
+        });
+      });
   }
 
   this.perform = function () {

@@ -5,6 +5,24 @@ var Interface = require('forest-express');
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
+  var fieldNamesRequested = (function() {
+    if (!params.fields || !params.fields[model.name]) { return null; }
+
+    // NOTICE: Populate the necessary associations for filters
+    var associationsForQuery = [];
+    _.each(params.filter, function (values, key) {
+      if (key.indexOf(':') !== -1) {
+        var association = key.split(':')[0];
+        associationsForQuery.push(association);
+      }
+    });
+
+    if (params.sort && params.sort.indexOf('.') !== -1) {
+      associationsForQuery.push(params.sort.split('.')[0]);
+    }
+
+    return _.union(params.fields[model.name].split(','), associationsForQuery);
+  })();
 
   function handleSearchParam() {
     var where = {};
@@ -43,24 +61,28 @@ function ResourcesGetter(model, opts, params) {
       or.push(q);
     });
 
+    // NOTICE: Handle search on displayed belongsTo
     _.each(model.associations, function (association) {
-      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        var fieldsAssociation = Interface.Schemas
-          .schemas[association.target.name].fields;
-        _.each(fieldsAssociation, function(field) {
-          if (field.integration || field.isSearchable === false) { return; }
+      if (!fieldNamesRequested ||
+        (fieldNamesRequested.indexOf(association.target.name) !== -1)) {
+        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+          var fieldsAssociation = Interface.Schemas
+            .schemas[association.target.name].fields;
+          _.each(fieldsAssociation, function(field) {
+            if (field.integration || field.isSearchable === false) { return; }
 
-          var q = {};
-          if (field.type === 'String') {
-            q = opts.sequelize.where(
-              opts.sequelize.fn('lower', opts.sequelize.col(
-                association.associationAccessor + '.' + field.field)),
-              ' LIKE ',
-              opts.sequelize.fn('lower', '%' + params.search + '%')
-            );
-            or.push(q);
-          }
-        });
+            var q = {};
+            if (field.type === 'String') {
+              q = opts.sequelize.where(
+                opts.sequelize.fn('lower', opts.sequelize.col(
+                  association.associationAccessor + '.' + field.field)),
+                ' LIKE ',
+                opts.sequelize.fn('lower', '%' + params.search + '%')
+              );
+              or.push(q);
+            }
+          });
+        }
       }
     });
 
@@ -72,20 +94,31 @@ function ResourcesGetter(model, opts, params) {
     var where = {};
     var conditions = [];
 
-    _.each(params.filter, function (value, key) {
+    _.each(params.filter, function (values, key) {
       if (key.indexOf(':') !== -1) {
         key = '$' + key.replace(':', '.') + '$';
       }
-      value.split(',').forEach(function (v) {
-        var q = {};
-        q[key] = new OperatorValueParser().perform(model, key, v);
-        conditions.push(q);
+      values.split(',').forEach(function (value) {
+        var condition = {};
+        condition[key] = new OperatorValueParser().perform(model, key, value);
+        conditions.push(condition);
       });
     });
 
     if (params.filterType) { where['$' + params.filterType] = conditions; }
 
     return where;
+  }
+
+  function getSelect() {
+    if (!fieldNamesRequested) { return null; }
+
+    var fieldsSchema = _.select(schema.fields, function (field) {
+      return !field.reference && !field.isVirtual;
+    });
+    var fieldNamesSchema = _.map(fieldsSchema, 'field');
+
+    return _.intersection(fieldNamesSchema, fieldNamesRequested);
   }
 
   function getWhere() {
@@ -124,13 +157,15 @@ function ResourcesGetter(model, opts, params) {
 
   function getIncludes() {
     var includes = [];
-
     _.values(model.associations).forEach(function (association) {
-      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        includes.push({
-          model: association.target,
-          as: association.associationAccessor
-        });
+      if (!fieldNamesRequested ||
+        (fieldNamesRequested.indexOf(association.target.name) !== -1)) {
+        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+          includes.push({
+            model: association.target,
+            as: association.associationAccessor
+          });
+        }
       }
     });
 
@@ -146,8 +181,12 @@ function ResourcesGetter(model, opts, params) {
         order = 'DESC';
       }
 
-
-      return [[params.sort, order]];
+      if (params.sort.indexOf('.') !== -1) {
+        // NOTICE: Sort on the belongsTo displayed field
+        return [[opts.sequelize.literal(params.sort), order]];
+      } else {
+        return [[params.sort, order]];
+      }
     }
 
     return [];
@@ -155,6 +194,7 @@ function ResourcesGetter(model, opts, params) {
 
   function getRecords() {
     var findAllOpts = {
+      attributes: getSelect(),
       include: getIncludes(),
       limit: getLimit(),
       offset: getSkip(),
