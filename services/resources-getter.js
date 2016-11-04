@@ -3,6 +3,8 @@ var _ = require('lodash');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 
+var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
   var fieldNamesRequested = (function() {
@@ -40,7 +42,7 @@ function ResourcesGetter(model, opts, params) {
       if (field.field === schema.idField) {
         if (field.type === 'Number') {
           q[field.field] = parseInt(params.search, 10) || 0;
-        } else {
+        } else if (params.search.match(REGEX_UUID)) {
           q[field.field] = params.search;
         }
       } else if (field.type === 'Enum') {
