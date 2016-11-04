@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 0.3.6 - 2016-11-04
 ### Added
 - Performance - Request only displayed fields in the records list.
 - Schema - Support UUID field type.
