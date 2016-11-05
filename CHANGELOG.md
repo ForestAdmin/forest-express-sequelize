@@ -4,8 +4,10 @@
 
 ## RELEASE 0.3.6 - 2016-11-04
 ### Added
-- Performance - Request only displayed fields in the records list.
 - Schema - Support UUID field type.
+
+### Changed
+- Performance - Request only displayed fields in the records list.
 
 ### Fixed
 - Search - Fix the search on collections with uuid column as a primaryKey.
