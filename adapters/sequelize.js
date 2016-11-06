@@ -33,10 +33,10 @@ module.exports = function (model, opts) {
     switch (association.associationType) {
       case 'BelongsTo':
       case 'HasOne':
-        return 'Number';
+        return association.type;
       case 'HasMany':
       case 'BelongsToMany':
-        return ['Number'];
+        return [association.type];
     }
   }
 
