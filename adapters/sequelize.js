@@ -57,7 +57,7 @@ module.exports = function (model, opts) {
     var schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
-      reference: association.target.name + '.id',
+      reference: association.target.name + '.' + association.foreignKey,
       inverseOf: null
     };
 

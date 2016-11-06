@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - belongsTo - Support association with other type than Number foreign key.
+- belongsTo - Support foreign key with other than ID as a primary key.
 
 ## RELEASE 0.3.6 - 2016-11-04
 ### Added
