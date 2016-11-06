@@ -161,7 +161,7 @@ function ResourcesGetter(model, opts, params) {
     var includes = [];
     _.values(model.associations).forEach(function (association) {
       if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.target.name) !== -1)) {
+        (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
           includes.push({
             model: association.target,

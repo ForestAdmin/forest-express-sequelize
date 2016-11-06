@@ -30,13 +30,16 @@ module.exports = function (model, opts) {
   }
 
   function getTypeForAssociation(association) {
+    var attribute = association.target.attributes[association.targetKey];
+    var type = attribute ? getTypeFor(attribute) : 'Number';
+
     switch (association.associationType) {
       case 'BelongsTo':
       case 'HasOne':
-        return association.type;
+        return type;
       case 'HasMany':
       case 'BelongsToMany':
-        return [association.type];
+        return [type];
     }
   }
 
