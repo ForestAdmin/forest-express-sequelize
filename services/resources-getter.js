@@ -23,7 +23,12 @@ function ResourcesGetter(model, opts, params) {
       associationsForQuery.push(params.sort.split('.')[0]);
     }
 
-    return _.union(params.fields[model.name].split(','), associationsForQuery);
+    // NOTICE: Force the primaryKey retrieval to store the records properly in
+    //         the client.
+    var primaryKeyArray = [_.keys(model.primaryKeys)[0]];
+
+    return _.union(primaryKeyArray, params.fields[model.name].split(','),
+      associationsForQuery);
   })();
 
   function handleSearchParam() {
