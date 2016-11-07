@@ -7,8 +7,12 @@ function HasManyGetter(model, association, opts, params) {
   var schema = Interface.Schemas.schemas[association.name];
 
   function getFieldNamesRequested() {
-    if (!params.fields || params.fields[association.name]) { return null; }
-    return params.fields[association.name].split(',');
+    if (!params.fields || !params.fields[association.name]) { return null; }
+    // NOTICE: Force the primaryKey retrieval to store the records properly in
+    //         the client.
+    var primaryKeyArray = [_.keys(model.primaryKeys)[0]];
+
+    return _.union(primaryKeyArray, params.fields[association.name].split(','));
   }
 
   function getIncludes() {

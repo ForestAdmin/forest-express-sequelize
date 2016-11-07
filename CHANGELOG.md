@@ -5,6 +5,9 @@
 - Field Type - Support Time field type.
 - Models - Support resources/charts queries on models having a defaultScope configuration.
 
+### Fixed
+- Records Index - Fix the duplicate records displayed on the front if the ids are hidden in the list.
+
 ## RELEASE 0.3.7 - 2016-11-06
 ### Changed
 - BelongsTo - Better support belongsTo relationships (as, foreign keys, etc.).
