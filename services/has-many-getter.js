@@ -94,6 +94,7 @@ function HasManyGetter(model, association, opts, params) {
       .findById(params.recordId)
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
+          scope: false,
           attributes: getSelect(),
           offset: getSkip(),
           limit: getLimit(),
