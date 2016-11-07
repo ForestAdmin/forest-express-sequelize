@@ -52,9 +52,10 @@ function ResourcesGetter(model, opts, params) {
           q[field.field] = enumSearch;
         }
       } else if (field.type === 'String') {
+        var column = field.columnName || field.field;
         q = opts.sequelize.where(
           opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
-            field.field)),
+            column)),
           ' LIKE ',
           opts.sequelize.fn('lower', '%' + params.search + '%')
         );
