@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Field Type - Support Time field type.
 
 ## RELEASE 0.3.7 - 2016-11-06
 ### Changed
