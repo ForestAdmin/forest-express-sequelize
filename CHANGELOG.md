@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- belongsTo - Better support belongsTo relationships (as, foreign keys, etc.).
 
 ## RELEASE 0.3.6 - 2016-11-04
 ### Added

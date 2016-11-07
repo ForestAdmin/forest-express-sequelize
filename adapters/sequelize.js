@@ -30,13 +30,16 @@ module.exports = function (model, opts) {
   }
 
   function getTypeForAssociation(association) {
+    var attribute = association.target.attributes[association.targetKey];
+    var type = attribute ? getTypeFor(attribute) : 'Number';
+
     switch (association.associationType) {
       case 'BelongsTo':
       case 'HasOne':
-        return 'Number';
+        return type;
       case 'HasMany':
       case 'BelongsToMany':
-        return ['Number'];
+        return [type];
     }
   }
 
@@ -57,7 +60,7 @@ module.exports = function (model, opts) {
     var schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
-      reference: association.target.name + '.id',
+      reference: association.target.name + '.' + association.foreignKey,
       inverseOf: null
     };
 
