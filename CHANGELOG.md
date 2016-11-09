@@ -4,7 +4,10 @@
 
 ## RELEASE 0.3.7 - 2016-11-06
 ### Changed
-- belongsTo - Better support belongsTo relationships (as, foreign keys, etc.).
+- BelongsTo - Better support belongsTo relationships (as, foreign keys, etc.).
+
+### Fixed
+- BelongsTo - Fix belongsTo retrieval if the model and association names are different (ex: Capitalized model names).
 
 ## RELEASE 0.3.6 - 2016-11-04
 ### Added
