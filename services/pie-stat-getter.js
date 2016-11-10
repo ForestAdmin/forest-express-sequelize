@@ -82,7 +82,7 @@ function PieStatGetter(model, params, opts) {
   this.perform = function () {
     detectGroupByAssociationField();
 
-    return model.findAll({
+    return model.unscoped().findAll({
       attributes: [
         getGroupBy(),
         [

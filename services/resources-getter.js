@@ -212,7 +212,7 @@ function ResourcesGetter(model, opts, params) {
       });
     }
 
-    return model.findAll(findAllOpts);
+    return model.unscoped().findAll(findAllOpts);
   }
 
   function getCount() {
@@ -229,7 +229,7 @@ function ResourcesGetter(model, opts, params) {
       });
     }
 
-    return model.count(countOpts);
+    return model.unscoped().count(countOpts);
   }
 
   this.perform = function () {

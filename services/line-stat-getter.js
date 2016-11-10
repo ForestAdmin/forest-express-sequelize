@@ -110,7 +110,7 @@ function LineStatGetter(model, params, opts) {
 
   this.perform = function () {
 
-    return model.findAll({
+    return model.unscoped().findAll({
       attributes: [getGroupByDateInterval(), getAggregate()],
       where: getFilters(),
       group: ['date'],

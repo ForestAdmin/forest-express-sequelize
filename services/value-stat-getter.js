@@ -53,6 +53,7 @@ function ValueStatGetter(model, params, opts) {
     var filterDateIntervalForPrevious = getIntervalDateFilterForPrevious();
 
     return model
+      .unscoped()
       .aggregate(aggregateField, aggregate, { where: filters })
       .then(function (count) {
         countCurrent = count || 0;
@@ -71,6 +72,7 @@ function ValueStatGetter(model, params, opts) {
             }
           });
           return model
+            .unscoped()
             .aggregate(aggregateField, aggregate, { where: filters })
             .then(function (count) { return count || 0; });
         }
