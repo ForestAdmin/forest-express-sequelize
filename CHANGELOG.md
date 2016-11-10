@@ -4,6 +4,7 @@
 ### Added
 - Field Type - Support Time field type.
 - Models - Support resources/charts queries on models having a defaultScope configuration.
+- Model - Support model "field" option to specify a database column name.
 
 ## RELEASE 0.3.7 - 2016-11-06
 ### Changed

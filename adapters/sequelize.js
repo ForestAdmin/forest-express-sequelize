@@ -48,7 +48,10 @@ module.exports = function (model, opts) {
   function getSchemaForColumn(column) {
     var schema = {
       field: column.fieldName,
-      type: getTypeFor(column)
+      type: getTypeFor(column),
+      // NOTICE: Necessary only for fields with different field and database
+      //         column names 
+      columnName: column.field
     };
 
     if (schema.type === 'Enum') {
