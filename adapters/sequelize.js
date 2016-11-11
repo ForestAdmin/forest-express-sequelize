@@ -50,7 +50,7 @@ module.exports = function (model, opts) {
       field: column.fieldName,
       type: getTypeFor(column),
       // NOTICE: Necessary only for fields with different field and database
-      //         column names 
+      //         column names
       columnName: column.field
     };
 

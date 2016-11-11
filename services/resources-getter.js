@@ -36,11 +36,14 @@ function ResourcesGetter(model, opts, params) {
     var or = [];
 
     _.each(schema.fields, function (field) {
-      // Ignore Smart field.
+      // NOTICE: Ignore Smart field.
       if (field.isVirtual) { return; }
 
-      // Ignore integration field.
+      // NOTICE: Ignore integration field.
       if (field.integration) { return; }
+
+      // NOTICE: Handle belongsTo search below.
+      if (field.reference) { return; }
 
       var q = {};
 
@@ -58,6 +61,7 @@ function ResourcesGetter(model, opts, params) {
         }
       } else if (field.type === 'String') {
         var column = field.columnName || field.field;
+
         q = opts.sequelize.where(
           opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
             column)),
@@ -71,20 +75,23 @@ function ResourcesGetter(model, opts, params) {
 
     // NOTICE: Handle search on displayed belongsTo
     _.each(model.associations, function (association) {
+
       if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.target.name) !== -1)) {
+        (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+
           var fieldsAssociation = Interface.Schemas
             .schemas[association.target.name].fields;
+
           _.each(fieldsAssociation, function(field) {
-            if (field.integration || field.isSearchable === false) { return; }
+            if (field.reference || field.integration ||
+              field.isSearchable === false) { return; }
 
             var q = {};
             if (field.type === 'String') {
               q = opts.sequelize.where(
                 opts.sequelize.fn('lower', opts.sequelize.col(
-                  association.associationAccessor + '.' + field.field)),
-                ' LIKE ',
+                  association.as + '.' + field.field)), ' LIKE ',
                 opts.sequelize.fn('lower', '%' + params.search + '%')
               );
               or.push(q);

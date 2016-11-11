@@ -1,10 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+## RELEASE 0.4.1 - 2016-11-11
 ### Added
 - Field Type - Support Time field type.
 - Models - Support resources/charts queries on models having a defaultScope configuration.
 - Model - Support model "field" option to specify a database column name.
+- Search - Fix global search specific to model sequelize definition.
 
 ### Fixed
 - Records Index - Fix the duplicate records displayed on the front if the ids are hidden in the list.
