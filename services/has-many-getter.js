@@ -22,7 +22,7 @@ function HasManyGetter(model, association, opts, params) {
     _.values(association.associations).forEach(function (association) {
       // NOTICE: Add all includes only for requested associations
       if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.target.name) !== -1)) {
+        (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
           includes.push({
             model: association.target,
