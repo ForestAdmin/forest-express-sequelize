@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Has Many Getter - Fix the missing data for belongsTo fields while retrieving «has many» associated records.
 
 ## RELEASE 0.4.1 - 2016-11-11
 ### Added
