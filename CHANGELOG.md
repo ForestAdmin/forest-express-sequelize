@@ -2,6 +2,11 @@
 
 ## [Unreleased]
 
+## RELEASE 0.4.3 - 2016-11-17
+### Added
+- Deserialization - Expose the Deserialization module to the API.
+- Schemas - Expose the Schemas module to the API.
+
 ## RELEASE 0.4.2 - 2016-11-16
 ### Fixed
 - Has Many Getter - Fix the missing data for belongsTo fields while retrieving «has many» associated records.
