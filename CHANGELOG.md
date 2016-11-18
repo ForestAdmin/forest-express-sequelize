@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## RELEASE 0.4.3 - 2016-11-17
+### Fixed
+- Custom Actions - Fix missing actions for Smart Collections.
+
 ## RELEASE 0.4.2 - 2016-11-16
 ### Fixed
 - Has Many Getter - Fix the missing data for belongsTo fields while retrieving «has many» associated records.
