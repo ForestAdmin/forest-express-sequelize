@@ -6,16 +6,7 @@ var Interface = require('forest-express');
 
 // jshint sub: true
 function PieStatGetter(model, params, opts) {
-  var associatedField;
   var schema = Interface.Schemas.schemas[model.name];
-
-  function detectGroupByAssociationField() {
-    _.values(model.associations).forEach(function (association) {
-      if (params['group_by_field'] === association.target.name) {
-        associatedField = association.foreignKey;
-      }
-    });
-  }
 
   function getAggregate() {
     return params.aggregate.toLowerCase();
@@ -66,21 +57,20 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    return associatedField || params['group_by_field'];
+    var groupByField = params['group_by_field'].replace(':', '.');
+    return [opts.sequelize.col(groupByField), 'key'];
   }
 
   function formatResults (records) {
     return P.map(records, function (record) {
       return {
-        key: String(record[getGroupBy()]),
+        key: String(record.key),
         value: record.value
       };
     });
   }
 
   this.perform = function () {
-    detectGroupByAssociationField();
-
     return model.unscoped().findAll({
       attributes: [
         getGroupBy(),
@@ -92,7 +82,7 @@ function PieStatGetter(model, params, opts) {
       ],
       include: getIncludes(),
       where: getFilters(),
-      group: [getGroupBy()],
+      group: ['key'],
       order: 'value DESC',
       raw: true
     })
