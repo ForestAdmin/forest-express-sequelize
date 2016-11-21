@@ -7,7 +7,6 @@ var Interface = require('forest-express');
 // jshint sub: true
 function PieStatGetter(model, params, opts) {
   var associatedField;
-  var associatedValues;
   var schema = Interface.Schemas.schemas[model.name];
 
   function detectGroupByAssociationField() {
@@ -23,7 +22,8 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getAggregateField() {
-    return params['aggregate_field'] || schema.idField;
+    var fieldName = params['aggregate_field'] || schema.idField;
+    return schema.name + '.' + fieldName;
   }
 
   function getFilters() {
@@ -32,8 +32,15 @@ function PieStatGetter(model, params, opts) {
 
     if (params.filters) {
       params.filters.forEach(function (filter) {
+        var field = filter.field;
+        if (field.indexOf(':') !== -1) {
+          var fieldSplited = field.split(':');
+          var associationTableName = Interface.Schemas.schemas[fieldSplited[0]].name;
+          field = '$' + associationTableName + '.' + fieldSplited[1] + '$';
+        }
+
         var condition = {};
-        condition[filter.field] = new OperatorValueParser(opts).perform(model,
+        condition[field] = new OperatorValueParser(opts).perform(model,
           filter.field, filter.value);
         conditions.push(condition);
       });
@@ -43,37 +50,29 @@ function PieStatGetter(model, params, opts) {
     return where;
   }
 
+  function getIncludes() {
+    var includes = [];
+    _.values(model.associations).forEach(function (association) {
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        includes.push({
+          model: association.target,
+          as: association.associationAccessor,
+          attributes: []
+        });
+      }
+    });
+
+    return includes;
+  }
+
   function getGroupBy() {
     return associatedField || params['group_by_field'];
   }
 
-  function retrieveAssociatedValuesIfAny(records) {
-    if (!associatedField) { return records; }
-
-    var associatedIds = _.map(records, getGroupBy());
-    return model.associations[params['group_by_field']].target
-      .findAll({ where: { id: { $in: associatedIds }}})
-      .then(function (values) {
-        associatedValues = _.map(values, 'dataValues');
-      })
-      .thenReturn(records);
-  }
-
   function formatResults (records) {
     return P.map(records, function (record) {
-      record = record.toJSON();
-      var key;
-
-      if (associatedValues) {
-        key = _.find(associatedValues, function (value) {
-          return value.id === record[getGroupBy()];
-        });
-      } else {
-        key = String(record[getGroupBy()]);
-      }
-
       return {
-        key: key,
+        key: String(record[getGroupBy()]),
         value: record.value
       };
     });
@@ -91,11 +90,12 @@ function PieStatGetter(model, params, opts) {
           'value'
         ]
       ],
+      include: getIncludes(),
       where: getFilters(),
       group: [getGroupBy()],
-      order: 'value DESC'
+      order: 'value DESC',
+      raw: true
     })
-    .then(retrieveAssociatedValuesIfAny)
     .then(formatResults)
     .then(function (records) {
       return { value: records };
