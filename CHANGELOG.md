@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Chart Filters - Support chart filters on belongsTo associations.
+- Pie Charts - Support group by on belongsTo associations.
 
 ## RELEASE 0.4.3 - 2016-11-17
 ### Fixed
