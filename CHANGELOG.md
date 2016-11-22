@@ -4,6 +4,8 @@
 ### Added
 - Chart Filters - Support chart filters on belongsTo associations.
 - Pie Charts - Support group by on belongsTo associations.
+- Deserialization - Expose the Deserialization module to the API.
+- Schemas - Expose the Schemas module to the API.
 
 ## RELEASE 0.4.3 - 2016-11-17
 ### Fixed

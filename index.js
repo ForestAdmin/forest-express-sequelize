@@ -6,6 +6,8 @@ exports.collection = Interface.collection;
 exports.ensureAuthenticated = Interface.ensureAuthenticated;
 exports.StatSerializer = Interface.StatSerializer;
 exports.ResourceSerializer = Interface.ResourceSerializer;
+exports.ResourceDeserializer = Interface.ResourceDeserializer;
+exports.Schemas = Interface.Schemas;
 
 exports.init = function(opts) {
   exports.opts = opts;
