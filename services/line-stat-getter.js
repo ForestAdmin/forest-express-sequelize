@@ -3,16 +3,24 @@ var _ = require('lodash');
 var P = require('bluebird');
 var moment = require('moment');
 var OperatorValueParser = require('./operator-value-parser');
+var Interface = require('forest-express');
 
 // jshint sub: true
 function LineStatGetter(model, params, opts) {
+  var schema = Interface.Schemas.schemas[model.name];
 
   function isMysql() {
     return (['mysql', 'mariadb'].indexOf(opts.sequelize.options.dialect) > -1);
   }
 
   function getAggregateField() {
-    return params['aggregate_field'] || 'id';
+    var fieldName = params['aggregate_field'] || schema.idField;
+    return schema.name + '.' + fieldName;
+  }
+
+  function getGroupByDateField() {
+    var fieldName = params['group_by_date_field'];
+    return schema.name + '.' + fieldName;
   }
 
   function getGroupByDateInterval() {
@@ -54,7 +62,7 @@ function LineStatGetter(model, params, opts) {
       return [
         opts.sequelize.fn('to_char',
           opts.sequelize.fn('date_trunc', params['time_range'],
-          opts.sequelize.col(params['group_by_date_field'])),
+          opts.sequelize.col(getGroupByDateField())),
         'YYYY-MM-DD 00:00:00'),
         'date'
       ];
@@ -85,7 +93,7 @@ function LineStatGetter(model, params, opts) {
   function getAggregate() {
     return [
       opts.sequelize.fn(params.aggregate.toLowerCase(),
-      opts.sequelize.col(getAggregateField())),
+        opts.sequelize.col(getAggregateField())),
       'value'
     ];
   }
@@ -97,8 +105,13 @@ function LineStatGetter(model, params, opts) {
 
     if (params.filters) {
       params.filters.forEach(function (filter) {
+        var field = filter.field;
+        if (field.indexOf(':') !== -1) {
+          field = '$' + field.replace(':', '.') + '$';
+        }
+
         var condition = {};
-        condition[filter.field] = new OperatorValueParser(opts).perform(model,
+        condition[field] = new OperatorValueParser(opts).perform(model,
           filter.field, filter.value);
         conditions.push(condition);
       });
@@ -108,18 +121,32 @@ function LineStatGetter(model, params, opts) {
     return where;
   }
 
-  this.perform = function () {
+  function getIncludes() {
+    var includes = [];
+    _.values(model.associations).forEach(function (association) {
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        includes.push({
+          model: association.target,
+          as: association.associationAccessor,
+          attributes: []
+        });
+      }
+    });
 
+    return includes;
+  }
+
+  this.perform = function () {
     return model.unscoped().findAll({
       attributes: [getGroupByDateInterval(), getAggregate()],
+      include: getIncludes(),
       where: getFilters(),
       group: ['date'],
-      order: ['date']
+      order: ['date'],
+      raw: true
     })
     .then(function (records) {
       return P.map(records, function (record) {
-        record = record.toJSON();
-
         return {
           label: record.date,
           values: { value: parseInt(record.value) }

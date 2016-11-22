@@ -1,8 +1,10 @@
 'use strict';
+var _ = require('lodash');
 var OperatorValueParser = require('./operator-value-parser');
 var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 var Interface = require('forest-express');
 
+// jshint sub: true
 function ValueStatGetter(model, params, opts) {
   var schema = Interface.Schemas.schemas[model.name];
 
@@ -11,8 +13,8 @@ function ValueStatGetter(model, params, opts) {
   }
 
   function getAggregateField() {
-    // jshint sub: true
-    return params['aggregate_field'] || schema.idField;
+    var fieldName = params['aggregate_field'] || schema.idField;
+    return schema.name + '.' + fieldName;
   }
 
   function getFilters() {
@@ -21,8 +23,13 @@ function ValueStatGetter(model, params, opts) {
 
     if (params.filters) {
       params.filters.forEach(function (filter) {
+        var field = filter.field;
+        if (field.indexOf(':') !== -1) {
+          field = '$' + field.replace(':', '.') + '$';
+        }
+
         var condition = {};
-        condition[filter.field] = new OperatorValueParser(opts).perform(model,
+        condition[field] = new OperatorValueParser(opts).perform(model,
           filter.field, filter.value);
         conditions.push(condition);
       });
@@ -30,6 +37,21 @@ function ValueStatGetter(model, params, opts) {
 
     if (params.filterType) { where['$' + params.filterType] = conditions; }
     return where;
+  }
+
+  function getIncludes() {
+    var includes = [];
+    _.values(model.associations).forEach(function (association) {
+      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+        includes.push({
+          model: association.target,
+          as: association.associationAccessor,
+          attributes: []
+        });
+      }
+    });
+
+    return includes;
   }
 
   function getIntervalDateFilterForPrevious() {
@@ -54,7 +76,10 @@ function ValueStatGetter(model, params, opts) {
 
     return model
       .unscoped()
-      .aggregate(aggregateField, aggregate, { where: filters })
+      .aggregate(aggregateField, aggregate, {
+        include: getIncludes(),
+        where: filters
+      })
       .then(function (count) {
         countCurrent = count || 0;
 
@@ -73,7 +98,10 @@ function ValueStatGetter(model, params, opts) {
           });
           return model
             .unscoped()
-            .aggregate(aggregateField, aggregate, { where: filters })
+            .aggregate(aggregateField, aggregate, {
+              include: getIncludes(),
+              where: filters
+            })
             .then(function (count) { return count || 0; });
         }
         return undefined;
