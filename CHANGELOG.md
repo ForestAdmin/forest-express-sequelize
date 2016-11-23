@@ -6,6 +6,7 @@
 - Pie Charts - Support group by on belongsTo associations.
 - Deserialization - Expose the Deserialization module to the API.
 - Schemas - Expose the Schemas module to the API.
+- Errors Tracking - Catch errors on app launch / apimap generation / liana session creation.
 
 ### Fixed
 - Resource Creation - Fix the creation of records having NOT NULL association constraints in the database.
