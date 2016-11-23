@@ -7,6 +7,9 @@
 - Deserialization - Expose the Deserialization module to the API.
 - Schemas - Expose the Schemas module to the API.
 
+### Fixed
+- Resource Creator - Fix creating resource with required association
+
 ## RELEASE 0.4.3 - 2016-11-17
 ### Fixed
 - Custom Actions - Fix missing actions for Smart Collections.
