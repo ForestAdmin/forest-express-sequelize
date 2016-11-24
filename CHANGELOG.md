@@ -8,7 +8,7 @@
 - Schemas - Expose the Schemas module to the API.
 
 ### Fixed
-- Resource Creator - Fix creating resource with required association
+- Resource Creation - Fix the creation of records having NOT NULL association constraints in the database.
 
 ## RELEASE 0.4.3 - 2016-11-17
 ### Fixed
