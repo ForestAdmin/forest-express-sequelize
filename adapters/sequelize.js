@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
+var Interface = require('forest-express');
 
 module.exports = function (model, opts) {
   var fields = [];
@@ -74,16 +75,27 @@ module.exports = function (model, opts) {
 
   var columns = P
     .each(_.values(model.attributes), function (column) {
-      if (column.references) { return; }
+      try {
+        if (column.references) { return; }
 
-      var schema = getSchemaForColumn(column);
-      fields.push(schema);
+        var schema = getSchemaForColumn(column);
+        fields.push(schema);
+      } catch (error) {
+        Interface.logger.error('Cannot fetch properly column ' + column.field +
+          ' of model ' + model.name + ':\n' + error);
+      }
     });
 
   var associations = P
     .each(_.values(model.associations), function (association) {
-      var schema = getSchemaForAssociation(association);
-      fields.push(schema);
+      try {
+        var schema = getSchemaForAssociation(association);
+        fields.push(schema);
+      } catch (error) {
+        Interface.logger.error('Cannot fetch properly association ' +
+          association.associationAccessor + ' of model ' + model.name + ':\n' +
+          error);
+      }
     });
 
   return P.all([columns, associations])
