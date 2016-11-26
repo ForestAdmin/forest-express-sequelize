@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 0.4.4 - 2016-11-25
 ### Added
 - Chart Filters - Support chart filters on belongsTo associations.
 - Pie Charts - Support group by on belongsTo associations.
