@@ -2,28 +2,18 @@
 var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 
 function OperatorValueParser() {
-  this.perform = function (model, fieldName, value) {
-    var operatorDateIntervalParser = new OperatorDateIntervalParser(value);
+  this.perform = function (model, fieldName, value, timezone) {
+    var operatorDateIntervalParser = new OperatorDateIntervalParser(value, timezone);
 
     if (value[0] === '!') {
       value = value.substring(1);
       return { $ne: value };
     } else if (value[0] === '>') {
       value = value.substring(1);
-
-      if (operatorDateIntervalParser.isIntervalDateValue()) {
-        return operatorDateIntervalParser.getIntervalDateFilter();
-      } else {
-        return { $gt: value };
-      }
+      return { $gt: value };
     } else if (value[0] === '<') {
       value = value.substring(1);
-
-      if (operatorDateIntervalParser.isIntervalDateValue()) {
-        return operatorDateIntervalParser.getIntervalDateFilter();
-      } else {
-        return { $lt: value };
-      }
+      return { $lt: value };
     } else if (value[0] === '*' && value[value.length - 1] === '*') {
       value = value.substring(1, value.length - 1);
       return { $like: '%' + value + '%' };

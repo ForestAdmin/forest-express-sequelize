@@ -5,7 +5,7 @@ var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 var Interface = require('forest-express');
 
 // jshint sub: true
-function ValueStatGetter(model, params, opts) {
+function ValueStatGetter(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
 
   function getAggregate() {
@@ -29,8 +29,8 @@ function ValueStatGetter(model, params, opts) {
         }
 
         var condition = {};
-        condition[field] = new OperatorValueParser(opts).perform(model,
-          filter.field, filter.value);
+        condition[field] = new OperatorValueParser().perform(model,
+          filter.field, filter.value, params.timezone);
         conditions.push(condition);
       });
     }
@@ -59,7 +59,7 @@ function ValueStatGetter(model, params, opts) {
 
     params.filters.forEach(function (filter) {
       var operatorValueParser =
-        new OperatorDateIntervalParser(filter.value);
+        new OperatorDateIntervalParser(filter.value, params.timezone);
       if (operatorValueParser.hasPreviousInterval()) {
         intervalDateFilter = filter;
       }
@@ -87,7 +87,7 @@ function ValueStatGetter(model, params, opts) {
         //         'AND', it would not be pertinent for a 'OR' filterType.
         if (filterDateIntervalForPrevious && params.filterType === 'and') {
           var operatorValueParser = new OperatorDateIntervalParser(
-            filterDateIntervalForPrevious.value
+            filterDateIntervalForPrevious.value, params.timezone
           );
           var conditions = filters.$and;
           conditions.forEach(function (condition) {

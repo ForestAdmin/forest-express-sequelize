@@ -8,6 +8,7 @@ var Interface = require('forest-express');
 // jshint sub: true
 function LineStatGetter(model, params, opts) {
   var schema = Interface.Schemas.schemas[model.name];
+  var timeRange = params['time_range'].toLowerCase();
 
   function isMysql() {
     return (['mysql', 'mariadb'].indexOf(opts.sequelize.options.dialect) > -1);
@@ -24,7 +25,6 @@ function LineStatGetter(model, params, opts) {
   }
 
   function getGroupByDateInterval() {
-    var timeRange = params['time_range'].toLowerCase();
     var column = params['group_by_date_field'];
 
     if (isMysql()) {
@@ -59,13 +59,25 @@ function LineStatGetter(model, params, opts) {
           ];
       }
     } else {
+      var timezone = (-parseInt(params.timezone, 10)).toString();
       return [
         opts.sequelize.fn('to_char',
           opts.sequelize.fn('date_trunc', params['time_range'],
-          opts.sequelize.col(getGroupByDateField())),
-        'YYYY-MM-DD 00:00:00'),
+            opts.sequelize.literal('"' + getGroupByDateField()
+              .replace('.', '"."') + '" at time zone \'' + timezone + '\'')),
+          'YYYY-MM-DD 00:00:00'
+        ),
         'date'
       ];
+    }
+  }
+
+  function getFormat() {
+    switch (timeRange) {
+      case 'day': return 'DD/MM/YYYY';
+      case 'week': return '[W]w-YYYY';
+      case 'month': return 'MMM YY';
+      case 'year': return 'YYYY';
     }
   }
 
@@ -73,7 +85,6 @@ function LineStatGetter(model, params, opts) {
     if (records.length) {
       var firstDate = moment(records[0].label);
       var lastDate = moment(records[records.length - 1].label);
-      var timeRange = params['time_range'].toLowerCase();
 
       for (var i = firstDate ; i.toDate() <= lastDate.toDate() ;
         i = i.add(1, timeRange)) {
@@ -84,7 +95,13 @@ function LineStatGetter(model, params, opts) {
         }
       }
 
-      return _.sortBy(records, 'label');
+      records = _.sortBy(records, 'label');
+      return _.map(records, function (record) {
+        return {
+          label: moment(record.label).format(getFormat()),
+          values: record.values
+        };
+      });
     } else {
       return records;
     }
@@ -97,7 +114,6 @@ function LineStatGetter(model, params, opts) {
       'value'
     ];
   }
-
 
   function getFilters() {
     var where = {};
@@ -112,7 +128,7 @@ function LineStatGetter(model, params, opts) {
 
         var condition = {};
         condition[field] = new OperatorValueParser(opts).perform(model,
-          filter.field, filter.value);
+          filter.field, filter.value, params.timezone);
         conditions.push(condition);
       });
     }
