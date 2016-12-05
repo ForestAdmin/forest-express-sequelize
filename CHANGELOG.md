@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Search - Fix broken search on collections with associations using UUID primary keys. 
 
 ## RELEASE 0.4.4 - 2016-11-25
 ### Added

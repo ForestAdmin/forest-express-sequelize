@@ -80,22 +80,35 @@ function ResourcesGetter(model, opts, params) {
         (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
 
-          var fieldsAssociation = Interface.Schemas
-            .schemas[association.target.name].fields;
+          var schemaAssociation = Interface.Schemas
+            .schemas[association.target.name];
+          var fieldsAssociation = schemaAssociation.fields;
 
           _.each(fieldsAssociation, function(field) {
             if (field.reference || field.integration ||
               field.isSearchable === false) { return; }
 
             var q = {};
-            if (field.type === 'String') {
+            if (field.field === schemaAssociation.idField) {
+              if (field.type === 'Number') {
+                q = opts.sequelize.where(
+                  opts.sequelize.col(association.as + '.' + field.field),
+                  ' = ', parseInt(params.search, 10) || 0
+                );
+              } else if (params.search.match(REGEX_UUID)) {
+                q = opts.sequelize.where(
+                  opts.sequelize.col(association.as + '.' + field.field),
+                  ' = ', params.search
+                );
+              }
+            } else if (field.type === 'String') {
               q = opts.sequelize.where(
                 opts.sequelize.fn('lower', opts.sequelize.col(
                   association.as + '.' + field.field)), ' LIKE ',
                 opts.sequelize.fn('lower', '%' + params.search + '%')
               );
-              or.push(q);
             }
+            or.push(q);
           });
         }
       }
