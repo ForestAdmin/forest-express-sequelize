@@ -7,6 +7,7 @@
 
 ### Changed
 - Date Filters - Date filters operators are now based on the client timezone.
+- Packages - Remove useless node-uuid package.
 
 ## RELEASE 0.4.4 - 2016-11-25
 ### Added
