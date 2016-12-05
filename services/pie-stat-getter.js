@@ -1,12 +1,14 @@
 'use strict';
+/* jshint sub: true */
 var _ = require('lodash');
 var P = require('bluebird');
+var moment = require('moment');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 
-// jshint sub: true
 function PieStatGetter(model, params, opts) {
   var schema = Interface.Schemas.schemas[model.name];
+  var field = _.findWhere(schema.fields, { field: params['group_by_field'] });
 
   function getAggregate() {
     return params.aggregate.toLowerCase();
@@ -32,7 +34,7 @@ function PieStatGetter(model, params, opts) {
 
         var condition = {};
         condition[field] = new OperatorValueParser(opts).perform(model,
-          filter.field, filter.value);
+          filter.field, filter.value, params.timezone);
         conditions.push(condition);
       });
     }
@@ -57,14 +59,28 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    var groupByField = params['group_by_field'].replace(':', '.');
+    var groupByField;
+
+    if (params['group_by_field'].indexOf('.') === -1) {
+      groupByField = schema.name + '.' + params['group_by_field'];
+    } else {
+      groupByField = params['group_by_field'].replace(':', '.');
+    }
     return [opts.sequelize.col(groupByField), 'key'];
   }
 
   function formatResults (records) {
     return P.map(records, function (record) {
+      var key;
+
+      if (field.type === 'Date') {
+        key = moment(record.key).format('DD/MM/YYYY HH:mm:ss');
+      } else {
+        key = String(record.key);
+      }
+
       return {
-        key: String(record.key),
+        key: key,
         value: record.value
       };
     });

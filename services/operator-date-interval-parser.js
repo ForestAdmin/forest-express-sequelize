@@ -1,20 +1,8 @@
 'use strict';
 var moment = require('moment');
 
-function OperatorDateIntervalParser(value) {
-  // NOTICE: Manage retrocompatibility
-  // TODO: Remove once new filter protocol is live
-  if (value && value[0] !== '$') {
-    value = value.substring(1);
-  }
-
+function OperatorDateIntervalParser(value, timezone) {
   var PERIODS = {
-    yesterday: { duration: 1, period: 'days' }, // TODO: Remove once new filter protocol is live
-    lastWeek: { duration: 1, period: 'weeks' }, // TODO: Remove once new filter protocol is live
-    last2Weeks: { duration: 2, period: 'weeks' }, // TODO: Remove once new filter protocol is live
-    lastMonth: { duration: 1, period: 'months' }, // TODO: Remove once new filter protocol is live
-    last3Months: { duration: 3, period: 'months' }, // TODO: Remove once new filter protocol is live
-    lastYear: { duration: 1, period: 'years' }, // TODO: Remove once new filter protocol is live
     $yesterday: { duration: 1, period: 'days' },
     $previousWeek: { duration: 1, period: 'weeks' },
     $previousMonth: { duration: 1, period: 'months' },
@@ -26,12 +14,9 @@ function OperatorDateIntervalParser(value) {
     $yearToDate: { duration: 1, period: 'years', toDate: true }
   };
 
-  var PERIODS_FROM_NOW = 'fromNow'; // TODO: Remove once new filter protocol is live
   var PERIODS_PAST = '$past';
   var PERIODS_FUTURE = '$future';
-  var PERIODS_TODAY_DEPRECATED = 'today'; // TODO: Remove once new filter protocol is live
   var PERIODS_TODAY = '$today';
-  var PERIODS_LAST_X_DAYS = /^last(\d+)days$/; // TODO: Remove once new filter protocol is live
   var PERIODS_PREVIOUS_X_DAYS = /^\$previous(\d+)Days$/;
   var PERIODS_X_DAYS_TO_DATE = /^\$(\d+)DaysToDate$/;
 
@@ -43,23 +28,18 @@ function OperatorDateIntervalParser(value) {
     years: 'year'
   };
 
+  var offsetClient = parseInt(timezone, 10);
+  var offsetServer = moment().utcOffset() / 60;
+  var offsetHours = offsetServer - offsetClient;
+
   this.isIntervalDateValue = function () {
     if (PERIODS[value]) { return true; }
-
-    // TODO: Remove once new filter protocol is live
-    if ([PERIODS_FROM_NOW, PERIODS_TODAY_DEPRECATED].indexOf(value) !== -1) {
-      return true;
-    }
 
     if ([PERIODS_PAST, PERIODS_FUTURE, PERIODS_TODAY].indexOf(value) !== -1) {
       return true;
     }
 
-    // TODO: Remove once new filter protocol is live
-    var match = value.match(PERIODS_LAST_X_DAYS);
-    if (match && match[1]) { return true; }
-
-    match = value.match(PERIODS_PREVIOUS_X_DAYS);
+    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
     if (match && match[1]) { return true; }
 
     match = value.match(PERIODS_X_DAYS_TO_DATE);
@@ -71,16 +51,9 @@ function OperatorDateIntervalParser(value) {
   this.hasPreviousInterval = function () {
     if (PERIODS[value]) { return true; }
 
-    // TODO: Remove once new filter protocol is live
-    if (value === PERIODS_TODAY_DEPRECATED) { return true; }
-
     if (value === PERIODS_TODAY) { return true; }
 
-    // TODO: Remove once new filter protocol is live
-    var match = value.match(PERIODS_LAST_X_DAYS);
-    if (match && match[1]) { return true; }
-
-    match = value.match(PERIODS_PREVIOUS_X_DAYS);
+    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
     if (match && match[1]) { return true; }
 
     match = value.match(PERIODS_X_DAYS_TO_DATE);
@@ -92,11 +65,6 @@ function OperatorDateIntervalParser(value) {
   this.getIntervalDateFilter = function () {
     if (!this.isIntervalDateValue()) { return; }
 
-    // TODO: Remove once new filter protocol is live
-    if (value === PERIODS_FROM_NOW) {
-      return { $gte: moment().toDate() };
-    }
-
     if (value === PERIODS_PAST) {
       return { $lte: moment().toDate() };
     }
@@ -105,43 +73,29 @@ function OperatorDateIntervalParser(value) {
       return { $gte: moment().toDate() };
     }
 
-    // TODO: Remove once new filter protocol is live
-    if (value === PERIODS_TODAY_DEPRECATED) {
-      return {
-        $gte: moment().startOf('day').toDate(),
-        $lte: moment().endOf('day').toDate()
-      };
-    }
-
     if (value === PERIODS_TODAY) {
       return {
-        $gte: moment().startOf('day').toDate(),
-        $lte: moment().endOf('day').toDate()
+        $gte: moment().startOf('day').add(offsetHours, 'h').toDate(),
+        $lte: moment().endOf('day').add(offsetHours, 'h').toDate()
       };
     }
 
-    // TODO: Remove once new filter protocol is live
-    var match = value.match(PERIODS_LAST_X_DAYS);
+    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
     if (match && match[1]) {
       return {
-        $gte: moment().subtract(match[1], 'days').startOf('day').toDate(),
-        $lte: moment().subtract(1, 'days').endOf('day').toDate()
-      };
-    }
-
-    match = value.match(PERIODS_PREVIOUS_X_DAYS);
-    if (match && match[1]) {
-      return {
-        $gte: moment().subtract(match[1], 'days').startOf('day').toDate(),
-        $lte: moment().subtract(1, 'days').endOf('day').toDate()
+        $gte: moment().subtract(match[1], 'days').startOf('day')
+                .add(offsetHours, 'h').toDate(),
+        $lte: moment().subtract(1, 'days').endOf('day').add(offsetHours, 'h')
+                .toDate()
       };
     }
 
     match = value.match(PERIODS_X_DAYS_TO_DATE);
     if (match && match[1]) {
       return {
-        $gte: moment().subtract(match[1] - 1, 'days').startOf('day').toDate(),
-        $lte: moment().toDate()
+        $gte: moment().subtract(match[1] - 1, 'days').startOf('day')
+                .add(offsetHours, 'h').toDate(),
+        $lte: moment().add(offsetHours, 'h').toDate()
       };
     }
 
@@ -152,13 +106,15 @@ function OperatorDateIntervalParser(value) {
 
     if (toDate) {
       return {
-        $gte: moment().startOf(periodValue).toDate(),
-        $lte: moment().toDate()
+        $gte: moment().startOf(periodValue).add(offsetHours, 'h').toDate(),
+        $lte: moment().add(offsetHours, 'h').toDate()
       };
     } else {
       return {
-        $gte: moment().subtract(duration, period).startOf(periodValue).toDate(),
-        $lte: moment().subtract(1, period).endOf(periodValue).toDate()
+        $gte: moment().subtract(duration, period).startOf(periodValue)
+                .add(offsetHours, 'h').toDate(),
+        $lte: moment().subtract(1, period).endOf(periodValue)
+                .add(offsetHours, 'h').toDate()
       };
     }
   };
@@ -166,45 +122,31 @@ function OperatorDateIntervalParser(value) {
   this.getIntervalDateFilterForPreviousInterval = function () {
     if (!this.hasPreviousInterval()) { return; }
 
-    // TODO: Remove once new filter protocol is live
-    if (value === PERIODS_TODAY_DEPRECATED) {
-      return {
-        $gte: moment().subtract(1, 'days').startOf('day').toDate(),
-        $lte: moment().subtract(1, 'days').endOf('day').toDate()
-      };
-    }
-
     if (value === PERIODS_TODAY) {
       return {
-        $gte: moment().subtract(1, 'days').startOf('day').toDate(),
-        $lte: moment().subtract(1, 'days').endOf('day').toDate()
+        $gte: moment().subtract(1, 'days').startOf('day')
+                .add(offsetHours, 'h').toDate(),
+        $lte: moment().subtract(1, 'days').endOf('day')
+                .add(offsetHours, 'h').toDate()
       };
     }
 
-    // TODO: Remove once new filter protocol is live
-    var match = value.match(PERIODS_LAST_X_DAYS);
+    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
     if (match && match[1]) {
       return {
-        $gte: moment().subtract(match[1] * 2, 'days').startOf('day').toDate(),
+        $gte: moment().subtract(match[1] * 2, 'days').startOf('day')
+                .add(offsetHours, 'h').toDate(),
         $lte: moment().subtract(parseInt(match[1], 10) + 1, 'days')
-                .endOf('day').toDate()
-      };
-    }
-
-    match = value.match(PERIODS_PREVIOUS_X_DAYS);
-    if (match && match[1]) {
-      return {
-        $gte: moment().subtract(match[1] * 2, 'days').startOf('day').toDate(),
-        $lte: moment().subtract(parseInt(match[1], 10) + 1, 'days')
-                .endOf('day').toDate()
+                .endOf('day').add(offsetHours, 'h').toDate()
       };
     }
 
     match = value.match(PERIODS_X_DAYS_TO_DATE);
     if (match && match[1]) {
       return {
-        $gte: moment().subtract((match[1] * 2) - 1, 'days').startOf('day').toDate(),
-        $lte: moment().subtract(match[1], 'days').toDate()
+        $gte: moment().subtract((match[1] * 2) - 1, 'days').startOf('day')
+                .add(offsetHours, 'h').toDate(),
+        $lte: moment().subtract(match[1], 'days').add(offsetHours, 'h').toDate()
       };
     }
 
@@ -215,13 +157,17 @@ function OperatorDateIntervalParser(value) {
 
     if (toDate) {
       return {
-        $gte: moment().subtract(duration, period).startOf(periodValue).toDate(),
-        $lte: moment().subtract(duration, period).toDate()
+        $gte: moment().subtract(duration, period).startOf(periodValue)
+                .add(offsetHours, 'h').toDate(),
+        $lte: moment().subtract(duration, period)
+                .add(offsetHours, 'h').toDate()
       };
     } else {
       return {
-        $gte: moment().subtract(duration * 2, period).startOf(periodValue).toDate(),
-        $lte: moment().subtract(1 + duration, period).endOf(periodValue).toDate()
+        $gte: moment().subtract(duration * 2, period).startOf(periodValue)
+                .add(offsetHours, 'h').toDate(),
+        $lte: moment().subtract(1 + duration, period).endOf(periodValue)
+                .add(offsetHours, 'h').toDate()
       };
     }
   };

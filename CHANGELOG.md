@@ -2,7 +2,11 @@
 
 ## [Unreleased]
 ### Fixed
-- Search - Fix broken search on collections with associations using UUID primary keys. 
+- Pie Charts - Fix potential ambiguous groupBy field name.
+- Search - Fix broken search on collections with associations using UUID primary keys.
+
+### Changed
+- Date Filters - Date filters operators are now based on the client timezone.
 
 ## RELEASE 0.4.4 - 2016-11-25
 ### Added
