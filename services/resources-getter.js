@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('lodash');
+var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 
@@ -7,6 +8,8 @@ var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
+  var segment;
+
   var fieldNamesRequested = (function() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
@@ -150,14 +153,18 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getWhere() {
-    var where = {};
+    var where = { $and: [] };
 
     if (params.search) {
-      where = _.extend(where, handleSearchParam());
+      where.$and.push(handleSearchParam());
     }
 
     if (params.filter) {
-      where = _.extend(where, handleFilterParams());
+      where.$and.push(handleFilterParams());
+    }
+
+    if (segment && segment.where) {
+      where.$and.push(segment.where);
     }
 
     return where;
@@ -238,7 +245,11 @@ function ResourcesGetter(model, opts, params) {
       });
     }
 
-    return model.unscoped().findAll(findAllOpts);
+    if (segment && segment.scope) {
+      return model.scope(segment.scope).findAll(findAllOpts);
+    } else {
+      return model.unscoped().findAll(findAllOpts);
+    }
   }
 
   function getCount() {
@@ -255,11 +266,38 @@ function ResourcesGetter(model, opts, params) {
       });
     }
 
-    return model.unscoped().count(countOpts);
+    if (segment && segment.scope) {
+      return model.scope(segment.scope).count(countOpts);
+    } else {
+      return model.unscoped().count(countOpts);
+    }
+  }
+
+  function getSegment() {
+    if (schema.segments && params.segment) {
+      segment = _.find(schema.segments, function (segment) {
+        return segment.name === params.segment;
+      });
+    }
+  }
+
+  function getSegmentCondition() {
+    if (segment && segment.where && typeof segment.where === 'function') {
+      return segment.where()
+        .then(function (where) {
+          segment.where = where;
+          return;
+        });
+    } else {
+      return new P(function (resolve) { return resolve(); });
+    }
   }
 
   this.perform = function () {
-    return getRecords()
+    getSegment();
+
+    return getSegmentCondition()
+      .then(getRecords)
       .then(function (records) {
         return getCount()
           .then(function (count) {
