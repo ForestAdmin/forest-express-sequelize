@@ -1,13 +1,15 @@
 # Change Log
 
 ## [Unreleased]
-### Fixed
-- Pie Charts - Fix potential ambiguous groupBy field name.
-- Search - Fix broken search on collections with associations using UUID primary keys.
 
+## RELEASE 0.4.5 - 2016-12-05
 ### Changed
 - Date Filters - Date filters operators are now based on the client timezone.
 - Packages - Remove useless node-uuid package.
+
+### Fixed
+- Pie Charts - Fix potential ambiguous groupBy field name.
+- Search - Fix broken search on collections with associations using UUID primary keys.
 
 ## RELEASE 0.4.4 - 2016-11-25
 ### Added
