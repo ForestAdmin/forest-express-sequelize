@@ -4,6 +4,11 @@
 ### Added
 - Segments - Smart Segments can be created to define specific records subsets.
 
+### Changed
+- Package - Add contributors, keywords, homepage...
+- Package - Remove all unused packages.
+- Dependencies - Freeze the dependencies versions to reduce packages versions changes between projects/environments.
+
 ## RELEASE 0.4.5 - 2016-12-05
 ### Added
 - Date Filters - Date filters operators are now based on the client timezone.
