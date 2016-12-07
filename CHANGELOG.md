@@ -9,6 +9,9 @@
 - Package - Remove all unused packages.
 - Dependencies - Freeze the dependencies versions to reduce packages versions changes between projects/environments.
 
+### Fixed
+- Search - Fix search requests on associated collections having different fields names from database columns names.
+
 ## RELEASE 0.4.5 - 2016-12-05
 ### Added
 - Date Filters - Date filters operators are now based on the client timezone.

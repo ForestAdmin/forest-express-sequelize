@@ -63,11 +63,11 @@ function ResourcesGetter(model, opts, params) {
           q[field.field] = enumSearch;
         }
       } else if (field.type === 'String') {
-        var column = field.columnName || field.field;
+        var columnName = field.columnName || field.field;
 
         q = opts.sequelize.where(
           opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
-            column)),
+            columnName)),
           ' LIKE ',
           opts.sequelize.fn('lower', '%' + params.search + '%')
         );
@@ -92,22 +92,19 @@ function ResourcesGetter(model, opts, params) {
               field.isSearchable === false) { return; }
 
             var q = {};
+            var columnName = field.columnName || field.field;
+            var column = opts.sequelize.col(association.as + '.' + columnName);
+
             if (field.field === schemaAssociation.idField) {
               if (field.type === 'Number') {
-                q = opts.sequelize.where(
-                  opts.sequelize.col(association.as + '.' + field.field),
-                  ' = ', parseInt(params.search, 10) || 0
-                );
+                q = opts.sequelize.where(column, ' = ',
+                  parseInt(params.search, 10) || 0);
               } else if (params.search.match(REGEX_UUID)) {
-                q = opts.sequelize.where(
-                  opts.sequelize.col(association.as + '.' + field.field),
-                  ' = ', params.search
-                );
+                q = opts.sequelize.where(column, ' = ', params.search);
               }
             } else if (field.type === 'String') {
               q = opts.sequelize.where(
-                opts.sequelize.fn('lower', opts.sequelize.col(
-                  association.as + '.' + field.field)), ' LIKE ',
+                opts.sequelize.fn('lower', column), ' LIKE ',
                 opts.sequelize.fn('lower', '%' + params.search + '%')
               );
             }
