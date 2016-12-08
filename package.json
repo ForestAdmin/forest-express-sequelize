@@ -1,38 +1,35 @@
 {
   "name": "forest-express-sequelize",
+  "description": "Official Express/Sequelize Liana for Forest",
   "version": "0.4.5",
-  "description": "Forest Liana for Expressjs and Sequelize",
-  "main": "index.js",
-  "scripts": {},
   "author": "Sandro Munda <sandro@munda.me>",
-  "license": "GPL",
+  "contributors": [
+    "Arnaud Besnier <arnaudibesnier@gmail.com>"
+  ],
+  "license": "GPL-3.0",
+  "homepage": "http://www.forestadmin.com",
+  "keywords": [
+    "forest",
+    "admin",
+    "panel",
+    "interface",
+    "sequelize"
+  ],
   "repository": {
     "type": "git",
     "url": "git://github.com/ForestAdmin/forest-express-sequelize.git"
   },
+  "main": "index.js",
   "dependencies": {
-    "bcryptjs": "^2.3.0",
-    "bluebird": "^2.9.25",
-    "body-parser": "^1.13.1",
-    "express": "^4.12.4",
-    "express-cors": "0.0.3",
-    "express-jwt": "^3.0.1",
-    "flat": "^1.6.0",
-    "forest-express": "^0.1.33",
-    "humps": "^0.6.0",
-    "inflected": "^1.1.6",
-    "jsonapi-serializer": "^3.4.1",
-    "jsonwebtoken": "^5.7.0",
-    "lodash": "^3.9.3",
-    "moment": "^2.10.6",
-    "semver": "^4.3.6",
-    "sequelize": "^3.14.2",
-    "superagent": "^1.4.0",
-    "winston": "^1.0.2"
+    "bluebird": "2.9.25",
+    "forest-express": "0.1.33",
+    "lodash": "3.9.3",
+    "moment": "2.10.6"
   },
   "devDependencies": {
-    "chai": "^2.3.0",
-    "git-hooks": "^1.1.6",
-    "mocha": "^2.2.5"
-  }
+    "chai": "2.3.0",
+    "git-hooks": "1.1.6",
+    "mocha": "2.2.5"
+  },
+  "scripts": {}
 }
