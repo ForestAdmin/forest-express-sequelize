@@ -280,7 +280,7 @@ function ResourcesGetter(model, opts, params) {
 
   function getSegmentCondition() {
     if (segment && segment.where && typeof segment.where === 'function') {
-      return segment.where()
+      return segment.where(params)
         .then(function (where) {
           segment.where = where;
           return;
