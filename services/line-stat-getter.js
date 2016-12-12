@@ -89,7 +89,7 @@ function LineStatGetter(model, params, opts) {
       for (var i = firstDate ; i.toDate() <= lastDate.toDate() ;
         i = i.add(1, timeRange)) {
 
-        var label = i.format('Y-MM-DD 00:00:00');
+        var label = i.format('YYYY-MM-DD 00:00:00');
         if (!_.find(records, { label: label })) {
           records.push({ label: label, values: { value: 0 }});
         }
