@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Line Charts - Fix a regression displaying some bad values in specific line charts.
 
 ## RELEASE 0.5.0 - 2016-12-12
 ### Added
