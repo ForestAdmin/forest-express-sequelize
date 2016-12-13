@@ -25,9 +25,9 @@ function LineStatGetter(model, params, opts) {
   }
 
   function getGroupByDateInterval() {
-    var column = params['group_by_date_field'];
-
     if (isMysql()) {
+      var column = getGroupByDateField();
+
       switch (timeRange) {
         case 'day':
           return [
@@ -37,9 +37,10 @@ function LineStatGetter(model, params, opts) {
             'date'
           ];
         case 'week':
+          var columnFormated = '`' + column.replace('.', '`.`') + '`';
           return [
-            opts.sequelize.literal('DATE_FORMAT(DATE_SUB(' + column + ', ' +
-              'INTERVAL ((7 + WEEKDAY(' + column + ')) % 7) DAY), ' +
+            opts.sequelize.literal('DATE_FORMAT(DATE_SUB(' + columnFormated +
+              ', INTERVAL ((7 + WEEKDAY(' + columnFormated + ')) % 7) DAY), ' +
               '\'%Y-%m-%d 00:00:00\')'),
             'date'
           ];
