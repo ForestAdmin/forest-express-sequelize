@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 0.5.2 - 2016-12-13
 ### Fixed
 - Relationships - Fix the retrieve of a record when a scope is applied on a relationship.
 
