@@ -8,7 +8,7 @@ function ResourceGetter(model, params) {
     _.values(model.associations).forEach(function (association) {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
         includes.push({
-          model: association.target,
+          model: association.target.unscoped(),
           as: association.associationAccessor
         });
       }
