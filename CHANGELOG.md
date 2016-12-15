@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 0.5.3 - 2016-12-14
 ### Fixed
 - Line Chart - Fix ambiguous groupBy field for MySQL databases.
 
