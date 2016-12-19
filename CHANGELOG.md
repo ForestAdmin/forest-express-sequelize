@@ -8,7 +8,7 @@
 
 ## RELEASE 0.5.2 - 2016-12-13
 ### Fixed
-- Relationships - Fix the retrieve of a record when a scope is applied on a relationship.
+- Relationships - Fix the retrieval of a record when a scope is applied on a relationship.
 
 ## RELEASE 0.5.1 - 2016-12-12
 ### Fixed
