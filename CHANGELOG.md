@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 0.5.4 - 2016-01-04
 ### Fixed
 - Smart segment - Smart segment are now correctly updated.
 
