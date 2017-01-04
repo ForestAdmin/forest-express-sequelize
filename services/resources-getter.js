@@ -160,8 +160,8 @@ function ResourcesGetter(model, opts, params) {
       where.$and.push(handleFilterParams());
     }
 
-    if (segment && segment.where) {
-      where.$and.push(segment.where);
+    if (segment && segment.whereValues) {
+      where.$and.push(segment.whereValues);
     }
 
     return where;
@@ -279,10 +279,10 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getSegmentCondition() {
-    if (segment && segment.where && typeof segment.where === 'function') {
+    if (segment && segment.where && _.isFunction(segment.where)) {
       return segment.where(params)
-        .then(function (where) {
-          segment.where = where;
+        .then(function (values) {
+          segment.whereValues = values;
           return;
         });
     } else {
