@@ -8,7 +8,8 @@ var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
-  var segment;
+  var segmentScope;
+  var segmentWhere;
 
   var fieldNamesRequested = (function() {
     if (!params.fields || !params.fields[model.name]) { return null; }
@@ -160,8 +161,8 @@ function ResourcesGetter(model, opts, params) {
       where.$and.push(handleFilterParams());
     }
 
-    if (segment && segment.whereValues) {
-      where.$and.push(segment.whereValues);
+    if (segmentWhere) {
+      where.$and.push(segmentWhere);
     }
 
     return where;
@@ -242,8 +243,8 @@ function ResourcesGetter(model, opts, params) {
       });
     }
 
-    if (segment && segment.scope) {
-      return model.scope(segment.scope).findAll(findAllOpts);
+    if (segmentScope) {
+      return model.scope(segmentScope).findAll(findAllOpts);
     } else {
       return model.unscoped().findAll(findAllOpts);
     }
@@ -263,8 +264,8 @@ function ResourcesGetter(model, opts, params) {
       });
     }
 
-    if (segment && segment.scope) {
-      return model.scope(segment.scope).count(countOpts);
+    if (segmentScope) {
+      return model.scope(segmentScope).count(countOpts);
     } else {
       return model.unscoped().count(countOpts);
     }
@@ -272,17 +273,20 @@ function ResourcesGetter(model, opts, params) {
 
   function getSegment() {
     if (schema.segments && params.segment) {
-      segment = _.find(schema.segments, function (segment) {
+      var segment = _.find(schema.segments, function (segment) {
         return segment.name === params.segment;
       });
+
+      segmentScope = segment.scope;
+      segmentWhere = segment.where;
     }
   }
 
   function getSegmentCondition() {
-    if (segment && segment.where && _.isFunction(segment.where)) {
-      return segment.where(params)
-        .then(function (values) {
-          segment.whereValues = values;
+    if (_.isFunction(segmentWhere)) {
+      return segmentWhere(params)
+        .then(function (where) {
+          segmentWhere = where;
           return;
         });
     } else {
