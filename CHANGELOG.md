@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Types Support - Support JSON field type (and behaves exactly like JSONB).
 
 ## RELEASE 0.5.4 - 2016-01-04
 ### Fixed
