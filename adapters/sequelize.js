@@ -23,7 +23,8 @@ module.exports = function (model, opts) {
       column.type instanceof DataTypes['DOUBLE PRECISION'] ||
       column.type instanceof DataTypes.DECIMAL) {
       return 'Number';
-    } else if (column.type instanceof DataTypes.JSONB) {
+    } else if (column.type instanceof DataTypes.JSONB ||
+      column.type instanceof DataTypes.JSON) {
       return 'Json';
     } else if (column.type instanceof DataTypes.TIME) {
       return 'Time';
