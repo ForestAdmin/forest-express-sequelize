@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## RELEASE 1.0.0 - 2016-02-06
+### Added
+- Smart Actions - Support file download.
+
 ## RELEASE 0.5.5 - 2016-01-24
 ### Added
 - Types Support - Support JSON field type (and behaves exactly like JSONB).
