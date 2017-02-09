@@ -1,13 +1,24 @@
 'use strict';
+var _ = require('lodash');
 var OperatorDateIntervalParser = require('./operator-date-interval-parser');
+var Interface = require('forest-express');
 
 function OperatorValueParser() {
   this.perform = function (model, fieldName, value, timezone) {
     var operatorDateIntervalParser = new OperatorDateIntervalParser(value, timezone);
 
+    // NOTICE: Handle boolean for MySQL database
+    var schema = Interface.Schemas.schemas[model.name];
+    var field = _.findWhere(schema.fields, { field: fieldName });
+    var valueBoolean;
+
+    if (field.type === 'Boolean') {
+      valueBoolean = value.indexOf('true') > -1 ? true : false;
+    }
+
     if (value[0] === '!') {
       value = value.substring(1);
-      return { $ne: value };
+      return { $ne: valueBoolean || value };
     } else if (value[0] === '>') {
       value = value.substring(1);
       return { $gt: value };
@@ -30,7 +41,7 @@ function OperatorValueParser() {
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
     } else {
-      return value;
+      return valueBoolean || value;
     }
 
     return;
