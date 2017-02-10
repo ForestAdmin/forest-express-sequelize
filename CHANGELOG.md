@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Filters - Fix filters on boolean fields using MySQL databases.
 
 ## RELEASE 1.0.0 - 2016-02-06
 ### Added
