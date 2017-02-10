@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.1 - 2017-02-10
 ### Fixed
 - Filters - Fix filters on boolean fields using MySQL databases.
 - Record Creation - Fix the record creation with many-to-many associations.
