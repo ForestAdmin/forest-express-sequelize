@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Filters - Fix filters on boolean fields using MySQL databases.
+- Record Creation - Fix the record creation with many-to-many associations.
 
 ## RELEASE 1.0.0 - 2016-02-06
 ### Added
