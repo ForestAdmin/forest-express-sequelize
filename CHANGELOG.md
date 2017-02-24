@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Filters - Fix filters regression on belongsTo associations (due to Boolean support for MySQL).
 
 ## RELEASE 1.0.1 - 2017-02-10
 ### Fixed
