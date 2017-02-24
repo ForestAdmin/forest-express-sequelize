@@ -8,12 +8,22 @@ function OperatorValueParser() {
     var operatorDateIntervalParser = new OperatorDateIntervalParser(value, timezone);
 
     // NOTICE: Handle boolean for MySQL database
-    var schema = Interface.Schemas.schemas[model.name];
-    var field = _.findWhere(schema.fields, { field: fieldName });
-    var valueBoolean;
+    var modelName, field, fieldSplit, valueBoolean;
+    if (fieldName.indexOf(':') === -1) {
+      modelName = model.name;
+    } else {
+      fieldSplit = fieldName.split(':');
+      modelName = fieldSplit[0];
+      fieldName = fieldSplit[1];
+    }
 
-    if (field.type === 'Boolean') {
-      valueBoolean = value.indexOf('true') > -1 ? true : false;
+    var schema = Interface.Schemas.schemas[modelName];
+    if (schema) {
+      field = _.findWhere(schema.fields, { field: fieldName });
+
+      if (field && field.type === 'Boolean') {
+        valueBoolean = value.indexOf('true') > -1 ? true : false;
+      }
     }
 
     if (value[0] === '!') {

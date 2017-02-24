@@ -33,7 +33,7 @@ function PieStatGetter(model, params, opts) {
         }
 
         var condition = {};
-        condition[field] = new OperatorValueParser(opts).perform(model,
+        condition[field] = new OperatorValueParser().perform(model,
           filter.field, filter.value, params.timezone);
         conditions.push(condition);
       });
