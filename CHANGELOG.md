@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Models - The sequelize db option is now optional.
 
 ## RELEASE 1.0.2 - 2017-02-24
 ### Fixed

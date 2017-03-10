@@ -23,7 +23,7 @@ exports.init = function(opts) {
   exports.SchemaAdapter = require('./adapters/sequelize');
 
   exports.getModels = function () {
-    return opts.sequelize.models;
+    return opts.sequelize ? opts.sequelize.models : [];
   };
 
   exports.getModelName = function (model) {
