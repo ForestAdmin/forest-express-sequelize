@@ -1,7 +1,7 @@
 {
   "name": "forest-express-sequelize",
   "description": "Official Express/Sequelize Liana for Forest",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "author": "Sandro Munda <sandro@munda.me>",
   "contributors": [
     "Arnaud Besnier <arnaudibesnier@gmail.com>"
@@ -22,7 +22,7 @@
   "main": "index.js",
   "dependencies": {
     "bluebird": "2.9.25",
-    "forest-express": "1.0.1",
+    "forest-express": "1.0.2",
     "lodash": "3.9.3",
     "moment": "2.10.6"
   },
