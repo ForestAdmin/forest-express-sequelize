@@ -61,7 +61,7 @@ function PieStatGetter(model, params, opts) {
   function getGroupBy() {
     var groupByField;
 
-    if (params['group_by_field'].indexOf('.') === -1) {
+    if (params['group_by_field'].indexOf(':') === -1) {
       groupByField = schema.name + '.' + params['group_by_field'];
     } else {
       groupByField = params['group_by_field'].replace(':', '.');
@@ -73,7 +73,7 @@ function PieStatGetter(model, params, opts) {
     return P.map(records, function (record) {
       var key;
 
-      if (field.type === 'Date') {
+      if (typeof field !== 'undefined' && field.type === 'Date') {
         key = moment(record.key).format('DD/MM/YYYY HH:mm:ss');
       } else {
         key = String(record.key);
