@@ -8,7 +8,18 @@ var Interface = require('forest-express');
 
 function PieStatGetter(model, params, opts) {
   var schema = Interface.Schemas.schemas[model.name];
-  var field = _.findWhere(schema.fields, { field: params['group_by_field'] });
+  var associationSplit,associationCollection, associationField,
+      associationSchema, field;
+
+  if (params['group_by_field'].indexOf(':') === -1) {
+    field = _.findWhere(schema.fields, { field: params['group_by_field'] });
+  } else {
+    associationSplit = params['group_by_field'].split(':');
+    associationCollection = associationSplit[0];
+    associationField = associationSplit[1];
+    associationSchema = Interface.Schemas.schemas[associationCollection];
+    field = _.findWhere(associationSchema.fields, { field: associationField });
+  }
 
   function getAggregate() {
     return params.aggregate.toLowerCase();
@@ -61,7 +72,7 @@ function PieStatGetter(model, params, opts) {
   function getGroupBy() {
     var groupByField;
 
-    if (params['group_by_field'].indexOf('.') === -1) {
+    if (params['group_by_field'].indexOf(':') === -1) {
       groupByField = schema.name + '.' + params['group_by_field'];
     } else {
       groupByField = params['group_by_field'].replace(':', '.');
