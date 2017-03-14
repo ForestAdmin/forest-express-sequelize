@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Types Support - Support CITEXT field type.
 
 ## RELEASE 1.0.3 - 2017-03-10
 ### Changed
