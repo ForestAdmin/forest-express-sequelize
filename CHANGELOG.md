@@ -6,6 +6,10 @@
 ### Added
 - Types Support - Support CITEXT field type.
 
+## RELEASE 1.0.4 - 2017-03-10
+### Added
+- Configuration - Display an error message if the Smart Action "fields" option is not an Array.
+
 ## RELEASE 1.0.3 - 2017-03-10
 ### Changed
 - Models - The sequelize db option is now optional.
