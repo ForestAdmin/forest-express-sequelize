@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Search - Primary key string fields are now searchable.
 
 ## RELEASE 1.0.5 - 2017-03-14
 ### Added
