@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('lodash');
+var createError = require('http-errors');
 
 function ResourceGetter(model, params) {
   function getIncludes() {
@@ -23,6 +24,11 @@ function ResourceGetter(model, params) {
         include: getIncludes()
       })
       .then(function (record) {
+        if (!record) {
+          throw createError(404, 'The ' + model.name + ' #' + params.recordId +
+            ' does not exist.');
+        }
+
         record = record.toJSON();
 
         // Ensure the Serializer set the relationship links on has many

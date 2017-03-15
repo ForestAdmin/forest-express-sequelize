@@ -8,6 +8,7 @@ var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
+  var DataTypes = opts.sequelize.Sequelize;
   var segmentScope;
   var segmentWhere;
 
@@ -50,11 +51,23 @@ function ResourcesGetter(model, opts, params) {
       if (field.reference) { return; }
 
       var q = {};
+      var columnName;
 
       if (field.field === schema.idField) {
-        if (field.type === 'Number') {
+        var primaryKeyType = model.primaryKeys[schema.idField].type;
+
+        if (primaryKeyType instanceof DataTypes.INTEGER) {
           q[field.field] = parseInt(params.search, 10) || 0;
-        } else if (params.search.match(REGEX_UUID)) {
+        } else if (primaryKeyType instanceof DataTypes.STRING) {
+          columnName = field.columnName || field.field;
+          q = opts.sequelize.where(
+            opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
+              columnName)),
+            ' LIKE ',
+            opts.sequelize.fn('lower', '%' + params.search + '%')
+          );
+        } else if (primaryKeyType instanceof DataTypes.UUID &&
+          params.search.match(REGEX_UUID)) {
           q[field.field] = params.search;
         }
       } else if (field.type === 'Enum') {
@@ -64,7 +77,7 @@ function ResourcesGetter(model, opts, params) {
           q[field.field] = enumSearch;
         }
       } else if (field.type === 'String') {
-        var columnName = field.columnName || field.field;
+        columnName = field.columnName || field.field;
 
         q = opts.sequelize.where(
           opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +

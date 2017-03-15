@@ -3,6 +3,18 @@
 ## [Unreleased]
 ### Fixed
 - Pie Charts - Fix Pie Charts having a groupBy on a belongsTo/hasOne relationship.
+- Record Getter - Prevent an unexpected error if the record does not exist.
+
+### Added
+- Search - Primary key string fields are now searchable.
+
+## RELEASE 1.0.5 - 2017-03-14
+### Added
+- Types Support - Support CITEXT field type.
+
+## RELEASE 1.0.4 - 2017-03-10
+### Added
+- Configuration - Display an error message if the Smart Action "fields" option is not an Array.
 
 ## RELEASE 1.0.3 - 2017-03-10
 ### Changed
