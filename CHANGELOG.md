@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Search - Primary key string fields are now searchable.
+
 ### Fixed
 - Record Getter - Prevent an unexpected error if the record does not exist.
 
