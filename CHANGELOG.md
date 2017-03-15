@@ -1,11 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Pie Charts - Fix Pie Charts having a groupBy on a belongsTo/hasOne relationship.
+- Record Getter - Prevent an unexpected error if the record does not exist.
+
 ### Added
 - Search - Primary key string fields are now searchable.
-
-### Fixed
-- Record Getter - Prevent an unexpected error if the record does not exist.
 
 ## RELEASE 1.0.5 - 2017-03-14
 ### Added
