@@ -4,6 +4,9 @@
 ### Added
 - Search - Primary key string fields are now searchable.
 
+### Fixed
+- Record Getter - Prevent an unexpected error if the record does not exist.
+
 ## RELEASE 1.0.5 - 2017-03-14
 ### Added
 - Types Support - Support CITEXT field type.
