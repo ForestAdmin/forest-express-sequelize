@@ -3,12 +3,12 @@
 ## [Unreleased]
 
 ## RELEASE 1.0.6 - 2017-03-16
+### Added
+- Search - Primary key string fields are now searchable.
+
 ### Fixed
 - Pie Charts - Fix Pie Charts having a groupBy on a belongsTo/hasOne relationship.
 - Record Getter - Prevent an unexpected error if the record does not exist.
-
-### Added
-- Search - Primary key string fields are now searchable.
 
 ## RELEASE 1.0.5 - 2017-03-14
 ### Added
