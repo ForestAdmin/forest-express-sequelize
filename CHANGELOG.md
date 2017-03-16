@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.6 - 2017-03-16
 ### Fixed
 - Pie Charts - Fix Pie Charts having a groupBy on a belongsTo/hasOne relationship.
 - Record Getter - Prevent an unexpected error if the record does not exist.
