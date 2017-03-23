@@ -29,7 +29,9 @@ function ResourceGetter(model, params) {
             ' does not exist.');
         }
 
-        record = record.toJSON();
+        // NOTICE: Do not use "toJSON" method to prevent issues on models that
+        //         override this method.
+        record = record.get({ plain: true });
 
         // Ensure the Serializer set the relationship links on has many
         // relationships by setting them to an empty array.
