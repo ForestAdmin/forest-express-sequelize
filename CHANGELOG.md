@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Sorting - Fix records retrieval with a sort on an association field.
 
 ## RELEASE 1.0.7 - 2017-03-23
 ### Fixed
