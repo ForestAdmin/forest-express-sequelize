@@ -108,7 +108,9 @@ function HasManyGetter(model, association, opts, params) {
       })
       .then(function (records) {
         return P.map(records, function (record) {
-          return record.toJSON();
+          // NOTICE: Do not use "toJSON" method to prevent issues on models that
+          //         override this method.
+          return record.get({ plain: true });
         });
       });
   }
