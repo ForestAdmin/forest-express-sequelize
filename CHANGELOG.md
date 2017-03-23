@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.7 - 2017-03-23
 ### Fixed
 - Record Getter - Prevent issues on models that have overriden the "toJSON" method.
 
