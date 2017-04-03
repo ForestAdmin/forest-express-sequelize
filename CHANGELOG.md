@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Version Warning - Display a warning message if the liana version used is too old.
+- Types Support - Support Dateonly field type.
 
 ## RELEASE 1.0.9 - 2017-03-30
 ### Added

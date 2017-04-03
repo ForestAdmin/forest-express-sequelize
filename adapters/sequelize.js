@@ -16,6 +16,8 @@ module.exports = function (model, opts) {
       return 'Enum';
     } else if (column.type instanceof DataTypes.BOOLEAN) {
       return 'Boolean';
+    } else if (column.type instanceof DataTypes.DATEONLY) {
+      return 'Dateonly';
     } else if (column.type instanceof DataTypes.DATE) {
       return 'Date';
     } else if (column.type instanceof DataTypes.INTEGER ||
