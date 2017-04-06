@@ -86,6 +86,10 @@ function PieStatGetter(model, params, opts) {
 
       if (field.type === 'Date') {
         key = moment(record.key).format('DD/MM/YYYY HH:mm:ss');
+      } else if (field.type === 'Dateonly') {
+        var offsetServer = moment().utcOffset() / 60;
+        var dateonly = moment.utc(record.key).add(offsetServer, 'h');
+        key = dateonly.format('DD/MM/YYYY');
       } else {
         key = String(record.key);
       }
