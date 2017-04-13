@@ -58,6 +58,7 @@ function ResourcesGetter(model, opts, params) {
 
         if (primaryKeyType instanceof DataTypes.INTEGER) {
           q[field.field] = parseInt(params.search, 10) || 0;
+          or.push(q);
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           q = opts.sequelize.where(
@@ -66,28 +67,38 @@ function ResourcesGetter(model, opts, params) {
             ' LIKE ',
             opts.sequelize.fn('lower', '%' + params.search + '%')
           );
+          or.push(q);
         } else if (primaryKeyType instanceof DataTypes.UUID &&
           params.search.match(REGEX_UUID)) {
           q[field.field] = params.search;
+          or.push(q);
         }
       } else if (field.type === 'Enum') {
         var enumSearch = _.capitalize(params.search.toLowerCase());
 
         if (field.enums.indexOf(enumSearch) > -1) {
           q[field.field] = enumSearch;
+          or.push(q);
         }
       } else if (field.type === 'String') {
-        columnName = field.columnName || field.field;
+        if (model.attributes[field.field] &&
+          model.attributes[field.field].type instanceof DataTypes.UUID) {
+          if (params.search.match(REGEX_UUID)) {
+            q[field.field] = params.search;
+            or.push(q);
+          }
+        } else {
+          columnName = field.columnName || field.field;
 
-        q = opts.sequelize.where(
-          opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
-            columnName)),
-          ' LIKE ',
-          opts.sequelize.fn('lower', '%' + params.search + '%')
-        );
+          q = opts.sequelize.where(
+            opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
+              columnName)),
+            ' LIKE ',
+            opts.sequelize.fn('lower', '%' + params.search + '%')
+          );
+          or.push(q);
+        }
       }
-
-      or.push(q);
     });
 
     // NOTICE: Handle search on displayed belongsTo
@@ -128,7 +139,7 @@ function ResourcesGetter(model, opts, params) {
       }
     });
 
-    where.$or = or;
+    if (or.length) { where.$or = or; }
     return where;
   }
 
