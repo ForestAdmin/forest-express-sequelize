@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Search - Fix the search on UUID type columns that are not a primary key.
 
 ## RELEASE 1.0.10 - 2017-04-06
 ### Added
