@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.11 - 2017-04-14
 ### Added
 - Setup Guide - Add integration field to the collections to distinguish Smart Collections and Collections from integrations.
 
