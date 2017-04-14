@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Setup Guide - Add integration field to the collections to distinguish Smart Collections and Collections from integrations.
+
 ### Fixed
 - Search - Fix the search on UUID type columns that are not a primary key.
 
