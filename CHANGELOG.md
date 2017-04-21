@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.0.12 - 2017-04-21
 ### Fixed
 - Filters ToDate - Fix the end of period filtering for "toDate" date operator types.
 - Time-based chart - Ensure the groupBy is always valid.
