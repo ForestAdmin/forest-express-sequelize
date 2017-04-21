@@ -158,8 +158,8 @@ function LineStatGetter(model, params, opts) {
       attributes: [getGroupByDateInterval(), getAggregate()],
       include: getIncludes(),
       where: getFilters(),
-      group: ['date'],
-      order: ['date'],
+      group: '1',
+      order: '1',
       raw: true
     })
     .then(function (records) {
