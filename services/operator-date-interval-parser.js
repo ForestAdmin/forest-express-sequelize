@@ -95,7 +95,7 @@ function OperatorDateIntervalParser(value, timezone) {
       return {
         $gte: moment().subtract(match[1] - 1, 'days').startOf('day')
                 .add(offsetHours, 'h').toDate(),
-        $lte: moment().add(offsetHours, 'h').toDate()
+        $lte: moment().toDate()
       };
     }
 
@@ -107,7 +107,7 @@ function OperatorDateIntervalParser(value, timezone) {
     if (toDate) {
       return {
         $gte: moment().startOf(periodValue).add(offsetHours, 'h').toDate(),
-        $lte: moment().add(offsetHours, 'h').toDate()
+        $lte: moment().toDate()
       };
     } else {
       return {
