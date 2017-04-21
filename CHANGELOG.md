@@ -1,14 +1,14 @@
 # Change Log
 
 ## [Unreleased]
-### Fixed
+### Fixed
 - Filters ToDate - Fix the end of period filtering for "toDate" date operator types.
 
 ## RELEASE 1.0.11 - 2017-04-14
 ### Added
 - Setup Guide - Add integration field to the collections to distinguish Smart Collections and Collections from integrations.
 
-### Fixed
+### Fixed
 - Search - Fix the search on UUID type columns that are not a primary key.
 
 ## RELEASE 1.0.10 - 2017-04-06
@@ -25,14 +25,14 @@
 - Sorting - Fix records retrieval with a sort on an association field.
 
 ## RELEASE 1.0.7 - 2017-03-23
-### Fixed
+### Fixed
 - Record Getter - Prevent issues on models that have overriden the "toJSON" method.
 
 ## RELEASE 1.0.6 - 2017-03-16
-### Added
+### Added
 - Search - Primary key string fields are now searchable.
 
-### Fixed
+### Fixed
 - Pie Charts - Fix Pie Charts having a groupBy on a belongsTo/hasOne relationship.
 - Record Getter - Prevent an unexpected error if the record does not exist.
 
@@ -45,11 +45,11 @@
 - Configuration - Display an error message if the Smart Action "fields" option is not an Array.
 
 ## RELEASE 1.0.3 - 2017-03-10
-### Changed
+### Changed
 - Models - The sequelize db option is now optional.
 
 ## RELEASE 1.0.2 - 2017-02-24
-### Fixed
+### Fixed
 - Filters - Fix filters regression on belongsTo associations (due to Boolean support for MySQL).
 
 ## RELEASE 1.0.1 - 2017-02-10
@@ -70,22 +70,22 @@
 - Smart segment - Smart segment are now correctly updated.
 
 ## RELEASE 0.5.3 - 2016-12-14
-### Fixed
+### Fixed
 - Line Chart - Fix ambiguous groupBy field for MySQL databases.
 
 ## RELEASE 0.5.2 - 2016-12-13
-### Fixed
+### Fixed
 - Relationships - Fix the retrieval of a record when a scope is applied on a relationship.
 
 ## RELEASE 0.5.1 - 2016-12-12
-### Fixed
+### Fixed
 - Line Charts - Fix a regression displaying some bad values in specific line charts.
 
 ## RELEASE 0.5.0 - 2016-12-12
 ### Added
 - Segments - Smart Segments can be created to define specific records subsets.
 
-### Changed
+### Changed
 - Package - Add contributors, keywords, homepage...
 - Package - Remove all unused packages.
 - Dependencies - Freeze the dependencies versions to reduce packages versions changes between projects/environments.
@@ -132,7 +132,7 @@
 - Model - Support model "field" option to specify a database column name.
 - Search - Fix global search specific to model sequelize definition.
 
-### Fixed
+### Fixed
 - Records Index - Fix the duplicate records displayed on the front if the ids are hidden in the list.
 
 ## RELEASE 0.3.7 - 2016-11-06
