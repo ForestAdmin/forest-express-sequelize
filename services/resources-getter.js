@@ -262,7 +262,11 @@ function ResourcesGetter(model, opts, params) {
     if (params.search) {
       _.each(schema.fields, function (field) {
         if (field.search) {
-          field.search(findAllOpts, params.search);
+          try {
+            field.search(findAllOpts, params.search);
+          } catch (error) {
+            console.log(error);
+          }
         }
       });
     }
@@ -283,7 +287,11 @@ function ResourcesGetter(model, opts, params) {
     if (params.search) {
       _.each(schema.fields, function (field) {
         if (field.search) {
-          field.search(countOpts, params.search);
+          try {
+            field.search(countOpts, params.search);
+          } catch (error) {
+            console.log(error);
+          }
         }
       });
     }
