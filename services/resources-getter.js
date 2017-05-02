@@ -249,7 +249,12 @@ function ResourcesGetter(model, opts, params) {
     return [];
   }
 
-  function getRecords() {
+  function getAndCountRecords() {
+    var countOpts = {
+      include: getIncludes(),
+      where: getWhere()
+    };
+
     var findAllOpts = {
       attributes: getSelect(),
       include: getIncludes(),
@@ -263,6 +268,7 @@ function ResourcesGetter(model, opts, params) {
       _.each(schema.fields, function (field) {
         if (field.search) {
           try {
+            field.search(countOpts, params.search);
             field.search(findAllOpts, params.search);
           } catch (error) {
             Interface.logger.error('Cannot search properly on Smart Field ' +
@@ -273,35 +279,15 @@ function ResourcesGetter(model, opts, params) {
     }
 
     if (segmentScope) {
-      return model.scope(segmentScope).findAll(findAllOpts);
+      return P.all([
+        model.scope(segmentScope).count(countOpts),
+        model.scope(segmentScope).findAll(findAllOpts)
+      ]);
     } else {
-      return model.unscoped().findAll(findAllOpts);
-    }
-  }
-
-  function getCount() {
-    var countOpts = {
-      include: getIncludes(),
-      where: getWhere()
-    };
-
-    if (params.search) {
-      _.each(schema.fields, function (field) {
-        if (field.search) {
-          try {
-            field.search(countOpts, params.search);
-          } catch (error) {
-            Interface.logger.error('Cannot search properly on Smart Field ' +
-              field.field + ':\n' + error);
-          }
-        }
-      });
-    }
-
-    if (segmentScope) {
-      return model.scope(segmentScope).count(countOpts);
-    } else {
-      return model.unscoped().count(countOpts);
+      return P.all([
+        model.unscoped().count(countOpts),
+        model.unscoped().findAll(findAllOpts)
+      ]);
     }
   }
 
@@ -332,12 +318,9 @@ function ResourcesGetter(model, opts, params) {
     getSegment();
 
     return getSegmentCondition()
-      .then(getRecords)
-      .then(function (records) {
-        return getCount()
-          .then(function (count) {
-            return [count, records];
-          });
+      .then(getAndCountRecords)
+      .spread(function (count, records) {
+        return [count, records];
       });
   };
 }
