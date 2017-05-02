@@ -265,7 +265,8 @@ function ResourcesGetter(model, opts, params) {
           try {
             field.search(findAllOpts, params.search);
           } catch (error) {
-            console.log(error);
+            Interface.logger.error('Cannot search properly on Smart Field ' +
+              field.field + ':\n' + error);
           }
         }
       });
@@ -290,7 +291,8 @@ function ResourcesGetter(model, opts, params) {
           try {
             field.search(countOpts, params.search);
           } catch (error) {
-            console.log(error);
+            Interface.logger.error('Cannot search properly on Smart Field ' +
+              field.field + ':\n' + error);
           }
         }
       });
