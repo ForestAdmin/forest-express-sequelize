@@ -8,10 +8,10 @@
 - Smart Fields - A search on a collection having Smart Fields with search method implemented will respond properly (bypassing failing Smart Fields search if any).
 
 ## RELEASE 1.1.0 - 2017-04-27
-### Added
+### Added
 - Smart Fields - Developers can now define Smart Fields setters.
 
-### Changed
+### Changed
 - Smart Fields - Replace the Smart Fields value method by get.
 
 ## RELEASE 1.0.12 - 2017-04-21
