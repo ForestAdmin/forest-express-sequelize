@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- HasOne Associations - Users can now update records with hasOne associations.
 
 ## RELEASE 1.1.1 - 2017-05-04
 ### Added
