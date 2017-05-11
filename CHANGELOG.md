@@ -3,8 +3,8 @@
 ## [Unreleased]
 ### Fixed
 - HasOne Associations - Users can now update records with hasOne associations.
-- Reference Field Search -  All field values (even the hidden fields) are displaying
-when the user searches on the reference field
+- List Views - Smart Fields computed with other record attributes are now properly displayed even if the related record attributes have their columns hidden in the list view.
+- Smart Fields - A Smart Field used as a reference field is now displayed properly in the search results of a belongsTo field.
 
 ## RELEASE 1.1.1 - 2017-05-04
 ### Added
