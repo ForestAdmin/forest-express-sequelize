@@ -1,7 +1,12 @@
 # Change Log
 
 ## [Unreleased]
-### Fixed
+### Added
+- Customization Errors - Do not send the apimap when users create Forest customization with syntax errors in code.
+- Customization Errors - Add errors in the console when users create Forest customization with syntax errors in code.
+
+### Fixed
+- Smart Fields - Serialize Smart Fields values for belongsTo association.
 - HasOne Associations - Users can now update records with hasOne associations.
 
 ## RELEASE 1.1.1 - 2017-05-04
