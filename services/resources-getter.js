@@ -164,14 +164,12 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getSelect() {
-    if (!fieldNamesRequested) { return null; }
-
     var fieldsSchema = _.select(schema.fields, function (field) {
       return !field.reference && !field.isVirtual;
     });
     var fieldNamesSchema = _.map(fieldsSchema, 'field');
 
-    return _.intersection(fieldNamesSchema, fieldNamesRequested);
+    return fieldNamesSchema;
   }
 
   function getWhere() {
