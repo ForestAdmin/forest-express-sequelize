@@ -163,15 +163,6 @@ function ResourcesGetter(model, opts, params) {
     return where;
   }
 
-  function getSelect() {
-    var fieldsSchema = _.select(schema.fields, function (field) {
-      return !field.reference && !field.isVirtual;
-    });
-    var fieldNamesSchema = _.map(fieldsSchema, 'field');
-
-    return fieldNamesSchema;
-  }
-
   function getWhere() {
     var where = { $and: [] };
 
@@ -254,7 +245,6 @@ function ResourcesGetter(model, opts, params) {
     };
 
     var findAllOpts = {
-      attributes: getSelect(),
       include: getIncludes(),
       limit: getLimit(),
       offset: getSkip(),

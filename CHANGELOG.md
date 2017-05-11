@@ -3,7 +3,8 @@
 ## [Unreleased]
 ### Fixed
 - HasOne Associations - Users can now update records with hasOne associations.
-- Smart Fields - User can now search on smart field defined in reference field
+- Reference Field Search -  All field values (even the hidden fields) are displaying
+when the user searches on the reference field
 
 ## RELEASE 1.1.1 - 2017-05-04
 ### Added
