@@ -13,7 +13,7 @@ function ValueStatGetter(model, params) {
   }
 
   function getAggregateField() {
-    var fieldName = params['aggregate_field'] || schema.idField;
+    var fieldName = params['aggregate_field'] || '*';
     return schema.name + '.' + fieldName;
   }
 
