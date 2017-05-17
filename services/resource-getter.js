@@ -27,7 +27,7 @@ function ResourceGetter(model, params) {
       var recordId = params.recordId.split('-');
       if (recordId.length === _.keys(model.primaryKeys).length) {
         _.keys(model.primaryKeys).forEach(function (key, index) {
-          where[_.keys(model.primaryKeys)[index]] = recordId[index];
+          where[key] = recordId[index];
         });
       } else { return; }
     } else {
