@@ -308,6 +308,18 @@ function ResourcesGetter(model, opts, params) {
     return getSegmentCondition()
       .then(getAndCountRecords)
       .spread(function (count, records) {
+        if (schema.isCompositePrimary) {
+          records.forEach(function (record) {
+            record.forestCompositePrimary = '';
+            _.keys(model.primaryKeys).forEach(function (key, index) {
+              var glue = '';
+              if (index > 0) { glue = '-'; }
+              record.forestCompositePrimary = record.forestCompositePrimary +
+                glue +
+                record[key];
+            });
+          });
+        }
         return [count, records];
       });
   };
