@@ -1,16 +1,14 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
-var Interface = require('forest-express');
 
 function HasManyGetter(model, association, opts, params) {
-  var schema = Interface.Schemas.schemas[association.name];
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[association.name]) { return null; }
     // NOTICE: Force the primaryKey retrieval to store the records properly in
     //         the client.
-    var primaryKeyArray = [_.keys(model.primaryKeys)[0]];
+    var primaryKeyArray = [_.keys(association.primaryKeys)[0]];
 
     return _.union(primaryKeyArray, params.fields[association.name].split(','));
   }
@@ -43,18 +41,6 @@ function HasManyGetter(model, association, opts, params) {
       .then(function (records) {
         return records.length;
       });
-  }
-
-  function getSelect() {
-    var fieldNamesRequested = getFieldNamesRequested();
-    if (!fieldNamesRequested) { return null; }
-
-    var fieldsSchema = _.select(schema.fields, function (field) {
-      return !field.reference && !field.isVirtual;
-    });
-    var fieldNamesSchema = _.map(fieldsSchema, 'field');
-
-    return _.intersection(fieldNamesSchema, fieldNamesRequested);
   }
 
   function hasPagination() {
@@ -99,7 +85,6 @@ function HasManyGetter(model, association, opts, params) {
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           scope: false,
-          attributes: getSelect(),
           offset: getSkip(),
           limit: getLimit(),
           include: getIncludes(),
