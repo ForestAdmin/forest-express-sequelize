@@ -23,7 +23,7 @@ function ResourceGetter(model, params) {
 
   this.perform = function () {
     var where = {};
-    if (schema.isCompositePrimary) {
+    if (schema.isCompositePrimary && params.recordId) {
       var recordId = params.recordId.split('-');
       if (recordId.length === _.keys(model.primaryKeys).length) {
         _.keys(model.primaryKeys).forEach(function (key, index) {

@@ -41,6 +41,16 @@ function ResourceCreator(model, params) {
           .thenReturn(record);
       })
       .then(function (record) {
+        if (schema.isCompositePrimary) {
+          record.forestCompositePrimary = '';
+          _.keys(model.primaryKeys).forEach(function (key, index) {
+            var glue = '';
+            if (index > 0) { glue = '-'; }
+            record.forestCompositePrimary = record.forestCompositePrimary +
+              glue +
+              record[key];
+          });
+        }
         return new ResourceGetter(model, {
           recordId: record[schema.idField]
         }).perform();
