@@ -1,8 +1,11 @@
 'use strict';
 var _ = require('lodash');
 var createError = require('http-errors');
+var Interface = require('forest-express');
 
 function ResourceGetter(model, params) {
+  var schema = Interface.Schemas.schemas[model.name];
+
   function getIncludes() {
     var includes = [];
 
@@ -19,10 +22,20 @@ function ResourceGetter(model, params) {
   }
 
   this.perform = function () {
+    var where = {};
+    if (schema.isCompositePrimary) {
+      var recordId = params.recordId.split('-');
+      if (recordId.length === _.keys(model.primaryKeys).length) {
+        _.keys(model.primaryKeys).forEach(function (key, index) {
+          where[_.keys(model.primaryKeys)[index]] = recordId[index];
+        });
+      } else { return; }
+    } else {
+      where.id = params.recordId;
+    }
+
     return model
-      .findById(params.recordId, {
-        include: getIncludes()
-      })
+      .find({ where: where, include: getIncludes() })
       .then(function (record) {
         if (!record) {
           throw createError(404, 'The ' + model.name + ' #' + params.recordId +
