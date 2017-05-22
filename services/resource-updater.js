@@ -1,7 +1,8 @@
 'use strict';
-var ResourceGetter = require('./resource-getter');
 var Interface = require('forest-express');
 var _ = require('lodash');
+var ResourceGetter = require('./resource-getter');
+var PrimaryCompositeKeys = require('./primary-composite-key');
 
 function ResourceUpdater(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -21,14 +22,8 @@ function ResourceUpdater(model, params) {
       .update(params, { where: where, individualHooks: true })
       .then(function () {
         if (schema.isCompositePrimary) {
-          params.forestCompositePrimary = '';
-          _.keys(model.primaryKeys).forEach(function (key, index) {
-            var glue = '';
-            if (index > 0) { glue = '-'; }
-            params.forestCompositePrimary = params.forestCompositePrimary +
-              glue +
-              params[key];
-          });
+          params.forestCompositePrimary =
+            new PrimaryCompositeKeys(model, schema, params).get();
         }
         return new ResourceGetter(model, {
           recordId: params[schema.idField]

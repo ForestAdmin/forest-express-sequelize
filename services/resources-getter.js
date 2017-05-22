@@ -3,6 +3,7 @@ var _ = require('lodash');
 var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
+var PrimaryCompositeKeys = require('./primary-composite-key');
 
 var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -310,14 +311,8 @@ function ResourcesGetter(model, opts, params) {
       .spread(function (count, records) {
         if (schema.isCompositePrimary) {
           records.forEach(function (record) {
-            record.forestCompositePrimary = '';
-            _.keys(model.primaryKeys).forEach(function (key, index) {
-              var glue = '';
-              if (index > 0) { glue = '-'; }
-              record.forestCompositePrimary = record.forestCompositePrimary +
-                glue +
-                record[key];
-            });
+            record.forestCompositePrimary =
+              new PrimaryCompositeKeys(model, schema, record).get();
           });
         }
         return [count, records];

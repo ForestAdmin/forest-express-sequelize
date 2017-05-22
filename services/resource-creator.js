@@ -1,8 +1,9 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
-var ResourceGetter = require('./resource-getter');
 var Interface = require('forest-express');
+var ResourceGetter = require('./resource-getter');
+var PrimaryCompositeKeys = require('./primary-composite-key');
 
 function ResourceCreator(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -42,14 +43,8 @@ function ResourceCreator(model, params) {
       })
       .then(function (record) {
         if (schema.isCompositePrimary) {
-          record.forestCompositePrimary = '';
-          _.keys(model.primaryKeys).forEach(function (key, index) {
-            var glue = '';
-            if (index > 0) { glue = '-'; }
-            record.forestCompositePrimary = record.forestCompositePrimary +
-              glue +
-              record[key];
-          });
+          record.forestCompositePrimary =
+            new PrimaryCompositeKeys(model, schema, record).get();
         }
         return new ResourceGetter(model, {
           recordId: record[schema.idField]
