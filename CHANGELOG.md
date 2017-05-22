@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Types Support - Support BIGINT field type.
+- Primary Composite Key - Primary Composite Key are supported by the liana.
 
 ### Fixed
 - HasMany ListViews - Fix the display of hasMany records for a model having a primaryKey that is not an "id" column and that has the related column hidden in the hasMany list view.
