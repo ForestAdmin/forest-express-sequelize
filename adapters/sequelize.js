@@ -23,6 +23,7 @@ module.exports = function (model, opts) {
     } else if (column.type instanceof DataTypes.INTEGER ||
       column.type instanceof DataTypes.FLOAT ||
       column.type instanceof DataTypes['DOUBLE PRECISION'] ||
+      column.type instanceof DataTypes.BIGINT ||
       column.type instanceof DataTypes.DECIMAL) {
       return 'Number';
     } else if (column.type instanceof DataTypes.JSONB ||
@@ -103,9 +104,18 @@ module.exports = function (model, opts) {
 
   return P.all([columns, associations])
     .then(function () {
+      var isCompositePrimary = false;
+      var idField = _.keys(model.primaryKeys)[0];
+
+      if (_.keys(model.primaryKeys).length > 1) {
+        isCompositePrimary = true;
+        idField = 'forestCompositePrimary';
+      }
+
       return {
         name: model.name,
-        idField: _.keys(model.primaryKeys)[0],
+        idField: idField,
+        isCompositePrimary: isCompositePrimary,
         fields: fields
       };
     });
