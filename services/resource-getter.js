@@ -32,7 +32,7 @@ function ResourceGetter(model, params) {
         });
       } else { return; }
     } else {
-      where.id = params.recordId;
+      where[schema.idField] = params.recordId;
     }
 
     return model
