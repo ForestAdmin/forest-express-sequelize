@@ -27,7 +27,7 @@ function ResourceGetter(model, params) {
 
     var KeysManager = new CompositeKeysManager(model, schema, params);
     if (schema.isCompositePrimary) {
-      where = KeysManager.splitCompositePrimary(params.recordId);
+      where = KeysManager.getRecordConditions(params.recordId);
     } else {
       where[schema.idField] = params.recordId;
     }

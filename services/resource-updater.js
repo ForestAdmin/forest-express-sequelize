@@ -10,7 +10,7 @@ function ResourceUpdater(model, params, record) {
     var KeysManager = new CompositeKeysManager(model, schema, record);
     var where = {};
     if (schema.isCompositePrimary) {
-      where = KeysManager.splitCompositePrimary(params.recordId);
+      where = KeysManager.getRecordConditions(params.recordId);
     } else {
       where[schema.idField] = params.recordId;
     }

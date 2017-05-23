@@ -4,28 +4,29 @@ var _ = require('lodash');
 function CompositeKeysManager(model, schema, record) {
   var GLUE = '-';
 
-  this.splitCompositePrimary = function (recordId) {
-    recordId = recordId.split(GLUE);
+  this.getRecordConditions = function (recordId) {
     var where = {};
-    if (recordId.length === _.keys(model.primaryKeys).length) {
-      _.keys(model.primaryKeys).forEach(function (key, index) {
-        where[key] = recordId[index];
+    var primaryKeyValues = recordId.split(GLUE);
+
+    if (primaryKeyValues.length === _.keys(model.primaryKeys).length) {
+      _.keys(model.primaryKeys).forEach(function (primaryKey, index) {
+        where[primaryKey] = primaryKeyValues[index];
       });
     }
     return where;
   };
 
   this.createCompositePrimary = function () {
-    var forestCompositePrimary = '';
+    var compositePrimary = '';
+
     _.keys(model.primaryKeys).forEach(function (primaryKey, index) {
       if (index === 0) {
-        forestCompositePrimary = record[primaryKey];
+        compositePrimary = record[primaryKey];
       } else {
-        forestCompositePrimary = forestCompositePrimary +
-          GLUE + record[primaryKey];
+        compositePrimary = compositePrimary + GLUE + record[primaryKey];
       }
     });
-    return forestCompositePrimary;
+    return compositePrimary;
   };
 }
 
