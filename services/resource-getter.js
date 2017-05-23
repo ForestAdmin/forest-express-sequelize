@@ -24,12 +24,12 @@ function ResourceGetter(model, params) {
 
   this.perform = function () {
     var where = {};
+
+    var KeysManager = new CompositeKeysManager(model, schema, params);
     if (schema.isCompositePrimary && params.recordId) {
-      var recordId = params.recordId.split('-');
-      if (recordId.length === _.keys(model.primaryKeys).length) {
-        _.keys(model.primaryKeys).forEach(function (key, index) {
-          where[key] = recordId[index];
-        });
+      var PrimaryCompositeKeys = params.recordId.split('-');
+      if (PrimaryCompositeKeys.length === _.keys(model.primaryKeys).length) {
+        where = KeysManager.getCondition(PrimaryCompositeKeys, null);
       }
     } else {
       where[schema.idField] = params.recordId;
@@ -42,10 +42,10 @@ function ResourceGetter(model, params) {
           throw createError(404, 'The ' + model.name + ' #' + params.recordId +
             ' does not exist.');
         }
-
         // NOTICE: Do not use "toJSON" method to prevent issues on models that
         //         override this method.
         record = record.get({ plain: true });
+        KeysManager = new CompositeKeysManager(model, schema, record);
 
         // Ensure the Serializer set the relationship links on has many
         // relationships by setting them to an empty array.
@@ -57,7 +57,7 @@ function ResourceGetter(model, params) {
 
         if (schema.isCompositePrimary) {
           record.forestCompositePrimary =
-            new CompositeKeysManager(model, schema, record).get();
+            KeysManager.createCompositePrimary();
         }
 
         return record;

@@ -312,7 +312,8 @@ function ResourcesGetter(model, opts, params) {
         if (schema.isCompositePrimary) {
           records.forEach(function (record) {
             record.forestCompositePrimary =
-              new CompositeKeysManager(model, schema, record).get();
+              new CompositeKeysManager(model, schema, record)
+                .createCompositePrimary();
           });
         }
         return [count, records];

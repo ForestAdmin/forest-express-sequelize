@@ -44,7 +44,8 @@ function ResourceCreator(model, params) {
       .then(function (record) {
         if (schema.isCompositePrimary) {
           record.forestCompositePrimary =
-            new CompositeKeysManager(model, schema, record).get();
+            new CompositeKeysManager(model, schema, record)
+              .createCompositePrimary();
         }
         return new ResourceGetter(model, {
           recordId: record[schema.idField]
