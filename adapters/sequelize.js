@@ -23,6 +23,7 @@ module.exports = function (model, opts) {
     } else if (column.type instanceof DataTypes.INTEGER ||
       column.type instanceof DataTypes.FLOAT ||
       column.type instanceof DataTypes['DOUBLE PRECISION'] ||
+      column.type instanceof DataTypes.BIGINT ||
       column.type instanceof DataTypes.DECIMAL) {
       return 'Number';
     } else if (column.type instanceof DataTypes.JSONB ||
