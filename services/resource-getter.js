@@ -30,7 +30,7 @@ function ResourceGetter(model, params) {
         _.keys(model.primaryKeys).forEach(function (key, index) {
           where[key] = recordId[index];
         });
-      } else { return; }
+      }
     } else {
       where[schema.idField] = params.recordId;
     }
