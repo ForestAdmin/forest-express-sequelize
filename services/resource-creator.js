@@ -3,7 +3,7 @@ var _ = require('lodash');
 var P = require('bluebird');
 var Interface = require('forest-express');
 var ResourceGetter = require('./resource-getter');
-var PrimaryCompositeKeys = require('./primary-composite-key');
+var CompositeKeysManager = require('./composite-keys-manager');
 
 function ResourceCreator(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -44,7 +44,7 @@ function ResourceCreator(model, params) {
       .then(function (record) {
         if (schema.isCompositePrimary) {
           record.forestCompositePrimary =
-            new PrimaryCompositeKeys(model, schema, record).get();
+            new CompositeKeysManager(model, schema, record).get();
         }
         return new ResourceGetter(model, {
           recordId: record[schema.idField]

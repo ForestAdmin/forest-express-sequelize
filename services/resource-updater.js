@@ -2,7 +2,7 @@
 var Interface = require('forest-express');
 var _ = require('lodash');
 var ResourceGetter = require('./resource-getter');
-var PrimaryCompositeKeys = require('./primary-composite-key');
+var CompositeKeysManager = require('./composite-keys-manager');
 
 function ResourceUpdater(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -23,7 +23,7 @@ function ResourceUpdater(model, params) {
       .then(function () {
         if (schema.isCompositePrimary) {
           params.forestCompositePrimary =
-            new PrimaryCompositeKeys(model, schema, params).get();
+            new CompositeKeysManager(model, schema, params).get();
         }
         return new ResourceGetter(model, {
           recordId: params[schema.idField]

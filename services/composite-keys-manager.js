@@ -1,7 +1,7 @@
 'use strict';
 var _ = require('lodash');
 
-function PrimaryCompositeKeys(model, schema, record) {
+function CompositeKeysManager(model, schema, record) {
   var GLUE = '-';
 
   this.get = function () {
@@ -18,4 +18,4 @@ function PrimaryCompositeKeys(model, schema, record) {
   };
 }
 
-module.exports = PrimaryCompositeKeys;
+module.exports = CompositeKeysManager;

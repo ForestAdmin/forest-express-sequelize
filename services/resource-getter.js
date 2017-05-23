@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var createError = require('http-errors');
 var Interface = require('forest-express');
-var PrimaryCompositeKeys = require('./primary-composite-key');
+var CompositeKeysManager = require('./composite-keys-manager');
 
 function ResourceGetter(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -57,7 +57,7 @@ function ResourceGetter(model, params) {
 
         if (schema.isCompositePrimary) {
           record.forestCompositePrimary =
-            new PrimaryCompositeKeys(model, schema, record).get();
+            new CompositeKeysManager(model, schema, record).get();
         }
 
         return record;
