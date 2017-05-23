@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- BIGINT - BIGINT are supported in creation, edition & read.
+- Types Support - Support BIGINT field type.
 
 ### Fixed
 - HasMany ListViews - Fix the display of hasMany records for a model having a primaryKey that is not an "id" column and that has the related column hidden in the hasMany list view.
