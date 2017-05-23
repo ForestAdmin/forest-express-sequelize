@@ -4,13 +4,14 @@ var _ = require('lodash');
 function CompositeKeysManager(model, schema, record) {
   var GLUE = '-';
 
-  this.getCondition = function (PrimaryCompositeKeys, params) {
+  this.splitCompositePrimary = function (recordId) {
+    recordId = recordId.split(GLUE);
     var where = {};
-
-    _.keys(model.primaryKeys).forEach(function (primaryKey, index) {
-      where[primaryKey] =
-        (params ? params[primaryKey] : PrimaryCompositeKeys[index]);
-    });
+    if (recordId.length === _.keys(model.primaryKeys).length) {
+      _.keys(model.primaryKeys).forEach(function (key, index) {
+        where[key] = recordId[index];
+      });
+    }
     return where;
   };
 

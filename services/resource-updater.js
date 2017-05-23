@@ -9,9 +9,8 @@ function ResourceUpdater(model, params) {
   this.perform = function () {
     var KeysManager = new CompositeKeysManager(model, schema, params);
     var where = {};
-
     if (schema.isCompositePrimary) {
-      where = KeysManager.getCondition(null, params);
+      where = KeysManager.splitCompositePrimary(params.forestCompositePrimary);
     } else {
       where[schema.idField] = params[schema.idField];
     }

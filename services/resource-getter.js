@@ -26,11 +26,8 @@ function ResourceGetter(model, params) {
     var where = {};
 
     var KeysManager = new CompositeKeysManager(model, schema, params);
-    if (schema.isCompositePrimary && params.recordId) {
-      var PrimaryCompositeKeys = params.recordId.split('-');
-      if (PrimaryCompositeKeys.length === _.keys(model.primaryKeys).length) {
-        where = KeysManager.getCondition(PrimaryCompositeKeys, null);
-      }
+    if (schema.isCompositePrimary) {
+      where = KeysManager.splitCompositePrimary(params.recordId);
     } else {
       where[schema.idField] = params.recordId;
     }
@@ -42,6 +39,7 @@ function ResourceGetter(model, params) {
           throw createError(404, 'The ' + model.name + ' #' + params.recordId +
             ' does not exist.');
         }
+
         // NOTICE: Do not use "toJSON" method to prevent issues on models that
         //         override this method.
         record = record.get({ plain: true });
