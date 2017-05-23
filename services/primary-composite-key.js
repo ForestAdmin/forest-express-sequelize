@@ -2,15 +2,16 @@
 var _ = require('lodash');
 
 function PrimaryCompositeKeys(model, schema, record) {
-  var glue = '-';
+  var GLUE = '-';
 
   this.get = function () {
     var forestCompositePrimary = '';
-    _.keys(model.primaryKeys).forEach(function (key, index) {
+    _.keys(model.primaryKeys).forEach(function (primaryKey, index) {
       if (index === 0) {
-        forestCompositePrimary = record[key];
+        forestCompositePrimary = record[primaryKey];
       } else {
-        forestCompositePrimary = forestCompositePrimary + glue + record[key];
+        forestCompositePrimary = forestCompositePrimary +
+          GLUE + record[primaryKey];
       }
     });
     return forestCompositePrimary;
