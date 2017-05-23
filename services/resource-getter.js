@@ -25,9 +25,9 @@ function ResourceGetter(model, params) {
   this.perform = function () {
     var where = {};
 
-    var KeysManager = new CompositeKeysManager(model, schema, params);
     if (schema.isCompositePrimary) {
-      where = KeysManager.getRecordConditions(params.recordId);
+      where = new CompositeKeysManager(model, schema, params)
+        .getRecordConditions(params.recordId);
     } else {
       where[schema.idField] = params.recordId;
     }
@@ -43,7 +43,6 @@ function ResourceGetter(model, params) {
         // NOTICE: Do not use "toJSON" method to prevent issues on models that
         //         override this method.
         record = record.get({ plain: true });
-        KeysManager = new CompositeKeysManager(model, schema, record);
 
         // Ensure the Serializer set the relationship links on has many
         // relationships by setting them to an empty array.
@@ -54,8 +53,8 @@ function ResourceGetter(model, params) {
         });
 
         if (schema.isCompositePrimary) {
-          record.forestCompositePrimary =
-            KeysManager.createCompositePrimary();
+          record.forestCompositePrimary = new CompositeKeysManager(model,
+            schema, record).createCompositePrimary();
         }
 
         return record;

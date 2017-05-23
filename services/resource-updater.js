@@ -7,10 +7,11 @@ function ResourceUpdater(model, params, record) {
   var schema = Interface.Schemas.schemas[model.name];
 
   this.perform = function () {
-    var KeysManager = new CompositeKeysManager(model, schema, record);
     var where = {};
+    var compositeKeysManager = new CompositeKeysManager(model, schema, record);
+
     if (schema.isCompositePrimary) {
-      where = KeysManager.getRecordConditions(params.recordId);
+      where = compositeKeysManager.getRecordConditions(params.recordId);
     } else {
       where[schema.idField] = params.recordId;
     }
@@ -19,8 +20,10 @@ function ResourceUpdater(model, params, record) {
       .update(record, { where: where, individualHooks: true })
       .then(function () {
         if (schema.isCompositePrimary) {
-          record.forestCompositePrimary = KeysManager.createCompositePrimary();
+          record.forestCompositePrimary =
+            compositeKeysManager.createCompositePrimary();
         }
+
         return new ResourceGetter(model, {
           recordId: params.recordId
         }).perform();
