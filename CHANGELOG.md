@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.1.3 - 2017-05-24
 ### Added
 - Composite Keys - Support composite primary keys.
 - Types Support - Support BIGINT field type.
