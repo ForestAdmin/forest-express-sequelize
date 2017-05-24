@@ -1,8 +1,12 @@
 'use strict';
 var _ = require('lodash');
 var createError = require('http-errors');
+var Interface = require('forest-express');
+var CompositeKeysManager = require('./composite-keys-manager');
 
 function ResourceGetter(model, params) {
+  var schema = Interface.Schemas.schemas[model.name];
+
   function getIncludes() {
     var includes = [];
 
@@ -19,10 +23,17 @@ function ResourceGetter(model, params) {
   }
 
   this.perform = function () {
+    var where = {};
+
+    if (schema.isCompositePrimary) {
+      where = new CompositeKeysManager(model, schema, params)
+        .getRecordConditions(params.recordId);
+    } else {
+      where[schema.idField] = params.recordId;
+    }
+
     return model
-      .findById(params.recordId, {
-        include: getIncludes()
-      })
+      .find({ where: where, include: getIncludes() })
       .then(function (record) {
         if (!record) {
           throw createError(404, 'The ' + model.name + ' #' + params.recordId +
@@ -40,6 +51,11 @@ function ResourceGetter(model, params) {
             record[association.associationAccessor] = [];
           }
         });
+
+        if (schema.isCompositePrimary) {
+          record.forestCompositePrimary = new CompositeKeysManager(model,
+            schema, record).createCompositePrimary();
+        }
 
         return record;
       });
