@@ -26,7 +26,7 @@ function OperatorValueParser() {
       }
     }
 
-    if (value[0] === '!') {
+    if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
       return { $ne: valueBoolean || value };
     } else if (value[0] === '>') {
@@ -38,6 +38,10 @@ function OperatorValueParser() {
     } else if (value[0] === '*' && value[value.length - 1] === '*') {
       value = value.substring(1, value.length - 1);
       return { $like: '%' + value + '%' };
+    } else if (value[0] === '!' && value[1] === '*' &&
+      value[value.length - 1] === '*') {
+      value = value.substring(2, value.length - 1);
+      return { $notLike: '%' + value + '%' };
     } else if (value[0] === '*') {
       value = value.substring(1);
       return { $like: '%' + value };
