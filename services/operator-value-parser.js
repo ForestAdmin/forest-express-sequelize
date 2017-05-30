@@ -41,7 +41,10 @@ function OperatorValueParser() {
     } else if (value[0] === '!' && value[1] === '*' &&
       value[value.length - 1] === '*') {
       value = value.substring(2, value.length - 1);
-      return { $notLike: '%' + value + '%' };
+      return { $or: {
+          $notLike: '%' + value + '%',
+          $eq: null }
+      };
     } else if (value[0] === '*') {
       value = value.substring(1);
       return { $like: '%' + value };
