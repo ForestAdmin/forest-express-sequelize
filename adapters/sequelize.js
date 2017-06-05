@@ -105,7 +105,8 @@ module.exports = function (model, opts) {
   return P.all([columns, associations])
     .then(function () {
       var isCompositePrimary = false;
-      var idField = _.keys(model.primaryKeys)[0];
+      var primaryKeys = _.keys(model.primaryKeys);
+      var idField = primaryKeys[0];
 
       if (_.keys(model.primaryKeys).length > 1) {
         isCompositePrimary = true;
@@ -115,6 +116,7 @@ module.exports = function (model, opts) {
       return {
         name: model.name,
         idField: idField,
+        primaryKeys: primaryKeys,
         isCompositePrimary: isCompositePrimary,
         fields: fields
       };
