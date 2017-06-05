@@ -17,7 +17,8 @@ function LineStatGetter(model, params, opts) {
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
     //         cannot be '*'.
-    var fieldName = params['aggregate_field'] || schema.primaryKeys[0];
+    var fieldName = params['aggregate_field'] || schema.primaryKeys[0] ||
+      schema.fields[0].field;
     return schema.name + '.' + fieldName;
   }
 
