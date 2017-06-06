@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Records Serialization - Fix the object types case (kebab case) to prevent potential JSON api adapter errors on client side.
+- Charts - Fix a regression on Count Charts for MySQL apps since liana version 1.1.3.
 
 ## RELEASE 1.1.5 - 2017-06-01
 ### Fixed
