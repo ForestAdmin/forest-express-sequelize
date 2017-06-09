@@ -261,7 +261,7 @@ function ResourcesGetter(model, opts, params) {
             field.search(findAllOpts, params.search);
           } catch (error) {
             Interface.logger.error('Cannot search properly on Smart Field ' +
-              field.field + ':\n' + error);
+              field.field, error);
           }
         }
       });

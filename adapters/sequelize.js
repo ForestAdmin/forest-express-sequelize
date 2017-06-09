@@ -86,7 +86,7 @@ module.exports = function (model, opts) {
         fields.push(schema);
       } catch (error) {
         Interface.logger.error('Cannot fetch properly column ' + column.field +
-          ' of model ' + model.name + ':\n' + error);
+          ' of model ' + model.name, error);
       }
     });
 
@@ -97,8 +97,7 @@ module.exports = function (model, opts) {
         fields.push(schema);
       } catch (error) {
         Interface.logger.error('Cannot fetch properly association ' +
-          association.associationAccessor + ' of model ' + model.name + ':\n' +
-          error);
+          association.associationAccessor + ' of model ' + model.name, error);
       }
     });
 
