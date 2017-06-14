@@ -80,7 +80,7 @@ function PieStatGetter(model, params, opts) {
     } else {
       groupByField = params['group_by_field'].replace(':', '.');
     }
-    return [opts.sequelize.col(groupByField), 'key'];
+    return [opts.sequelize.col(groupByField), 'piestatkey_'];
   }
 
   function formatResults (records) {
@@ -88,18 +88,18 @@ function PieStatGetter(model, params, opts) {
       var key;
 
       if (field.type === 'Date') {
-        key = moment(record.key).format('DD/MM/YYYY HH:mm:ss');
+        key = moment(record.piestatkey_).format('DD/MM/YYYY HH:mm:ss');
       } else if (field.type === 'Dateonly') {
         var offsetServer = moment().utcOffset() / 60;
-        var dateonly = moment.utc(record.key).add(offsetServer, 'h');
+        var dateonly = moment.utc(record.piestatkey_).add(offsetServer, 'h');
         key = dateonly.format('DD/MM/YYYY');
       } else {
-        key = String(record.key);
+        key = String(record.piestatkey_);
       }
 
       return {
         key: key,
-        value: record.value
+        value: record.piestatvalue_
       };
     });
   }
@@ -111,13 +111,13 @@ function PieStatGetter(model, params, opts) {
         [
           opts.sequelize.fn(getAggregate(),
           opts.sequelize.col(getAggregateField())),
-          'value'
+          'piestatvalue_'
         ]
       ],
       include: getIncludes(),
       where: getFilters(),
-      group: ['key'],
-      order: 'value DESC',
+      group: ['piestatkey_'],
+      order: 'piestatvalue_ DESC',
       raw: true
     })
     .then(formatResults)
