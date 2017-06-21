@@ -22,7 +22,6 @@ function PieStatGetter(model, params, opts) {
     field = _.findWhere(associationSchema.fields, { field: associationField });
   }
 
-
   function getGroupByField() {
     if (params['group_by_field'].indexOf(':') === -1) {
       return schema.name + '.' + params['group_by_field'];
