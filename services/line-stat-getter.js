@@ -3,16 +3,13 @@ var _ = require('lodash');
 var P = require('bluebird');
 var moment = require('moment');
 var OperatorValueParser = require('./operator-value-parser');
+var Database = require('../utils/database');
 var Interface = require('forest-express');
 
 // jshint sub: true
 function LineStatGetter(model, params, opts) {
   var schema = Interface.Schemas.schemas[model.name];
   var timeRange = params['time_range'].toLowerCase();
-
-  function isMysql() {
-    return (['mysql', 'mariadb'].indexOf(opts.sequelize.options.dialect) > -1);
-  }
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
@@ -28,7 +25,7 @@ function LineStatGetter(model, params, opts) {
   }
 
   function getGroupByDateInterval() {
-    if (isMysql()) {
+    if (Database.isMySQL(opts)) {
       var column = getGroupByDateField();
 
       switch (timeRange) {
