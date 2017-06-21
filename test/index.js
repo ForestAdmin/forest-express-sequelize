@@ -52,6 +52,7 @@ Interface.Schemas = {
 };
 
 var PieStatGetter = require('../services/pie-stat-getter');
+var LineStatGetter = require('../services/line-stat-getter');
 
 describe('Stats > Pie Stat Getter', function () {
   before(function (done) {
@@ -70,6 +71,27 @@ describe('Stats > Pie Stat Getter', function () {
           group_by_field: 'firstName',
           aggregate: 'Count',
           time_range: null,
+          filters: []
+        }, {
+          sequelize: sequelize
+        })
+        .perform()
+        .then(function (stat) {
+          expect(stat.value.length).equal(0);
+          done();
+        });
+    });
+  });
+
+  describe('A simple Line Chart on an empty users table', function () {
+    it('should repond with an empty value', function (done) {
+      return new LineStatGetter(models.user, {
+          type: 'Line',
+          collection: 'user',
+          timezone: '+02:00',
+          group_by_date_field: 'createdAt',
+          aggregate: 'Count',
+          time_range: 'Week',
           filters: []
         }, {
           sequelize: sequelize
