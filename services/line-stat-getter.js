@@ -28,6 +28,9 @@ function LineStatGetter(model, params, opts) {
 
   function getGroupByDateFieldMSSQLFormated(timeRange) {
     switch (timeRange) {
+      case 'day':
+        return opts.sequelize.fn('FORMAT', opts.sequelize.col(groupByDateField),
+          'yyyy-MM-dd 00:00:00.000');
       case 'month':
         return opts.sequelize.fn('FORMAT', opts.sequelize.col(groupByDateField),
           'yyyy-MM-01 00:00:00.000');
@@ -72,6 +75,8 @@ function LineStatGetter(model, params, opts) {
       }
     } else if (Database.isMSSQL(opts)) {
       switch (timeRange) {
+        case 'day':
+          return [getGroupByDateFieldMSSQLFormated(timeRange), 'date'];
         case 'month':
           return [getGroupByDateFieldMSSQLFormated(timeRange), 'date'];
         case 'year':
