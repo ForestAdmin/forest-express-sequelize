@@ -1,0 +1,9 @@
+postgres :
+  image : postgres:9.4.5
+  container_name : forest_express_sequelize_postgres
+  ports :
+    - "5436:5432"
+  environment:
+    - POSTGRES_DB=forest-express-sequelize-test
+    - POSTGRES_USER=forest
+    - POSTGRES_PASSWORD=secret

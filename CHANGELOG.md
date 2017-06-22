@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Pie Charts - Support MSSQL dialect for "Manual" Pie charts.
 
 ## RELEASE 1.1.7 - 2017-06-13
 ### Changed

@@ -4,6 +4,7 @@ var _ = require('lodash');
 var P = require('bluebird');
 var moment = require('moment');
 var OperatorValueParser = require('./operator-value-parser');
+var Database = require('../utils/database');
 var Interface = require('forest-express');
 
 function PieStatGetter(model, params, opts) {
@@ -20,6 +21,16 @@ function PieStatGetter(model, params, opts) {
     associationSchema = Interface.Schemas.schemas[associationCollection];
     field = _.findWhere(associationSchema.fields, { field: associationField });
   }
+
+  function getGroupByField() {
+    if (params['group_by_field'].indexOf(':') === -1) {
+      return schema.name + '.' + params['group_by_field'];
+    } else {
+      return params['group_by_field'].replace(':', '.');
+    }
+  }
+
+  var groupByField = getGroupByField();
 
   function getAggregate() {
     return params.aggregate.toLowerCase();
@@ -73,14 +84,7 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    var groupByField;
-
-    if (params['group_by_field'].indexOf(':') === -1) {
-      groupByField = schema.name + '.' + params['group_by_field'];
-    } else {
-      groupByField = params['group_by_field'].replace(':', '.');
-    }
-    return [opts.sequelize.col(groupByField), 'key'];
+    return Database.isMSSQL(opts) ? [opts.sequelize.col(groupByField)] : ['key'];
   }
 
   function formatResults (records) {
@@ -107,7 +111,10 @@ function PieStatGetter(model, params, opts) {
   this.perform = function () {
     return model.unscoped().findAll({
       attributes: [
-        getGroupBy(),
+        [
+          opts.sequelize.col(groupByField),
+          'key'
+        ],
         [
           opts.sequelize.fn(getAggregate(),
           opts.sequelize.col(getAggregateField())),
@@ -116,7 +123,7 @@ function PieStatGetter(model, params, opts) {
       ],
       include: getIncludes(),
       where: getFilters(),
-      group: ['key'],
+      group: getGroupBy(),
       order: 'value DESC',
       raw: true
     })
