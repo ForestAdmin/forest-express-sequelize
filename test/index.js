@@ -83,7 +83,28 @@ describe('Stats > Pie Stat Getter', function () {
     });
   });
 
-  describe('A simple Line Chart on an empty users table', function () {
+  describe('A simple Line Chart per day on an empty users table', function () {
+    it('should repond with an empty value', function (done) {
+      return new LineStatGetter(models.user, {
+          type: 'Line',
+          collection: 'user',
+          timezone: '+02:00',
+          group_by_date_field: 'createdAt',
+          aggregate: 'Count',
+          time_range: 'Day',
+          filters: []
+        }, {
+          sequelize: sequelize
+        })
+        .perform()
+        .then(function (stat) {
+          expect(stat.value.length).equal(0);
+          done();
+        });
+    });
+  });
+
+  describe('A simple Line Chart per week on an empty users table', function () {
     it('should repond with an empty value', function (done) {
       return new LineStatGetter(models.user, {
           type: 'Line',
@@ -92,6 +113,48 @@ describe('Stats > Pie Stat Getter', function () {
           group_by_date_field: 'createdAt',
           aggregate: 'Count',
           time_range: 'Week',
+          filters: []
+        }, {
+          sequelize: sequelize
+        })
+        .perform()
+        .then(function (stat) {
+          expect(stat.value.length).equal(0);
+          done();
+        });
+    });
+  });
+
+  describe('A simple Line Chart per month on an empty users table', function () {
+    it('should repond with an empty value', function (done) {
+      return new LineStatGetter(models.user, {
+          type: 'Line',
+          collection: 'user',
+          timezone: '+02:00',
+          group_by_date_field: 'createdAt',
+          aggregate: 'Count',
+          time_range: 'Month',
+          filters: []
+        }, {
+          sequelize: sequelize
+        })
+        .perform()
+        .then(function (stat) {
+          expect(stat.value.length).equal(0);
+          done();
+        });
+    });
+  });
+
+  describe('A simple Line Chart per year on an empty users table', function () {
+    it('should repond with an empty value', function (done) {
+      return new LineStatGetter(models.user, {
+          type: 'Line',
+          collection: 'user',
+          timezone: '+02:00',
+          group_by_date_field: 'createdAt',
+          aggregate: 'Count',
+          time_range: 'Year',
           filters: []
         }, {
           sequelize: sequelize
