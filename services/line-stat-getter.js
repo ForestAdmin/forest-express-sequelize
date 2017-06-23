@@ -24,41 +24,50 @@ function LineStatGetter(model, params, opts) {
     return schema.name + '.' + fieldName;
   }
 
+  var groupByDateField = getGroupByDateField();
+
+  function getGroupByDateFieldFormatedForMySQL(timeRange) {
+    switch (timeRange) {
+      case 'day':
+        return opts.sequelize.fn('DATE_FORMAT', opts.sequelize.col(groupByDateField),
+          '%Y-%m-%d 00:00:00');
+      case 'week':
+        var groupByDateFieldFormated = '`' + groupByDateField.replace('.', '`.`') + '`';
+        return opts.sequelize.literal('DATE_FORMAT(DATE_SUB(' + groupByDateFieldFormated +
+          ', INTERVAL ((7 + WEEKDAY(' + groupByDateFieldFormated + ')) % 7) DAY), ' +
+          '\'%Y-%m-%d 00:00:00\')');
+      case 'month':
+        return opts.sequelize.fn('DATE_FORMAT', opts.sequelize.col(groupByDateField),
+          '%Y-%m-01 00:00:00');
+      case 'year':
+        return opts.sequelize.fn('DATE_FORMAT', opts.sequelize.col(groupByDateField),
+          '%Y-01-01 00:00:00');
+    }
+  }
+
+  function getGroupByDateFieldFormatedForMSSQL(timeRange) {
+    switch (timeRange) {
+      case 'day':
+        return opts.sequelize.fn('FORMAT', opts.sequelize.col(groupByDateField),
+          'yyyy-MM-dd 00:00:00');
+      case 'week':
+        var groupByDateFieldFormated = '[' + groupByDateField.replace('.', '].[') + ']';
+        return opts.sequelize.literal('FORMAT(DATEADD(DAY, -DATEPART(dw,' +
+          groupByDateFieldFormated + '),' + groupByDateFieldFormated + '), \'yyyy-MM-dd 00:00:00\')');
+      case 'month':
+        return opts.sequelize.fn('FORMAT', opts.sequelize.col(groupByDateField),
+          'yyyy-MM-01 00:00:00');
+      case 'year':
+        return opts.sequelize.fn('FORMAT', opts.sequelize.col(groupByDateField),
+          'yyyy-01-01 00:00:00');
+    }
+  }
+
   function getGroupByDateInterval() {
     if (Database.isMySQL(opts)) {
-      var column = getGroupByDateField();
-
-      switch (timeRange) {
-        case 'day':
-          return [
-            opts.sequelize.fn('DATE_FORMAT',
-            opts.sequelize.col(column),
-            '%Y-%m-%d 00:00:00'),
-            'date'
-          ];
-        case 'week':
-          var columnFormated = '`' + column.replace('.', '`.`') + '`';
-          return [
-            opts.sequelize.literal('DATE_FORMAT(DATE_SUB(' + columnFormated +
-              ', INTERVAL ((7 + WEEKDAY(' + columnFormated + ')) % 7) DAY), ' +
-              '\'%Y-%m-%d 00:00:00\')'),
-            'date'
-          ];
-        case 'month':
-          return [
-            opts.sequelize.fn('DATE_FORMAT',
-            opts.sequelize.col(column),
-            '%Y-%m-01 00:00:00'),
-            'date'
-          ];
-        case 'year':
-          return [
-            opts.sequelize.fn('DATE_FORMAT',
-            opts.sequelize.col(column),
-            '%Y-01-01 00:00:00'),
-            'date'
-          ];
-      }
+      return [getGroupByDateFieldFormatedForMySQL(timeRange), 'date'];
+    } else if (Database.isMSSQL(opts)) {
+      return [getGroupByDateFieldFormatedForMSSQL(timeRange), 'date'];
     } else {
       var timezone = (-parseInt(params.timezone, 10)).toString();
       return [
@@ -153,13 +162,21 @@ function LineStatGetter(model, params, opts) {
     return includes;
   }
 
+  function getGroupBy() {
+    return Database.isMSSQL(opts) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : '1';
+  }
+
+  function getOrder() {
+    return Database.isMSSQL(opts) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : '1';
+  }
+
   this.perform = function () {
     return model.unscoped().findAll({
       attributes: [getGroupByDateInterval(), getAggregate()],
       include: getIncludes(),
       where: getFilters(),
-      group: '1',
-      order: '1',
+      group: getGroupBy(),
+      order: getOrder(),
       raw: true
     })
     .then(function (records) {

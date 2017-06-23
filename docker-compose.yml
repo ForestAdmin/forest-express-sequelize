@@ -7,3 +7,14 @@ postgres :
     - POSTGRES_DB=forest-express-sequelize-test
     - POSTGRES_USER=forest
     - POSTGRES_PASSWORD=secret
+
+mysql:
+  image: mysql:5.7
+  container_name: forest_express_sequelize_mysql
+  environment:
+    MYSQL_ROOT_PASSWORD: secret
+    MYSQL_DATABASE: forest-express-sequelize-test
+    MYSQL_USER: forest
+    MYSQL_PASSWORD: secret
+  ports:
+    - "127.0.0.1:8999:3306"
