@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Apimap - Send database type and orm version in apimap.
+
 ### Fixed
 - Pie Charts - Support MSSQL dialect for "Manual" Pie charts.
 
