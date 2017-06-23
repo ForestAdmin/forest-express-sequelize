@@ -20,6 +20,14 @@ exports.init = function(opts) {
     return require('./package.json').version;
   };
 
+  exports.getOrmVersion = function () {
+    return opts.sequelize.Sequelize.version;
+  };
+
+  exports.getDatabaseType = function () {
+    return opts.sequelize.options.dialect;
+  };
+
   exports.SchemaAdapter = require('./adapters/sequelize');
 
   exports.getModels = function () {
