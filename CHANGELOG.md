@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Ressources Getter - Set order to undefined if the query is empty.
 
 ## RELEASE 1.1.9 - 2017-06-28
 ### Fixed
