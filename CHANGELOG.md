@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Resources Getter - Set order to undefined if the query is empty.
+- Ressources Getter - Set order to null if empty prevent MSSQL to crash on a find query.
 
 ## RELEASE 1.1.8 - 2017-06-23
 ### Added
