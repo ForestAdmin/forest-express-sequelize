@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('lodash');
+var Database = require('../utils/database');
 
 function QueryBuilder(model, opts, params) {
 
@@ -84,6 +85,12 @@ function QueryBuilder(model, opts, params) {
 
   this.getOrder = function () {
     if (params.sort) {
+      var idField = _.keys(model.primaryKeys)[0];
+
+      if (Database.isMSSQL(opts) && params.sort.indexOf(idField) >= 0) {
+        return null;
+      }
+
       var order = 'ASC';
 
       if (params.sort[0] === '-') {
