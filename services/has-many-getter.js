@@ -85,10 +85,10 @@ function HasManyGetter(model, association, opts, params) {
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           scope: false,
-          offset: getSkip(),
-          limit: getLimit(),
           include: getIncludes(),
-          order: getOrder()
+          order: getOrder(),
+          offset: getSkip(),
+          limit: getLimit()
         });
       })
       .then(function (records) {

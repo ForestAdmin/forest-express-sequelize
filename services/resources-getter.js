@@ -246,11 +246,11 @@ function ResourcesGetter(model, opts, params) {
     };
 
     var findAllOpts = {
-      include: getIncludes(),
-      limit: getLimit(),
-      offset: getSkip(),
       where: getWhere(),
-      order: getOrder()
+      include: getIncludes(),
+      order: getOrder(),
+      offset: getSkip(),
+      limit: getLimit()
     };
 
     if (params.search) {
