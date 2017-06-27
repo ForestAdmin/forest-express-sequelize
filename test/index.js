@@ -20,6 +20,7 @@ var sequelizeMySQL = new Sequelize(
 
 var PieStatGetter = require('../services/pie-stat-getter');
 var LineStatGetter = require('../services/line-stat-getter');
+var ResourcesGetter = require('../services/resources-getter');
 
 [sequelizePostgres, sequelizeMySQL].forEach(function (sequelize) {
   var models = {};
@@ -169,6 +170,136 @@ var LineStatGetter = require('../services/line-stat-getter');
             .perform()
             .then(function (stat) {
               expect(stat.value.length).equal(0);
+              done();
+            });
+        });
+      });
+
+      describe('Request on the ressources getter', function () {
+        it('should repond with an empty value', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '1' },
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
+              done();
+            });
+        });
+      });
+
+      describe('Request on the ressources getter with a size parameter', function () {
+        it('should repond with an empty value', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '1', size: '30' },
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
+              done();
+            });
+        });
+      });
+
+      describe('Request on the ressources getter with a sort parameter', function () {
+        it('should repond with an empty value', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            sort: '-id',
+            page: { number: '1', size: '30' },
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
+              done();
+            });
+        });
+      });
+
+      describe('Request on the ressources getter with a search parameter', function () {
+        it('should repond with an empty value', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '1', size: '30' },
+            search: 'hello',
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
+              done();
+            });
+        });
+      });
+
+      describe('Request on the ressources getter with a filter parameter', function () {
+        it('should repond with an empty value', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '1', size: '30' },
+            filterType: 'and',
+            filter: { username: '!*hello*' },
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
+              done();
+            });
+        });
+      });
+
+      describe('Request on the ressources getter with a filter and search parameter', function () {
+        it('should repond with an empty value', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '2', size: '50' },
+            filterType: 'and',
+            filter: { username: '*hello*' },
+            search: 'world',
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
+              done();
+            });
+        });
+      });
+
+      describe('Request on the ressources getter with a filter and search parameter and sort', function () {
+        it('should repond with an empty value', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '2', size: '50' },
+            filterType: 'and',
+            filter: { username: '*hello*' },
+            sort: '-id',
+            search: 'world',
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
               done();
             });
         });
