@@ -3,37 +3,15 @@ var _ = require('lodash');
 var createError = require('http-errors');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
+var ResourceFinder = require('./resource-finder');
 
 function ResourceGetter(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
-
-  function getIncludes() {
-    var includes = [];
-
-    _.values(model.associations).forEach(function (association) {
-      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        includes.push({
-          model: association.target.unscoped(),
-          as: association.associationAccessor
-        });
-      }
-    });
-
-    return includes;
-  }
+  var compositeKeysManager = new CompositeKeysManager(model, schema, params);
 
   this.perform = function () {
-    var where = {};
-
-    if (schema.isCompositePrimary) {
-      where = new CompositeKeysManager(model, schema, params)
-        .getRecordConditions(params.recordId);
-    } else {
-      where[schema.idField] = params.recordId;
-    }
-
-    return model
-      .find({ where: where, include: getIncludes() })
+    return new ResourceFinder(model, params, { include: true })
+      .perform()
       .then(function (record) {
         if (!record) {
           throw createError(404, 'The ' + model.name + ' #' + params.recordId +
@@ -53,8 +31,8 @@ function ResourceGetter(model, params) {
         });
 
         if (schema.isCompositePrimary) {
-          record.forestCompositePrimary = new CompositeKeysManager(model,
-            schema, record).createCompositePrimary();
+          record.forestCompositePrimary =
+            compositeKeysManager.createCompositePrimary();
         }
 
         return record;
