@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Ressources Getter - Set order to null if empty prevent MSSQL to crash on a find query.
+- Resources Getter - Support MSSQL records list retrieval without order in the query.
 
 ## RELEASE 1.1.8 - 2017-06-23
 ### Added

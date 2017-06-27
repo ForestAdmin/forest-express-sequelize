@@ -71,7 +71,7 @@ var ResourcesGetter = require('../services/resources-getter');
       });
 
       describe('A simple Pie Chart on an empty users table', function () {
-        it('should repond with an empty value', function (done) {
+        it('should generate a valid SQL query', function (done) {
           return new PieStatGetter(models.user, {
               type: 'Pie',
               collection: 'user',
@@ -92,7 +92,7 @@ var ResourcesGetter = require('../services/resources-getter');
       });
 
       describe('A simple Line Chart per day on an empty users table', function () {
-        it('should repond with an empty value', function (done) {
+        it('should generate a valid SQL query', function (done) {
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -111,9 +111,11 @@ var ResourcesGetter = require('../services/resources-getter');
             });
         });
       });
+    });
 
+    describe('Stats > Line Stat Getter', function () {
       describe('A simple Line Chart per week on an empty users table', function () {
-        it('should repond with an empty value', function (done) {
+        it('should generate a valid SQL query', function (done) {
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -134,7 +136,7 @@ var ResourcesGetter = require('../services/resources-getter');
       });
 
       describe('A simple Line Chart per month on an empty users table', function () {
-        it('should repond with an empty value', function (done) {
+        it('should generate a valid SQL query', function (done) {
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -155,7 +157,7 @@ var ResourcesGetter = require('../services/resources-getter');
       });
 
       describe('A simple Line Chart per year on an empty users table', function () {
-        it('should repond with an empty value', function (done) {
+        it('should generate a valid SQL query', function (done) {
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -174,9 +176,11 @@ var ResourcesGetter = require('../services/resources-getter');
             });
         });
       });
+    });
 
-      describe('Request on the ressources getter', function () {
-        it('should repond with an empty value', function (done) {
+    describe('Resources > Resources Getter', function () {
+      describe('Request on the ressources getter without page size', function () {
+        it('should generate a valid SQL query', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -192,8 +196,8 @@ var ResourcesGetter = require('../services/resources-getter');
         });
       });
 
-      describe('Request on the ressources getter with a size parameter', function () {
-        it('should repond with an empty value', function (done) {
+      describe('Request on the ressources getter with a page size', function () {
+        it('should generate a valid SQL query', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -209,8 +213,8 @@ var ResourcesGetter = require('../services/resources-getter');
         });
       });
 
-      describe('Request on the ressources getter with a sort parameter', function () {
-        it('should repond with an empty value', function (done) {
+      describe('Request on the ressources getter with a sort on the primary key', function () {
+        it('should generate a valid SQL query', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -227,8 +231,8 @@ var ResourcesGetter = require('../services/resources-getter');
         });
       });
 
-      describe('Request on the ressources getter with a search parameter', function () {
-        it('should repond with an empty value', function (done) {
+      describe('Request on the ressources getter with a search', function () {
+        it('should generate a valid SQL query', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -245,8 +249,8 @@ var ResourcesGetter = require('../services/resources-getter');
         });
       });
 
-      describe('Request on the ressources getter with a filter parameter', function () {
-        it('should repond with an empty value', function (done) {
+      describe('Request on the ressources getter with a "not contains" filter condition', function () {
+        it('should generate a valid SQL query', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -264,8 +268,8 @@ var ResourcesGetter = require('../services/resources-getter');
         });
       });
 
-      describe('Request on the ressources getter with a filter and search parameter', function () {
-        it('should repond with an empty value', function (done) {
+      describe('Request on the ressources getter with a filter condition and search', function () {
+        it('should generate a valid SQL query', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -284,8 +288,8 @@ var ResourcesGetter = require('../services/resources-getter');
         });
       });
 
-      describe('Request on the ressources getter with a filter and search parameter and sort', function () {
-        it('should repond with an empty value', function (done) {
+      describe('Request on the ressources getter with a filter condition, search and sort combined', function () {
+        it('should generate a valid SQL query', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
