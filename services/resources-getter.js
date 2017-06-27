@@ -4,12 +4,14 @@ var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
+var QueryBuilderService = require('./query-builder');
 
 var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
   var DataTypes = opts.sequelize.Sequelize;
+  var QueryBuilder = new QueryBuilderService(model, opts, params);
   var segmentScope;
   var segmentWhere;
 
@@ -38,6 +40,7 @@ function ResourcesGetter(model, opts, params) {
   })();
 
   function handleSearchParam() {
+    if (!params.search) { return ; }
     var where = {};
     var or = [];
 
@@ -145,6 +148,7 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function handleFilterParams() {
+    if (!params.filter) { return ; }
     var where = {};
     var conditions = [];
 
@@ -164,93 +168,20 @@ function ResourcesGetter(model, opts, params) {
     return where;
   }
 
-  function getWhere() {
-    var where = { $and: [] };
-
-    if (params.search) {
-      where.$and.push(handleSearchParam());
-    }
-
-    if (params.filter) {
-      where.$and.push(handleFilterParams());
-    }
-
-    if (segmentWhere) {
-      where.$and.push(segmentWhere);
-    }
-
-    return where;
-  }
-
-  function hasPagination() {
-    return params.page && params.page.number;
-  }
-
-  function getLimit() {
-    if (hasPagination()) {
-      return parseInt(params.page.size) || 10;
-    } else {
-      return 10;
-    }
-  }
-
-  function getSkip() {
-    if (hasPagination()) {
-      return (parseInt(params.page.number) - 1) * getLimit();
-    } else {
-      return 0;
-    }
-  }
-
-  function getIncludes() {
-    var includes = [];
-    _.values(model.associations).forEach(function (association) {
-      if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.as) !== -1)) {
-        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-          includes.push({
-            model: association.target.unscoped(),
-            as: association.associationAccessor
-          });
-        }
-      }
-    });
-
-    return includes;
-  }
-
-  function getOrder() {
-    if (params.sort) {
-      var order = 'ASC';
-
-      if (params.sort[0] === '-') {
-        params.sort = params.sort.substring(1);
-        order = 'DESC';
-      }
-
-      if (params.sort.indexOf('.') !== -1) {
-        // NOTICE: Sort on the belongsTo displayed field
-        return [[opts.sequelize.col(params.sort), order]];
-      } else {
-        return [[params.sort, order]];
-      }
-    }
-
-    return null;
-  }
-
   function getAndCountRecords() {
     var countOpts = {
-      include: getIncludes(),
-      where: getWhere()
+      include: QueryBuilder.getIncludes(fieldNamesRequested),
+      where: QueryBuilder
+        .getWhere(segmentWhere, handleSearchParam(), handleFilterParams())
     };
 
     var findAllOpts = {
-      where: getWhere(),
-      include: getIncludes(),
-      order: getOrder(),
-      offset: getSkip(),
-      limit: getLimit()
+      where: QueryBuilder
+        .getWhere(segmentWhere, handleSearchParam(), handleFilterParams()),
+      include: QueryBuilder.getIncludes(fieldNamesRequested),
+      order: QueryBuilder.getOrder(),
+      offset: QueryBuilder.getSkip(),
+      limit: QueryBuilder.getLimit()
     };
 
     if (params.search) {
