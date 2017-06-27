@@ -236,7 +236,7 @@ function ResourcesGetter(model, opts, params) {
       }
     }
 
-    return undefined;
+    return null;
   }
 
   function getAndCountRecords() {
