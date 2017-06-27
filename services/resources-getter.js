@@ -40,7 +40,6 @@ function ResourcesGetter(model, opts, params) {
   })();
 
   function handleSearchParam() {
-    if (!params.search) { return ; }
     var where = {};
     var or = [];
 
@@ -148,7 +147,6 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function handleFilterParams() {
-    if (!params.filter) { return ; }
     var where = {};
     var conditions = [];
 
@@ -168,16 +166,32 @@ function ResourcesGetter(model, opts, params) {
     return where;
   }
 
+   function getWhere () {
+    var where = { $and: [] };
+
+    if (params.search) {
+      where.$and.push(handleSearchParam());
+    }
+
+    if (params.filter) {
+      where.$and.push(handleFilterParams());
+    }
+
+    if (segmentWhere) {
+      where.$and.push(segmentWhere);
+    }
+
+    return where;
+  }
+
   function getAndCountRecords() {
     var countOpts = {
       include: QueryBuilder.getIncludes(fieldNamesRequested),
-      where: QueryBuilder
-        .getWhere(segmentWhere, handleSearchParam(), handleFilterParams())
+      where: getWhere()
     };
 
     var findAllOpts = {
-      where: QueryBuilder
-        .getWhere(segmentWhere, handleSearchParam(), handleFilterParams()),
+      where: getWhere(),
       include: QueryBuilder.getIncludes(fieldNamesRequested),
       order: QueryBuilder.getOrder(),
       offset: QueryBuilder.getSkip(),

@@ -3,49 +3,6 @@ var _ = require('lodash');
 var Database = require('../utils/database');
 
 function QueryBuilder(model, opts, params) {
-
-  var fieldNamesRequested = (function() {
-    if (!params.fields || !params.fields[model.name]) { return null; }
-
-    // NOTICE: Populate the necessary associations for filters
-    var associationsForQuery = [];
-    _.each(params.filter, function (values, key) {
-      if (key.indexOf(':') !== -1) {
-        var association = key.split(':')[0];
-        associationsForQuery.push(association);
-      }
-    });
-
-    if (params.sort && params.sort.indexOf('.') !== -1) {
-      associationsForQuery.push(params.sort.split('.')[0]);
-    }
-
-    // NOTICE: Force the primaryKey retrieval to store the records properly in
-    //         the client.
-    var primaryKeyArray = [_.keys(model.primaryKeys)[0]];
-
-    return _.union(primaryKeyArray, params.fields[model.name].split(','),
-      associationsForQuery);
-  })();
-
-  this.getWhere = function (segmentWhere, searchParams, filterParams) {
-    var where = { $and: [] };
-
-    if (params.search) {
-      where.$and.push(searchParams);
-    }
-
-    if (params.filter) {
-      where.$and.push(filterParams);
-    }
-
-    if (segmentWhere) {
-      where.$and.push(segmentWhere);
-    }
-
-    return where;
-  };
-
   this.hasPagination = function () {
     return params.page && params.page.number;
   };
@@ -66,7 +23,7 @@ function QueryBuilder(model, opts, params) {
     }
   };
 
-  this.getIncludes = function () {
+  this.getIncludes = function (fieldNamesRequested) {
     var includes = [];
     _.values(model.associations).forEach(function (association) {
       if (!fieldNamesRequested ||

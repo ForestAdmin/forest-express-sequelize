@@ -3,8 +3,17 @@ var _ = require('lodash');
 var P = require('bluebird');
 var QueryBuilderService = require('./query-builder');
 
-function HasManyGetter(model, association, opts, params) {
-  var QueryBuilder = new QueryBuilderService(model, opts, params);
+  function HasManyGetter(model, association, opts, params) {
+    var QueryBuilder = new QueryBuilderService(model, opts, params);
+
+    function getFieldNamesRequested() {
+     if (!params.fields || !params.fields[association.name]) { return null; }
+     // NOTICE: Force the primaryKey retrieval to store the records properly in
+     //         the client.
+     var primaryKeyArray = [_.keys(association.primaryKeys)[0]];
+
+     return _.union(primaryKeyArray, params.fields[association.name].split(','));
+   }
 
   function count() {
     return model.findById(params.recordId)
@@ -22,7 +31,7 @@ function HasManyGetter(model, association, opts, params) {
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           scope: false,
-          include: QueryBuilder.getIncludes(),
+          include: QueryBuilder.getIncludes(getFieldNamesRequested()),
           order: QueryBuilder.getOrder(),
           offset: QueryBuilder.getSkip(),
           limit: QueryBuilder.getLimit()
