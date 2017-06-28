@@ -22,7 +22,7 @@ function ResourceFinder(model, params, include) {
   }
 
   this.perform = function () {
-    var find = {};
+    var find = { where: {} };
 
     if (include) { find.include = getIncludes(); }
     if (schema.isCompositePrimary) {

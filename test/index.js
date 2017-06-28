@@ -21,6 +21,8 @@ var sequelizeMySQL = new Sequelize(
 var PieStatGetter = require('../services/pie-stat-getter');
 var LineStatGetter = require('../services/line-stat-getter');
 var ResourcesGetter = require('../services/resources-getter');
+var ResourceCreator = require('../services/resource-creator');
+var ResourceRemover = require('../services/resource-remover');
 var HasManyGetter = require('../services/has-many-getter');
 
 [sequelizePostgres, sequelizeMySQL].forEach(function (sequelize) {
@@ -49,6 +51,15 @@ var HasManyGetter = require('../services/has-many-getter');
     userId: { type: Sequelize.INTEGER }
   });
 
+<<<<<<< HEAD
+=======
+  models.log = sequelize.define('log', {
+    code: { type: Sequelize.STRING, primaryKey: true },
+    trace: { type: Sequelize.STRING, primaryKey: true },
+    stack: { type: Sequelize.STRING }
+  });
+
+>>>>>>> [-] Tests primary composite keys
   models.address.belongsTo(models.user);
   models.user.hasMany(models.address);
 
@@ -85,6 +96,22 @@ var HasManyGetter = require('../services/has-many-getter');
           { field: 'user', type: 'Number', references: 'user.id' },
           { field: 'createdAt', type: 'Date' },
           { field: 'updatedAt', type: 'Date' }
+<<<<<<< HEAD
+=======
+        ]
+      },
+      log: {
+        name: 'log',
+        idField: 'forestCompositePrimary',
+        primaryKeys: ['code', 'trace'],
+        isCompositePrimary: true,
+        fields: [
+          { field: 'code', type: 'String' },
+          { field: 'trace', type: 'String' },
+          { field: 'stack', type: 'String' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' }
+>>>>>>> [-] Tests primary composite keys
         ]
       }
     }
@@ -100,7 +127,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('A simple Pie Chart on an empty users table', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           return new PieStatGetter(models.user, {
               type: 'Pie',
               collection: 'user',
@@ -121,7 +152,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('A simple Line Chart per day on an empty users table', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -144,7 +179,11 @@ var HasManyGetter = require('../services/has-many-getter');
 
     describe('Stats > Line Stat Getter', function () {
       describe('A simple Line Chart per week on an empty users table', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -165,7 +204,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('A simple Line Chart per month on an empty users table', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -186,7 +229,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('A simple Line Chart per year on an empty users table', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
@@ -209,7 +256,11 @@ var HasManyGetter = require('../services/has-many-getter');
 
     describe('Resources > Resources Getter', function () {
       describe('Request on the resources getter without page size', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -226,7 +277,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('Request on the resources getter with a page size', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -243,7 +298,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('Request on the resources getter with a sort on the primary key', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -261,7 +320,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('Request on the resources getter with a search', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -279,7 +342,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('Request on the resources getter with a "not contains" filter condition', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -298,7 +365,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('Request on the resources getter with a filter condition and search', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -318,7 +389,11 @@ var HasManyGetter = require('../services/has-many-getter');
       });
 
       describe('Request on the resources getter with a filter condition, search and sort combined', function () {
+<<<<<<< HEAD
         it('should generate a valid SQL query', function (done) {
+=======
+        it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -348,7 +423,11 @@ var HasManyGetter = require('../services/has-many-getter');
         });
 
         describe('Request on the hasMany getter without sort', function () {
+<<<<<<< HEAD
           it('should generate a valid SQL query', function (done) {
+=======
+          it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
             var params = {
               recordId: 1,
               associationName: 'addresses',
@@ -368,7 +447,11 @@ var HasManyGetter = require('../services/has-many-getter');
         });
 
         describe('Request on the hasMany getter with a sort on an attribute', function () {
+<<<<<<< HEAD
           it('should generate a valid SQL query', function (done) {
+=======
+          it('should generate a valid SQL query', function (done) {
+>>>>>>> [-] Tests primary composite keys
             var params = {
               recordId: 1,
               associationName: 'addresses',
@@ -388,6 +471,7 @@ var HasManyGetter = require('../services/has-many-getter');
           });
         });
 
+<<<<<<< HEAD
         describe('Request on the hasMany getter with a sort on a belongsTo', function () {
           it('should generate a valid SQL query', function (done) {
             var params = {
@@ -405,6 +489,95 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(0);
                 done();
+=======
+        // describe('Request on the hasMany getter with a sort on a belongsTo', function () {
+        //   it('should generate a valid SQL query', function (done) {
+        //     var params = {
+        //       recordId: 1,
+        //       associationName: 'addresses',
+        //       fields: {
+        //         address: 'line,zipCode,city,country,user'
+        //       },
+        //       page: { number: '1', size: '20' },
+        //       sort: '-user.id',
+        //       timezone: '+02:00'
+        //     };
+        //     return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+        //       .perform()
+        //       .then(function (result) {
+        //         expect(result[0]).equal(0);
+        //         done();
+        //       });
+        //   });
+        // });
+      });
+    });
+    describe('Resources > Resources Creator', function () {
+      describe('Request record creation on a collection', function () {
+        it('should create a record', function (done) {
+          return new ResourceCreator(models.user, {
+            email: 'jack@forestadmin.com',
+            firstName: 'Jack',
+            lastName: 'Lumberjack',
+            username: 'Jacouille',
+            password: 'bonpoissonnet'
+          })
+          .perform()
+          .then(function (result) {
+            expect(result.id).equal(2);
+            expect(result.firstName).equal('Jack');
+            expect(result.username).equal('Jacouille');
+            done();
+          });
+        });
+      });
+      describe('Request record creation on a collection with composite primary keys', function () {
+        it('should create a record', function (done) {
+          return new ResourceCreator(models.log, {
+            code: 'G@G#F@G@',
+            trace: 'Ggg23g242@'
+          })
+          .perform()
+          .then(function (result) {
+            expect(result.code).equal('G@G#F@G@');
+            expect(result.trace).equal('Ggg23g242@');
+            done();
+          });
+        });
+      });
+    });
+    describe('Resources > Resources Remover', function () {
+      describe('Remove a record in a collection', function () {
+        it('should create a record', function (done) {
+          var params = {
+            recordId: 2,
+            timezone: '+02:00'
+          };
+          return new ResourceRemover(models.user, params)
+          .perform()
+          .then(function () {
+            return models.user
+              .find({ where : { email: 'jack@forestadmin.com' } })
+              .then(function (user) {
+                if (!user) { return done(); }
+              });
+          });
+        });
+      });
+      describe('Remove a record in a collection with composite primary key', function () {
+        it('should create a record', function (done) {
+          var params = {
+            recordId: 'G@G#F@G@-Ggg23g242@',
+            timezone: '+02:00'
+          };
+          return new ResourceRemover(models.log, params)
+          .perform()
+          .then(function () {
+            return models.log
+              .find({ where : { code: 'G@G#F@G@' } })
+              .then(function (log) {
+                if (!log) { return done(); }
+>>>>>>> [-] Tests primary composite keys
               });
           });
         });
