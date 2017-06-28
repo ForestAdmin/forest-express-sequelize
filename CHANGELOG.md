@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.1.9 - 2017-06-28
 ### Fixed
 - Resources Getter - Support MSSQL records list retrieval without order in the query.
 
