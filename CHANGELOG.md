@@ -8,7 +8,7 @@
 ### Added
 - Apimap - Send database type and orm version in apimap.
 
-### Fixed
+### Fixed
 - Pie Charts - Support MSSQL dialect for "Manual" Pie charts.
 - Line Charts - Support MSSQL dialect for "Manual" Line charts.
 
@@ -136,7 +136,7 @@
 - Types Support - Support JSON field type (and behaves exactly like JSONB).
 
 ## RELEASE 0.5.4 - 2016-01-04
-### Fixed
+### Fixed
 - Smart segment - Smart segment are now correctly updated.
 
 ## RELEASE 0.5.3 - 2016-12-14
