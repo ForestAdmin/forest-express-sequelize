@@ -23,9 +23,9 @@ function QueryBuilder(model, opts, params) {
     }
   };
 
-  this.getIncludes = function (fieldNamesRequested) {
+  this.getIncludes = function (modelForIncludes, fieldNamesRequested) {
     var includes = [];
-    _.values(model.associations).forEach(function (association) {
+    _.values(modelForIncludes.associations).forEach(function (association) {
       if (!fieldNamesRequested ||
         (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {

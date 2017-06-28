@@ -186,13 +186,13 @@ function ResourcesGetter(model, opts, params) {
 
   function getAndCountRecords() {
     var countOpts = {
-      include: QueryBuilder.getIncludes(fieldNamesRequested),
+      include: QueryBuilder.getIncludes(model, fieldNamesRequested),
       where: getWhere()
     };
 
     var findAllOpts = {
       where: getWhere(),
-      include: QueryBuilder.getIncludes(fieldNamesRequested),
+      include: QueryBuilder.getIncludes(model, fieldNamesRequested),
       order: QueryBuilder.getOrder(),
       offset: QueryBuilder.getSkip(),
       limit: QueryBuilder.getLimit()

@@ -31,7 +31,8 @@ function HasManyGetter(model, association, opts, params) {
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           scope: false,
-          include: QueryBuilder.getIncludes(getFieldNamesRequested()),
+          include: QueryBuilder.getIncludes(association,
+            getFieldNamesRequested()),
           order: QueryBuilder.getOrder(),
           offset: QueryBuilder.getSkip(),
           limit: QueryBuilder.getLimit()
