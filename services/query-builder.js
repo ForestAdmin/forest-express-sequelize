@@ -3,23 +3,23 @@ var _ = require('lodash');
 var Database = require('../utils/database');
 
 function QueryBuilder(model, opts, params) {
-  this.hasPagination = function () {
+  function hasPagination() {
     return params.page && params.page.number;
-  };
-
-  this.getLimit = function () {
-    if (this.hasPagination()) {
-      return parseInt(params.page.size) || 10;
-    } else {
-      return 10;
-    }
-  };
+  }
 
   this.getSkip = function () {
-    if (this.hasPagination()) {
+    if (hasPagination()) {
       return (parseInt(params.page.number) - 1) * this.getLimit();
     } else {
       return 0;
+    }
+  };
+
+  this.getLimit = function () {
+    if (hasPagination()) {
+      return parseInt(params.page.size) || 10;
+    } else {
+      return 10;
     }
   };
 
@@ -44,7 +44,10 @@ function QueryBuilder(model, opts, params) {
     if (params.sort) {
       var idField = _.keys(model.primaryKeys)[0];
 
-      if (Database.isMSSQL(opts) && params.sort.indexOf(idField) >= 0) {
+      // WORKAROUND: Sequelize generate a bad MSSSQ query if users sort the
+      //             collection on the primary key, so we prevent that.
+      if (Database.isMSSQL(opts) && _.contains([idField, '-' + idField],
+        params.sort)) {
         return null;
       }
 
