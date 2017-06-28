@@ -4,12 +4,14 @@ var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
+var QueryBuilder = require('./query-builder');
 
 var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
   var DataTypes = opts.sequelize.Sequelize;
+  var queryBuilder = new QueryBuilder(model, opts, params);
   var segmentScope;
   var segmentWhere;
 
@@ -182,75 +184,18 @@ function ResourcesGetter(model, opts, params) {
     return where;
   }
 
-  function hasPagination() {
-    return params.page && params.page.number;
-  }
-
-  function getLimit() {
-    if (hasPagination()) {
-      return parseInt(params.page.size) || 10;
-    } else {
-      return 10;
-    }
-  }
-
-  function getSkip() {
-    if (hasPagination()) {
-      return (parseInt(params.page.number) - 1) * getLimit();
-    } else {
-      return 0;
-    }
-  }
-
-  function getIncludes() {
-    var includes = [];
-    _.values(model.associations).forEach(function (association) {
-      if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.as) !== -1)) {
-        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-          includes.push({
-            model: association.target.unscoped(),
-            as: association.associationAccessor
-          });
-        }
-      }
-    });
-
-    return includes;
-  }
-
-  function getOrder() {
-    if (params.sort) {
-      var order = 'ASC';
-
-      if (params.sort[0] === '-') {
-        params.sort = params.sort.substring(1);
-        order = 'DESC';
-      }
-
-      if (params.sort.indexOf('.') !== -1) {
-        // NOTICE: Sort on the belongsTo displayed field
-        return [[opts.sequelize.col(params.sort), order]];
-      } else {
-        return [[params.sort, order]];
-      }
-    }
-
-    return [];
-  }
-
   function getAndCountRecords() {
     var countOpts = {
-      include: getIncludes(),
+      include: queryBuilder.getIncludes(model, fieldNamesRequested),
       where: getWhere()
     };
 
     var findAllOpts = {
-      include: getIncludes(),
-      limit: getLimit(),
-      offset: getSkip(),
       where: getWhere(),
-      order: getOrder()
+      include: queryBuilder.getIncludes(model, fieldNamesRequested),
+      order: queryBuilder.getOrder(),
+      offset: queryBuilder.getSkip(),
+      limit: queryBuilder.getLimit()
     };
 
     if (params.search) {
