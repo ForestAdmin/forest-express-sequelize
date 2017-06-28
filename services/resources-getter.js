@@ -166,7 +166,7 @@ function ResourcesGetter(model, opts, params) {
     return where;
   }
 
-   function getWhere () {
+  function getWhere() {
     var where = { $and: [] };
 
     if (params.search) {
