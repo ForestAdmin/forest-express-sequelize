@@ -4,14 +4,14 @@ var P = require('bluebird');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
-var QueryBuilderService = require('./query-builder');
+var QueryBuilder = require('./query-builder');
 
 var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
   var DataTypes = opts.sequelize.Sequelize;
-  var QueryBuilder = new QueryBuilderService(model, opts, params);
+  var queryBuilder = new QueryBuilder(model, opts, params);
   var segmentScope;
   var segmentWhere;
 
@@ -186,16 +186,16 @@ function ResourcesGetter(model, opts, params) {
 
   function getAndCountRecords() {
     var countOpts = {
-      include: QueryBuilder.getIncludes(model, fieldNamesRequested),
+      include: queryBuilder.getIncludes(model, fieldNamesRequested),
       where: getWhere()
     };
 
     var findAllOpts = {
       where: getWhere(),
-      include: QueryBuilder.getIncludes(model, fieldNamesRequested),
-      order: QueryBuilder.getOrder(),
-      offset: QueryBuilder.getSkip(),
-      limit: QueryBuilder.getLimit()
+      include: queryBuilder.getIncludes(model, fieldNamesRequested),
+      order: queryBuilder.getOrder(),
+      offset: queryBuilder.getSkip(),
+      limit: queryBuilder.getLimit()
     };
 
     if (params.search) {

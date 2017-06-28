@@ -1,10 +1,10 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
-var QueryBuilderService = require('./query-builder');
+var QueryBuilder = require('./query-builder');
 
 function HasManyGetter(model, association, opts, params) {
-  var QueryBuilder = new QueryBuilderService(model, opts, params);
+  var queryBuilder = new QueryBuilder(model, opts, params);
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[association.name]) { return null; }
@@ -31,11 +31,11 @@ function HasManyGetter(model, association, opts, params) {
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           scope: false,
-          include: QueryBuilder.getIncludes(association,
+          include: queryBuilder.getIncludes(association,
             getFieldNamesRequested()),
-          order: QueryBuilder.getOrder(),
-          offset: QueryBuilder.getSkip(),
-          limit: QueryBuilder.getLimit()
+          order: queryBuilder.getOrder(),
+          offset: queryBuilder.getSkip(),
+          limit: queryBuilder.getLimit()
         });
       })
       .then(function (records) {
