@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Primary Composite Key - Ressource remover handle primary composite key. 
+- Record Deletions - Handle the record deletion on models having a composite primary key. 
 
 ## RELEASE 1.1.9 - 2017-06-28
 ### Fixed
