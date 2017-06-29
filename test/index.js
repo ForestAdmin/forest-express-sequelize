@@ -1,6 +1,7 @@
 'use strict';
 /* global describe, before, it */
 /* jshint camelcase: false */
+/* jshint expr: true */
 var expect = require('chai').expect;
 var Sequelize = require('sequelize');
 var Interface = require('forest-express');
@@ -358,81 +359,82 @@ var HasManyGetter = require('../services/has-many-getter');
             });
         });
       });
+    });
 
-      describe('HasMany > HasMany Getter', function () {
-        before(function (done) {
-          return models.user
-            .create({ email: 'louis@forestadmin.com' })
-            .then(function () {
-              return done();
+    describe('HasMany > HasMany Getter', function () {
+      before(function (done) {
+        return models.user
+          .create({ email: 'louis@forestadmin.com' })
+          .then(function () {
+            return done();
+          });
+      });
+
+      describe('Request on the hasMany getter without sort', function () {
+        it('should generate a valid SQL query', function (done) {
+          var params = {
+            recordId: 1,
+            associationName: 'addresses',
+            fields: {
+              address: 'line,zipCode,city,country,user'
+            },
+            page: { number: '1', size: '20' },
+            timezone: '+02:00'
+          };
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+            .perform()
+            .then(function (result) {
+              expect(result[0]).equal(0);
+              done();
             });
         });
+      });
 
-        describe('Request on the hasMany getter without sort', function () {
-          it('should generate a valid SQL query', function (done) {
-            var params = {
-              recordId: 1,
-              associationName: 'addresses',
-              fields: {
-                address: 'line,zipCode,city,country,user'
-              },
-              page: { number: '1', size: '20' },
-              timezone: '+02:00'
-            };
-            return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
-              .perform()
-              .then(function (result) {
-                expect(result[0]).equal(0);
-                done();
-              });
-          });
+      describe('Request on the hasMany getter with a sort on an attribute', function () {
+        it('should generate a valid SQL query', function (done) {
+          var params = {
+            recordId: 1,
+            associationName: 'addresses',
+            fields: {
+              address: 'line,zipCode,city,country,user'
+            },
+            page: { number: '1', size: '20' },
+            sort: 'city',
+            timezone: '+02:00'
+          };
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+            .perform()
+            .then(function (result) {
+              expect(result[0]).equal(0);
+              done();
+            });
         });
+      });
 
-        describe('Request on the hasMany getter with a sort on an attribute', function () {
-          it('should generate a valid SQL query', function (done) {
-            var params = {
-              recordId: 1,
-              associationName: 'addresses',
-              fields: {
-                address: 'line,zipCode,city,country,user'
-              },
-              page: { number: '1', size: '20' },
-              sort: 'city',
-              timezone: '+02:00'
-            };
-            return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
-              .perform()
-              .then(function (result) {
-                expect(result[0]).equal(0);
-                done();
-              });
-          });
-        });
-
-        describe('Request on the hasMany getter with a sort on a belongsTo', function () {
-          it('should generate a valid SQL query', function (done) {
-            var params = {
-              recordId: 1,
-              associationName: 'addresses',
-              fields: {
-                address: 'line,zipCode,city,country,user'
-              },
-              page: { number: '1', size: '20' },
-              sort: '-user.id',
-              timezone: '+02:00'
-            };
-            return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
-              .perform()
-              .then(function (result) {
-                expect(result[0]).equal(0);
-                done();
-              });
-          });
+      describe('Request on the hasMany getter with a sort on a belongsTo', function () {
+        it('should generate a valid SQL query', function (done) {
+          var params = {
+            recordId: 1,
+            associationName: 'addresses',
+            fields: {
+              address: 'line,zipCode,city,country,user'
+            },
+            page: { number: '1', size: '20' },
+            sort: '-user.id',
+            timezone: '+02:00'
+          };
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+            .perform()
+            .then(function (result) {
+              expect(result[0]).equal(0);
+              done();
+            });
         });
       });
     });
+
     describe('Resources > Resources Creator', function () {
-      describe('Request record creation on a collection', function () {
+      describe('Create a record on a simple collection', function () {
         it('should create a record', function (done) {
           return new ResourceCreator(models.user, {
             email: 'jack@forestadmin.com',
@@ -446,11 +448,18 @@ var HasManyGetter = require('../services/has-many-getter');
             expect(result.id).equal(2);
             expect(result.firstName).equal('Jack');
             expect(result.username).equal('Jacouille');
-            done();
+
+            return models.user
+              .find({ where : { email: 'jack@forestadmin.com' } })
+              .then(function (user) {
+                expect(user).not.to.be.null;
+                done();
+              });
           });
         });
       });
-      describe('Request record creation on a collection with composite primary keys', function () {
+
+      describe('Create a record on a collection with a composite primary key', function () {
         it('should create a record', function (done) {
           return new ResourceCreator(models.log, {
             code: 'G@G#F@G@',
@@ -460,13 +469,19 @@ var HasManyGetter = require('../services/has-many-getter');
           .then(function (result) {
             expect(result.code).equal('G@G#F@G@');
             expect(result.trace).equal('Ggg23g242@');
-            done();
+            return models.log
+              .find({ where : { code: 'G@G#F@G@' } })
+              .then(function (log) {
+                expect(log).not.to.be.null;
+                done();
+              });
           });
         });
       });
     });
+
     describe('Resources > Resources Remover', function () {
-      describe('Remove a record in a collection', function () {
+      describe('Remove a record in a simple collection', function () {
         it('should create a record', function (done) {
           var params = {
             recordId: 2,
@@ -478,13 +493,15 @@ var HasManyGetter = require('../services/has-many-getter');
             return models.user
               .find({ where : { email: 'jack@forestadmin.com' } })
               .then(function (user) {
-                if (!user) { return done(); }
+                expect(user).to.be.null;
+                done();
               });
           });
         });
       });
-      describe('Remove a record in a collection with composite primary key', function () {
-        it('should create a record', function (done) {
+
+      describe('Remove a record in a collection with a composite primary key', function () {
+        it('should destroy the record', function (done) {
           var params = {
             recordId: 'G@G#F@G@-Ggg23g242@',
             timezone: '+02:00'
@@ -495,7 +512,8 @@ var HasManyGetter = require('../services/has-many-getter');
             return models.log
               .find({ where : { code: 'G@G#F@G@' } })
               .then(function (log) {
-                if (!log) { return done(); }
+                expect(log).to.be.null;
+                done();
               });
           });
         });
