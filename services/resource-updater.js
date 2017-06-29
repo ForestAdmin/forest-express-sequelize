@@ -2,25 +2,24 @@
 var Interface = require('forest-express');
 var ResourceGetter = require('./resource-getter');
 var CompositeKeysManager = require('./composite-keys-manager');
+var ResourceFinder = require('./resource-finder');
 
-function ResourceUpdater(model, params, record) {
+function ResourceUpdater(model, params, newRecord) {
   var schema = Interface.Schemas.schemas[model.name];
 
   this.perform = function () {
-    var where = {};
-    var compositeKeysManager = new CompositeKeysManager(model, schema, record);
+    var compositeKeysManager = new CompositeKeysManager(model, schema, newRecord);
 
-    if (schema.isCompositePrimary) {
-      where = compositeKeysManager.getRecordConditions(params.recordId);
-    } else {
-      where[schema.idField] = params.recordId;
-    }
-
-    return model
-      .update(record, { where: where, individualHooks: true })
+    return new ResourceFinder(model, params)
+      .perform()
+      .then(function (record) {
+        if (record) {
+          return record.update(newRecord);
+        }
+      })
       .then(function () {
         if (schema.isCompositePrimary) {
-          record.forestCompositePrimary =
+          newRecord.forestCompositePrimary =
             compositeKeysManager.createCompositePrimary();
         }
 

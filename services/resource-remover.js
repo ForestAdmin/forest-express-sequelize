@@ -1,9 +1,10 @@
 'use strict';
+var ResourceFinder = require('./resource-finder');
 
 function ResourceRemover(model, params) {
   this.perform = function () {
-    return model
-      .findById(params.recordId)
+    return new ResourceFinder(model, params)
+      .perform()
       .then(function (record) {
         return record.destroy();
       });
