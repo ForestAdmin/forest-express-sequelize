@@ -22,6 +22,7 @@ var sequelizeMySQL = new Sequelize(
 var PieStatGetter = require('../services/pie-stat-getter');
 var LineStatGetter = require('../services/line-stat-getter');
 var ResourcesGetter = require('../services/resources-getter');
+var ResourceGetter = require('../services/resource-getter');
 var ResourceCreator = require('../services/resource-creator');
 var ResourceRemover = require('../services/resource-remover');
 var HasManyGetter = require('../services/has-many-getter');
@@ -480,12 +481,43 @@ var HasManyGetter = require('../services/has-many-getter');
       });
     });
 
+    describe('Resources > Resource Getter', function () {
+      describe('Get a record in a simple collection', function () {
+        it('should retrieve the record', function (done) {
+          var params = {
+            recordId: 2
+          };
+          return new ResourceGetter(models.user, params)
+          .perform()
+          .then(function (user) {
+            expect(user).not.to.be.null;
+            expect(user.id).equal(2);
+            done();
+          });
+        });
+      });
+
+      describe('Get a record in a collection with a composite primary key', function () {
+        it('should retrieve the record', function (done) {
+          var params = {
+            recordId: 'G@G#F@G@-Ggg23g242@'
+          };
+          return new ResourceGetter(models.log, params)
+          .perform()
+          .then(function (log) {
+            expect(log).not.to.be.null;
+            expect(log.forestCompositePrimary).equal('G@G#F@G@-Ggg23g242@');
+            done();
+          });
+        });
+      });
+    });
+
     describe('Resources > Resources Remover', function () {
       describe('Remove a record in a simple collection', function () {
         it('should create a record', function (done) {
           var params = {
-            recordId: 2,
-            timezone: '+02:00'
+            recordId: 2
           };
           return new ResourceRemover(models.user, params)
           .perform()
@@ -503,8 +535,7 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('Remove a record in a collection with a composite primary key', function () {
         it('should destroy the record', function (done) {
           var params = {
-            recordId: 'G@G#F@G@-Ggg23g242@',
-            timezone: '+02:00'
+            recordId: 'G@G#F@G@-Ggg23g242@'
           };
           return new ResourceRemover(models.log, params)
           .perform()

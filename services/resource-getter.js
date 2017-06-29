@@ -7,7 +7,6 @@ var ResourceFinder = require('./resource-finder');
 
 function ResourceGetter(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
-  var compositeKeysManager = new CompositeKeysManager(model, schema, params);
 
   this.perform = function () {
     return new ResourceFinder(model, params, { include: true })
@@ -31,6 +30,7 @@ function ResourceGetter(model, params) {
         });
 
         if (schema.isCompositePrimary) {
+          var compositeKeysManager = new CompositeKeysManager(model, schema, record);
           record.forestCompositePrimary =
             compositeKeysManager.createCompositePrimary();
         }
