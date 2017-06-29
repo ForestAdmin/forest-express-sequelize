@@ -13,7 +13,9 @@ function ResourceUpdater(model, params, newRecord) {
     return new ResourceFinder(model, params)
       .perform()
       .then(function (record) {
-         return record.update(newRecord);
+        if (record) {
+          return record.update(newRecord);
+        }
       })
       .then(function () {
         if (schema.isCompositePrimary) {

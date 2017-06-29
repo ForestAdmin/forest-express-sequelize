@@ -9,7 +9,7 @@ function ResourceGetter(model, params) {
   var schema = Interface.Schemas.schemas[model.name];
 
   this.perform = function () {
-    return new ResourceFinder(model, params, { include: true })
+    return new ResourceFinder(model, params, true)
       .perform()
       .then(function (record) {
         if (!record) {
@@ -30,9 +30,8 @@ function ResourceGetter(model, params) {
         });
 
         if (schema.isCompositePrimary) {
-          var compositeKeysManager = new CompositeKeysManager(model, schema, record);
-          record.forestCompositePrimary =
-            compositeKeysManager.createCompositePrimary();
+          record.forestCompositePrimary = new CompositeKeysManager(model,
+            schema, record).createCompositePrimary();
         }
 
         return record;

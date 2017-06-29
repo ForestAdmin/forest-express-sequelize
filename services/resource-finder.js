@@ -3,7 +3,7 @@ var _ = require('lodash');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
 
-function ResourceFinder(model, params, include) {
+function ResourceFinder(model, params, withIncludes) {
   var schema = Interface.Schemas.schemas[model.name];
   var compositeKeysManager = new CompositeKeysManager(model, schema, params);
 
@@ -22,16 +22,20 @@ function ResourceFinder(model, params, include) {
   }
 
   this.perform = function () {
-    var find = { where: {} };
+    var conditions = { where: {} };
 
-    if (include) { find.include = getIncludes(); }
-    if (schema.isCompositePrimary) {
-      find.where = compositeKeysManager.getRecordConditions(params.recordId);
-    } else {
-      find.where[schema.idField] = params.recordId;
+    if (withIncludes) {
+      conditions.include = getIncludes();
     }
 
-    return model.find(find);
+    if (schema.isCompositePrimary) {
+      conditions.where = compositeKeysManager
+        .getRecordConditions(params.recordId);
+    } else {
+      conditions.where[schema.idField] = params.recordId;
+    }
+
+    return model.find(conditions);
   };
 }
 
