@@ -320,6 +320,25 @@ var HasManyGetter = require('../services/has-many-getter');
         });
       });
 
+      describe('Request on the resources getter with a "before x hours" filter condition', function () {
+        it('should generate a valid SQL query', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '1', size: '30' },
+            filterType: 'and',
+            filter: { createdAt: '$24HoursBefore' },
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function () {
+              done();
+            });
+        });
+      });
+
       describe('Request on the resources getter with a filter condition and search', function () {
         it('should generate a valid SQL query', function (done) {
           var params = {
