@@ -1,6 +1,7 @@
 'use strict';
 var P = require('bluebird');
 var Interface = require('forest-express');
+var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
 
 exports.collection = Interface.collection;
 exports.ensureAuthenticated = Interface.ensureAuthenticated;
@@ -17,11 +18,17 @@ exports.init = function(opts) {
   };
 
   exports.getLianaVersion = function () {
-    return require('./package.json').version;
+    var lianaVersion = require('./package.json').version.match(REGEX_VERSION);
+    if (lianaVersion && lianaVersion[0]) {
+      return lianaVersion[0];
+    }
   };
 
   exports.getOrmVersion = function () {
-    return opts.sequelize.Sequelize.version;
+    var ormVersion = opts.sequelize.Sequelize.version.match(REGEX_VERSION);
+    if (ormVersion && ormVersion[0]) {
+      return ormVersion[0];
+    }
   };
 
   exports.getDatabaseType = function () {
