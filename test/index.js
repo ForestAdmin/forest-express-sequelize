@@ -306,7 +306,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(1);
               done();
             });
         });
@@ -324,7 +325,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(1);
               done();
             });
         });
@@ -342,7 +344,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(0);
               done();
             });
         });
@@ -361,7 +364,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(1);
               done();
             });
         });
@@ -401,7 +405,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(0);
               done();
             });
         });
@@ -413,7 +418,7 @@ var HasManyGetter = require('../services/has-many-getter');
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
             },
-            page: { number: '2', size: '50' },
+            paglouie: { number: '2', size: '50' },
             filterType: 'and',
             filter: { username: '*hello*' },
             sort: '-id',
@@ -422,7 +427,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(0);
               done();
             });
         });
@@ -535,7 +541,7 @@ var HasManyGetter = require('../services/has-many-getter');
 
     describe('Resources > Resources Remover', function () {
       describe('Remove a record in a simple collection', function () {
-        it('should create a record', function (done) {
+        it('should destroy the record', function (done) {
           var params = {
             recordId: 1
           };
