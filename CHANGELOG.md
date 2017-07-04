@@ -2,7 +2,8 @@
 
 ## [Unreleased]
 ### Fixed
-- Record Deletions - Handle the record deletion on models having a composite primary key. 
+- Record Deletions - Handle the record deletion on models having a composite primary key.
+- Liana Version & Orm Version - Prevent server crash on bad format version.
 
 ## RELEASE 1.1.9 - 2017-06-28
 ### Fixed
