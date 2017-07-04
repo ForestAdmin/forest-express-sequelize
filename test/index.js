@@ -418,7 +418,7 @@ var HasManyGetter = require('../services/has-many-getter');
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
             },
-            paglouie: { number: '2', size: '50' },
+            page: { number: '2', size: '50' },
             filterType: 'and',
             filter: { username: '*hello*' },
             sort: '-id',
