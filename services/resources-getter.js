@@ -43,7 +43,25 @@ function ResourcesGetter(model, opts, params) {
     var where = {};
     var or = [];
 
-    _.each(schema.fields, function (field) {
+    var fields = schema.fields;
+    var associations = model.associations;
+
+    var searchFields = schema.searchFields;
+    var searchAssociationFields = _.remove(searchFields, function (field) {
+      return field.indexOf('.') !== -1;
+    });
+
+    if (schema.searchFields && _.isArray(schema.searchFields)) {
+      _.remove(fields, function (field) {
+        return !_.includes(schema.searchFields, field.field);
+      });
+
+      var searchAssociationNames =  _.map(searchAssociationFields,
+        function (association) { return association.split('.')[0]; });
+      associations = _.pick(associations, searchAssociationNames);
+    }
+
+    _.each(fields, function (field) {
       // NOTICE: Ignore Smart field.
       if (field.isVirtual) { return; }
 
@@ -60,8 +78,11 @@ function ResourcesGetter(model, opts, params) {
         var primaryKeyType = model.primaryKeys[schema.idField].type;
 
         if (primaryKeyType instanceof DataTypes.INTEGER) {
-          q[field.field] = parseInt(params.search, 10) || 0;
-          or.push(q);
+          var value = parseInt(params.search, 10) || 0;
+          if (value) {
+            q[field.field] = value;
+            or.push(q);
+          }
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           q = opts.sequelize.where(
@@ -105,8 +126,8 @@ function ResourcesGetter(model, opts, params) {
     });
 
     // NOTICE: Handle search on displayed belongsTo
-    _.each(model.associations, function (association) {
-
+    _.each(associations, function (association) {
+      // console.log('****', association.as);
       if (!fieldNamesRequested ||
         (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
@@ -119,14 +140,23 @@ function ResourcesGetter(model, opts, params) {
             if (field.reference || field.integration ||
               field.isSearchable === false) { return; }
 
+            console.log(searchAssociationFields);
+            console.log(association.as + '.' + field.field);
+            if (schema.searchFields && _.isArray(schema.searchFields) && !_.includes(searchAssociationFields, association.as + '.' + field.field)) {
+              return;
+            }
+
             var q = {};
             var columnName = field.columnName || field.field;
             var column = opts.sequelize.col(association.as + '.' + columnName);
 
             if (field.field === schemaAssociation.idField) {
               if (field.type === 'Number') {
-                q = opts.sequelize.where(column, ' = ',
-                  parseInt(params.search, 10) || 0);
+                var value = parseInt(params.search, 10) || 0;
+                if (value) {
+                  q = opts.sequelize.where(column, ' = ',
+                    parseInt(params.search, 10) || 0);
+                }
               } else if (params.search.match(REGEX_UUID)) {
                 q = opts.sequelize.where(column, ' = ', params.search);
               }

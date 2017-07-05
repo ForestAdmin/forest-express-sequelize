@@ -5,6 +5,7 @@
 ## RELEASE 1.1.10 - 2017-07-05
 ### Added
 - Filters - Add the before x hours operator.
+- Search - Developers can configure in which fields the search will be executed.
 
 ### Changed
 - Technical - Support Sequelize 4.2.0.
