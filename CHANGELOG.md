@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Search - Developers can configure in which fields the search will be executed.
+
+### Changed
+- Search - Remove some useless conditions to improve performance (id = 0).
 
 ## RELEASE 1.1.10 - 2017-07-05
 ### Added
