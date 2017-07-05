@@ -8,7 +8,8 @@ function ResourceUpdater(model, params, newRecord) {
   var schema = Interface.Schemas.schemas[model.name];
 
   this.perform = function () {
-    var compositeKeysManager = new CompositeKeysManager(model, schema, newRecord);
+    var compositeKeysManager =
+      new CompositeKeysManager(model, schema, newRecord);
 
     return new ResourceFinder(model, params)
       .perform()

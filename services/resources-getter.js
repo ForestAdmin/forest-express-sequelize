@@ -6,7 +6,7 @@ var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
 var QueryBuilder = require('./query-builder');
 
-var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+var REGEX_UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -206,7 +206,8 @@ function ResourcesGetter(model, opts, params) {
       }
       values.split(',').forEach(function (value) {
         var condition = {};
-        condition[key] = new OperatorValueParser().perform(model, key, value, params.timezone);
+        condition[key] = new OperatorValueParser()
+          .perform(model, key, value, params.timezone);
         conditions.push(condition);
       });
     });

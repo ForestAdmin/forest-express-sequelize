@@ -22,6 +22,7 @@
   "main": "index.js",
   "dependencies": {
     "bluebird": "2.9.25",
+    "eslint": "4.1.1",
     "forest-express": "1.1.12",
     "http-errors": "1.6.1",
     "lodash": "3.9.3",
@@ -40,6 +41,7 @@
     "simple-git": "1.65.0"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/index.js"
+    "test": "./node_modules/mocha/bin/mocha test/index.js",
+    "lint": "./node_modules/eslint/bin/eslint.js services/ adapters/ utils/"
   }
 }
