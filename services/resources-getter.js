@@ -16,7 +16,7 @@ function ResourcesGetter(model, opts, params) {
   var segmentWhere;
 
   var fields = _.clone(schema.fields);
-  var associations = model.associations;
+  var associations = _.clone(model.associations);
   var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
   var searchAssociationFields;
 
@@ -45,7 +45,7 @@ function ResourcesGetter(model, opts, params) {
   })();
 
   function selectSearchFields() {
-    var searchFields = schema.searchFields;
+    var searchFields = _.clone(schema.searchFields);
     searchAssociationFields = _.remove(searchFields, function (field) {
       return field.indexOf('.') !== -1;
     });
@@ -57,6 +57,26 @@ function ResourcesGetter(model, opts, params) {
     var searchAssociationNames = _.map(searchAssociationFields,
       function (association) { return association.split('.')[0]; });
     associations = _.pick(associations, searchAssociationNames);
+
+    // NOTICE: Compute warnings to help developers to configure the
+    //         searchFields.
+    var fieldsSimpleNotFound = _.xor(searchFields,
+      _.map(fields, function (field) { return field.field; }));
+    var fieldsAssociationNotFound = _.xor(
+      _.map(searchAssociationFields, function (association) {
+        return association.split('.')[0];
+      }), _.keys(associations));
+
+    if (fieldsSimpleNotFound.length) {
+      Interface.logger.warn('Cannot find the fields [' + fieldsSimpleNotFound +
+        '] while searching records in model ' + model.name + '.');
+    }
+
+    if (fieldsAssociationNotFound.length) {
+      Interface.logger.warn('Cannot find the associations [' +
+        fieldsAssociationNotFound + '] while searching records in model ' +
+        model.name + '.');
+    }
   }
 
   function handleSearchParam() {
