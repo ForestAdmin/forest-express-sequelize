@@ -124,7 +124,7 @@ function PieStatGetter(model, params, opts) {
       include: getIncludes(),
       where: getFilters(),
       group: getGroupBy(),
-      order: 'value DESC',
+      order: [[opts.sequelize.literal('value'), 'DESC']],
       raw: true
     })
     .then(formatResults)

@@ -4,6 +4,9 @@
 ### Added
 - Filters - Add the before x hours operator.
 
+### Changed
+- Technical - Support Sequelize 4.2.0.
+
 ### Fixed
 - Record Deletions - Handle the record deletion on models having a composite primary key.
 - Liana Version & Orm Version - Prevent server crash on bad format version.

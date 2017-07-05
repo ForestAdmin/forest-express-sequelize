@@ -167,7 +167,7 @@ function LineStatGetter(model, params, opts) {
   }
 
   function getOrder() {
-    return Database.isMSSQL(opts) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : '1';
+    return Database.isMSSQL(opts) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [opts.sequelize.literal('1')];
   }
 
   this.perform = function () {
