@@ -15,6 +15,11 @@ function ResourcesGetter(model, opts, params) {
   var segmentScope;
   var segmentWhere;
 
+  var fields = _.clone(schema.fields);
+  var associations = model.associations;
+  var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
+  var searchAssociationFields;
+
   var fieldNamesRequested = (function() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
@@ -39,27 +44,24 @@ function ResourcesGetter(model, opts, params) {
       associationsForQuery);
   })();
 
-  function handleSearchParam() {
-    var where = {};
-    var or = [];
-
-    var fields = schema.fields;
-    var associations = model.associations;
-
+  function selectSearchFields() {
     var searchFields = schema.searchFields;
-    var searchAssociationFields = _.remove(searchFields, function (field) {
+    searchAssociationFields = _.remove(searchFields, function (field) {
       return field.indexOf('.') !== -1;
     });
 
-    if (schema.searchFields && _.isArray(schema.searchFields)) {
-      _.remove(fields, function (field) {
-        return !_.includes(schema.searchFields, field.field);
-      });
+    _.remove(fields, function (field) {
+      return !_.includes(schema.searchFields, field.field);
+    });
 
-      var searchAssociationNames =  _.map(searchAssociationFields,
-        function (association) { return association.split('.')[0]; });
-      associations = _.pick(associations, searchAssociationNames);
-    }
+    var searchAssociationNames = _.map(searchAssociationFields,
+      function (association) { return association.split('.')[0]; });
+    associations = _.pick(associations, searchAssociationNames);
+  }
+
+  function handleSearchParam() {
+    var where = {};
+    var or = [];
 
     _.each(fields, function (field) {
       // NOTICE: Ignore Smart field.
@@ -127,7 +129,6 @@ function ResourcesGetter(model, opts, params) {
 
     // NOTICE: Handle search on displayed belongsTo
     _.each(associations, function (association) {
-      // console.log('****', association.as);
       if (!fieldNamesRequested ||
         (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
@@ -140,9 +141,8 @@ function ResourcesGetter(model, opts, params) {
             if (field.reference || field.integration ||
               field.isSearchable === false) { return; }
 
-            console.log(searchAssociationFields);
-            console.log(association.as + '.' + field.field);
-            if (schema.searchFields && _.isArray(schema.searchFields) && !_.includes(searchAssociationFields, association.as + '.' + field.field)) {
+            if (hasSearchFields && !_.includes(searchAssociationFields,
+              association.as + '.' + field.field)) {
               return;
             }
 
@@ -215,6 +215,10 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getAndCountRecords() {
+    if (hasSearchFields) {
+      selectSearchFields();
+    }
+
     var countOpts = {
       include: queryBuilder.getIncludes(model, fieldNamesRequested),
       where: getWhere()
