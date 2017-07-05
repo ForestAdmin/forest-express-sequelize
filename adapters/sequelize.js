@@ -5,6 +5,7 @@ var Interface = require('forest-express');
 
 module.exports = function (model, opts) {
   var fields = [];
+  var fieldNamesToExclude = [];
   var DataTypes = opts.sequelize.Sequelize;
 
   function getTypeFor(column) {
@@ -70,9 +71,17 @@ module.exports = function (model, opts) {
     var schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
+      // TODO: For BelongsTo associations, the reference does not seem to be
+      //       correct; the target name is correct, but not the second part.
       reference: association.target.name + '.' + association.foreignKey,
       inverseOf: null
     };
+
+    // NOTICE: Detect potential foreign keys that should be excluded, if a
+    //         constraints property is set for example.
+    if (association.associationType === 'BelongsTo') {
+      fieldNamesToExclude.push(association.identifierField);
+    }
 
     return schema;
   }
@@ -111,6 +120,10 @@ module.exports = function (model, opts) {
         isCompositePrimary = true;
         idField = 'forestCompositePrimary';
       }
+
+      _.remove(fields, function (field) {
+        return _.includes(fieldNamesToExclude, field.field);
+      });
 
       return {
         name: model.name,
