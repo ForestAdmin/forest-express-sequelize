@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Travis CI.
 
 ## RELEASE 1.1.11 - 2017-07-05
 ### Added

@@ -42,6 +42,6 @@
   },
   "scripts": {
     "test": "./node_modules/mocha/bin/mocha test/index.js",
-    "lint": "./node_modules/eslint/bin/eslint.js services/ adapters/ utils/"
+    "lint": "eslint services/ adapters/ utils/"
   }
 }
