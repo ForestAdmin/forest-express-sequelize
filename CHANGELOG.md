@@ -9,6 +9,7 @@
 
 ### Changed
 - Technical - Support Sequelize 4.2.0.
+- Search - Remove some useless conditions to improve performance (id = 0). 
 
 ### Fixed
 - Record Deletions - Handle the record deletion on models having a composite primary key.
