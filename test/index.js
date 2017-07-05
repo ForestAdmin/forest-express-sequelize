@@ -230,6 +230,53 @@ var HasManyGetter = require('../services/has-many-getter');
       });
     });
 
+    describe('Resources > Resources Creator', function () {
+      describe('Create a record on a simple collection', function () {
+        it('should create a record', function (done) {
+          return new ResourceCreator(models.user, {
+            email: 'jack@forestadmin.com',
+            firstName: 'Jack',
+            lastName: 'Lumberjack',
+            username: 'Jacouille',
+            password: 'bonpoissonnet'
+          })
+          .perform()
+          .then(function (result) {
+            expect(result.id).equal(1);
+            expect(result.firstName).equal('Jack');
+            expect(result.username).equal('Jacouille');
+
+            return models.user
+              .find({ where : { email: 'jack@forestadmin.com' } })
+              .then(function (user) {
+                expect(user).not.to.be.null;
+                done();
+              });
+          });
+        });
+      });
+
+      describe('Create a record on a collection with a composite primary key', function () {
+        it('should create a record', function (done) {
+          return new ResourceCreator(models.log, {
+            code: 'G@G#F@G@',
+            trace: 'Ggg23g242@'
+          })
+          .perform()
+          .then(function (result) {
+            expect(result.code).equal('G@G#F@G@');
+            expect(result.trace).equal('Ggg23g242@');
+            return models.log
+              .find({ where : { code: 'G@G#F@G@' } })
+              .then(function (log) {
+                expect(log).not.to.be.null;
+                done();
+              });
+          });
+        });
+      });
+    });
+
     describe('Resources > Resources Getter', function () {
       describe('Request on the resources getter without page size', function () {
         it('should generate a valid SQL query', function (done) {
@@ -259,7 +306,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(1);
               done();
             });
         });
@@ -277,7 +325,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(1);
               done();
             });
         });
@@ -295,7 +344,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(0);
               done();
             });
         });
@@ -314,7 +364,28 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(1);
+              done();
+            });
+        });
+      });
+
+      describe('Request on the resources getter with a "before x hours" filter condition', function () {
+        it('should generate a valid SQL query', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '1', size: '30' },
+            filterType: 'and',
+            filter: { createdAt: '$2HoursBefore' },
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+            .perform()
+            .then(function (result) {
+              expect(result[0]).equal(0);
               done();
             });
         });
@@ -334,7 +405,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(0);
               done();
             });
         });
@@ -355,7 +427,8 @@ var HasManyGetter = require('../services/has-many-getter');
           };
           return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
             .perform()
-            .then(function () {
+            .then(function (result) {
+              expect(result[0]).equal(0);
               done();
             });
         });
@@ -434,53 +507,6 @@ var HasManyGetter = require('../services/has-many-getter');
       });
     });
 
-    describe('Resources > Resources Creator', function () {
-      describe('Create a record on a simple collection', function () {
-        it('should create a record', function (done) {
-          return new ResourceCreator(models.user, {
-            email: 'jack@forestadmin.com',
-            firstName: 'Jack',
-            lastName: 'Lumberjack',
-            username: 'Jacouille',
-            password: 'bonpoissonnet'
-          })
-          .perform()
-          .then(function (result) {
-            expect(result.id).equal(2);
-            expect(result.firstName).equal('Jack');
-            expect(result.username).equal('Jacouille');
-
-            return models.user
-              .find({ where : { email: 'jack@forestadmin.com' } })
-              .then(function (user) {
-                expect(user).not.to.be.null;
-                done();
-              });
-          });
-        });
-      });
-
-      describe('Create a record on a collection with a composite primary key', function () {
-        it('should create a record', function (done) {
-          return new ResourceCreator(models.log, {
-            code: 'G@G#F@G@',
-            trace: 'Ggg23g242@'
-          })
-          .perform()
-          .then(function (result) {
-            expect(result.code).equal('G@G#F@G@');
-            expect(result.trace).equal('Ggg23g242@');
-            return models.log
-              .find({ where : { code: 'G@G#F@G@' } })
-              .then(function (log) {
-                expect(log).not.to.be.null;
-                done();
-              });
-          });
-        });
-      });
-    });
-
     describe('Resources > Resource Getter', function () {
       describe('Get a record in a simple collection', function () {
         it('should retrieve the record', function (done) {
@@ -515,9 +541,9 @@ var HasManyGetter = require('../services/has-many-getter');
 
     describe('Resources > Resources Remover', function () {
       describe('Remove a record in a simple collection', function () {
-        it('should create a record', function (done) {
+        it('should destroy the record', function (done) {
           var params = {
-            recordId: 2
+            recordId: 1
           };
           return new ResourceRemover(models.user, params)
           .perform()
