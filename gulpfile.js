@@ -32,6 +32,6 @@ gulp.task('build', function () {
 
   // COMMIT
   simpleGit.add(['CHANGELOG.md', 'package.json'], function () {
-    simpleGit.commit('Bump ' + version);
+    simpleGit.commit('Release ' + version);
   });
 });
