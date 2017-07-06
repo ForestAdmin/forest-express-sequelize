@@ -1,0 +1,35 @@
+[
+  {
+    "model": "user",
+    "data": {
+      "id": 100,
+      "email": "richard@piedpiper.com",
+      "firstName": "Richard",
+      "lastName": "Hendricks",
+      "username": "RichaHendr",
+      "password": "2gh2p9g832hp"
+    }
+  },
+  {
+    "model": "user",
+    "data": {
+      "id": 200,
+      "email": "elrich@piedpiper.com",
+      "firstName": "Elrich",
+      "lastName": "Bachman",
+      "username": "Unicorn",
+      "password": "jinYang"
+    }
+  },
+  {
+    "model": "user",
+    "data": {
+      "id": 300,
+      "email": "dinesh@piedpiper.com",
+      "firstName": "Dinesh",
+      "lastName": "Chugtai",
+      "username": "PiperTchat",
+      "password": "jinYang"
+    }
+  }
+]
