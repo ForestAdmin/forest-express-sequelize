@@ -2,6 +2,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var QueryBuilder = require('./query-builder');
+var HandleSearchParam = require('./handle-search');
 
 function HasManyGetter(model, association, opts, params) {
   var queryBuilder = new QueryBuilder(model, opts, params);
@@ -26,13 +27,17 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   function getRecords() {
+
+    var where = new HandleSearchParam(association, opts, params,
+      getFieldNamesRequested()).perform();
+
     return model
       .findById(params.recordId)
       .then(function (record) {
         return record['get' + _.capitalize(params.associationName)]({
           scope: false,
-          include: queryBuilder.getIncludes(association,
-            getFieldNamesRequested()),
+          include: queryBuilder.getIncludes(
+            association, getFieldNamesRequested(), where),
           order: queryBuilder.getOrder(),
           offset: queryBuilder.getSkip(),
           limit: queryBuilder.getLimit()
