@@ -7,41 +7,10 @@ var REGEX_UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[
 function HandleSearchParam(model, opts, params, fieldNamesRequested) {
   var schema = Interface.Schemas.schemas[model.name];
   var DataTypes = opts.sequelize.Sequelize;
-
-  function selectSearchFields() {
-    var searchFields = _.clone(schema.searchFields);
-    searchAssociationFields = _.remove(searchFields, function (field) {
-      return field.indexOf('.') !== -1;
-    });
-
-    _.remove(fields, function (field) {
-      return !_.includes(schema.searchFields, field.field);
-    });
-
-    var searchAssociationNames = _.map(searchAssociationFields,
-      function (association) { return association.split('.')[0]; });
-    associations = _.pick(associations, searchAssociationNames);
-
-    // NOTICE: Compute warnings to help developers to configure the
-    //         searchFields.
-    var fieldsSimpleNotFound = _.xor(searchFields,
-      _.map(fields, function (field) { return field.field; }));
-    var fieldsAssociationNotFound = _.xor(
-      _.map(searchAssociationFields, function (association) {
-        return association.split('.')[0];
-      }), _.keys(associations));
-
-    if (fieldsSimpleNotFound.length) {
-      Interface.logger.warn('Cannot find the fields [' + fieldsSimpleNotFound +
-        '] while searching records in model ' + model.name + '.');
-    }
-
-    if (fieldsAssociationNotFound.length) {
-      Interface.logger.warn('Cannot find the associations [' +
-        fieldsAssociationNotFound + '] while searching records in model ' +
-        model.name + '.');
-    }
-  }
+  var fields = _.clone(schema.fields);
+  var associations = _.clone(model.associations);
+  var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
+  var searchAssociationFields;
 
   this.perform = function () {
     var where = {};
