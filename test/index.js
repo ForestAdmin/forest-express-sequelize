@@ -462,7 +462,7 @@ var HasManyGetter = require('../services/has-many-getter');
           return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[0]).equal(3);
               done();
             });
         });
@@ -483,7 +483,7 @@ var HasManyGetter = require('../services/has-many-getter');
           return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[0]).equal(3);
               done();
             });
         });
@@ -505,7 +505,7 @@ var HasManyGetter = require('../services/has-many-getter');
             { sequelize: sequelize }, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[0]).equal(3);
               done();
             });
         });
