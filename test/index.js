@@ -437,7 +437,8 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'world',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user,
+            { sequelize: sequelize }, params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -459,7 +460,8 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '20' },
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address,
+            { sequelize: sequelize }, params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
@@ -480,7 +482,8 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: 'city',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address,
+            { sequelize: sequelize }, params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
@@ -509,6 +512,29 @@ var HasManyGetter = require('../services/has-many-getter');
               done();
             });
         });
+      });
+    });
+
+    describe('Request on the hasMany getter with a search parameter', function () {
+      it('should generate a valid SQL query', function (done) {
+        var params = {
+          recordId: 100,
+          associationName: 'addresses',
+          fields: {
+            address: 'line,zipCode,city,country,user'
+          },
+          page: { number: '1', size: '20' },
+          search: 'SF',
+          sort: '-user.id',
+          timezone: '+02:00'
+        };
+        return new HasManyGetter(models.user, models.address,
+          { sequelize: sequelize }, params)
+          .perform()
+          .then(function (result) {
+            expect(result[1].length).equal(1);
+            done();
+          });
       });
     });
 

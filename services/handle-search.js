@@ -13,6 +13,7 @@ function HandleSearchParam(model, opts, params, fieldNamesRequested) {
   var searchAssociationFields;
 
   this.perform = function () {
+    if (!params.search) { return null; }
     var where = {};
     var or = [];
 
