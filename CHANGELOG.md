@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Technical - Travis CI.
+- HasMany - Search on has many associations.
 
 ## RELEASE 1.1.11 - 2017-07-05
 ### Added
