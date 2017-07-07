@@ -532,6 +532,7 @@ var HasManyGetter = require('../services/has-many-getter');
           { sequelize: sequelize }, params)
           .perform()
           .then(function (result) {
+            expect(result[0]).equal(1);
             expect(result[1].length).equal(1);
             done();
           });

@@ -16,34 +16,37 @@ function HasManyGetter(model, association, opts, params) {
     return _.union(primaryKeyArray, params.fields[association.name].split(','));
   }
 
-  function count() {
+  var where = new HandleSearchParam(association, opts, params,
+    getFieldNamesRequested()).perform();
+
+  function findRequest(query) {
+    if (!query) { query = {}; }
+    query.scope = false;
+    query.where = where;
+    query.include = queryBuilder
+      .getIncludes(association, getFieldNamesRequested());
+
     return model.findById(params.recordId)
       .then(function (record) {
-        return record['get' + _.capitalize(params.associationName)]();
-      })
+        return record['get' + _.capitalize(params.associationName)](query);
+      });
+  }
+
+  function count() {
+    return findRequest()
       .then(function (records) {
         return records.length;
       });
   }
 
   function getRecords() {
+    var query = {
+      order: queryBuilder.getOrder(),
+      offset: queryBuilder.getSkip(),
+      limit: queryBuilder.getLimit()
+    };
 
-    var where = new HandleSearchParam(association, opts, params,
-      getFieldNamesRequested()).perform();
-
-    return model
-      .findById(params.recordId)
-      .then(function (record) {
-        return record['get' + _.capitalize(params.associationName)]({
-          scope: false,
-          where: where,
-          include: queryBuilder.getIncludes(
-            association, getFieldNamesRequested()),
-          order: queryBuilder.getOrder(),
-          offset: queryBuilder.getSkip(),
-          limit: queryBuilder.getLimit()
-        });
-      })
+    return findRequest(query)
       .then(function (records) {
         return P.map(records, function (record) {
           // NOTICE: Do not use "toJSON" method to prevent issues on models that
