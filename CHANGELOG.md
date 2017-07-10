@@ -1,19 +1,21 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Filters - Boolean filter condition with a null value will not crash anymore.
 
 ## RELEASE 1.1.11 - 2017-07-05
 ### Added
 - Search - Developers can configure in which fields the search will be executed.
 
-### Changed
+### Changed
 - Search - Remove some useless conditions to improve performance (id = 0).
 
 ## RELEASE 1.1.10 - 2017-07-05
 ### Added
 - Filters - Add the before x hours operator.
 
-### Changed
+### Changed
 - Technical - Support Sequelize 4.2.0.
 
 ### Fixed

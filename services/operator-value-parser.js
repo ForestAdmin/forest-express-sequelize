@@ -9,6 +9,7 @@ function OperatorValueParser() {
 
     // NOTICE: Handle boolean for MySQL database
     var modelName, field, fieldSplit, valueBoolean;
+    var fieldBoolean = false;
     if (fieldName.indexOf(':') === -1) {
       modelName = model.name;
     } else {
@@ -22,13 +23,22 @@ function OperatorValueParser() {
       field = _.findWhere(schema.fields, { field: fieldName });
 
       if (field && field.type === 'Boolean') {
-        valueBoolean = value.indexOf('true') > -1 ? true : false;
+        fieldBoolean = true;
+        if (value.indexOf('true') > -1) {
+          valueBoolean = true;
+        } else if (value.indexOf('false') > -1) {
+          valueBoolean = false;
+        }
       }
     }
 
     if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
-      return { $ne: valueBoolean || value };
+      if (fieldBoolean) {
+        return { $ne: _.isUndefined(valueBoolean) ? null : valueBoolean };
+      } else {
+        return { $ne: value };
+      }
     } else if (value[0] === '>') {
       value = value.substring(1);
       return { $gt: value };
@@ -57,7 +67,11 @@ function OperatorValueParser() {
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
     } else {
-      return valueBoolean || value;
+      if (fieldBoolean) {
+        return _.isUndefined(valueBoolean) ? { $eq: null } : valueBoolean;
+      } else {
+        return value;
+      }
     }
 
     return;
