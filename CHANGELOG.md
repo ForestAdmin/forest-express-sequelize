@@ -2,8 +2,8 @@
 
 ## [Unreleased]
 ### Added
-- Technical - Travis CI.
-- HasMany - Search on has many associations.
+- Search - Users can search on the hasMany associated data of a specific record.
+- Technical - Setup the continuous integrations configuration for Travis CI.
 
 ## RELEASE 1.1.11 - 2017-07-05
 ### Added
