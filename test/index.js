@@ -119,9 +119,8 @@ var HasManyGetter = require('../services/has-many-getter');
       before(function (done) {
         return sequelize.sync({ force: true })
           .then(function () {
-            var fixturesFileName = 'test/fixtures/db.json';
-            return sequelizeFixtures
-              .loadFile(fixturesFileName, models, { log: function () {} });
+            return sequelizeFixtures.loadFile('test/fixtures/db.json', models,
+              { log: function () {} });
           })
           .then(function() { return done(); });
       });
@@ -238,7 +237,7 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('Create a record on a simple collection', function () {
         it('should create a record', function (done) {
           return new ResourceCreator(models.user, {
-            id: 1,
+            id: '1',
             email: 'jack@forestadmin.com',
             firstName: 'Jack',
             lastName: 'Lumberjack',
@@ -292,8 +291,8 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function () {
               done();
@@ -310,8 +309,8 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '30' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(4);
@@ -330,8 +329,8 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '30' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(4);
@@ -350,8 +349,8 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'hello',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -371,8 +370,8 @@ var HasManyGetter = require('../services/has-many-getter');
             filter: { username: '!*hello*' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(4);
@@ -392,8 +391,8 @@ var HasManyGetter = require('../services/has-many-getter');
             filter: { createdAt: '$2HoursBefore' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -414,8 +413,8 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'world',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -437,8 +436,8 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'world',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user,
-            { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -460,8 +459,8 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '20' },
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address,
-            { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
@@ -482,8 +481,8 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: 'city',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address,
-            { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
@@ -504,8 +503,8 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: '-user.id',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address,
-            { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
@@ -576,7 +575,7 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('Remove a record in a simple collection', function () {
         it('should destroy the record', function (done) {
           var params = {
-            recordId: 1,
+            recordId: 1
           };
           return new ResourceRemover(models.user, params)
           .perform()
