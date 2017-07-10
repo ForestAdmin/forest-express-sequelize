@@ -16,39 +16,41 @@ function HasManyGetter(model, association, opts, params) {
     return _.union(primaryKeyArray, params.fields[association.name].split(','));
   }
 
-  var where = new SearchBuilder(association, opts, params,
-    getFieldNamesRequested()).perform();
+  var fieldNamesRequested = getFieldNamesRequested();
+  var where = new SearchBuilder(association, opts, params, fieldNamesRequested)
+    .perform();
+  var include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
-  function findRequest(query) {
-    if (!query) { query = {}; }
-    query.scope = false;
-    query.where = where;
-    query.include = queryBuilder
-      .getIncludes(association, getFieldNamesRequested());
+  function findQuery(queryOptions) {
+    if (!queryOptions) { queryOptions = {}; }
+    queryOptions.scope = false;
+    queryOptions.where = where;
+    queryOptions.include = include;
 
     return model.findById(params.recordId)
       .then(function (record) {
-        return record['get' + _.capitalize(params.associationName)](query);
+        return record['get' +
+          _.capitalize(params.associationName)](queryOptions);
       });
   }
 
   function count() {
     // TODO: Why not use a count that would generate a much more efficient SQL
     //       query.
-    return findRequest()
+    return findQuery()
       .then(function (records) {
         return records.length;
       });
   }
 
   function getRecords() {
-    var query = {
+    var queryOptions = {
       order: queryBuilder.getOrder(),
       offset: queryBuilder.getSkip(),
       limit: queryBuilder.getLimit()
     };
 
-    return findRequest(query)
+    return findQuery(queryOptions)
       .then(function (records) {
         return P.map(records, function (record) {
           // NOTICE: Do not use "toJSON" method to prevent issues on models that
