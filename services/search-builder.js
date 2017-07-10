@@ -4,7 +4,7 @@ var Interface = require('forest-express');
 
 var REGEX_UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i';
 
-function HandleSearchParam(model, opts, params, fieldNamesRequested) {
+function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var schema = Interface.Schemas.schemas[model.name];
   var DataTypes = opts.sequelize.Sequelize;
   var fields = _.clone(schema.fields);
@@ -131,4 +131,4 @@ function HandleSearchParam(model, opts, params, fieldNamesRequested) {
   };
 }
 
-module.exports = HandleSearchParam;
+module.exports = SearchBuilder;

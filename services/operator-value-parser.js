@@ -5,8 +5,8 @@ var Interface = require('forest-express');
 
 function OperatorValueParser() {
   this.perform = function (model, fieldName, value, timezone) {
-    var operatorDateIntervalParser =
-      new OperatorDateIntervalParser(value, timezone);
+    var operatorDateIntervalParser = new OperatorDateIntervalParser(value,
+      timezone);
 
     // NOTICE: Handle boolean for MySQL database
     var modelName, field, fieldSplit, valueBoolean;
@@ -57,9 +57,9 @@ function OperatorValueParser() {
       return null;
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
+    } else {
+      return valueBoolean || value;
     }
-
-    return valueBoolean || value;
   };
 }
 

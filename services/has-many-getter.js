@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var QueryBuilder = require('./query-builder');
-var HandleSearchParam = require('./handle-search');
+var SearchBuilder = require('./search-builder');
 
 function HasManyGetter(model, association, opts, params) {
   var queryBuilder = new QueryBuilder(model, opts, params);
@@ -16,7 +16,7 @@ function HasManyGetter(model, association, opts, params) {
     return _.union(primaryKeyArray, params.fields[association.name].split(','));
   }
 
-  var where = new HandleSearchParam(association, opts, params,
+  var where = new SearchBuilder(association, opts, params,
     getFieldNamesRequested()).perform();
 
   function findRequest(query) {
@@ -33,6 +33,8 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   function count() {
+    // TODO: Why not use a count that would generate a much more efficient SQL
+    //       query.
     return findRequest()
       .then(function (records) {
         return records.length;

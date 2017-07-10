@@ -5,7 +5,7 @@ var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
 var QueryBuilder = require('./query-builder');
-var HandleSearchParam = require('./handle-search');
+var SearchBuilder = require('./search-builder');
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -102,7 +102,7 @@ function ResourcesGetter(model, opts, params) {
     var where = { $and: [] };
 
     if (params.search) {
-      where.$and.push(new HandleSearchParam(model, opts, params,
+      where.$and.push(new SearchBuilder(model, opts, params,
           fieldNamesRequested).perform());
     }
 
