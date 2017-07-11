@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Search - Users can search on the hasMany associated data of a specific record.
+- Technical - Setup the continuous integrations configuration for Travis CI.
 
 ## RELEASE 1.1.11 - 2017-07-05
 ### Added

@@ -44,7 +44,7 @@ function QueryBuilder(model, opts, params) {
     if (params.sort) {
       var idField = _.keys(model.primaryKeys)[0];
 
-      // WORKAROUND: Sequelize generate a bad MSSSQ query if users sort the
+      // WORKAROUND: Sequelize generate a bad MSSQL query if users sort the
       //             collection on the primary key, so we prevent that.
       if (Database.isMSSQL(opts) && _.contains([idField, '-' + idField],
         params.sort)) {

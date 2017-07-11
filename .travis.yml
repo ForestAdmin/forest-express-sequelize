@@ -1,3 +1,18 @@
+sudo: required
+
 language: node_js
+
 node_js:
-  - "0.12"
+  - 6
+
+services:
+  - docker
+
+before_install:
+  - docker-compose --version
+  - docker-compose up -d
+  - docker ps
+
+script:
+  - npm run lint
+  - npm run test

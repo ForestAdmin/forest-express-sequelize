@@ -1,0 +1,62 @@
+[
+  {
+    "model": "user",
+    "data": {
+      "id": 100,
+      "email": "richard@piedpiper.com",
+      "firstName": "Richard",
+      "lastName": "Hendricks",
+      "username": "RichaHendr",
+      "password": "2gh2p9g832hp"
+    }
+  },
+  {
+    "model": "address",
+    "data": {
+      "id": 100,
+      "city": "SF",
+      "country": "USA",
+      "user": 100
+    }
+  },
+  {
+    "model": "address",
+    "data": {
+      "id": 101,
+      "city": "Paris",
+      "country": "France",
+      "user": 100
+    }
+  },
+  {
+    "model": "address",
+    "data": {
+      "id": 102,
+      "city": "Honk Kong",
+      "country": "China",
+      "user": 100
+    }
+  },
+  {
+    "model": "user",
+    "data": {
+      "id": 102,
+      "email": "elrich@piedpiper.com",
+      "firstName": "Elrich",
+      "lastName": "Bachman",
+      "username": "Unicorn",
+      "password": "jinYang"
+    }
+  },
+  {
+    "model": "user",
+    "data": {
+      "id": 103,
+      "email": "dinesh@piedpiper.com",
+      "firstName": "Dinesh",
+      "lastName": "Chugtai",
+      "username": "PiperTchat",
+      "password": "jinYang"
+    }
+  }
+]
