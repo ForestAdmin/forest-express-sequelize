@@ -2,6 +2,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var QueryBuilder = require('./query-builder');
+var SearchBuilder = require('./search-builder');
 
 function HasManyGetter(model, association, opts, params) {
   var queryBuilder = new QueryBuilder(model, opts, params);
@@ -15,29 +16,41 @@ function HasManyGetter(model, association, opts, params) {
     return _.union(primaryKeyArray, params.fields[association.name].split(','));
   }
 
-  function count() {
+  var fieldNamesRequested = getFieldNamesRequested();
+  var where = new SearchBuilder(association, opts, params, fieldNamesRequested)
+    .perform();
+  var include = queryBuilder.getIncludes(association, fieldNamesRequested);
+
+  function findQuery(queryOptions) {
+    if (!queryOptions) { queryOptions = {}; }
+    queryOptions.scope = false;
+    queryOptions.where = where;
+    queryOptions.include = include;
+
     return model.findById(params.recordId)
       .then(function (record) {
-        return record['get' + _.capitalize(params.associationName)]();
-      })
+        return record['get' +
+          _.capitalize(params.associationName)](queryOptions);
+      });
+  }
+
+  function count() {
+    // TODO: Why not use a count that would generate a much more efficient SQL
+    //       query.
+    return findQuery()
       .then(function (records) {
         return records.length;
       });
   }
 
   function getRecords() {
-    return model
-      .findById(params.recordId)
-      .then(function (record) {
-        return record['get' + _.capitalize(params.associationName)]({
-          scope: false,
-          include: queryBuilder.getIncludes(association,
-            getFieldNamesRequested()),
-          order: queryBuilder.getOrder(),
-          offset: queryBuilder.getSkip(),
-          limit: queryBuilder.getLimit()
-        });
-      })
+    var queryOptions = {
+      order: queryBuilder.getOrder(),
+      offset: queryBuilder.getSkip(),
+      limit: queryBuilder.getLimit()
+    };
+
+    return findQuery(queryOptions)
       .then(function (records) {
         return P.map(records, function (record) {
           // NOTICE: Do not use "toJSON" method to prevent issues on models that

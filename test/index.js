@@ -5,6 +5,7 @@
 var expect = require('chai').expect;
 var _ = require('lodash');
 var Sequelize = require('sequelize');
+var sequelizeFixtures = require('sequelize-fixtures');
 var Interface = require('forest-express');
 
 var databaseOptions = {
@@ -120,10 +121,12 @@ var HasManyGetter = require('../services/has-many-getter');
   describe('Dialect ' + sequelize.options.dialect, function () {
     describe('Stats > Pie Stat Getter', function () {
       before(function (done) {
-        // var fixturesFileName = 'test/fixtures/routes/charts.json';
         return sequelize.sync({ force: true })
+          .then(function () {
+            return sequelizeFixtures.loadFile('test/fixtures/db.json', models,
+              { log: function () {} });
+          })
           .then(function() { return done(); });
-          // .then(() => sequelizeFixtures.loadFile(fixturesFileName, models, { log: () => {} }));
       });
 
       describe('A simple Pie Chart on an empty users table', function () {
@@ -141,7 +144,7 @@ var HasManyGetter = require('../services/has-many-getter');
             })
             .perform()
             .then(function (stat) {
-              expect(stat.value.length).equal(0);
+              expect(stat.value.length).equal(3);
               done();
             });
         });
@@ -162,7 +165,7 @@ var HasManyGetter = require('../services/has-many-getter');
             })
             .perform()
             .then(function (stat) {
-              expect(stat.value.length).equal(0);
+              expect(stat.value.length).equal(1);
               done();
             });
         });
@@ -185,7 +188,7 @@ var HasManyGetter = require('../services/has-many-getter');
             })
             .perform()
             .then(function (stat) {
-              expect(stat.value.length).equal(0);
+              expect(stat.value.length).equal(1);
               done();
             });
         });
@@ -206,7 +209,7 @@ var HasManyGetter = require('../services/has-many-getter');
             })
             .perform()
             .then(function (stat) {
-              expect(stat.value.length).equal(0);
+              expect(stat.value.length).equal(1);
               done();
             });
         });
@@ -227,7 +230,7 @@ var HasManyGetter = require('../services/has-many-getter');
             })
             .perform()
             .then(function (stat) {
-              expect(stat.value.length).equal(0);
+              expect(stat.value.length).equal(1);
               done();
             });
         });
@@ -238,6 +241,7 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('Create a record on a simple collection', function () {
         it('should create a record', function (done) {
           return new ResourceCreator(models.user, {
+            id: '1',
             email: 'jack@forestadmin.com',
             firstName: 'Jack',
             lastName: 'Lumberjack',
@@ -291,7 +295,8 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function () {
               done();
@@ -308,10 +313,11 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '30' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(1);
+              expect(result[0]).equal(4);
               done();
             });
         });
@@ -327,10 +333,11 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '30' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(1);
+              expect(result[0]).equal(4);
               done();
             });
         });
@@ -346,7 +353,8 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'hello',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -450,7 +458,7 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[0]).equal(4);
                 done();
               });
           });
@@ -482,7 +490,8 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'world',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -504,7 +513,8 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'world',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+          return new ResourcesGetter(models.user, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
@@ -515,18 +525,10 @@ var HasManyGetter = require('../services/has-many-getter');
     });
 
     describe('HasMany > HasMany Getter', function () {
-      before(function (done) {
-        return models.user
-          .create({ email: 'louis@forestadmin.com' })
-          .then(function () {
-            return done();
-          });
-      });
-
       describe('Request on the hasMany getter without sort', function () {
         it('should generate a valid SQL query', function (done) {
           var params = {
-            recordId: 1,
+            recordId: 100,
             associationName: 'addresses',
             fields: {
               address: 'line,zipCode,city,country,user'
@@ -534,10 +536,11 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '20' },
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[0]).equal(3);
               done();
             });
         });
@@ -546,7 +549,7 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('Request on the hasMany getter with a sort on an attribute', function () {
         it('should generate a valid SQL query', function (done) {
           var params = {
-            recordId: 1,
+            recordId: 100,
             associationName: 'addresses',
             fields: {
               address: 'line,zipCode,city,country,user'
@@ -555,10 +558,11 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: 'city',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[0]).equal(3);
               done();
             });
         });
@@ -567,7 +571,7 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('Request on the hasMany getter with a sort on a belongsTo', function () {
         it('should generate a valid SQL query', function (done) {
           var params = {
-            recordId: 1,
+            recordId: 100,
             associationName: 'addresses',
             fields: {
               address: 'line,zipCode,city,country,user'
@@ -576,13 +580,38 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: '-user.id',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelize }, params)
+          return new HasManyGetter(models.user, models.address, { sequelize: sequelize },
+            params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[0]).equal(3);
               done();
             });
         });
+      });
+    });
+
+    describe('Request on the hasMany getter with a search parameter', function () {
+      it('should generate a valid SQL query', function (done) {
+        var params = {
+          recordId: 100,
+          associationName: 'addresses',
+          fields: {
+            address: 'line,zipCode,city,country,user'
+          },
+          page: { number: '1', size: '20' },
+          search: 'SF',
+          sort: '-user.id',
+          timezone: '+02:00'
+        };
+        return new HasManyGetter(models.user, models.address,
+          { sequelize: sequelize }, params)
+          .perform()
+          .then(function (result) {
+            expect(result[0]).equal(1);
+            expect(result[1].length).equal(1);
+            done();
+          });
       });
     });
 
@@ -590,13 +619,14 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('Get a record in a simple collection', function () {
         it('should retrieve the record', function (done) {
           var params = {
-            recordId: 2
+            recordId: 100
           };
           return new ResourceGetter(models.user, params)
           .perform()
           .then(function (user) {
             expect(user).not.to.be.null;
-            expect(user.id).equal(2);
+            expect(user.id).equal(100);
+            expect(user.firstName).equal('Richard');
             done();
           });
         });

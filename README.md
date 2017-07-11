@@ -1,4 +1,5 @@
 # Forest Express/Sequelize Liana
+[![Build Status](https://travis-ci.org/ForestAdmin/forest-express-sequelize.svg?branch=master)](https://travis-ci.org/ForestAdmin/forest-express-sequelize)
 
 The official Express/Sequelize liana for Forest.  
 Forest is a modern admin interface (see the [live demo](https://app.forestadmin.com/login?livedemo)) that works on all major web frameworks.

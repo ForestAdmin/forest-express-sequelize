@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Search - Users can search on the hasMany associated data of a specific record.
+- Technical - Setup the continuous integrations configuration for Travis CI.
+
 ### Fixed
 - Filters - Boolean filter condition with a null value will not crash anymore.
 
