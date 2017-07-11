@@ -3,6 +3,7 @@
 /* jshint camelcase: false */
 /* jshint expr: true */
 var expect = require('chai').expect;
+var _ = require('lodash');
 var Sequelize = require('sequelize');
 var sequelizeFixtures = require('sequelize-fixtures');
 var Interface = require('forest-express');
@@ -37,6 +38,7 @@ var HasManyGetter = require('../services/has-many-getter');
       unique: true,
       validate: { isEmail: true }
     },
+    emailValid: { type: Sequelize.BOOLEAN },
     firstName: { type: Sequelize.STRING },
     lastName: { type: Sequelize.STRING },
     username: { type: Sequelize.STRING },
@@ -72,6 +74,8 @@ var HasManyGetter = require('../services/has-many-getter');
         isCompositePrimary: false,
         fields: [
           { field: 'id', type: 'Number' },
+          { field: 'email', type: 'String' },
+          { field: 'emailValid', type: 'Boolean' },
           { field: 'firstName', type: 'String' },
           { field: 'lastName', type: 'String' },
           { field: 'username', type: 'String' },
@@ -359,45 +363,118 @@ var HasManyGetter = require('../services/has-many-getter');
         });
       });
 
-      describe('Request on the resources getter with a "not contains" filter condition', function () {
-        it('should generate a valid SQL query', function (done) {
-          var params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
-            },
-            page: { number: '1', size: '30' },
-            filterType: 'and',
-            filter: { username: '!*hello*' },
-            timezone: '+02:00'
-          };
-          return new ResourcesGetter(models.user, { sequelize: sequelize },
-            params)
-            .perform()
-            .then(function (result) {
-              expect(result[0]).equal(4);
-              done();
-            });
-        });
-      });
+      describe('Request on the resources getter with filters conditions', function () {
+        var paramsBase = {
+          fields: {
+            user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+          },
+          page: { number: '1', size: '30' },
+          filterType: 'and',
+          timezone: '+02:00'
+        };
 
-      describe('Request on the resources getter with a "before x hours" filter condition', function () {
-        it('should generate a valid SQL query', function (done) {
-          var params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
-            },
-            page: { number: '1', size: '30' },
-            filterType: 'and',
-            filter: { createdAt: '$2HoursBefore' },
-            timezone: '+02:00'
-          };
-          return new ResourcesGetter(models.user, { sequelize: sequelize },
-            params)
-            .perform()
-            .then(function (result) {
-              expect(result[0]).equal(0);
-              done();
-            });
+        describe('with a "is null" condition on a boolean field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { emailValid: 'null' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(4);
+                done();
+              });
+          });
+        });
+
+        describe('with a "is true" condition on a boolean field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { emailValid: 'true' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(0);
+                done();
+              });
+          });
+        });
+
+        describe('with a "is false" condition on a boolean field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { emailValid: 'false' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(0);
+                done();
+              });
+          });
+        });
+
+        describe('with a "is not null" condition on a boolean field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { emailValid: '!null' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(0);
+                done();
+              });
+          });
+        });
+
+        describe('with a "is not true" condition on a boolean field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { emailValid: '!true' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(0);
+                done();
+              });
+          });
+        });
+
+        describe('with a "is not false" condition on a boolean field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { emailValid: '!false' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(0);
+                done();
+              });
+          });
+        });
+
+        describe('with a "not contains" condition on a string field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { username: '!*hello*' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(4);
+                done();
+              });
+          });
+        });
+
+        describe('with a "before x hours" condition on a date field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { createdAt: '$2HoursBefore' };
+            return new ResourcesGetter(models.user, { sequelize: sequelize }, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(0);
+                done();
+              });
+          });
         });
       });
 
