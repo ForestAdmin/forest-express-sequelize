@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Records Update - Prevent a crash on record updates for records that have no attributes.
 
 ## RELEASE 1.1.12 - 2017-07-11
 ### Added
