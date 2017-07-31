@@ -28,6 +28,7 @@
     "http-errors": "1.6.1",
     "lodash": "3.9.3",
     "moment": "2.10.6",
+    "semver": "5.4.1",
     "sequelize-fixtures": "0.6.0"
   },
   "devDependencies": {
