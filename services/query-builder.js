@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('lodash');
+var semver = require('semver');
 var Database = require('../utils/database');
 
 function QueryBuilder(model, opts, params) {
@@ -42,20 +43,24 @@ function QueryBuilder(model, opts, params) {
 
   this.getOrder = function () {
     if (params.sort) {
-      var idField = _.keys(model.primaryKeys)[0];
-
-      // WORKAROUND: Sequelize generate a bad MSSQL query if users sort the
-      //             collection on the primary key, so we prevent that.
-      if (Database.isMSSQL(opts) && _.contains([idField, '-' + idField],
-        params.sort)) {
-        return null;
-      }
-
       var order = 'ASC';
 
       if (params.sort[0] === '-') {
         params.sort = params.sort.substring(1);
         order = 'DESC';
+      }
+
+      // NOTICE: Sequelize version previous to 4.4.2 generate a bad MSSQL query
+      //         if users sort the collection on the primary key, so we prevent
+      //         that.
+      var idField = _.keys(model.primaryKeys)[0];
+      if (Database.isMSSQL(opts) && _.contains([idField, '-' + idField],
+        params.sort)) {
+        var sequelizeVersion = opts.sequelize.Sequelize.version;
+        if (!semver.valid(sequelizeVersion) ||
+          semver.lt(sequelizeVersion, '4.4.2')) {
+          return null;
+        }
       }
 
       if (params.sort.indexOf('.') !== -1) {
