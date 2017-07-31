@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Sorting - Fix the sorting issue on the primary keys for MSSQL projects (bad fix on the previous version).
 
 ## RELEASE 1.1.14 - 2017-07-31
 ### Fixed

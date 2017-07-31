@@ -1,6 +1,5 @@
 'use strict';
 var _ = require('lodash');
-var semver = require('semver');
 var Database = require('../utils/database');
 
 function QueryBuilder(model, opts, params) {
@@ -57,8 +56,7 @@ function QueryBuilder(model, opts, params) {
       if (Database.isMSSQL(opts) && _.contains([idField, '-' + idField],
         params.sort)) {
         var sequelizeVersion = opts.sequelize.Sequelize.version;
-        if (!semver.valid(sequelizeVersion) ||
-          semver.lt(sequelizeVersion, '4.4.2')) {
+        if (sequelizeVersion !== '4.4.2-forest') {
           return null;
         }
       }
