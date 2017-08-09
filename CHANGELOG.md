@@ -1,9 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Integrations - Add a first version of Layer integration.
 
 ## RELEASE 1.1.16 - 2017-08-08
-### Added
+### Added
 - Validations - Start the support of forms validations (with 9 first validations).
 - Fields - Send the defaultValue for creation forms.
 
