@@ -4,6 +4,7 @@
 ### Added
 - Validations - Start the support of forms validations (with 9 first validations).
 - Fields - Send the defaultValue for creation forms.
+- Search - Add a params to search on associations or not.
 
 ## RELEASE 1.1.15 - 2017-07-31
 ### Fixed
