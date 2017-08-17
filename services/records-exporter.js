@@ -1,12 +1,12 @@
 'use strict';
+var _ = require('lodash');
 var ResourcesGetter = require('./resources-getter');
 
 var BATCH_INITIAL_PAGE = 1;
 var BATCH_SIZE = 1000;
 
 function RecordsExporter(model, options, params) {
-  // TODO: do not hardcode the primary key here.
-  params.sort = 'id';
+  params.sort = _.keys(model.primaryKeys)[0] || 'id';
   params.page = { size: BATCH_SIZE };
 
   function retrieveBatch(dataSender, pageNumber) {
@@ -18,9 +18,7 @@ function RecordsExporter(model, options, params) {
 
         return dataSender(records)
           .then(function () {
-            // if (records.length === BATCH_SIZE) {
-            if (records.length === BATCH_SIZE && pageNumber < 10) {
-              console.log('page: ', pageNumber);
+            if (records.length === BATCH_SIZE) {
               return retrieveBatch(dataSender, pageNumber + 1);
             } else {
               return;
