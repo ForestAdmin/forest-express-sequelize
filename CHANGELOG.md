@@ -1,7 +1,10 @@
 # Change Log
 
 ## [Unreleased]
-### Fixed
+### Added
+- Exports - Forest can now handle large data exports.
+
+### Fixed
 - Record Creations - Prevent issue on record creations for models with UUID primary key default value.
 
 ## RELEASE 1.1.17 - 2017-08-09
