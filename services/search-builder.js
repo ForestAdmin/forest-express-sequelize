@@ -82,7 +82,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     });
 
     // NOTICE: Handle search on displayed belongsTo
-    if (parseInt(params.deep)) {
+    if (parseInt(params.searchExtended)) {
       _.each(associations, function (association) {
         if (!fieldNamesRequested ||
           (fieldNamesRequested.indexOf(association.as) !== -1)) {
