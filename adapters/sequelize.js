@@ -165,7 +165,11 @@ module.exports = function (model, opts) {
     }
 
     if (!_.isNull(column.defaultValue) && !_.isUndefined(column.defaultValue)) {
-      schema.defaultValue = column.defaultValue;
+      // NOTICE: Do not use the primary keys default values to prevent issues
+      //         with UUID fields (defaultValue: DataTypes.UUIDV4).
+      if (!_.includes(_.keys(model.primaryKeys), column.fieldName)) {
+        schema.defaultValue = column.defaultValue;
+      }
     }
 
     schema.validations = getValidations(column);
