@@ -82,49 +82,51 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     });
 
     // NOTICE: Handle search on displayed belongsTo
-    _.each(associations, function (association) {
-      if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.as) !== -1)) {
-        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+    if (parseInt(params.searchExtended)) {
+      _.each(associations, function (association) {
+        if (!fieldNamesRequested ||
+          (fieldNamesRequested.indexOf(association.as) !== -1)) {
+          if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
 
-          var schemaAssociation = Interface.Schemas
-            .schemas[association.target.name];
-          var fieldsAssociation = schemaAssociation.fields;
+            var schemaAssociation = Interface.Schemas
+              .schemas[association.target.name];
+            var fieldsAssociation = schemaAssociation.fields;
 
-          _.each(fieldsAssociation, function(field) {
-            if (field.reference || field.integration ||
-              field.isSearchable === false) { return; }
+            _.each(fieldsAssociation, function(field) {
+              if (field.reference || field.integration ||
+                field.isSearchable === false) { return; }
 
-            if (hasSearchFields && !_.includes(searchAssociationFields,
-              association.as + '.' + field.field)) {
-              return;
-            }
-
-            var q = {};
-            var columnName = field.columnName || field.field;
-            var column = opts.sequelize.col(association.as + '.' + columnName);
-
-            if (field.field === schemaAssociation.idField) {
-              if (field.type === 'Number') {
-                var value = parseInt(params.search, 10) || 0;
-                if (value) {
-                  q = opts.sequelize.where(column, ' = ',
-                    parseInt(params.search, 10) || 0);
-                }
-              } else if (params.search.match(REGEX_UUID)) {
-                q = opts.sequelize.where(column, ' = ', params.search);
+              if (hasSearchFields && !_.includes(searchAssociationFields,
+                association.as + '.' + field.field)) {
+                return;
               }
-            } else if (field.type === 'String') {
-              q = opts.sequelize.where(
-                opts.sequelize.fn('lower', column), ' LIKE ',
-                opts.sequelize.fn('lower', '%' + params.search + '%')
-              );
-            }
-            or.push(q);
-          });
+
+              var q = {};
+              var columnName = field.columnName || field.field;
+              var column = opts.sequelize.col(association.as + '.' + columnName);
+
+              if (field.field === schemaAssociation.idField) {
+                if (field.type === 'Number') {
+                  var value = parseInt(params.search, 10) || 0;
+                  if (value) {
+                    q = opts.sequelize.where(column, ' = ',
+                      parseInt(params.search, 10) || 0);
+                  }
+                } else if (params.search.match(REGEX_UUID)) {
+                  q = opts.sequelize.where(column, ' = ', params.search);
+                }
+              } else if (field.type === 'String') {
+                q = opts.sequelize.where(
+                  opts.sequelize.fn('lower', column), ' LIKE ',
+                  opts.sequelize.fn('lower', '%' + params.search + '%')
+                );
+              }
+              or.push(q);
+            });
+          }
         }
-      }
-    });
+      });
+    }
 
     if (or.length) { where.$or = or; }
     return where;
