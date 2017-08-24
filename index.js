@@ -1,4 +1,5 @@
 'use strict';
+var _ = require('lodash');
 var P = require('bluebird');
 var Interface = require('forest-express');
 var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
@@ -9,8 +10,12 @@ exports.StatSerializer = Interface.StatSerializer;
 exports.ResourceSerializer = Interface.ResourceSerializer;
 exports.ResourceDeserializer = Interface.ResourceDeserializer;
 exports.Schemas = Interface.Schemas;
+exports.ResourcesRoute = Interface.ResourcesRoute;
 
 exports.init = function(opts) {
+  opts.sequelizeFct = _.isArray(opts.sequelize) ? opts.sequelize[0] :
+    opts.sequelize;
+
   exports.opts = opts;
 
   exports.getLianaName = function () {
@@ -25,20 +30,36 @@ exports.init = function(opts) {
   };
 
   exports.getOrmVersion = function () {
-    var ormVersion = opts.sequelize.Sequelize.version.match(REGEX_VERSION);
+    if (!opts.sequelizeFct) { return null; }
+
+    var ormVersion = opts.sequelizeFct.Sequelize.version.match(REGEX_VERSION);
     if (ormVersion && ormVersion[0]) {
       return ormVersion[0];
     }
   };
 
   exports.getDatabaseType = function () {
-    return opts.sequelize.options.dialect;
+    if (!opts.sequelizeFct) { return null; }
+
+    return opts.sequelizeFct.options.dialect;
   };
 
   exports.SchemaAdapter = require('./adapters/sequelize');
 
   exports.getModels = function () {
-    return opts.sequelize ? opts.sequelize.models : [];
+    var models = [];
+
+    if (_.isArray(opts.sequelize)) {
+      _.each(opts.sequelize, function (db) {
+        _.each(db.models, function (model) {
+          models.push(model);
+        });
+      });
+    } else if (opts.sequelize) {
+      models = opts.sequelize.models;
+    }
+
+    return models;
   };
 
   exports.getModelName = function (model) {

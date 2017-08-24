@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Onboarding - Display an error message if the envSecret option is missing.
+- Sequelize - Supports multiple Sequelize databases.
 
 ### Fixed
 - Code Inspection - Fix Forest customization code inspection to be recursive through directories.
