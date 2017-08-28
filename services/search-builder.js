@@ -6,7 +6,7 @@ var REGEX_UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[
 
 function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var schema = Interface.Schemas.schemas[model.name];
-  var DataTypes = opts.sequelizeFct.Sequelize;
+  var DataTypes = opts.sequelize.Sequelize;
   var fields = _.clone(schema.fields);
   var associations = _.clone(model.associations);
   var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
@@ -41,11 +41,11 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           }
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
-          q = opts.sequelizeFct.where(
-            opts.sequelizeFct.fn('lower', opts.sequelizeFct.col(
+          q = opts.sequelize.where(
+            opts.sequelize.fn('lower', opts.sequelize.col(
               schema.name + '.' + columnName)),
             ' LIKE ',
-            opts.sequelizeFct.fn('lower', '%' + params.search + '%')
+            opts.sequelize.fn('lower', '%' + params.search + '%')
           );
           or.push(q);
         } else if (primaryKeyType instanceof DataTypes.UUID &&
@@ -70,11 +70,11 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         } else {
           columnName = field.columnName || field.field;
 
-          q = opts.sequelizeFct.where(
-            opts.sequelizeFct.fn('lower', opts.sequelizeFct.col(schema.name +
+          q = opts.sequelize.where(
+            opts.sequelize.fn('lower', opts.sequelize.col(schema.name +
               '.' + columnName)),
             ' LIKE ',
-            opts.sequelizeFct.fn('lower', '%' + params.search + '%')
+            opts.sequelize.fn('lower', '%' + params.search + '%')
           );
           or.push(q);
         }
@@ -103,22 +103,23 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
 
               var q = {};
               var columnName = field.columnName || field.field;
-              var column = opts.sequelizeFct.col(association.as + '.' + columnName);
+              var column = opts.sequelize.col(association.as + '.' +
+                columnName);
 
               if (field.field === schemaAssociation.idField) {
                 if (field.type === 'Number') {
                   var value = parseInt(params.search, 10) || 0;
                   if (value) {
-                    q = opts.sequelizeFct.where(column, ' = ',
+                    q = opts.sequelize.where(column, ' = ',
                       parseInt(params.search, 10) || 0);
                   }
                 } else if (params.search.match(REGEX_UUID)) {
-                  q = opts.sequelizeFct.where(column, ' = ', params.search);
+                  q = opts.sequelize.where(column, ' = ', params.search);
                 }
               } else if (field.type === 'String') {
-                q = opts.sequelizeFct.where(
-                  opts.sequelizeFct.fn('lower', column), ' LIKE ',
-                  opts.sequelizeFct.fn('lower', '%' + params.search + '%')
+                q = opts.sequelize.where(
+                  opts.sequelize.fn('lower', column), ' LIKE ',
+                  opts.sequelize.fn('lower', '%' + params.search + '%')
                 );
               }
               or.push(q);

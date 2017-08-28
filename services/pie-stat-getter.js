@@ -85,7 +85,7 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    return Database.isMSSQL(opts) ? [opts.sequelizeFct.col(groupByField)] : ['key'];
+    return Database.isMSSQL(opts) ? [opts.sequelize.col(groupByField)] : ['key'];
   }
 
   function formatResults (records) {
@@ -113,19 +113,19 @@ function PieStatGetter(model, params, opts) {
     return model.unscoped().findAll({
       attributes: [
         [
-          opts.sequelizeFct.col(groupByField),
+          opts.sequelize.col(groupByField),
           'key'
         ],
         [
-          opts.sequelizeFct.fn(getAggregate(),
-          opts.sequelizeFct.col(getAggregateField())),
+          opts.sequelize.fn(getAggregate(),
+          opts.sequelize.col(getAggregateField())),
           'value'
         ]
       ],
       include: getIncludes(),
       where: getFilters(),
       group: getGroupBy(),
-      order: [[opts.sequelizeFct.literal('value'), 'DESC']],
+      order: [[opts.sequelize.literal('value'), 'DESC']],
       raw: true
     })
     .then(formatResults)

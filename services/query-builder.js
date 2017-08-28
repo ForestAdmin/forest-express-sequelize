@@ -55,7 +55,7 @@ function QueryBuilder(model, opts, params) {
       var idField = _.keys(model.primaryKeys)[0];
       if (Database.isMSSQL(opts) && _.contains([idField, '-' + idField],
         params.sort)) {
-        var sequelizeVersion = opts.sequelizeFct.Sequelize.version;
+        var sequelizeVersion = opts.sequelize.Sequelize.version;
         if (sequelizeVersion !== '4.4.2-forest') {
           return null;
         }
@@ -63,7 +63,7 @@ function QueryBuilder(model, opts, params) {
 
       if (params.sort.indexOf('.') !== -1) {
         // NOTICE: Sort on the belongsTo displayed field
-        return [[opts.sequelizeFct.col(params.sort), order]];
+        return [[opts.sequelize.col(params.sort), order]];
       } else {
         return [[params.sort, order]];
       }

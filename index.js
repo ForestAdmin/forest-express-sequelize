@@ -13,10 +13,13 @@ exports.Schemas = Interface.Schemas;
 exports.ResourcesRoute = Interface.ResourcesRoute;
 
 exports.init = function(opts) {
-  opts.sequelizeFct = _.isArray(opts.sequelize) ? opts.sequelize[0] :
-    opts.sequelize;
-
   exports.opts = opts;
+
+  // NOTICE: Ensure compatibility with the old middleware configuration.
+  if (!('connections' in opts)) {
+    opts.connections = [opts.sequelize];
+    opts.sequelize = opts.sequelize.Sequelize;
+  }
 
   exports.getLianaName = function () {
     return 'forest-express-sequelize';
@@ -30,18 +33,18 @@ exports.init = function(opts) {
   };
 
   exports.getOrmVersion = function () {
-    if (!opts.sequelizeFct) { return null; }
+    if (!opts.sequelize) { return null; }
 
-    var ormVersion = opts.sequelizeFct.Sequelize.version.match(REGEX_VERSION);
+    var ormVersion = opts.sequelize.version.match(REGEX_VERSION);
     if (ormVersion && ormVersion[0]) {
       return ormVersion[0];
     }
   };
 
   exports.getDatabaseType = function () {
-    if (!opts.sequelizeFct) { return null; }
+    if (!opts.connections) { return null; }
 
-    return opts.sequelizeFct.options.dialect;
+    return opts.sequelize.options.dialect;
   };
 
   exports.SchemaAdapter = require('./adapters/sequelize');
@@ -49,15 +52,11 @@ exports.init = function(opts) {
   exports.getModels = function () {
     var models = [];
 
-    if (_.isArray(opts.sequelize)) {
-      _.each(opts.sequelize, function (db) {
-        _.each(db.models, function (model) {
-          models.push(model);
-        });
+    _.each(opts.connections, function (connection) {
+      _.each(connection.models, function (model) {
+        models.push(model);
       });
-    } else if (opts.sequelize) {
-      models = opts.sequelize.models;
-    }
+    });
 
     return models;
   };
