@@ -1,4 +1,5 @@
 'use strict';
+var _ = require('lodash');
 var P = require('bluebird');
 var Interface = require('forest-express');
 var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
@@ -13,6 +14,12 @@ exports.Schemas = Interface.Schemas;
 exports.init = function(opts) {
   exports.opts = opts;
 
+  // NOTICE: Ensure compatibility with the old middleware configuration.
+  if (!('connections' in opts)) {
+    opts.connections = [opts.sequelize];
+    opts.sequelize = opts.sequelize.Sequelize;
+  }
+
   exports.getLianaName = function () {
     return 'forest-express-sequelize';
   };
@@ -25,20 +32,32 @@ exports.init = function(opts) {
   };
 
   exports.getOrmVersion = function () {
-    var ormVersion = opts.sequelize.Sequelize.version.match(REGEX_VERSION);
+    if (!opts.sequelize) { return null; }
+
+    var ormVersion = opts.sequelize.version.match(REGEX_VERSION);
     if (ormVersion && ormVersion[0]) {
       return ormVersion[0];
     }
   };
 
   exports.getDatabaseType = function () {
+    if (!opts.connections) { return null; }
+
     return opts.sequelize.options.dialect;
   };
 
   exports.SchemaAdapter = require('./adapters/sequelize');
 
   exports.getModels = function () {
-    return opts.sequelize ? opts.sequelize.models : [];
+    var models = {};
+
+    _.each(opts.connections, function (connection) {
+      _.each(connection.models, function (model) {
+        models[model.name] = model;
+      });
+    });
+
+    return models;
   };
 
   exports.getModelName = function (model) {

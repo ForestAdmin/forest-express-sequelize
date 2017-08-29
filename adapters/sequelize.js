@@ -6,7 +6,7 @@ var Interface = require('forest-express');
 module.exports = function (model, opts) {
   var fields = [];
   var fieldNamesToExclude = [];
-  var DataTypes = opts.sequelize.Sequelize;
+  var DataTypes = opts.sequelize;
 
   function getTypeFor(column) {
     if (column.type instanceof DataTypes.STRING ||

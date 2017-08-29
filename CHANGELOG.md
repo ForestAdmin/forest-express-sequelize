@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Onboarding - Display an error message if the envSecret option is missing.
+- Databases Connections - Support multiple databases connections.
 
 ### Fixed
 - Code Inspection - Fix Forest customization code inspection to be recursive through directories.

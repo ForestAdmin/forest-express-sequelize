@@ -42,8 +42,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           q = opts.sequelize.where(
-            opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
-              columnName)),
+            opts.sequelize.fn('lower', opts.sequelize.col(
+              schema.name + '.' + columnName)),
             ' LIKE ',
             opts.sequelize.fn('lower', '%' + params.search + '%')
           );
@@ -71,8 +71,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           columnName = field.columnName || field.field;
 
           q = opts.sequelize.where(
-            opts.sequelize.fn('lower', opts.sequelize.col(schema.name + '.' +
-              columnName)),
+            opts.sequelize.fn('lower', opts.sequelize.col(schema.name +
+              '.' + columnName)),
             ' LIKE ',
             opts.sequelize.fn('lower', '%' + params.search + '%')
           );
@@ -103,7 +103,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
 
               var q = {};
               var columnName = field.columnName || field.field;
-              var column = opts.sequelize.col(association.as + '.' + columnName);
+              var column = opts.sequelize.col(association.as + '.' +
+                columnName);
 
               if (field.field === schemaAssociation.idField) {
                 if (field.type === 'Number') {
