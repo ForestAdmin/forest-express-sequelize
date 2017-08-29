@@ -50,11 +50,11 @@ exports.init = function(opts) {
   exports.SchemaAdapter = require('./adapters/sequelize');
 
   exports.getModels = function () {
-    var models = [];
+    var models = {};
 
     _.each(opts.connections, function (connection) {
       _.each(connection.models, function (model) {
-        models.push(model);
+        models[model.name] = model;
       });
     });
 
