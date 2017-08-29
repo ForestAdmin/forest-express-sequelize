@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.3.0 - 2017-08-29
 ### Added
 - Onboarding - Display an error message if the envSecret option is missing.
 - Databases Connections - Support multiple databases connections.
