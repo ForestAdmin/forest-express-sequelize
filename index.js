@@ -10,6 +10,7 @@ exports.StatSerializer = Interface.StatSerializer;
 exports.ResourceSerializer = Interface.ResourceSerializer;
 exports.ResourceDeserializer = Interface.ResourceDeserializer;
 exports.Schemas = Interface.Schemas;
+exports.ResourcesRoute = Interface.ResourcesRoute;
 
 exports.init = function(opts) {
   exports.opts = opts;

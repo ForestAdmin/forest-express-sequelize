@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Resources Route - Allow users to call a ResourcesRoute from their app.
+
 ### Fixed
 - Apimap - Fix collections schema for collections having snakecase foreign keys.
 
