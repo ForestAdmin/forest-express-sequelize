@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Integrations - Add the Layer integration.
 
 ## RELEASE 1.3.1 - 2017-08-30
 ### Added
@@ -77,7 +79,7 @@
 ### Fixed
 - Record Deletions - Handle the record deletion on models having a composite primary key.
 - Liana Version & Orm Version - Prevent server crash on bad format version.
-- Apimaps - Prevent foreign key field creation for belongsTo associations having a constaints set to false.
+- Apimaps - Prevent foreign key field creation for belongsTo associations having a constraints set to false.
 
 ## RELEASE 1.1.9 - 2017-06-28
 ### Fixed

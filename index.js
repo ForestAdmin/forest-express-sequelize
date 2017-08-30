@@ -122,5 +122,23 @@ exports.init = function(opts) {
     }
   };
 
+  exports.Layer = {
+    getUser: function (customerModel, customerField, customerId) {
+      return new P(function (resolve, reject) {
+        if (customerId) {
+          return customerModel
+            .findById(customerId)
+            .then(function (customer) {
+              if (!customer || !customer[customerField]) { return reject(); }
+
+              resolve(customer);
+            });
+        } else {
+          resolve();
+        }
+      });
+    }
+  };
+
   return Interface.init(exports);
 };
