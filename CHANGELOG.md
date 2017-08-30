@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.3.1 - 2017-08-30
 ### Added
 - Resources Route - Allow users to call a ResourcesRoute from their app.
 
