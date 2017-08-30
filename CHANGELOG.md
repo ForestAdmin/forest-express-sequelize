@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Apimap - Fix collections schema for collections having snakecase foreign keys.
 
 ## RELEASE 1.3.0 - 2017-08-29
 ### Added
