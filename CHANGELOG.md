@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Composite Primary Keys - prevent crash with null values.
 
 ## RELEASE 1.3.2 - 2017-08-30
 ### Added
