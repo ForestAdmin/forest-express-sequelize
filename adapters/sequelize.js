@@ -236,7 +236,7 @@ module.exports = function (model, opts) {
       }
 
       _.remove(fields, function (field) {
-        return _.includes(fieldNamesToExclude, field.field);
+        return _.includes(fieldNamesToExclude, field.columnName);
       });
 
       return {
