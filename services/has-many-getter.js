@@ -1,11 +1,14 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
+var Interface = require('forest-express');
 var QueryBuilder = require('./query-builder');
 var SearchBuilder = require('./search-builder');
+var CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {
   var queryBuilder = new QueryBuilder(model, opts, params);
+  var schema = Interface.Schemas.schemas[association.name];
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[association.name]) { return null; }
@@ -55,7 +58,14 @@ function HasManyGetter(model, association, opts, params) {
         return P.map(records, function (record) {
           // NOTICE: Do not use "toJSON" method to prevent issues on models that
           //         override this method.
-          return record.get({ plain: true });
+          var recordFormated = record.get({ plain: true });
+          if (schema.isCompositePrimary) {
+            recordFormated.forestCompositePrimary =
+              new CompositeKeysManager(association, schema, record)
+                .createCompositePrimary();
+          }
+
+          return recordFormated;
         });
       });
   }

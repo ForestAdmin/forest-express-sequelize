@@ -7,7 +7,8 @@ var BATCH_INITIAL_PAGE = 1;
 var BATCH_SIZE = 1000;
 
 function RecordsExporter(model, options, params, association) {
-  params.sort = _.keys(model.primaryKeys)[0] || 'id';
+  var primaryKeys = _.keys((association || model).primaryKeys);
+  params.sort = primaryKeys[0] || 'id';
   params.page = { size: BATCH_SIZE };
 
   function getter() {

@@ -156,6 +156,9 @@ module.exports = function (model, opts) {
       columnName: column.field
     };
 
+    if (column.primaryKey === true) {
+      schema.primaryKey = true;
+    }
     if (schema.type === 'Enum') {
       schema.enums = column.values;
     }
@@ -203,7 +206,7 @@ module.exports = function (model, opts) {
   var columns = P
     .each(_.values(model.attributes), function (column) {
       try {
-        if (column.references) { return; }
+        if (column.references && !column.primaryKey) { return; }
 
         var schema = getSchemaForColumn(column);
         fields.push(schema);
@@ -236,7 +239,8 @@ module.exports = function (model, opts) {
       }
 
       _.remove(fields, function (field) {
-        return _.includes(fieldNamesToExclude, field.columnName);
+        return _.includes(fieldNamesToExclude, field.columnName) &&
+          !field.primaryKey;
       });
 
       return {
