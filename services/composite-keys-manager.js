@@ -12,8 +12,6 @@ function CompositeKeysManager(model, schema, record) {
       if (key === 'null') { primaryKeyValues[index] = null; }
     });
 
-    console.log(primaryKeyValues);
-
     if (primaryKeyValues.length === _.keys(model.primaryKeys).length) {
       _.keys(model.primaryKeys).forEach(function (primaryKey, index) {
         where[primaryKey] = primaryKeyValues[index];
