@@ -4,6 +4,8 @@
 ### Fixed
 - HasMany Display - Fix HasMany association display for models having a composite primary key.
 - Export CSV - Fix HasMany association export for models having a composite primary key.
+- Search - Fix a potential search regression due to multi database support (1.3.0).
+- Charts Line - Fix the MySQL detection regression.
 
 ## RELEASE 1.3.2 - 2017-08-30
 ### Added
