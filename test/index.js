@@ -31,7 +31,10 @@ var HasManyGetter = require('../services/has-many-getter');
 
 [sequelizePostgres, sequelizeMySQL].forEach(function (sequelize) {
   var models = {};
-  var sequelizeOption = Sequelize;
+  var sequelizeOptions = {
+    sequelize: Sequelize,
+    connections: [sequelize]
+  };
 
   models.user = sequelize.define('user', {
     email: {
@@ -140,9 +143,7 @@ var HasManyGetter = require('../services/has-many-getter');
               aggregate: 'Count',
               time_range: null,
               filters: []
-            }, {
-              sequelize: sequelizeOption
-            })
+            }, sequelizeOptions)
             .perform()
             .then(function (stat) {
               expect(stat.value.length).equal(3);
@@ -161,9 +162,7 @@ var HasManyGetter = require('../services/has-many-getter');
               aggregate: 'Count',
               time_range: 'Day',
               filters: []
-            }, {
-              sequelize: sequelize
-            })
+            }, sequelizeOptions)
             .perform()
             .then(function (stat) {
               expect(stat.value.length).equal(1);
@@ -184,9 +183,7 @@ var HasManyGetter = require('../services/has-many-getter');
               aggregate: 'Count',
               time_range: 'Week',
               filters: []
-            }, {
-              sequelize: sequelize
-            })
+            }, sequelizeOptions)
             .perform()
             .then(function (stat) {
               expect(stat.value.length).equal(1);
@@ -205,9 +202,7 @@ var HasManyGetter = require('../services/has-many-getter');
               aggregate: 'Count',
               time_range: 'Month',
               filters: []
-            }, {
-              sequelize: sequelize
-            })
+            }, sequelizeOptions)
             .perform()
             .then(function (stat) {
               expect(stat.value.length).equal(1);
@@ -226,9 +221,7 @@ var HasManyGetter = require('../services/has-many-getter');
               aggregate: 'Count',
               time_range: 'Year',
               filters: []
-            }, {
-              sequelize: sequelize
-            })
+            }, sequelizeOptions)
             .perform()
             .then(function (stat) {
               expect(stat.value.length).equal(1);
@@ -296,7 +289,7 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelizeOption },
+          return new ResourcesGetter(models.user, sequelizeOptions,
             params)
             .perform()
             .then(function () {
@@ -314,7 +307,7 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '30' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelizeOption },
+          return new ResourcesGetter(models.user, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -334,7 +327,7 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '30' },
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelizeOption },
+          return new ResourcesGetter(models.user, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -354,7 +347,7 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'hello',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelizeOption },
+          return new ResourcesGetter(models.user, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -378,7 +371,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: 'null' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(4);
@@ -391,7 +384,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: 'true' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(0);
@@ -404,7 +397,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: 'false' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(0);
@@ -417,7 +410,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: '!null' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(0);
@@ -430,7 +423,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: '!true' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(0);
@@ -443,7 +436,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: '!false' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(0);
@@ -456,7 +449,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { username: '!*hello*' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(4);
@@ -469,7 +462,7 @@ var HasManyGetter = require('../services/has-many-getter');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { createdAt: '$2HoursBefore' };
-            return new ResourcesGetter(models.user, { sequelize: sequelizeOption }, params)
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(0);
@@ -491,7 +484,7 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'world',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelizeOption },
+          return new ResourcesGetter(models.user, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -514,7 +507,7 @@ var HasManyGetter = require('../services/has-many-getter');
             search: 'world',
             timezone: '+02:00'
           };
-          return new ResourcesGetter(models.user, { sequelize: sequelizeOption },
+          return new ResourcesGetter(models.user, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -537,7 +530,7 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '20' },
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelizeOption },
+          return new HasManyGetter(models.user, models.address, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -559,7 +552,7 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: 'city',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelizeOption },
+          return new HasManyGetter(models.user, models.address, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -581,7 +574,7 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: '-user.id',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, { sequelize: sequelizeOption },
+          return new HasManyGetter(models.user, models.address, sequelizeOptions,
             params)
             .perform()
             .then(function (result) {
@@ -606,7 +599,7 @@ var HasManyGetter = require('../services/has-many-getter');
           timezone: '+02:00'
         };
         return new HasManyGetter(models.user, models.address,
-          { sequelize: sequelizeOption }, params)
+          sequelizeOptions, params)
           .perform()
           .then(function (result) {
             expect(result[0]).equal(1);
