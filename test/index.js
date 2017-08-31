@@ -31,7 +31,7 @@ var HasManyGetter = require('../services/has-many-getter');
 
 [sequelizePostgres, sequelizeMySQL].forEach(function (sequelize) {
   var models = {};
-  var sequelizeOption = sequelize.Sequelize;
+  var sequelizeOption = Sequelize;
 
   models.user = sequelize.define('user', {
     email: {
@@ -162,7 +162,7 @@ var HasManyGetter = require('../services/has-many-getter');
               time_range: 'Day',
               filters: []
             }, {
-              sequelize: sequelizeOption
+              sequelize: sequelize
             })
             .perform()
             .then(function (stat) {
@@ -185,7 +185,7 @@ var HasManyGetter = require('../services/has-many-getter');
               time_range: 'Week',
               filters: []
             }, {
-              sequelize: sequelizeOption
+              sequelize: sequelize
             })
             .perform()
             .then(function (stat) {
@@ -206,7 +206,7 @@ var HasManyGetter = require('../services/has-many-getter');
               time_range: 'Month',
               filters: []
             }, {
-              sequelize: sequelizeOption
+              sequelize: sequelize
             })
             .perform()
             .then(function (stat) {
@@ -227,7 +227,7 @@ var HasManyGetter = require('../services/has-many-getter');
               time_range: 'Year',
               filters: []
             }, {
-              sequelize: sequelizeOption
+              sequelize: sequelize
             })
             .perform()
             .then(function (stat) {
