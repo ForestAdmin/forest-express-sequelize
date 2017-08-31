@@ -33,7 +33,6 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       if (field.field === schema.idField) {
         var primaryKeyType = model.primaryKeys[schema.idField].type;
 
-        console.log('=== here', DataTypes.INTEGER);
         if (primaryKeyType instanceof DataTypes.INTEGER) {
           var value = parseInt(params.search, 10) || 0;
           if (value) {
