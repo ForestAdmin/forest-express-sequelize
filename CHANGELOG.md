@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.3.3 - 2017-08-31
 ### Fixed
 - HasMany Display - Fix HasMany association display for models having a composite primary key.
 - Export CSV - Fix HasMany association export for models having a composite primary key.
