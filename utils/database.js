@@ -1,6 +1,8 @@
 'use strict';
 
 function optionsInvalid(options) {
+  // TODO: This function only works with the connection 0, we should add a index
+  //       parameter in case of multiple database with different dialect.
   return !(options && options.connections && options.connections[0] &&
     options.connections[0].options && options.connections[0].options.dialect);
 }
