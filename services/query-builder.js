@@ -55,7 +55,7 @@ function QueryBuilder(model, opts, params) {
       var idField = _.keys(model.primaryKeys)[0];
       if (Database.isMSSQL(opts) && _.contains([idField, '-' + idField],
         params.sort)) {
-        var sequelizeVersion = opts.sequelize.Sequelize.version;
+        var sequelizeVersion = opts.sequelize.version;
         if (sequelizeVersion !== '4.4.2-forest') {
           return null;
         }

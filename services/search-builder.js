@@ -6,7 +6,7 @@ var REGEX_UUID = '/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[
 
 function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var schema = Interface.Schemas.schemas[model.name];
-  var DataTypes = opts.sequelize.Sequelize;
+  var DataTypes = opts.sequelize;
   var fields = _.clone(schema.fields);
   var associations = _.clone(model.associations);
   var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
@@ -33,6 +33,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       if (field.field === schema.idField) {
         var primaryKeyType = model.primaryKeys[schema.idField].type;
 
+        console.log('=== here', DataTypes.INTEGER);
         if (primaryKeyType instanceof DataTypes.INTEGER) {
           var value = parseInt(params.search, 10) || 0;
           if (value) {
