@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Line Charts - Support SQLite dialect for groupBy fields.
 
 ## RELEASE 1.3.6 - 2017-09-10
 ### Changed

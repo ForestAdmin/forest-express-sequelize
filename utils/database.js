@@ -16,3 +16,8 @@ exports.isMSSQL = function(options) {
   if (optionsInvalid(options)) { return false; }
   return options.connections[0].options.dialect === 'mssql';
 };
+
+exports.isSQLite = function(options) {
+  if (optionsInvalid(options)) { return false; }
+  return options.connections[0].options.dialect === 'sqlite';
+};
