@@ -7,6 +7,10 @@ var OperatorValueParser = require('./operator-value-parser');
 var Database = require('../utils/database');
 var Interface = require('forest-express');
 
+// NOTICE: These aliases are not camelcased to prevent issues with Sequelize.
+var ALIAS_GROUP_BY = 'forest_alias_groupby';
+var ALIAS_AGGREGATE = 'forest_alias_aggregate';
+
 function PieStatGetter(model, params, opts) {
   var schema = Interface.Schemas.schemas[model.name];
   var associationSplit,associationCollection, associationField,
@@ -85,7 +89,8 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    return Database.isMSSQL(opts) ? [opts.sequelize.col(groupByField)] : ['key'];
+    return Database.isMSSQL(opts) ? [opts.sequelize.col(groupByField)] :
+      [ALIAS_GROUP_BY];
   }
 
   function formatResults (records) {
@@ -93,18 +98,19 @@ function PieStatGetter(model, params, opts) {
       var key;
 
       if (field.type === 'Date') {
-        key = moment(record.key).format('DD/MM/YYYY HH:mm:ss');
+        key = moment(record[ALIAS_GROUP_BY]).format('DD/MM/YYYY HH:mm:ss');
       } else if (field.type === 'Dateonly') {
         var offsetServer = moment().utcOffset() / 60;
-        var dateonly = moment.utc(record.key).add(offsetServer, 'h');
+        var dateonly = moment.utc(record[ALIAS_GROUP_BY])
+          .add(offsetServer, 'h');
         key = dateonly.format('DD/MM/YYYY');
       } else {
-        key = String(record.key);
+        key = String(record[ALIAS_GROUP_BY]);
       }
 
       return {
         key: key,
-        value: record.value
+        value: record[ALIAS_AGGREGATE]
       };
     });
   }
@@ -114,18 +120,18 @@ function PieStatGetter(model, params, opts) {
       attributes: [
         [
           opts.sequelize.col(groupByField),
-          'key'
+          ALIAS_GROUP_BY
         ],
         [
           opts.sequelize.fn(getAggregate(),
           opts.sequelize.col(getAggregateField())),
-          'value'
+          ALIAS_AGGREGATE
         ]
       ],
       include: getIncludes(),
       where: getFilters(),
       group: getGroupBy(),
-      order: [[opts.sequelize.literal('value'), 'DESC']],
+      order: [[opts.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
       raw: true
     })
     .then(formatResults)

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Pie Charts - Prevent a potential crash on models having a column named "key".
 
 ## RELEASE 1.3.5 - 2017-09-08
 ### Fixed
