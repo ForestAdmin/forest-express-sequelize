@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Initialization - Display an explicit error log if a model cannot be loaded properly.
+
 ### Fixed
 - Pie Charts - Prevent a potential crash on models having a column named "key".
 
