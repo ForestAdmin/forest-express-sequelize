@@ -18,19 +18,18 @@ function ResourceFinder(model, params, withIncludes) {
         });
       }
     });
-    return includes;
+
+    // NOTICE: Avoid to inject an empty "include" array inside conditions
+    //         otherwise Sequelize 4.8.x won't set the WHERE clause in the SQL
+    //         query.
+    return includes.length === 0 ? null : includes;
   }
 
   this.perform = function () {
     var conditions = { where: {} };
 
     if (withIncludes) {
-      // NOTICE: Avoid to inject an empty "include" array inside conditions
-      // otherwise Sequelize 4.8.x won't set the WHERE clause in the SQL query.
-      var includes = getIncludes();
-      if (includes && includes.length) {
-        conditions.include = includes;
-      }
+      conditions.include = getIncludes();
     }
 
     if (schema.isCompositePrimary) {
