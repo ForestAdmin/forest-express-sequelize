@@ -25,7 +25,12 @@ function ResourceFinder(model, params, withIncludes) {
     var conditions = { where: {} };
 
     if (withIncludes) {
-      conditions.include = getIncludes();
+      // NOTICE: Avoid to inject an empty "include" array inside conditions
+      // otherwise Sequelize 4.8.x won't set the WHERE clause in the SQL query.
+      var includes = getIncludes();
+      if (includes && includes.length) {
+        conditions.include = includes;
+      }
     }
 
     if (schema.isCompositePrimary) {

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Resource Finder - Set a Sequelize bug workaround to get the WHERE clause supported when no includes are available.
 
 ## RELEASE 1.3.6 - 2017-09-10
 ### Changed
