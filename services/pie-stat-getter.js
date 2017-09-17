@@ -57,9 +57,9 @@ function PieStatGetter(model, params, opts) {
         var field = filter.field;
         if (field.indexOf(':') !== -1) {
           var fieldSplited = field.split(':');
-          var associationTableName = Interface.Schemas.schemas[fieldSplited[0]]
-            .name;
-          field = '$' + associationTableName + '.' + fieldSplited[1] + '$';
+          var associationSchema = Interface.Schemas.schemas[fieldSplited[0]];
+          var associationField = _.findWhere(associationSchema.fields, { field: fieldSplited[1] });
+          field = '$' + associationSchema.name + '.' + associationField.columnName + '$';
         }
 
         var condition = {};

@@ -134,6 +134,7 @@ function LineStatGetter(model, params, opts) {
         var field = filter.field;
         if (field.indexOf(':') !== -1) {
           field = '$' + field.replace(':', '.') + '$';
+          // TOFIX: the column name might be different than the model name.
         }
 
         var condition = {};
