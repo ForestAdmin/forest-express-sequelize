@@ -19,7 +19,9 @@ function BaseStatGetter(model, params) {
         if (field.indexOf(':') !== -1) {
           var fieldSplited = field.split(':');
           var associationSchema = Interface.Schemas.schemas[fieldSplited[0]];
-          var associationField = _.findWhere(associationSchema.fields, { field: fieldSplited[1] });
+          var associationField = _.findWhere(associationSchema.fields, {
+            field: fieldSplited[1]
+          });
           field = '$' + associationSchema.name + '.' + associationField.columnName + '$';
         }
 
