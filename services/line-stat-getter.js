@@ -2,12 +2,14 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var moment = require('moment');
-var OperatorValueParser = require('./operator-value-parser');
+var BaseStatGetter = require('./base-stat-getter');
 var Database = require('../utils/database');
 var Interface = require('forest-express');
 
 // jshint sub: true
 function LineStatGetter(model, params, opts) {
+  BaseStatGetter.call(this, model, params);
+
   var schema = Interface.Schemas.schemas[model.name];
   var timeRange = params['time_range'].toLowerCase();
 
@@ -125,28 +127,6 @@ function LineStatGetter(model, params, opts) {
     ];
   }
 
-  function getFilters() {
-    var where = {};
-    var conditions = [];
-
-    if (params.filters) {
-      params.filters.forEach(function (filter) {
-        var field = filter.field;
-        if (field.indexOf(':') !== -1) {
-          field = '$' + field.replace(':', '.') + '$';
-        }
-
-        var condition = {};
-        condition[field] = new OperatorValueParser().perform(model,
-          filter.field, filter.value, params.timezone);
-        conditions.push(condition);
-      });
-    }
-
-    if (params.filterType) { where['$' + params.filterType] = conditions; }
-    return where;
-  }
-
   function getIncludes() {
     var includes = [];
     _.values(model.associations).forEach(function (association) {
@@ -174,7 +154,7 @@ function LineStatGetter(model, params, opts) {
     return model.unscoped().findAll({
       attributes: [getGroupByDateInterval(), getAggregate()],
       include: getIncludes(),
-      where: getFilters(),
+      where: this.getFilters(),
       group: getGroupBy(),
       order: getOrder(),
       raw: true
