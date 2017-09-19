@@ -18,7 +18,11 @@ function ResourceFinder(model, params, withIncludes) {
         });
       }
     });
-    return includes;
+
+    // NOTICE: Avoid to inject an empty "include" array inside conditions
+    //         otherwise Sequelize 4.8.x won't set the WHERE clause in the SQL
+    //         query.
+    return includes.length === 0 ? null : includes;
   }
 
   this.perform = function () {

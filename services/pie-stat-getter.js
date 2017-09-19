@@ -3,7 +3,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var moment = require('moment');
-var OperatorValueParser = require('./operator-value-parser');
+var BaseStatGetter = require('./base-stat-getter');
 var Database = require('../utils/database');
 var Interface = require('forest-express');
 
@@ -12,6 +12,8 @@ var ALIAS_GROUP_BY = 'forest_alias_groupby';
 var ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
 function PieStatGetter(model, params, opts) {
+  BaseStatGetter.call(this, model, params);
+
   var schema = Interface.Schemas.schemas[model.name];
   var associationSplit,associationCollection, associationField,
       associationSchema, field;
@@ -46,31 +48,6 @@ function PieStatGetter(model, params, opts) {
     var fieldName = params['aggregate_field'] || schema.primaryKeys[0] ||
       schema.fields[0].field;
     return schema.name + '.' + fieldName;
-  }
-
-  function getFilters() {
-    var where = {};
-    var conditions = [];
-
-    if (params.filters) {
-      params.filters.forEach(function (filter) {
-        var field = filter.field;
-        if (field.indexOf(':') !== -1) {
-          var fieldSplited = field.split(':');
-          var associationTableName = Interface.Schemas.schemas[fieldSplited[0]]
-            .name;
-          field = '$' + associationTableName + '.' + fieldSplited[1] + '$';
-        }
-
-        var condition = {};
-        condition[field] = new OperatorValueParser().perform(model,
-          filter.field, filter.value, params.timezone);
-        conditions.push(condition);
-      });
-    }
-
-    if (params.filterType) { where['$' + params.filterType] = conditions; }
-    return where;
   }
 
   function getIncludes() {
@@ -129,7 +106,7 @@ function PieStatGetter(model, params, opts) {
         ]
       ],
       include: getIncludes(),
-      where: getFilters(),
+      where: this.getFilters(),
       group: getGroupBy(),
       order: [[opts.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
       raw: true

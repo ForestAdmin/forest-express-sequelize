@@ -4,6 +4,10 @@
 ### Added
 - Line Charts - Support SQLite dialect for groupBy fields.
 
+### Fixed
+- Resource Retrieval - Fix the record retrieval for a record having no belongsTo/hasOne for projects using Sequelize 4.8.x.
+- Charts - Fix broken charts if they contain relationship filters on model fields that have a different column name.
+
 ## RELEASE 1.3.6 - 2017-09-10
 ### Changed
 - Initialization - Display an explicit error log if a model cannot be loaded properly.
