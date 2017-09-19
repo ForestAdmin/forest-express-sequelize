@@ -65,11 +65,34 @@ function LineStatGetter(model, params, opts) {
     }
   }
 
+  function getGroupByDateFieldFormatedForSQLite(timeRange) {
+    switch (timeRange) {
+      case 'day': {
+        return opts.sequelize.fn('STRFTIME', '%Y-%m-%d',
+          opts.sequelize.col(groupByDateField));
+      }
+      case 'week': {
+        return opts.sequelize.fn('STRFTIME', '%Y-%W',
+          opts.sequelize.col(groupByDateField));
+      }
+      case 'month': {
+        return opts.sequelize.fn('STRFTIME', '%Y-%m-01',
+          opts.sequelize.col(groupByDateField));
+      }
+      case 'year': {
+        return opts.sequelize.fn('STRFTIME', '%Y-01-01',
+          opts.sequelize.col(groupByDateField));
+      }
+    }
+  }
+
   function getGroupByDateInterval() {
     if (Database.isMySQL(opts)) {
       return [getGroupByDateFieldFormatedForMySQL(timeRange), 'date'];
     } else if (Database.isMSSQL(opts)) {
       return [getGroupByDateFieldFormatedForMSSQL(timeRange), 'date'];
+    } else if (Database.isSQLite(opts)) {
+      return [getGroupByDateFieldFormatedForSQLite(timeRange), 'date'];
     } else {
       var timezone = (-parseInt(params.timezone, 10)).toString();
       return [
@@ -95,13 +118,18 @@ function LineStatGetter(model, params, opts) {
 
   function fillEmptyDateInterval(records) {
     if (records.length) {
-      var firstDate = moment(records[0].label);
-      var lastDate = moment(records[records.length - 1].label);
+      var sqlFormat = 'YYYY-MM-DD 00:00:00';
+      if (Database.isSQLite(opts) && timeRange === 'week') {
+        sqlFormat = 'YYYY-WW';
+      }
+
+      var firstDate = moment(records[0].label, sqlFormat);
+      var lastDate = moment(records[records.length - 1].label, sqlFormat);
 
       for (var i = firstDate ; i.toDate() <= lastDate.toDate() ;
         i = i.add(1, timeRange)) {
 
-        var label = i.format('YYYY-MM-DD 00:00:00');
+        var label = i.format(sqlFormat);
         if (!_.find(records, { label: label })) {
           records.push({ label: label, values: { value: 0 }});
         }
@@ -110,7 +138,7 @@ function LineStatGetter(model, params, opts) {
       records = _.sortBy(records, 'label');
       return _.map(records, function (record) {
         return {
-          label: moment(record.label).format(getFormat()),
+          label: moment(record.label, sqlFormat).format(getFormat()),
           values: record.values
         };
       });
