@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.4.0 - 2017-09-20
 ### Added
 - Line Charts - Support SQLite dialect for groupBy fields.
 - Smart Fields - Add a parameter to specify if the sorting is allowed on this field.
