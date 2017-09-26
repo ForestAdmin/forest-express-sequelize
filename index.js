@@ -16,7 +16,7 @@ exports.init = function(opts) {
   exports.opts = opts;
 
   // NOTICE: Ensure compatibility with the old middleware configuration.
-  if (!('connections' in opts)) {
+  if (opts.sequelize && !('connections' in opts)) {
     opts.connections = [opts.sequelize];
     opts.sequelize = opts.sequelize.Sequelize;
   }
