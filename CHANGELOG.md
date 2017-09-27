@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Initialization - Fix the init phase when sequelize option is not present.
 
 ## RELEASE 1.4.0 - 2017-09-20
 ### Added
