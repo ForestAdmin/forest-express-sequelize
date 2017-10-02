@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Initialisation - Prevent bad ES2017 syntax error detections on initialisation.
 
 ## RELEASE 1.4.1 - 2017-10-02
 ### Fixed
