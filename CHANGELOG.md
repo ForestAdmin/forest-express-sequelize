@@ -4,6 +4,10 @@
 ### Fixed
 - Initialization - Fix the init phase when sequelize option is not present.
 
+### Changed
+- Intercom Integration - Prefer Intercom accessToken configuration to old fashioned appId/apiKey.
+- Intercom Integration - Remove support for old configuration parameter use "userCollection" (use mapping instead).
+
 ## RELEASE 1.4.0 - 2017-09-20
 ### Added
 - Line Charts - Support SQLite dialect for groupBy fields.
