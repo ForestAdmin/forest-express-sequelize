@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Intercom - Make the conversation details accessible.
 
 ## RELEASE 1.4.2 - 2017-10-02
 ### Fixed
