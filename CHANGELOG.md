@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Initialisation - Do not try to require file that don't have the js extension.
 
 ## RELEASE 1.4.3 - 2017-10-03
 ### Fixed
