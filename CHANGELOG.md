@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Sessions - Display a clean error message if the renderingId and envSecret are missing or inconsistent.
+
+### Fixed
+- Initialisation - Prevent bad "import" syntax error detections on initialisation.
 
 ## RELEASE 1.4.5 - 2017-10-06
 ### Fixed
