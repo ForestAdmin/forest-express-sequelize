@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.4.7 - 2017-10-18
 ### Fixed
 - Charts - Fix one-relationship filters for projects with collections names different than the filter field name send in the request.
 
