@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.4.8 - 2017-10-20
 ### Fixed
 - Line Charts - Fix Line Charts potential crash on Postgresql databases.
 - Search - Fix the regression of the searchFields option.
