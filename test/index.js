@@ -66,6 +66,12 @@ var HasManyGetter = require('../services/has-many-getter');
     stack: { type: Sequelize.STRING }
   });
 
+  models.order = sequelize.define('order', {
+    amount: { type: Sequelize.INTEGER },
+    comment: { type: Sequelize.STRING },
+    giftMessage: { type: Sequelize.STRING }
+  });
+
   models.address.belongsTo(models.user);
   models.user.hasMany(models.address);
 
@@ -117,6 +123,19 @@ var HasManyGetter = require('../services/has-many-getter');
           { field: 'stack', type: 'String' },
           { field: 'createdAt', type: 'Date' },
           { field: 'updatedAt', type: 'Date' }
+        ]
+      },
+      order: {
+        name: 'order',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        searchFields: ['amount', 'comment'],
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'amount', type: 'Number' },
+          { field: 'comment', type: 'String' },
+          { field: 'giftMessage', type: 'String' }
         ]
       }
     }
@@ -352,6 +371,25 @@ var HasManyGetter = require('../services/has-many-getter');
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
+              done();
+            });
+        });
+      });
+
+      describe('Request on the resources getter with a search on a collection with searchFields', function () {
+        it('should generate a valid SQL query', function (done) {
+          var params = {
+            fields: {
+              order: 'id,amount,description,giftComment'
+            },
+            page: { number: '1', size: '30' },
+            search: 'gift',
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.order, sequelizeOptions, params)
+            .perform()
+            .then(function (result) {
+              expect(result[0]).equal(1);
               done();
             });
         });
