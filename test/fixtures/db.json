@@ -58,5 +58,23 @@
       "username": "PiperTchat",
       "password": "jinYang"
     }
+  },
+  {
+    "model": "order",
+    "data": {
+      "id": 100,
+      "amount": 199,
+      "comment": "no comment!",
+      "giftMessage": "Here is your gift"
+    }
+  },
+  {
+    "model": "order",
+    "data": {
+      "id": 101,
+      "amount": 1399,
+      "comment": "this is a gift",
+      "giftMessage": "Thank you"
+    }
   }
 ]
