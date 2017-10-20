@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Line Charts - Fix Line Charts potential crash on Postgresql databases.
+- Search - Fix the regression of the searchFields option.
 
 ## RELEASE 1.4.7 - 2017-10-18
 ### Fixed
