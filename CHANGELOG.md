@@ -1,7 +1,7 @@
 # Change Log
 
 ## [Unreleased]
-### Fixed
+### Fixed
 - Line Charts - Fix Line Charts potential crash on Postgresql databases.
 - Search - Fix the regression of the searchFields option.
 
@@ -22,7 +22,7 @@
 - Integrations - Ensure all the models are loading before integrations setup.
 
 ## RELEASE 1.4.4 - 2017-10-04
-### Fixed
+### Fixed
 - Initialisation - Do not try to require file that don't have the js extension.
 
 ## RELEASE 1.4.3 - 2017-10-03
