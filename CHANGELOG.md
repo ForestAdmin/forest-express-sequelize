@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Line Charts - Fix Line Charts potential crash on Postgresql databases.
 
 ## RELEASE 1.4.7 - 2017-10-18
 ### Fixed
