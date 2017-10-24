@@ -32,6 +32,9 @@ module.exports = function (model, opts) {
       return 'Json';
     } else if (column.type instanceof DataTypes.TIME) {
       return 'Time';
+    } else if (column.type instanceof DataTypes.GEOMETRY &&
+      column.type.type === 'POINT') {
+      return 'Point';
     } else if (column.type.type) {
       return [getTypeFor({ type: column.type.type })];
     }
