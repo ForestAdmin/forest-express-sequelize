@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Types Support - Support Point field type.
 
 ## RELEASE 1.4.8 - 2017-10-20
 ### Fixed
