@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Record Serialization - Type Point are serialized and in ressources attibutes.
+- Types Support - Support Point field type.
 
 ## RELEASE 1.3.5 - 2017-09-08
 ### Fixed
