@@ -11,6 +11,13 @@
     }
   },
   {
+    "model": "bike",
+    "data": {
+      "id": "1a11dc05-4e04-4d8f-958b-0a9f23a141a3",
+      "name": "Triumph Street Triple"
+    }
+  },
+  {
     "model": "address",
     "data": {
       "id": 100,

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Search - Fix a regression on UUID fields search. 🛡
 
 ## RELEASE 1.5.0 - 2017-10-26
 ### Added
