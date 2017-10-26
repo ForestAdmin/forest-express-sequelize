@@ -4,6 +4,10 @@
 ### Added
 - Types Support - Support Point field type.
 
+### Changed
+- Smart Relationships - Add a warning if a Smart Collection does not define the "idField" attribute necessary for Smart Relationships.
+- Smart Fields - Prevent the Smart Fields computation errors to generate a crash and handle it letting the value empty.
+
 ## RELEASE 1.4.8 - 2017-10-20
 ### Fixed
 - Line Charts - Fix Line Charts potential crash on Postgresql databases.
