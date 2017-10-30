@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Smart Fields - Do the Smart Fields values injection in the Serializer to simplify Smart Relationships implementation.
+
 ### Fixed
 - Search - Fix a regression on UUID fields search. 🛡
 - Search - An extended search on a belongsTo associated model with an UUID value will not crash anymore. 🛡
