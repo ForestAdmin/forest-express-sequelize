@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.5.1 - 2017-10-30
 ### Changed
 - Smart Fields - Do the Smart Fields values injection in the Serializer to simplify Smart Relationships implementation.
 
