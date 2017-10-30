@@ -49,7 +49,8 @@ var HasManyGetter = require('../services/has-many-getter');
     password: { type: Sequelize.STRING },
     createdAt: { type: Sequelize.DATE },
     updatedAt: { type: Sequelize.DATE },
-    resetPasswordToken: { type: Sequelize.STRING }
+    resetPasswordToken: { type: Sequelize.STRING },
+    uuid: { type: Sequelize.UUID }
   });
 
   models.bike = sequelize.define('bike', {
@@ -104,7 +105,8 @@ var HasManyGetter = require('../services/has-many-getter');
           { field: 'createdAt', type: 'Date' },
           { field: 'updatedAt', type: 'Date' },
           { field: 'resetPasswordToken', type: 'String' },
-          { field: 'addresses', type: ['Number'] }
+          { field: 'addresses', type: ['Number'] },
+          { field: 'uuid', type: 'String' }
         ]
       },
       bike: {
@@ -613,6 +615,29 @@ var HasManyGetter = require('../services/has-many-getter');
             .perform()
             .then(function (result) {
               expect(result[0]).equal(0);
+              done();
+            })
+            .catch(done);
+        });
+      });
+
+      describe('Request on the resources getter with an extended search with a UUID input', function () {
+        it('should generate a valid SQL query', function (done) {
+          var params = {
+            fields: {
+              address: 'line,zipCode,city,country,user',
+              user: 'id'
+            },
+            page: { number: '1', size: '10' },
+            search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
+            searchExtended: 1,
+            timezone: '+02:00'
+          };
+          return new ResourcesGetter(models.address, sequelizeOptions,
+            params)
+            .perform()
+            .then(function (result) {
+              expect(result[0]).equal(3);
               done();
             })
             .catch(done);

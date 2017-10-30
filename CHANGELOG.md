@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Search - Fix a regression on UUID fields search. 🛡
+- Search - An extended search on a belongsTo associated model with an UUID value will not crash anymore. 🛡
 
 ## RELEASE 1.5.0 - 2017-10-26
 ### Added

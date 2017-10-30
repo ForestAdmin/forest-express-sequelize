@@ -128,8 +128,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           (fieldNamesRequested.indexOf(association.as) !== -1)) {
           if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
 
+            var modelAssociation = association.target;
             var schemaAssociation = Interface.Schemas
-              .schemas[association.target.name];
+              .schemas[modelAssociation.name];
             var fieldsAssociation = schemaAssociation.fields;
 
             _.each(fieldsAssociation, function(field) {
@@ -157,10 +158,17 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                   q = opts.sequelize.where(column, ' = ', params.search);
                 }
               } else if (field.type === 'String') {
-                q = opts.sequelize.where(
-                  opts.sequelize.fn('lower', column), ' LIKE ',
-                  opts.sequelize.fn('lower', '%' + params.search + '%')
-                );
+                if (modelAssociation.attributes[field.field] &&
+                  modelAssociation.attributes[field.field].type instanceof
+                  DataTypes.UUID) {
+                  if (params.search.match(REGEX_UUID)) {
+                    q = opts.sequelize.where(column, '=', params.search);
+                  }
+                } else {
+                  q = opts.sequelize.where(
+                    opts.sequelize.fn('lower', column), ' LIKE ',
+                    opts.sequelize.fn('lower', '%' + params.search + '%'));
+                }
               }
               or.push(q);
             });
