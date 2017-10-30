@@ -52,6 +52,17 @@ var HasManyGetter = require('../services/has-many-getter');
     resetPasswordToken: { type: Sequelize.STRING }
   });
 
+  models.bike = sequelize.define('bike', {
+    id: {
+      type: Sequelize.UUID,
+      primaryKey: true,
+      defaultValue: Sequelize.UUIDV4
+    },
+    createdAt: { type: Sequelize.DATE },
+    updatedAt: { type: Sequelize.DATE },
+    name: { type: Sequelize.STRING, allowNull: false }
+  });
+
   models.address = sequelize.define('address', {
     line: { type: Sequelize.STRING },
     zipCode: { type: Sequelize.STRING },
@@ -94,6 +105,18 @@ var HasManyGetter = require('../services/has-many-getter');
           { field: 'updatedAt', type: 'Date' },
           { field: 'resetPasswordToken', type: 'String' },
           { field: 'addresses', type: ['Number'] }
+        ]
+      },
+      bike: {
+        name: 'bike',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'String' },
+          { field: 'name', type: 'String' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
         ]
       },
       address: {
@@ -149,25 +172,27 @@ var HasManyGetter = require('../services/has-many-getter');
             return sequelizeFixtures.loadFile('test/fixtures/db.json', models,
               { log: function () {} });
           })
-          .then(function() { return done(); });
+          .then(function() { return done(); })
+          .catch(done);
       });
 
       describe('A simple Pie Chart on an empty users table', function () {
         it('should generate a valid SQL query', function (done) {
           return new PieStatGetter(models.user, {
-              type: 'Pie',
-              collection: 'user',
-              timezone: '+02:00',
-              group_by_field: 'firstName',
-              aggregate: 'Count',
-              time_range: null,
-              filters: []
-            }, sequelizeOptions)
+            type: 'Pie',
+            collection: 'user',
+            timezone: '+02:00',
+            group_by_field: 'firstName',
+            aggregate: 'Count',
+            time_range: null,
+            filters: []
+          }, sequelizeOptions)
             .perform()
             .then(function (stat) {
               expect(stat.value.length).equal(3);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -186,7 +211,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (stat) {
               expect(stat.value.length).equal(1);
               done();
-            });
+            })
+            .catch(done);
         });
       });
     });
@@ -207,7 +233,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (stat) {
               expect(stat.value.length).equal(1);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -226,7 +253,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (stat) {
               expect(stat.value.length).equal(1);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -245,7 +273,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (stat) {
               expect(stat.value.length).equal(1);
               done();
-            });
+            })
+            .catch(done);
         });
       });
     });
@@ -261,19 +290,20 @@ var HasManyGetter = require('../services/has-many-getter');
             username: 'Jacouille',
             password: 'bonpoissonnet'
           })
-          .perform()
-          .then(function (result) {
-            expect(result.id).equal(1);
-            expect(result.firstName).equal('Jack');
-            expect(result.username).equal('Jacouille');
+            .perform()
+            .then(function (result) {
+              expect(result.id).equal(1);
+              expect(result.firstName).equal('Jack');
+              expect(result.username).equal('Jacouille');
 
-            return models.user
-              .find({ where : { email: 'jack@forestadmin.com' } })
-              .then(function (user) {
-                expect(user).not.to.be.null;
-                done();
-              });
-          });
+              return models.user
+                .find({ where : { email: 'jack@forestadmin.com' } })
+                .then(function (user) {
+                  expect(user).not.to.be.null;
+                  done();
+                });
+            })
+            .catch(done);
         });
       });
 
@@ -283,17 +313,18 @@ var HasManyGetter = require('../services/has-many-getter');
             code: 'G@G#F@G@',
             trace: 'Ggg23g242@'
           })
-          .perform()
-          .then(function (result) {
-            expect(result.code).equal('G@G#F@G@');
-            expect(result.trace).equal('Ggg23g242@');
-            return models.log
-              .find({ where : { code: 'G@G#F@G@' } })
-              .then(function (log) {
-                expect(log).not.to.be.null;
-                done();
-              });
-          });
+            .perform()
+            .then(function (result) {
+              expect(result.code).equal('G@G#F@G@');
+              expect(result.trace).equal('Ggg23g242@');
+              return models.log
+                .find({ where : { code: 'G@G#F@G@' } })
+                .then(function (log) {
+                  expect(log).not.to.be.null;
+                  done();
+                });
+            })
+            .catch(done);
         });
       });
     });
@@ -313,7 +344,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .perform()
             .then(function () {
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -332,7 +364,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (result) {
               expect(result[0]).equal(4);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -352,7 +385,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (result) {
               expect(result[0]).equal(4);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -372,7 +406,50 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (result) {
               expect(result[0]).equal(0);
               done();
-            });
+            })
+            .catch(done);
+        });
+      });
+
+      describe('Request on the resources getter with a search on a UUID primary key', function () {
+        describe('with a UUID that does not exist', function () {
+          it('should generate a valid SQL query and find 0 records', function (done) {
+            var params = {
+              fields: {
+                bike: 'id,name'
+              },
+              page: { number: '1', size: '30' },
+              search: '39a704a7-9149-448c-ac93-9c869c5af41d',
+              timezone: '+02:00'
+            };
+            return new ResourcesGetter(models.bike, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(0);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a UUID that exists', function () {
+          it('should generate a valid SQL query and find 1 records', function (done) {
+            var params = {
+              fields: {
+                bike: 'id,name'
+              },
+              page: { number: '1', size: '30' },
+              search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
+              timezone: '+02:00'
+            };
+            return new ResourcesGetter(models.bike, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(1);
+                done();
+              })
+              .catch(done);
+          });
         });
       });
 
@@ -391,7 +468,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (result) {
               expect(result[0]).equal(1);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -414,7 +492,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(4);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
 
@@ -427,7 +506,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(0);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
 
@@ -440,7 +520,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(0);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
 
@@ -453,7 +534,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(0);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
 
@@ -466,7 +548,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(0);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
 
@@ -479,7 +562,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(0);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
 
@@ -492,7 +576,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(4);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
 
@@ -505,7 +590,8 @@ var HasManyGetter = require('../services/has-many-getter');
               .then(function (result) {
                 expect(result[0]).equal(0);
                 done();
-              });
+              })
+              .catch(done);
           });
         });
       });
@@ -528,7 +614,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (result) {
               expect(result[0]).equal(0);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -551,7 +638,8 @@ var HasManyGetter = require('../services/has-many-getter');
             .then(function (result) {
               expect(result[0]).equal(0);
               done();
-            });
+            })
+            .catch(done);
         });
       });
     });
@@ -568,13 +656,14 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '20' },
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, sequelizeOptions,
-            params)
+          return new HasManyGetter(models.user, models.address,
+            sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -590,13 +679,14 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: 'city',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, sequelizeOptions,
-            params)
+          return new HasManyGetter(models.user, models.address,
+            sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
               done();
-            });
+            })
+            .catch(done);
         });
       });
 
@@ -612,13 +702,14 @@ var HasManyGetter = require('../services/has-many-getter');
             sort: '-user.id',
             timezone: '+02:00'
           };
-          return new HasManyGetter(models.user, models.address, sequelizeOptions,
-            params)
+          return new HasManyGetter(models.user, models.address,
+            sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[0]).equal(3);
               done();
-            });
+            })
+            .catch(done);
         });
       });
     });
@@ -643,7 +734,8 @@ var HasManyGetter = require('../services/has-many-getter');
             expect(result[0]).equal(1);
             expect(result[1].length).equal(1);
             done();
-          });
+          })
+          .catch(done);
       });
     });
 
@@ -654,13 +746,14 @@ var HasManyGetter = require('../services/has-many-getter');
             recordId: 100
           };
           return new ResourceGetter(models.user, params)
-          .perform()
-          .then(function (user) {
-            expect(user).not.to.be.null;
-            expect(user.id).equal(100);
-            expect(user.firstName).equal('Richard');
-            done();
-          });
+            .perform()
+            .then(function (user) {
+              expect(user).not.to.be.null;
+              expect(user.id).equal(100);
+              expect(user.firstName).equal('Richard');
+              done();
+            })
+            .catch(done);
         });
       });
 
@@ -670,12 +763,13 @@ var HasManyGetter = require('../services/has-many-getter');
             recordId: 'G@G#F@G@-Ggg23g242@'
           };
           return new ResourceGetter(models.log, params)
-          .perform()
-          .then(function (log) {
-            expect(log).not.to.be.null;
-            expect(log.forestCompositePrimary).equal('G@G#F@G@-Ggg23g242@');
-            done();
-          });
+            .perform()
+            .then(function (log) {
+              expect(log).not.to.be.null;
+              expect(log.forestCompositePrimary).equal('G@G#F@G@-Ggg23g242@');
+              done();
+            })
+            .catch(done);
         });
       });
     });
@@ -687,15 +781,16 @@ var HasManyGetter = require('../services/has-many-getter');
             recordId: 1
           };
           return new ResourceRemover(models.user, params)
-          .perform()
-          .then(function () {
-            return models.user
-              .find({ where : { email: 'jack@forestadmin.com' } })
-              .then(function (user) {
-                expect(user).to.be.null;
-                done();
-              });
-          });
+            .perform()
+            .then(function () {
+              return models.user
+                .find({ where : { email: 'jack@forestadmin.com' } })
+                .then(function (user) {
+                  expect(user).to.be.null;
+                  done();
+                });
+            })
+            .catch(done);
         });
       });
 
@@ -705,15 +800,16 @@ var HasManyGetter = require('../services/has-many-getter');
             recordId: 'G@G#F@G@-Ggg23g242@'
           };
           return new ResourceRemover(models.log, params)
-          .perform()
-          .then(function () {
-            return models.log
-              .find({ where : { code: 'G@G#F@G@' } })
-              .then(function (log) {
-                expect(log).to.be.null;
-                done();
-              });
-          });
+            .perform()
+            .then(function () {
+              return models.log
+                .find({ where : { code: 'G@G#F@G@' } })
+                .then(function (log) {
+                  expect(log).to.be.null;
+                  done();
+                });
+            })
+            .catch(done);
         });
       });
     });
