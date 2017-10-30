@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('lodash');
+var ErrorHTTP422 = require('./errors').ErrorHTTP422;
 
 function HasManyAssociator(model, association, opts, params, data) {
   this.perform = function () {
@@ -11,6 +12,9 @@ function HasManyAssociator(model, association, opts, params, data) {
         });
         return record['remove' + _.capitalize(params.associationName)](
           associatedIds);
+      })
+      .catch(function (error) {
+        throw new ErrorHTTP422(error.message);
       });
   };
 }
