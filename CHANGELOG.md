@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Performance - Improve MSSQL search performances (MSSQL Search is case insensitive).
 
 ## RELEASE 1.5.1 - 2017-10-30
 ### Changed

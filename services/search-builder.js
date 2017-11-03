@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var Interface = require('forest-express');
+var Database = require('../utils/database');
 
 var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -11,6 +12,13 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var associations = _.clone(model.associations);
   var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
   var searchAssociationFields;
+
+  function lowerIfNecessary(entry) {
+    // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
+    //         performance optimization.
+    if (Database.isMSSQL(opts)) { return entry; }
+    return opts.sequelize.fn('lower', entry);
+  }
 
   function selectSearchFields() {
     var searchFields = _.clone(schema.searchFields);
@@ -82,10 +90,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           q = opts.sequelize.where(
-            opts.sequelize.fn('lower', opts.sequelize.col(
-              schema.name + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
             ' LIKE ',
-            opts.sequelize.fn('lower', '%' + params.search + '%')
+            lowerIfNecessary('%' + params.search + '%')
           );
           or.push(q);
         } else if (primaryKeyType instanceof DataTypes.UUID &&
@@ -111,10 +118,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           columnName = field.columnName || field.field;
 
           q = opts.sequelize.where(
-            opts.sequelize.fn('lower', opts.sequelize.col(schema.name +
-              '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
             ' LIKE ',
-            opts.sequelize.fn('lower', '%' + params.search + '%')
+            lowerIfNecessary('%' + params.search + '%')
           );
           or.push(q);
         }
@@ -166,8 +172,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                   }
                 } else {
                   q = opts.sequelize.where(
-                    opts.sequelize.fn('lower', column), ' LIKE ',
-                    opts.sequelize.fn('lower', '%' + params.search + '%'));
+                    lowerIfNecessary(column), ' LIKE ',
+                    lowerIfNecessary('%' + params.search + '%'));
                 }
               }
               or.push(q);
