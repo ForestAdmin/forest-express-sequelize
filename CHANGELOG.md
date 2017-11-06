@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.5.2 - 2017-11-06
 ### Changed
 - Security - Remove all detected vulnerabilities upgrading some dependencies (nsp check --output summary).
 - Performance - Improve MSSQL search performances (MSSQL Search is case insensitive).
