@@ -70,13 +70,17 @@ function PieStatGetter(model, params, opts) {
       [ALIAS_GROUP_BY];
   }
 
+  function isDateOnlyString(field) {
+      return moment(field, 'YYYY-MM-DD', true).isValid();
+  }
+
   function formatResults (records) {
     return P.map(records, function (record) {
       var key;
 
       if (field.type === 'Date') {
         key = moment(record[ALIAS_GROUP_BY]).format('DD/MM/YYYY HH:mm:ss');
-      } else if (field.type === 'Dateonly') {
+      } else if (field.type === 'Dateonly' && !isDateOnlyString(record[ALIAS_GROUP_BY])) {
         var offsetServer = moment().utcOffset() / 60;
         var dateonly = moment.utc(record[ALIAS_GROUP_BY])
           .add(offsetServer, 'h');
