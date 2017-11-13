@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.5.4 - 2017-11-13
 ### Fixed
 - Validations - Allow an array with one value to define minimum value length validation.
 
