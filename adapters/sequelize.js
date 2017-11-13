@@ -102,24 +102,25 @@ module.exports = function (model, opts) {
     }
 
     if (column.validate.len) {
-      var length = column.validate.len.args || column.validate.len;
+      var lenValue = column.validate.len.args || column.validate.len;
 
-      if (length[0] && length[1]) {
+      if (lenValue[0] && lenValue[1]) {
         validations.push({
           type: 'is longer than',
-          value: length[0],
+          value: lenValue[0],
           message: column.validate.len.msg
         });
 
         validations.push({
           type: 'is shorter than',
-          value: length[1],
+          value: lenValue[1],
           message: column.validate.len.msg
         });
       } else {
         validations.push({
           type: 'is longer than',
-          value: length,
+          value: (_.isArray(lenValue) && lenValue.length === 1)
+            ? lenValue[0] : lenValue,
           message: column.validate.len.msg
         });
       }

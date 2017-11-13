@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Validations - Allow an array with one value to define min len field validation.
 
 ## RELEASE 1.5.3 - 2017-11-08
 ### Fixed
