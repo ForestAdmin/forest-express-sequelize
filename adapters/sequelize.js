@@ -104,18 +104,20 @@ module.exports = function (model, opts) {
     if (column.validate.len) {
       var length = column.validate.len.args || column.validate.len;
 
-      if (length[0] && length[1]) {
+      if (_.isArray(length) && length[0]) {
         validations.push({
           type: 'is longer than',
           value: length[0],
           message: column.validate.len.msg
         });
 
-        validations.push({
-          type: 'is shorter than',
-          value: length[1],
-          message: column.validate.len.msg
-        });
+        if (length[1]) {
+          validations.push({
+            type: 'is shorter than',
+            value: length[1],
+            message: column.validate.len.msg
+          });
+        }
       } else {
         validations.push({
           type: 'is longer than',
