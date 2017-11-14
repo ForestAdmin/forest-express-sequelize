@@ -1,5 +1,5 @@
 'use strict';
-var moment = require('moment');
+var moment = require('moment-timezone');
 
 function OperatorDateIntervalParser(value, timezone) {
   var PERIODS = {
@@ -29,7 +29,7 @@ function OperatorDateIntervalParser(value, timezone) {
     years: 'year'
   };
 
-  var offsetClient = parseInt(timezone, 10);
+  var offsetClient = parseInt(moment().tz(timezone).format('Z'), 10);
   var offsetServer = moment().utcOffset() / 60;
   var offsetHours = offsetServer - offsetClient;
 
