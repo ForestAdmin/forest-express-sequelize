@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Database Info - Send the database dialect in the Apimap metadata.
 
 ## RELEASE 1.5.4 - 2017-11-13
 ### Fixed

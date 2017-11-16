@@ -44,7 +44,7 @@ exports.init = function(opts) {
   exports.getDatabaseType = function () {
     if (!opts.connections) { return null; }
 
-    return opts.sequelize.options.dialect;
+    return opts.connections[0].options.dialect;
   };
 
   exports.SchemaAdapter = require('./adapters/sequelize');
