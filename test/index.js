@@ -218,7 +218,7 @@ var HasManyGetter = require('../services/has-many-getter');
       describe('on a simple collection with a fields with a bad type', function () {
         var schema;
         before(function (done) {
-          new  SchemaAdapter(models.hasBadFieldType, sequelizeOptions)
+          new SchemaAdapter(models.hasBadFieldType, sequelizeOptions)
             .then(function (schemaCreated) {
               schema = schemaCreated;
               done();
@@ -229,7 +229,7 @@ var HasManyGetter = require('../services/has-many-getter');
           expect(schema).not.to.be.null;
         });
 
-        it('should detect 1 field with a type', function () {
+        it('should detect 4 fields with a type', function () {
           expect(schema.fields.length).equal(4);
           expect(schema.fields[0].type).equal('Number');
           expect(schema.fields[1].type).equal('String');
