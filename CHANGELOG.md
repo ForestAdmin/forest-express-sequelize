@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.5.5 - 2017-11-20
 ### Changed
 - Apimap - Do not send fields with an unknown type in the Apimap anymore. 🛡
 
