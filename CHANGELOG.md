@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Apimap - Do not send fields with an unknown type in the Apimap anymore. 🛡
+
 ### Fixed
 - Database Info - Send the database dialect in the Apimap metadata.
 - Charts - Fix some bad Line charts aggregation due to Daylight Saving Time.
