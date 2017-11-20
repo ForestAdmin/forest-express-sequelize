@@ -214,7 +214,10 @@ module.exports = function (model, opts) {
         if (column.references && !column.primaryKey) { return; }
 
         var schema = getSchemaForColumn(column);
-        fields.push(schema);
+
+        if (schema.type) {
+          fields.push(schema);
+        }
       } catch (error) {
         Interface.logger.error('Cannot fetch properly column ' + column.field +
           ' of model ' + model.name, error);

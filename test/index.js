@@ -7,6 +7,7 @@ var _ = require('lodash');
 var Sequelize = require('sequelize');
 var sequelizeFixtures = require('sequelize-fixtures');
 var Interface = require('forest-express');
+var SchemaAdapter = require('../adapters/sequelize');
 
 var databaseOptions = {
   logging: false,
@@ -82,6 +83,11 @@ var HasManyGetter = require('../services/has-many-getter');
     amount: { type: Sequelize.INTEGER },
     comment: { type: Sequelize.STRING },
     giftMessage: { type: Sequelize.STRING }
+  });
+
+  models.hasBadFieldType = sequelize.define('hasBadFieldType', {
+    fieldGood: { type: Sequelize.STRING },
+    fieldBad: { type: Sequelize.REAL }, // NOTICE: not supported yet.
   });
 
   models.address.belongsTo(models.user);
@@ -167,6 +173,72 @@ var HasManyGetter = require('../services/has-many-getter');
   };
 
   describe('Dialect ' + sequelize.options.dialect, function () {
+    describe('Schema Adapter', function () {
+      describe('on a simple collection with 12 fields', function () {
+        var schema;
+        before(function (done) {
+          new SchemaAdapter(models.user, sequelizeOptions)
+            .then(function (schemaCreated) {
+              schema = schemaCreated;
+              done();
+            });
+        });
+
+        it('should generate a schema', function () {
+          expect(schema).not.to.be.null;
+        });
+
+        it('should define an idField', function () {
+          expect(schema.idField).equal('id');
+          expect(schema.primaryKeys.length).equal(1);
+          expect(schema.primaryKeys[0]).equal('id');
+        });
+
+        it('should not detect a composite primary key', function () {
+          expect(schema.isCompositePrimary).to.be.false;
+        });
+
+        it('should detect 12 fields with a type', function () {
+          expect(schema.fields.length).equal(12);
+          expect(schema.fields[0].type).equal('Number');
+          expect(schema.fields[1].type).equal('String');
+          expect(schema.fields[2].type).equal('Boolean');
+          expect(schema.fields[3].type).equal('String');
+          expect(schema.fields[4].type).equal('String');
+          expect(schema.fields[5].type).equal('String');
+          expect(schema.fields[6].type).equal('String');
+          expect(schema.fields[7].type).equal('Date');
+          expect(schema.fields[8].type).equal('Date');
+          expect(schema.fields[9].type).equal('String');
+          expect(schema.fields[10].type).equal('String');
+          expect(schema.fields[11].type[0]).equal('Number');
+        });
+      });
+
+      describe('on a simple collection with a fields with a bad type', function () {
+        var schema;
+        before(function (done) {
+          new SchemaAdapter(models.hasBadFieldType, sequelizeOptions)
+            .then(function (schemaCreated) {
+              schema = schemaCreated;
+              done();
+            });
+        });
+
+        it('should generate a schema', function () {
+          expect(schema).not.to.be.null;
+        });
+
+        it('should detect 4 fields with a type', function () {
+          expect(schema.fields.length).equal(4);
+          expect(schema.fields[0].type).equal('Number');
+          expect(schema.fields[1].type).equal('String');
+          expect(schema.fields[2].type).equal('Date');
+          expect(schema.fields[3].type).equal('Date');
+        });
+      });
+    });
+
     describe('Stats > Pie Stat Getter', function () {
       before(function (done) {
         return sequelize.sync({ force: true })
