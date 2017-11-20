@@ -94,12 +94,11 @@ function LineStatGetter(model, params, opts) {
     } else if (Database.isSQLite(opts)) {
       return [getGroupByDateFieldFormatedForSQLite(timeRange), 'date'];
     } else {
-      var timezone = (-parseInt(params.timezone, 10)).toString();
       return [
         opts.sequelize.fn('to_char',
           opts.sequelize.fn('date_trunc', params['time_range'],
             opts.sequelize.literal('"' + getGroupByDateField()
-              .replace('.', '"."') + '" at time zone \'' + timezone + '\'')),
+              .replace('.', '"."') + '" at time zone \'' + params.timezone + '\'')),
           'YYYY-MM-DD 00:00:00'
         ),
         'date'

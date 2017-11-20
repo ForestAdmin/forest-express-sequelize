@@ -5,7 +5,8 @@
   "author": "Sandro Munda <sandro@munda.me>",
   "contributors": [
     "Arnaud Besnier <arnaudibesnier@gmail.com>",
-    "Lucas Scariot <scluckas@gmail.com>"
+    "Lucas Scariot <scluckas@gmail.com>",
+    "Arnaud Valensi <arnaud.valensi@gmail.com>"
   ],
   "license": "GPL-3.0",
   "homepage": "http://www.forestadmin.com",
@@ -28,6 +29,7 @@
     "http-errors": "1.6.1",
     "lodash": "3.9.3",
     "moment": "2.18.1",
+    "moment-timezone": "0.5.14",
     "semver": "5.4.1",
     "sequelize-fixtures": "0.6.0"
   },

@@ -183,7 +183,7 @@ var HasManyGetter = require('../services/has-many-getter');
           return new PieStatGetter(models.user, {
             type: 'Pie',
             collection: 'user',
-            timezone: '+02:00',
+            timezone: 'Europe/Paris',
             group_by_field: 'firstName',
             aggregate: 'Count',
             time_range: null,
@@ -203,7 +203,7 @@ var HasManyGetter = require('../services/has-many-getter');
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
-              timezone: '+02:00',
+              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Day',
@@ -225,7 +225,7 @@ var HasManyGetter = require('../services/has-many-getter');
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
-              timezone: '+02:00',
+              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Week',
@@ -245,7 +245,7 @@ var HasManyGetter = require('../services/has-many-getter');
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
-              timezone: '+02:00',
+              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Month',
@@ -265,7 +265,7 @@ var HasManyGetter = require('../services/has-many-getter');
           return new LineStatGetter(models.user, {
               type: 'Line',
               collection: 'user',
-              timezone: '+02:00',
+              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Year',
@@ -339,7 +339,7 @@ var HasManyGetter = require('../services/has-many-getter');
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
             },
             page: { number: '1' },
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.user, sequelizeOptions,
             params)
@@ -358,7 +358,7 @@ var HasManyGetter = require('../services/has-many-getter');
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
             },
             page: { number: '1', size: '30' },
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.user, sequelizeOptions,
             params)
@@ -379,7 +379,7 @@ var HasManyGetter = require('../services/has-many-getter');
             },
             sort: '-id',
             page: { number: '1', size: '30' },
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.user, sequelizeOptions,
             params)
@@ -400,7 +400,7 @@ var HasManyGetter = require('../services/has-many-getter');
             },
             page: { number: '1', size: '30' },
             search: 'hello',
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.user, sequelizeOptions,
             params)
@@ -422,7 +422,7 @@ var HasManyGetter = require('../services/has-many-getter');
               },
               page: { number: '1', size: '30' },
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
-              timezone: '+02:00'
+              timezone: 'Europe/Paris'
             };
             return new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform()
@@ -442,7 +442,7 @@ var HasManyGetter = require('../services/has-many-getter');
               },
               page: { number: '1', size: '30' },
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
-              timezone: '+02:00'
+              timezone: 'Europe/Paris'
             };
             return new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform()
@@ -463,7 +463,7 @@ var HasManyGetter = require('../services/has-many-getter');
             },
             page: { number: '1', size: '30' },
             search: 'gift',
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.order, sequelizeOptions, params)
             .perform()
@@ -482,7 +482,7 @@ var HasManyGetter = require('../services/has-many-getter');
           },
           page: { number: '1', size: '30' },
           filterType: 'and',
-          timezone: '+02:00'
+          timezone: 'Europe/Paris'
         };
 
         describe('with a "is null" condition on a boolean field', function () {
@@ -608,7 +608,7 @@ var HasManyGetter = require('../services/has-many-getter');
             filterType: 'and',
             filter: { username: '*hello*' },
             search: 'world',
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.user, sequelizeOptions,
             params)
@@ -631,7 +631,7 @@ var HasManyGetter = require('../services/has-many-getter');
             page: { number: '1', size: '10' },
             search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
             searchExtended: 1,
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.address, sequelizeOptions,
             params)
@@ -655,7 +655,7 @@ var HasManyGetter = require('../services/has-many-getter');
             filter: { username: '*hello*' },
             sort: '-id',
             search: 'world',
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new ResourcesGetter(models.user, sequelizeOptions,
             params)
@@ -679,7 +679,7 @@ var HasManyGetter = require('../services/has-many-getter');
               address: 'line,zipCode,city,country,user'
             },
             page: { number: '1', size: '20' },
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new HasManyGetter(models.user, models.address,
             sequelizeOptions, params)
@@ -702,7 +702,7 @@ var HasManyGetter = require('../services/has-many-getter');
             },
             page: { number: '1', size: '20' },
             sort: 'city',
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new HasManyGetter(models.user, models.address,
             sequelizeOptions, params)
@@ -725,7 +725,7 @@ var HasManyGetter = require('../services/has-many-getter');
             },
             page: { number: '1', size: '20' },
             sort: '-user.id',
-            timezone: '+02:00'
+            timezone: 'Europe/Paris'
           };
           return new HasManyGetter(models.user, models.address,
             sequelizeOptions, params)
@@ -750,7 +750,7 @@ var HasManyGetter = require('../services/has-many-getter');
           page: { number: '1', size: '20' },
           search: 'SF',
           sort: '-user.id',
-          timezone: '+02:00'
+          timezone: 'Europe/Paris'
         };
         return new HasManyGetter(models.user, models.address,
           sequelizeOptions, params)

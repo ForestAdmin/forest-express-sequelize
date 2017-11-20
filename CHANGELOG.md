@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Database Info - Send the database dialect in the Apimap metadata.
+- Charts - Fix some bad Line charts aggregation due to Daylight Saving Time.
 
 ## RELEASE 1.5.4 - 2017-11-13
 ### Fixed
