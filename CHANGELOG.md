@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 1.5.7 - 2017-11-30
 ### Changed
 - Collections Names - Collection names are now based on the model name.
 
