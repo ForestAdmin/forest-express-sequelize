@@ -826,9 +826,9 @@ for-own@^1.0.0:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@2.0.3:
-  version "2.0.3"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.0.3.tgz#5f210bf91ec23bfab9f33b66552ac547931c5957"
+forest-express@2.0.5:
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.0.5.tgz#b0f50d3a175fc7e3f4afbdfa80fc4fbed0e70d88"
   dependencies:
     bcryptjs "2.4.3"
     bluebird "3.3.4"
@@ -841,7 +841,7 @@ forest-express@2.0.3:
     jsonapi-serializer "3.4.1"
     jsonwebtoken "7.1.9"
     lodash "4.10.0"
-    moment "2.17.1"
+    moment "2.19.4"
     superagent "3.7.0"
     useragent "2.1.13"
     uuid "3.0.1"
@@ -1760,13 +1760,13 @@ moment-timezone@0.5.14, moment-timezone@^0.5.4:
   dependencies:
     moment ">= 2.9.0"
 
-moment@2.17.1:
-  version "2.17.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.17.1.tgz#fed9506063f36b10f066c8b59a144d7faebe1d82"
-
 moment@2.18.1:
   version "2.18.1"
   resolved "https://registry.yarnpkg.com/moment/-/moment-2.18.1.tgz#c36193dd3ce1c2eed2adb7c802dbbc77a81b1c0f"
+
+moment@2.19.4:
+  version "2.19.4"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.19.4.tgz#17e5e2c6ead8819c8ecfad83a0acccb312e94682"
 
 moment@2.x.x, "moment@>= 2.9.0", moment@^2.13.0:
   version "2.19.1"
