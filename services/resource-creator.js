@@ -14,10 +14,8 @@ function ResourceCreator(model, params) {
 
     if (model.associations) {
       _.forOwn(model.associations, function (association, name) {
-        if (['BelongsTo', 'HasOne', 'HasMany']
-          .indexOf(association.associationType) > -1) {
-          promises.push(recordCreated['set' + _.capitalize(name)](
-            params[name], { save: false }));
+        if (association.associationType === 'BelongsTo') {
+          promises.push(recordCreated['set' + _.capitalize(name)](params[name], { save: false }));
         }
       });
     }
@@ -25,20 +23,19 @@ function ResourceCreator(model, params) {
     return P.all(promises)
       .then(function () { return recordCreated.save(); })
       .then(function (record) {
-        var promisesManyToMany = [];
+        var promisesAfterSave = [];
 
-        // NOTICE: Many to many associations have to be set after the record
-        //         creation in order to have an id.
+        // NOTICE: Many to many associations have to be set after the record creation in order to
+        //         have an id.
         if (model.associations) {
           _.forOwn(model.associations, function (association, name) {
-            if (association.associationType === 'BelongsToMany') {
-              promisesManyToMany.push(record['set' + _.capitalize(name)](
-                params[name]));
+            if (['BelongsToMany', 'HasOne', 'HasMany'].indexOf(association.associationType) > -1) {
+              promisesAfterSave.push(record['set' + _.capitalize(name)](params[name]));
             }
           });
         }
 
-        return P.all(promisesManyToMany)
+        return P.all(promisesAfterSave)
           .thenReturn(record);
       })
       .then(function (record) {

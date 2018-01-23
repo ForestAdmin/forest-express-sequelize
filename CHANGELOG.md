@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Creation - Fix broken "hasOne" associations defined while creating a new record.
 
 ## RELEASE 2.1.0 - 2018-01-11
 ### Added
