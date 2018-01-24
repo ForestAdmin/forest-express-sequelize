@@ -83,6 +83,7 @@ exports.init = function(opts) {
   exports.ValueStatGetter = require('./services/value-stat-getter');
   exports.PieStatGetter = require('./services/pie-stat-getter');
   exports.LineStatGetter = require('./services/line-stat-getter');
+  exports.QueryStatGetter = require('./services/query-stat-getter');
 
   exports.Stripe = {
     getCustomer: function (customerModel, customerField, customerId) {

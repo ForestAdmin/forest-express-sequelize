@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Charts - Users can create charts using raw database queries with the Live Query option.
 
 ## RELEASE 2.1.1 - 2018-01-23
 ### Fixed
