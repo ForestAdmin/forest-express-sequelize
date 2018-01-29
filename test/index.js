@@ -557,6 +557,71 @@ var HasManyGetter = require('../services/has-many-getter');
           timezone: 'Europe/Paris'
         };
 
+        var paramsBaseAddress = {
+          fields: {
+            address: 'id,city,country'
+          },
+          page: { number: '1', size: '30' },
+          filterType: 'and',
+          timezone: 'Europe/Paris'
+        };
+
+        describe('with a "is" condition on a number field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { id: '100' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(1);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a "greater than" condition on a number field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { id: '>101' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(2);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a "less than" condition on a number field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { id: '<104' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(4);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a "is not" condition on a number field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { id: '!100' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(3);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
         describe('with a "is null" condition on a boolean field', function () {
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
@@ -627,6 +692,20 @@ var HasManyGetter = require('../services/has-many-getter');
           });
         });
 
+        describe('with a "is not" condition on a string field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { email: '!richard@piedpiper.com' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(3);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
         describe('with a "is not false" condition on a boolean field', function () {
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
@@ -641,6 +720,20 @@ var HasManyGetter = require('../services/has-many-getter');
           });
         });
 
+        describe('with a "contains" condition on a string field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { firstName: '*Richa*' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(1);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
         describe('with a "not contains" condition on a string field', function () {
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
@@ -649,6 +742,62 @@ var HasManyGetter = require('../services/has-many-getter');
               .perform()
               .then(function (result) {
                 expect(result[0]).equal(4);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a "starts with" condition on a string field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { email: 'dinesh@*' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(1);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a "ends with" condition on a string field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { email: '*@piedpiper.com' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(3);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a "is present" condition on a string field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBaseAddress);
+            params.filter = { country: '$present' };
+            return new ResourcesGetter(models.address, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(2);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a "is blank" condition on a string field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBaseAddress);
+            params.filter = { country: '$blank' };
+            return new ResourcesGetter(models.address, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(1);
                 done();
               })
               .catch(done);
