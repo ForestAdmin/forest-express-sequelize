@@ -1,15 +1,17 @@
 'use strict';
 var _ = require('lodash');
+var Operators = require('../utils/operators');
 var BaseStatGetter = require('./base-stat-getter');
 var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 var Interface = require('forest-express');
 
 // jshint sub: true
-function ValueStatGetter(model, params) {
-  BaseStatGetter.call(this, model, params);
+function ValueStatGetter(model, params, options) {
+  BaseStatGetter.call(this, model, params, options);
+
+  var OPERATORS = new Operators(options);
 
   var schema = Interface.Schemas.schemas[model.name];
-
   function getAggregate() {
     return params.aggregate.toLowerCase();
   }
@@ -42,7 +44,7 @@ function ValueStatGetter(model, params) {
 
     params.filters.forEach(function (filter) {
       var operatorValueParser =
-        new OperatorDateIntervalParser(filter.value, params.timezone);
+        new OperatorDateIntervalParser(filter.value, params.timezone, options);
       if (operatorValueParser.hasPreviousInterval()) {
         intervalDateFilter = filter;
       }
@@ -72,7 +74,7 @@ function ValueStatGetter(model, params) {
           var operatorValueParser = new OperatorDateIntervalParser(
             filterDateIntervalForPrevious.value, params.timezone
           );
-          var conditions = filters.$and;
+          var conditions = filters[OPERATORS.AND];
           conditions.forEach(function (condition) {
             if (condition[filterDateIntervalForPrevious.field]) {
               condition[filterDateIntervalForPrevious.field] =

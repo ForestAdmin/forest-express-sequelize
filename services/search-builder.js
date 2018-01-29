@@ -1,5 +1,6 @@
 'use strict';
 var _ = require('lodash');
+var Operators = require('../utils/operators');
 var Interface = require('forest-express');
 var Database = require('../utils/database');
 
@@ -12,6 +13,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var associations = _.clone(model.associations);
   var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
   var searchAssociationFields;
+  var OPERATORS = new Operators(opts);
 
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
@@ -183,7 +185,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       });
     }
 
-    if (or.length) { where.$or = or; }
+    if (or.length) { where[OPERATORS.OR] = or; }
     return where;
   };
 }

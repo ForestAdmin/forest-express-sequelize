@@ -8,7 +8,7 @@ var Interface = require('forest-express');
 
 // jshint sub: true
 function LineStatGetter(model, params, opts) {
-  BaseStatGetter.call(this, model, params);
+  BaseStatGetter.call(this, model, params, opts);
 
   var schema = Interface.Schemas.schemas[model.name];
   var timeRange = params['time_range'].toLowerCase();

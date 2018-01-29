@@ -1,7 +1,10 @@
 'use strict';
+var Operators = require('../utils/operators');
 var moment = require('moment-timezone');
 
-function OperatorDateIntervalParser(value, timezone) {
+function OperatorDateIntervalParser(value, timezone, options) {
+  var OPERATORS = new Operators(options);
+
   var PERIODS = {
     $yesterday: { duration: 1, period: 'days' },
     $previousWeek: { duration: 1, period: 'weeks' },
@@ -32,6 +35,10 @@ function OperatorDateIntervalParser(value, timezone) {
   var offsetClient = parseInt(moment().tz(timezone).format('Z'), 10);
   var offsetServer = moment().utcOffset() / 60;
   var offsetHours = offsetServer - offsetClient;
+
+  function toDateWithTimezone(moment) {
+    return moment.add(offsetHours, 'h').toDate();
+  }
 
   this.isIntervalDateValue = function () {
     if (PERIODS[value]) { return true; }
@@ -69,45 +76,44 @@ function OperatorDateIntervalParser(value, timezone) {
   this.getIntervalDateFilter = function () {
     if (!this.isIntervalDateValue()) { return; }
 
+    var condition = {};
     if (value === PERIODS_PAST) {
-      return { $lte: moment().toDate() };
+      condition[OPERATORS.LTE] = moment().toDate();
+      return condition;
     }
 
     if (value === PERIODS_FUTURE) {
-      return { $gte: moment().toDate() };
+      condition[OPERATORS.GTE] = moment().toDate();
+      return condition;
     }
 
     if (value === PERIODS_TODAY) {
-      return {
-        $gte: moment().startOf('day').add(offsetHours, 'h').toDate(),
-        $lte: moment().endOf('day').add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment().startOf('day'));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment().endOf('day'));
+      return condition;
     }
 
     var match = value.match(PERIODS_PREVIOUS_X_DAYS);
     if (match && match[1]) {
-      return {
-        $gte: moment().subtract(match[1], 'days').startOf('day')
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().subtract(1, 'days').endOf('day').add(offsetHours, 'h')
-                .toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract(match[1], 'days').startOf('day'));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
+        .subtract(1, 'days').endOf('day'));
+      return condition;
     }
 
     match = value.match(PERIODS_X_DAYS_TO_DATE);
     if (match && match[1]) {
-      return {
-        $gte: moment().subtract(match[1] - 1, 'days').startOf('day')
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract(match[1] - 1, 'days').startOf('day'));
+      condition[OPERATORS.LTE] = moment().toDate();
+      return condition;
     }
 
     match = value.match(PERIODS_X_HOURS_BEFORE);
     if (match && match[1]) {
-      return {
-        $lte: moment().subtract(match[1], 'hours').add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment().subtract(match[1], 'hours'));
+      return condition;
     }
 
     var duration = PERIODS[value].duration;
@@ -116,49 +122,47 @@ function OperatorDateIntervalParser(value, timezone) {
     var toDate = PERIODS[value].toDate;
 
     if (toDate) {
-      return {
-        $gte: moment().startOf(periodValue).add(offsetHours, 'h').toDate(),
-        $lte: moment().toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .startOf(periodValue));
+      condition[OPERATORS.LTE] = moment().toDate();
+      return condition;
     } else {
-      return {
-        $gte: moment().subtract(duration, period).startOf(periodValue)
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().subtract(1, period).endOf(periodValue)
-                .add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract(duration, period).startOf(periodValue));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
+        .subtract(1, period).endOf(periodValue));
+      return condition;
     }
   };
 
   this.getIntervalDateFilterForPreviousInterval = function () {
     if (!this.hasPreviousInterval()) { return; }
 
+    var condition = {};
     if (value === PERIODS_TODAY) {
-      return {
-        $gte: moment().subtract(1, 'days').startOf('day')
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().subtract(1, 'days').endOf('day')
-                .add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract(1, 'days').startOf('day'));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
+        .subtract(1, 'days').endOf('day'));
+      return condition;
     }
 
     var match = value.match(PERIODS_PREVIOUS_X_DAYS);
     if (match && match[1]) {
-      return {
-        $gte: moment().subtract(match[1] * 2, 'days').startOf('day')
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().subtract(parseInt(match[1], 10) + 1, 'days')
-                .endOf('day').add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract(match[1] * 2, 'days').startOf('day'));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
+        .subtract(parseInt(match[1], 10) + 1, 'days').endOf('day'));
+      return condition;
     }
 
     match = value.match(PERIODS_X_DAYS_TO_DATE);
     if (match && match[1]) {
-      return {
-        $gte: moment().subtract((match[1] * 2) - 1, 'days').startOf('day')
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().subtract(match[1], 'days').add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract((match[1] * 2) - 1, 'days').startOf('day'));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
+        .subtract(match[1], 'days'));
+      return condition;
     }
 
     var duration = PERIODS[value].duration;
@@ -167,19 +171,17 @@ function OperatorDateIntervalParser(value, timezone) {
     var toDate = PERIODS[value].toDate;
 
     if (toDate) {
-      return {
-        $gte: moment().subtract(duration, period).startOf(periodValue)
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().subtract(duration, period)
-                .add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract(duration, period).startOf(periodValue));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
+        .subtract(duration, period));
+      return condition;
     } else {
-      return {
-        $gte: moment().subtract(duration * 2, period).startOf(periodValue)
-                .add(offsetHours, 'h').toDate(),
-        $lte: moment().subtract(1 + duration, period).endOf(periodValue)
-                .add(offsetHours, 'h').toDate()
-      };
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
+        .subtract(duration * 2, period).startOf(periodValue));
+      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
+        .subtract(1 + duration, period).endOf(periodValue));
+      return condition;
     }
   };
 }

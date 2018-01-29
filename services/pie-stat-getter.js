@@ -12,7 +12,7 @@ var ALIAS_GROUP_BY = 'forest_alias_groupby';
 var ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
 function PieStatGetter(model, params, opts) {
-  BaseStatGetter.call(this, model, params);
+  BaseStatGetter.call(this, model, params, opts);
 
   var schema = Interface.Schemas.schemas[model.name];
   var associationSplit,associationCollection, associationField,

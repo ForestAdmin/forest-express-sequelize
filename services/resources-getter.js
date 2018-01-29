@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
+var Operators = require('../utils/operators');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
@@ -12,6 +13,7 @@ function ResourcesGetter(model, opts, params) {
   var queryBuilder = new QueryBuilder(model, opts, params);
   var segmentScope;
   var segmentWhere;
+  var OPERATORS = new Operators(opts);
 
   var fieldNamesRequested = (function() {
     if (!params.fields || !params.fields[model.name]) { return null; }
@@ -53,38 +55,43 @@ function ResourcesGetter(model, opts, params) {
       });
     });
 
-    if (params.filterType) { where['$' + params.filterType] = conditions; }
+    if (params.filterType) {
+      where[OPERATORS[params.filterType.toUpperCase()]] = conditions;
+    }
 
     return where;
   }
 
   function getWhere() {
-    var where = { $and: [] };
+    var where = {};
+    where[OPERATORS.AND] = [];
 
     if (params.search) {
-      where.$and.push(new SearchBuilder(model, opts, params,
+      where[OPERATORS.AND].push(new SearchBuilder(model, opts, params,
           fieldNamesRequested).perform());
     }
 
     if (params.filter) {
-      where.$and.push(handleFilterParams());
+      where[OPERATORS.AND].push(handleFilterParams());
     }
 
     if (segmentWhere) {
-      where.$and.push(segmentWhere);
+      where[OPERATORS.AND].push(segmentWhere);
     }
 
     return where;
   }
 
   function getAndCountRecords() {
+    var where = getWhere();
+
     var countOpts = {
       include: queryBuilder.getIncludes(model, fieldNamesRequested),
-      where: getWhere()
+      where: where
     };
 
     var findAllOpts = {
-      where: getWhere(),
+      where: where,
       include: queryBuilder.getIncludes(model, fieldNamesRequested),
       order: queryBuilder.getOrder(),
       offset: queryBuilder.getSkip(),

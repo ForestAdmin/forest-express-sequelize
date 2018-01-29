@@ -1,12 +1,15 @@
 'use strict';
 var _ = require('lodash');
+var Operators = require('../utils/operators');
 var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 var Interface = require('forest-express');
 
-function OperatorValueParser() {
+function OperatorValueParser(options) {
+  var OPERATORS = new Operators(options);
+
   this.perform = function (model, fieldName, value, timezone) {
     var operatorDateIntervalParser = new OperatorDateIntervalParser(value,
-      timezone);
+      timezone, options);
 
     // NOTICE: Handle boolean for MySQL database
     var modelName, field, fieldSplit, valueBoolean;
@@ -33,47 +36,46 @@ function OperatorValueParser() {
       }
     }
 
+    var condition = {};
+
     if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
       if (fieldBoolean) {
-        return { $ne: _.isUndefined(valueBoolean) ? null : valueBoolean };
+        condition[OPERATORS.NE] = _.isUndefined(valueBoolean) ? null :
+          valueBoolean;
       } else {
-        return { $ne: value };
+        condition[OPERATORS.NE] = value;
       }
     } else if (value[0] === '>') {
-      value = value.substring(1);
-      return { $gt: value };
+      condition[OPERATORS.GT] = value.substring(1);
     } else if (value[0] === '<') {
-      value = value.substring(1);
-      return { $lt: value };
+      condition[OPERATORS.LT] = value.substring(1);
     } else if (value[0] === '*' && value[value.length - 1] === '*') {
-      value = value.substring(1, value.length - 1);
-      return { $like: '%' + value + '%' };
+      condition[OPERATORS.LIKE] = '%' + value.substring(1, value.length - 1) + '%';
     } else if (value[0] === '!' && value[1] === '*' &&
       value[value.length - 1] === '*') {
-      value = value.substring(2, value.length - 1);
-      return { $notLike: '%' + value + '%' };
       // TODO : Include null values
       // return { $or: { $notLike: '%' + value + '%', $eq: null } };
+      condition[OPERATORS.NOT_LIKE] = '%' + value.substring(2, value.length - 1) + '%';
     } else if (value[0] === '*') {
-      value = value.substring(1);
-      return { $like: '%' + value };
+      condition[OPERATORS.LIKE] = '%' + value.substring(1);
     } else if (value[value.length - 1] === '*') {
-      value = value.substring(0, value.length - 1);
-      return { $like: value + '%' };
+      condition[OPERATORS.LIKE] = value.substring(0, value.length - 1) + '%';
     } else if (value === '$present') {
-      return { $ne: null };
+      condition[OPERATORS.NE] = null;
     } else if (value === '$blank') {
-      return null;
+      condition[OPERATORS.EQ] = null;
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
     } else {
       if (fieldBoolean) {
-        return _.isUndefined(valueBoolean) ? { $eq: null } : valueBoolean;
+        condition[OPERATORS.EQ] = _.isUndefined(valueBoolean) ? null :
+          valueBoolean;
       } else {
-        return value;
+        condition[OPERATORS.EQ] = value;
       }
     }
+    return condition;
   };
 }
 
