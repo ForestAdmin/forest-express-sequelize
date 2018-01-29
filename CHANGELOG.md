@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.1 - 2018-01-29
 ### Changed
 - Security - Support new Sequelize Operators for a reinforced security.
 
