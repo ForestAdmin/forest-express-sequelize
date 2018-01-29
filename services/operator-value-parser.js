@@ -5,7 +5,7 @@ var OperatorDateIntervalParser = require('./operator-date-interval-parser');
 var Interface = require('forest-express');
 
 function OperatorValueParser(options) {
-  var OPERATORS = Operators.new(options);
+  var OPERATORS = new Operators(options);
 
   this.perform = function (model, fieldName, value, timezone) {
     var operatorDateIntervalParser = new OperatorDateIntervalParser(value,
