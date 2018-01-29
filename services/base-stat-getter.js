@@ -1,11 +1,14 @@
 'use strict';
 var _ = require('lodash');
+var Operators = require('../utils/operators');
 var Interface = require('forest-express');
 var OperatorValueParser = require('./operator-value-parser');
 
-function BaseStatGetter(model, params) {
+function BaseStatGetter(model, params, options) {
   this.model = model;
   this.params = params;
+
+  var OPERATORS = new Operators(options);
 
   this.getFilters = function () {
     var where = {};
@@ -33,14 +36,14 @@ function BaseStatGetter(model, params) {
         }
 
         var condition = {};
-        condition[field] = new OperatorValueParser().perform(model,
+        condition[field] = new OperatorValueParser(options).perform(model,
           filter.field, filter.value, params.timezone);
         conditions.push(condition);
       });
     }
 
     if (params.filterType) {
-      where['$' + params.filterType] = conditions;
+      where[OPERATORS[params.filterType.toUpperCase()]] = conditions;
     }
     return where;
   };
