@@ -9,7 +9,7 @@
 - Charts - Users can create charts using raw database queries with the Live Query option.
 
 ## RELEASE 2.1.1 - 2018-01-23
-### Fixed
+### Fixed
 - Creation - Fix broken "hasOne" associations defined while creating a new record.
 
 ## RELEASE 2.1.0 - 2018-01-11
@@ -44,7 +44,7 @@
 - Summary View - Fix potential Summary View freeze on records having "Point" type fields (if some related data are displayed).
 
 ## RELEASE 2.0.0 - 2017-11-30
-### Changed
+### Changed
 - Collections Names - Collection names are now based on the model name.
 
 ## RELEASE 1.5.6 - 2017-11-27
