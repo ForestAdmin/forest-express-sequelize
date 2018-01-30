@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.2 - 2018-01-30
 ### Fixed
 - Security - Fix the condition to use new Sequelize Operators for a reinforced security.
 
