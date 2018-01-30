@@ -1,9 +1,9 @@
 'use strict';
 
 function Operators(options) {
-  if (options && options.sequelize && options.sequelize.Sequelize &&
-    options.sequelize.Sequelize.Op) {
-    var Op = options.sequelize.Sequelize.Op;
+  if (options && options.sequelize && options.sequelize &&
+    options.sequelize.Op) {
+    var Op = options.sequelize.Op;
     return {
       AND: Op.and,
       EQ: Op.eq,
