@@ -49,7 +49,7 @@ function ResourcesGetter(model, opts, params) {
       }
       values.split(',').forEach(function (value) {
         var condition = {};
-        condition[key] = new OperatorValueParser()
+        condition[key] = new OperatorValueParser(opts)
           .perform(model, key, value, params.timezone);
         conditions.push(condition);
       });
