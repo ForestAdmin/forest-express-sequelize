@@ -2,6 +2,10 @@
 
 ## [Unreleased]
 
+## RELEASE 2.2.4 - 2018-02-01
+### Fixed
+- CORS - Re-authorize forestadmin.com in the CORS configuration. [regression introduced in 2.0.4]
+
 ## RELEASE 2.2.3 - 2018-01-30
 ### Fixed
 - Security - Fix the usage of new Sequelize Operators in list views for a reinforced security.
