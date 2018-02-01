@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.5 - 2018-02-01
 ### Fixed
 - Security - Fix the usage of new Sequelize Operators in list views for a reinforced security.
 
