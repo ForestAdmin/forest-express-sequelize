@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.6 - 2018-02-01
 ### Fixed
 - Smart Fields - Fix concurrency between Smart Fields setters and enable multiple setters to work properly on a record update.
 
