@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.2.4 - 2018-02-01
 ### Fixed
 - CORS - Re-authorize forestadmin.com in the CORS configuration. [regression introduced in 2.0.4]
 
