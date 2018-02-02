@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.3.1 - 2018-02-02
 ### Fixed
 - Charts - Fix the missing variation value for Value Charts computed with a specific period filter. [regression introduced in 2.2.3]
 
