@@ -72,7 +72,7 @@ function ValueStatGetter(model, params, options) {
         //         'AND', it would not be pertinent for a 'OR' filterType.
         if (filterDateIntervalForPrevious && params.filterType === 'and') {
           var operatorValueParser = new OperatorDateIntervalParser(
-            filterDateIntervalForPrevious.value, params.timezone
+            filterDateIntervalForPrevious.value, params.timezone, options
           );
           var conditions = filters[OPERATORS.AND];
           conditions.forEach(function (condition) {
