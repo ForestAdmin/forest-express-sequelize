@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Apimap - Prevent random sorting collections and useless updates.
+
+### Fixed
+- Search - Prevent the records search to crash if no fields parameter is sent by the client.
 
 ## RELEASE 2.3.1 - 2018-02-02
 ### Fixed
