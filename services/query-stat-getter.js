@@ -1,17 +1,30 @@
 'use strict';
-var Interface = require('forest-express');
+var ErrorHTTP422 = require('./errors').ErrorHTTP422;
 
 function QueryStatGetter(params, opts) {
   var QUERY_OPTIONS_SELECT = { type: opts.sequelize.QueryTypes.SELECT };
+  var QUERY_SELECT = /^SELECT\s[^]*FROM\s[^]*$/i;
+
+  function checkQuery(query) {
+    if (!query) {
+      throw new ErrorHTTP422('You cannot execute an empty SQL query.');
+    }
+
+    if (query.includes(';') && query.indexOf(';') < (query.length - 1)) {
+      throw new ErrorHTTP422('You cannot chain SQL queries.');
+    }
+
+    if (!QUERY_SELECT.test(query)) {
+      throw new ErrorHTTP422('Only SELECT queries are allowed.');
+    }
+
+    return;
+  }
 
   this.perform = function () {
-    var rawQuery = params.query;
+    var rawQuery = params.query.trim();
 
-    if (!rawQuery) {
-      Interface.logger
-        .error('Cannot execute an empty SQL query using Live Query feature.');
-      return [];
-    }
+    checkQuery(rawQuery);
 
     if (params.record_id) {
       rawQuery = rawQuery.replace('?', params.record_id);
