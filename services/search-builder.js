@@ -68,14 +68,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     var or = [];
 
     _.each(fields, function (field) {
-      // NOTICE: Ignore Smart field.
-      if (field.isVirtual) { return; }
-
-      // NOTICE: Ignore integration field.
-      if (field.integration) { return; }
-
-      // NOTICE: Handle belongsTo search below.
-      if (field.reference) { return; }
+      if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
+      if (field.integration) { return; } // NOTICE: Ignore integration fields.
+      if (field.reference) { return; } // NOTICE: Handle belongsTo search below.
 
       var q = {};
       var columnName;
@@ -142,8 +137,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
             var fieldsAssociation = schemaAssociation.fields;
 
             _.each(fieldsAssociation, function(field) {
-              if (field.reference || field.integration ||
-                field.isSearchable === false) { return; }
+              if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
+              if (field.integration) { return; } // NOTICE: Ignore integration fields.
+              if (field.reference) { return; } // NOTICE: Ignore associations.
+              if (field.isSearchable === false) { return; }
 
               if (hasSearchFields && !_.includes(searchAssociationFields,
                 association.as + '.' + field.field)) {
