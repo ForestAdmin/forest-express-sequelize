@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.4.2 - 2018-02-09
 ### Fixed
 - Search - Prevent potential extended search errors if the collection has belongsTo associations to collections having Smart Fields.
 
