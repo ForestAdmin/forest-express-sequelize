@@ -817,6 +817,20 @@ var HasManyGetter = require('../services/has-many-getter');
               .catch(done);
           });
         });
+
+        describe('with a "after x hours" condition on a date field', function () {
+          it('should generate a valid SQL query', function (done) {
+            var params = _.clone(paramsBase);
+            params.filter = { createdAt: '$2HoursAfter' };
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then(function (result) {
+                expect(result[0]).equal(4);
+                done();
+              })
+              .catch(done);
+          });
+        });
       });
 
       describe('Request on the resources getter with a filter condition and search', function () {
