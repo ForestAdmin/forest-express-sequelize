@@ -23,6 +23,7 @@ function OperatorDateIntervalParser(value, timezone, options) {
   var PERIODS_PREVIOUS_X_DAYS = /^\$previous(\d+)Days$/;
   var PERIODS_X_DAYS_TO_DATE = /^\$(\d+)DaysToDate$/;
   var PERIODS_X_HOURS_BEFORE = /^\$(\d+)HoursBefore$/;
+  var PERIODS_X_HOURS_AFTER = /^\$(\d+)HoursAfter$/;
 
   var PERIODS_VALUES = {
     days: 'day',
@@ -51,6 +52,9 @@ function OperatorDateIntervalParser(value, timezone, options) {
     if (match && match[1]) { return true; }
 
     match = value.match(PERIODS_X_HOURS_BEFORE);
+    if (match && match[1]) { return true; }
+
+    match = value.match(PERIODS_X_HOURS_AFTER);
     if (match && match[1]) { return true; }
 
     match = value.match(PERIODS_X_DAYS_TO_DATE);
@@ -113,6 +117,12 @@ function OperatorDateIntervalParser(value, timezone, options) {
     match = value.match(PERIODS_X_HOURS_BEFORE);
     if (match && match[1]) {
       condition[OPERATORS.LTE] = toDateWithTimezone(moment().subtract(match[1], 'hours'));
+      return condition;
+    }
+
+    match = value.match(PERIODS_X_HOURS_AFTER);
+    if (match && match[1]) {
+      condition[OPERATORS.GTE] = toDateWithTimezone(moment().subtract(match[1], 'hours'));
       return condition;
     }
 
