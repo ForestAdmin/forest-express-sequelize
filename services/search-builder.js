@@ -98,9 +98,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           or.push(q);
         }
       } else if (field.type === 'Enum') {
+        // TODO: Fix enum search for lowercase enums
         var enumSearch = _.capitalize(params.search.toLowerCase());
 
-        if (field.enums.indexOf(enumSearch) > -1) {
+        if (field.enums.indexOf(enumSearch) !== -1) {
           q[field.field] = enumSearch;
           or.push(q);
         }
