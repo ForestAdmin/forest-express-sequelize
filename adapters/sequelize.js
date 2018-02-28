@@ -35,6 +35,7 @@ module.exports = function (model, opts) {
     } else if (column.type instanceof DataTypes.GEOMETRY &&
       column.type.type === 'POINT') {
       return 'Point';
+    // NOTICE: Detect Array types (Array(String), Array(Integer), ...)
     } else if (column.type.type) {
       return [getTypeFor({ type: column.type.type })];
     }
