@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Live Query - Fix charts generation for values equal to 0 or null.
 
 ## RELEASE 2.5.0 - 2018-03-01
 ### Added
