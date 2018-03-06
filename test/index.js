@@ -629,7 +629,7 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(4);
+                expect(result[0]).equal(2);
                 done();
               })
               .catch(done);
@@ -643,7 +643,7 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(0);
+                expect(result[0]).equal(1);
                 done();
               })
               .catch(done);
@@ -657,7 +657,7 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(0);
+                expect(result[0]).equal(1);
                 done();
               })
               .catch(done);
@@ -671,7 +671,7 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(0);
+                expect(result[0]).equal(2);
                 done();
               })
               .catch(done);
@@ -685,7 +685,7 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(0);
+                expect(result[0]).equal(3);
                 done();
               })
               .catch(done);
@@ -713,7 +713,7 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(0);
+                expect(result[0]).equal(3);
                 done();
               })
               .catch(done);

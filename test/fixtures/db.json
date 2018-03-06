@@ -52,7 +52,8 @@
       "firstName": "Elrich",
       "lastName": "Bachman",
       "username": "Unicorn",
-      "password": "jinYang"
+      "password": "jinYang",
+      "emailValid": true
     }
   },
   {
@@ -63,7 +64,8 @@
       "firstName": "Dinesh",
       "lastName": "Chugtai",
       "username": "PiperTchat",
-      "password": "jinYang"
+      "password": "jinYang",
+      "emailValid": false
     }
   },
   {
