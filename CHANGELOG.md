@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.5.2 - 2018-03-06
 ### Fixed
 - Filters - Fix the "is not" operator behaviour on Boolean fields.
 
