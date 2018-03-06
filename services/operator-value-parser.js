@@ -41,7 +41,7 @@ function OperatorValueParser(options) {
     if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
       if (fieldBoolean) {
-        condition[OPERATORS.NE] = _.isUndefined(valueBoolean) ? null :
+        condition[OPERATORS.NOT] = _.isUndefined(valueBoolean) ? null :
           valueBoolean;
       } else {
         condition[OPERATORS.NE] = value;

@@ -12,6 +12,7 @@ function Operators(options) {
       LT: Op.lt,
       LTE: Op.lte,
       NE: Op.ne,
+      NOT: Op.not,
       NOT_LIKE: Op.notLike,
       OR: Op.or,
     };
@@ -26,6 +27,7 @@ function Operators(options) {
     LT: '$lt',
     LTE: '$lte',
     NE: '$ne',
+    NOT: '$not',
     NOT_LIKE: '$notLike',
     OR: '$or',
   };
