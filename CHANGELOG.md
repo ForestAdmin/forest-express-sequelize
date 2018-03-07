@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Smart Fields - Display a warning if an error occurs during Smart Field value computations.
 
 ## RELEASE 2.5.2 - 2018-03-06
 ### Fixed
