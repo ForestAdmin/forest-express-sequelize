@@ -29,6 +29,7 @@ var ResourceGetter = require('../services/resource-getter');
 var ResourceCreator = require('../services/resource-creator');
 var ResourceRemover = require('../services/resource-remover');
 var HasManyGetter = require('../services/has-many-getter');
+var HasManyDissociator = require('../services/has-many-dissociator');
 
 [sequelizePostgres, sequelizeMySQL].forEach(function (sequelize) {
   var models = {};
@@ -73,6 +74,15 @@ var HasManyGetter = require('../services/has-many-getter');
     userId: { type: Sequelize.INTEGER }
   });
 
+  models.team = sequelize.define('team', {
+    name: { type: Sequelize.STRING }
+  });
+
+  models.userTeam = sequelize.define('userTeam', {
+    userId: { type: Sequelize.INTEGER },
+    teamId: { type: Sequelize.INTEGER }
+  });
+
   models.log = sequelize.define('log', {
     code: { type: Sequelize.STRING, primaryKey: true },
     trace: { type: Sequelize.STRING, primaryKey: true },
@@ -92,6 +102,8 @@ var HasManyGetter = require('../services/has-many-getter');
 
   models.address.belongsTo(models.user);
   models.user.hasMany(models.address);
+  models.team.belongsToMany(models.user, { through: 'userTeam' });
+  models.user.belongsToMany(models.team, { through: 'userTeam' });
 
   Interface.Schemas = {
     schemas: {
@@ -168,13 +180,33 @@ var HasManyGetter = require('../services/has-many-getter');
           { field: 'comment', type: 'String' },
           { field: 'giftMessage', type: 'String' }
         ]
-      }
+      },
+      team: {
+        name: 'team',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'String' },
+        ]
+      },
+      userTeam: {
+        name: 'userTeam',
+        idField: 'forestCompositePrimary',
+        primaryKeys: ['userId', 'teamId'],
+        isCompositePrimary: true,
+        fields: [
+          { field: 'user', type: 'Number', references: 'user.id' },
+          { field: 'team', type: 'Number', references: 'team.id' },
+        ]
+      },
     }
   };
 
   describe('Dialect ' + sequelize.options.dialect, function () {
     describe('Schema Adapter', function () {
-      describe('on a simple collection with 12 fields', function () {
+      describe('on a simple collection with 13 fields', function () {
         var schema;
         before(function (done) {
           new SchemaAdapter(models.user, sequelizeOptions)
@@ -198,8 +230,8 @@ var HasManyGetter = require('../services/has-many-getter');
           expect(schema.isCompositePrimary).to.be.false;
         });
 
-        it('should detect 12 fields with a type', function () {
-          expect(schema.fields.length).equal(12);
+        it('should detect 13 fields with a type', function () {
+          expect(schema.fields.length).equal(13);
           expect(schema.fields[0].type).equal('Number');
           expect(schema.fields[1].type).equal('String');
           expect(schema.fields[2].type).equal('Boolean');
@@ -212,6 +244,7 @@ var HasManyGetter = require('../services/has-many-getter');
           expect(schema.fields[9].type).equal('String');
           expect(schema.fields[10].type).equal('String');
           expect(schema.fields[11].type[0]).equal('Number');
+          expect(schema.fields[12].type[0]).equal('Number');
         });
       });
 
@@ -362,7 +395,8 @@ var HasManyGetter = require('../services/has-many-getter');
             firstName: 'Jack',
             lastName: 'Lumberjack',
             username: 'Jacouille',
-            password: 'bonpoissonnet'
+            password: 'bonpoissonnet',
+            teams: [],
           })
             .perform()
             .then(function (result) {
@@ -371,7 +405,7 @@ var HasManyGetter = require('../services/has-many-getter');
               expect(result.username).equal('Jacouille');
 
               return models.user
-                .find({ where : { email: 'jack@forestadmin.com' } })
+                .find({ where: { email: 'jack@forestadmin.com' } })
                 .then(function (user) {
                   expect(user).not.to.be.null;
                   done();
@@ -392,7 +426,7 @@ var HasManyGetter = require('../services/has-many-getter');
               expect(result.code).equal('G@G#F@G@');
               expect(result.trace).equal('Ggg23g242@');
               return models.log
-                .find({ where : { code: 'G@G#F@G@' } })
+                .find({ where: { code: 'G@G#F@G@' } })
                 .then(function (log) {
                   expect(log).not.to.be.null;
                   done();
@@ -783,7 +817,9 @@ var HasManyGetter = require('../services/has-many-getter');
             return new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(2);
+                _.each(result[1], function (instance) {
+                  expect(instance.dataValues).to.include.keys('country');
+                })
                 done();
               })
               .catch(done);
@@ -872,7 +908,7 @@ var HasManyGetter = require('../services/has-many-getter');
             params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(3);
+              expect(result[0]).equal(4);
               done();
             })
             .catch(done);
@@ -920,7 +956,7 @@ var HasManyGetter = require('../services/has-many-getter');
             sequelizeOptions, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(3);
+              expect(result[0]).equal(4);
               done();
             })
             .catch(done);
@@ -943,7 +979,7 @@ var HasManyGetter = require('../services/has-many-getter');
             sequelizeOptions, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(3);
+              expect(result[0]).equal(4);
               done();
             })
             .catch(done);
@@ -966,7 +1002,7 @@ var HasManyGetter = require('../services/has-many-getter');
             sequelizeOptions, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(3);
+              expect(result[0]).equal(4);
               done();
             })
             .catch(done);
@@ -1044,7 +1080,7 @@ var HasManyGetter = require('../services/has-many-getter');
             .perform()
             .then(function () {
               return models.user
-                .find({ where : { email: 'jack@forestadmin.com' } })
+                .find({ where: { email: 'jack@forestadmin.com' } })
                 .then(function (user) {
                   expect(user).to.be.null;
                   done();
@@ -1063,13 +1099,125 @@ var HasManyGetter = require('../services/has-many-getter');
             .perform()
             .then(function () {
               return models.log
-                .find({ where : { code: 'G@G#F@G@' } })
+                .find({ where: { code: 'G@G#F@G@' } })
                 .then(function (log) {
                   expect(log).to.be.null;
                   done();
                 });
             })
             .catch(done);
+        });
+      });
+    });
+
+    describe('HasMany > HasMany Dissociator', function () {
+      describe('Dissociate', function () {
+        describe('On HasMany relationship', function () {
+          it('should delete the relationship of the record', function (done) {
+            var params = {
+              recordId: '100',
+              associationName: 'addresses'
+            };
+            var data = {
+              data: [
+                { id: '103', type: 'address' }
+              ]
+            };
+            return new HasManyDissociator(models.user, models.address,
+              sequelizeOptions, params, data)
+              .perform()
+              .then(function () {
+                return models.address
+                  .find({ where: { id: '103' } })
+                  .then(function (address) {
+                    expect(address).to.have.property('userId', null);
+                    done();
+                  });
+              })
+              .catch(done);
+          });
+        });
+
+        describe('On BelongsToMany relationship', function () {
+          it('should delete the relationship of the record', function (done) {
+            var params = {
+              recordId: '100',
+              associationName: 'teams'
+            };
+            var data = {
+              data: [
+                { id: '100', type: 'team' }
+              ]
+            };
+            return new HasManyDissociator(models.user, models.team,
+              sequelizeOptions, params, data)
+              .perform()
+              .then(function () {
+                return models.userTeam
+                  .find({ where: { userId: '100', teamId: '100' } })
+                  .then(function (userTeam) {
+                    expect(userTeam).to.be.null;
+                    done();
+                  });
+              })
+              .catch(done);
+          });
+        });
+      });
+
+      describe('Delete', function () {
+        describe('On HasMany relationship', function () {
+          it('should delete the relationship and delete the record', function (done) {
+            var params = {
+              recordId: '100',
+              associationName: 'addresses',
+              delete: 'true'
+            };
+            var data = {
+              data: [
+                { id: '103', type: 'address' }
+              ]
+            };
+            return new HasManyDissociator(models.user, models.address,
+              sequelizeOptions, params, data)
+              .perform()
+              .then(function () {
+                return models.address
+                  .find({ where: { id: '103' } })
+                  .then(function (address) {
+                    expect(address).to.be.null;
+                    done();
+                  });
+              })
+              .catch(done);
+          });
+        });
+
+        describe('On BelongsToMany relationship', function () {
+          it('should delete the relationship and delete the record', function (done) {
+            var params = {
+              recordId: '100',
+              associationName: 'teams',
+              delete: 'true'
+            };
+            var data = {
+              data: [
+                { id: '100', type: 'team' }
+              ]
+            };
+            return new HasManyDissociator(models.user, models.team,
+              sequelizeOptions, params, data)
+              .perform()
+              .then(function () {
+                return models.userTeam
+                  .find({ where: { userId: '100', teamId: '100' } })
+                  .then(function (userTeam) {
+                    expect(userTeam).to.be.null;
+                    done();
+                  });
+              })
+              .catch(done);
+          });
         });
       });
     });
