@@ -28,7 +28,7 @@
     "forest-express": "2.5.4",
     "http-errors": "1.6.1",
     "lodash": "3.9.3",
-    "moment": "2.18.1",
+    "moment": "2.19.4",
     "moment-timezone": "0.5.14",
     "semver": "5.4.1",
     "sequelize-fixtures": "0.6.0"
