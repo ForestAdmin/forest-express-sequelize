@@ -1,13 +1,15 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Smart Actions - Developers can define Smart Actions that can send their request to a different endpoint than the current environment endpoint.
 
 ## RELEASE 2.5.4 - 2018-03-08
 ### Fixed
 - Close.io Integration - Send a "No Content" (204) status code if not customer lead has been found instead of an "Internal Server Error" (500).
 
 ## RELEASE 2.5.3 - 2018-03-07
-### Changed
+### Changed
 - Smart Fields - Display a warning if an error occurs during Smart Field value computations.
 
 ## RELEASE 2.5.2 - 2018-03-06
@@ -19,7 +21,7 @@
 - Live Query - Fix charts generation for values equal to 0 or null.
 
 ## RELEASE 2.5.0 - 2018-03-01
-### Added
+### Added
 - Smart Actions - Users can define Smart Actions only available in a record detail.
 
 ## RELEASE 2.4.4 - 2018-02-28
