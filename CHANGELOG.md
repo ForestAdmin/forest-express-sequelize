@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Security - Fix low impact vulnerabilities.
+
 ### Fixed
 - Technical - Use local packages for npm scripts.
 
