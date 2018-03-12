@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Use local packages for npm scripts.
 
 ## RELEASE 2.5.5 - 2018-03-12
 ### Added
