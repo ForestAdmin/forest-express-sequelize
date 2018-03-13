@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.5.6 - 2018-03-13
 ### Changed
 - Security - Fix low impact vulnerabilities.
 
