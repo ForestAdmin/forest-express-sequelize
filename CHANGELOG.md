@@ -6,6 +6,7 @@
 
 ### Fixed
 - Technical - Use local packages for npm scripts.
+- Smart Elements - Fix error swallowing on start.
 
 ## RELEASE 2.5.5 - 2018-03-12
 ### Added
