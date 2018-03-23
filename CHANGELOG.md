@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Live Query - Replace all occurences of the special character '?' in the Live Query mode.
 
 ## RELEASE 2.5.7 - 2018-03-21
 ### Fixed

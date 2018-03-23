@@ -27,7 +27,7 @@ function QueryStatGetter(params, opts) {
     checkQuery(rawQuery);
 
     if (params.record_id) {
-      rawQuery = rawQuery.replace('?', params.record_id);
+      rawQuery = rawQuery.replace(new RegExp('\\?', 'g'), params.record_id);
     }
 
     // WARNING: Choosing the first connection might generate issues if the model
