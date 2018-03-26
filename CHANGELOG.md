@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Collections - Allow collection customization before liana initialization.
+
 ### Fixed
 - Live Query - Replace all occurences of the special character '?' in the Live Query mode.
 
