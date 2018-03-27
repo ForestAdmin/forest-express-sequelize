@@ -173,13 +173,13 @@ module.exports = function (model, opts) {
       schema.isRequired = true;
     }
 
-    var isDateDefaultValueFunction =
+    var isDefaultValueFunction = (typeof column.defaultValue) === 'function' ||
       (schema.type === 'Date' && (typeof column.defaultValue) === 'object');
 
     if (!_.isNull(column.defaultValue) && !_.isUndefined(column.defaultValue)) {
       // NOTICE: Prevent sequelize.Sequelize.NOW to be defined as the default value as the client
       //         does not manage it properly so far.
-      if (isDateDefaultValueFunction) {
+      if (isDefaultValueFunction) {
         schema.isRequired = false;
       } else {
         // NOTICE: Do not use the primary keys default values to prevent issues with UUID fields
@@ -190,7 +190,7 @@ module.exports = function (model, opts) {
       }
     }
 
-    schema.validations = getValidations(column, isDateDefaultValueFunction);
+    schema.validations = getValidations(column, isDefaultValueFunction);
 
     if (schema.validations.length === 0) {
       delete schema.validations;
