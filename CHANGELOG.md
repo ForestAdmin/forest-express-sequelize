@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Live Query - Let users define segments using SQL.
 
 ## RELEASE 2.10.0 - 2018-05-31
 ### Added
