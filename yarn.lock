@@ -934,9 +934,9 @@ for-own@^1.0.0:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@2.6.4:
-  version "2.6.4"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.6.4.tgz#f553ea766e48da8d5612183ade8111092c3e7744"
+forest-express@2.7.0:
+  version "2.7.0"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-2.7.0.tgz#39c264ce6b557f69f09f5ed83f5a47596dcfba53"
   dependencies:
     bcryptjs "2.4.3"
     bluebird "3.3.4"
@@ -945,6 +945,7 @@ forest-express@2.6.4:
     csv-stringify "1.0.4"
     express "4.16.2"
     express-jwt "5.3.1"
+    inflected "2.0.4"
     jsonapi-serializer "3.4.1"
     jsonwebtoken "8.1.1"
     lodash "4.10.0"
@@ -1292,6 +1293,10 @@ ignore@^3.3.3:
 imurmurhash@^0.1.4:
   version "0.1.4"
   resolved "https://registry.yarnpkg.com/imurmurhash/-/imurmurhash-0.1.4.tgz#9218b9b2b928a238b13dc4fb6b6d576f231453ea"
+
+inflected@2.0.4:
+  version "2.0.4"
+  resolved "https://registry.yarnpkg.com/inflected/-/inflected-2.0.4.tgz#323770961ccbe992a98ea930512e9a82d3d3ef77"
 
 inflected@^1.1.6:
   version "1.1.7"
