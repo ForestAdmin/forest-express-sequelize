@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Smart Actions - Smart Action forms can now be prefilled with contextual values.
+- Smart Actions - "Single" type Smart Action forms can now be prefilled with contextual values.
 
 ## RELEASE 2.5.9 - 2018-03-27
 ### Fixed
