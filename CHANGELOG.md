@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.6.1 - 2018-03-30
 ### Fixed
 - Integration - Prevent client console error on Close.io leads failed retrieval.
 
