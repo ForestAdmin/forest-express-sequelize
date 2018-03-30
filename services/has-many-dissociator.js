@@ -4,16 +4,16 @@ var Operators = require('../utils/operators');
 var ErrorHTTP422 = require('./errors').ErrorHTTP422;
 
 function HasManyDissociator(model, association, options, params, data) {
-  var isDelete = Boolean(params.delete);
   var OPERATORS = new Operators(options);
+  var isDelete = Boolean(params.delete);
+
   this.perform = function () {
-    var associatedIds = _.map(data.data, function (value) {
-      return value.id;
-    });
+    var associatedIds = _.map(data.data, function (value) { return value.id; });
     return model
       .findById(params.recordId)
       .then(function (record) {
         var removeAssociation = false;
+
         if (isDelete) {
           _.each(model.associations, function(association, associationName) {
             if (associationName === params.associationName) {
@@ -23,18 +23,18 @@ function HasManyDissociator(model, association, options, params, data) {
         } else {
           removeAssociation = true;
         }
+
         if (removeAssociation) {
-          return record['remove' + _.capitalize(params.associationName)](
-            associatedIds);
-        } else {
-          return null;
+          return record['remove' + _.capitalize(params.associationName)](associatedIds);
         }
+        return null;
       })
       .then(function () {
         if (isDelete) {
-          return association.destroy({
-            where: {id: { [OPERATORS.IN]: associatedIds }}
-          });
+          var condition = { id: {} };
+          condition.id[OPERATORS.IN] = associatedIds;
+
+          return association.destroy({ where: condition });
         }
       })
       .catch(function (error) {
