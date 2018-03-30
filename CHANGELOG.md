@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Related Data - Delete records directly from a hasMany listing.
 
 ## RELEASE 2.6.1 - 2018-03-30
 ### Fixed

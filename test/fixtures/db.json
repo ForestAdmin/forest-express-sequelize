@@ -40,7 +40,16 @@
     "model": "address",
     "data": {
       "id": 102,
-      "city": "Honk Kong",
+      "city": "Hong Kong",
+      "user": 100
+    }
+  },
+  {
+    "model": "address",
+    "data": {
+      "id": 103,
+      "city": "London",
+      "country": "United Kingdom",
       "user": 100
     }
   },
@@ -84,6 +93,20 @@
       "amount": 1399,
       "comment": "this is a gift",
       "giftMessage": "Thank you"
+    }
+  },
+  {
+    "model": "team",
+    "data": {
+      "id": 100,
+      "name": "lumber"
+    }
+  },
+  {
+    "model": "userTeam",
+    "data": {
+      "userId": 100,
+      "teamId": 100
     }
   }
 ]
