@@ -29,8 +29,13 @@ function ResourceCreator(model, params) {
         //         have an id.
         if (model.associations) {
           _.forOwn(model.associations, function (association, name) {
-            if (['BelongsToMany', 'HasOne', 'HasMany'].indexOf(association.associationType) > -1) {
-              promisesAfterSave.push(record['set' + _.capitalize(name)](params[name]));
+            if (params[name]) {
+              if (association.associationType === 'HasOne') {
+                promisesAfterSave.push(record['set' + _.capitalize(name)](params[name]));
+              }
+              if (/Many$/.test(association.associationType) && params[name].length) {
+                promisesAfterSave.push(record['add' + _.capitalize(name)](params[name]));
+              }
             }
           });
         }

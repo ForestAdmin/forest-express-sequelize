@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Creation - Prevent associations defined while creating a new record from overwriting associations created by hooks [regression introduced in 2.1.1].
 
 ## RELEASE 2.7.0 - 2018-03-30
 ### Added
