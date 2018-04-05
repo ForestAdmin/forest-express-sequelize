@@ -149,5 +149,19 @@ exports.init = function(opts) {
     }
   };
 
+  exports.Mixpanel = {
+    getUser: function (userModel, userField, userId) {
+      if (userId) {
+        return userModel
+          .findById(userId)
+          .then(function (user) {
+            return user.toJSON();
+          });
+      } else {
+        return new P(function (resolve) { resolve(); });
+      }
+    },
+  };
+
   return Interface.init(exports);
 };
