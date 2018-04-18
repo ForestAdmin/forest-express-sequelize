@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Premium Security - Handle mutli instances ip whitelist refresh.
 
 ## RELEASE 2.8.1 - 2018-04-17
 - Technical - Update yarn.lock.
