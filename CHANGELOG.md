@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+## Fixed
+- Default Values - Fix DateOnly fields with a Sequelize.fn('now') default value will display [Object object].
 
 ## RELEASE 2.8.2 - 2018-04-25
 ### Fixed
