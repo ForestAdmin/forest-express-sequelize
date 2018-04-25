@@ -175,8 +175,9 @@ module.exports = function (model, opts) {
       schema.isRequired = true;
     }
 
+    var isDateOrDateOnly = ['Date', 'Dateonly'].indexOf(schema.type) !== -1;
     var isDefaultValueFunction = (typeof column.defaultValue) === 'function' ||
-      ((schema.type === 'Date' || schema.type === 'Dateonly') && (typeof column.defaultValue) === 'object');
+      (isDateOrDateOnly && (typeof column.defaultValue) === 'object');
 
     if (!_.isNull(column.defaultValue) && !_.isUndefined(column.defaultValue)) {
       // NOTICE: Prevent sequelize.Sequelize.NOW to be defined as the default value as the client
