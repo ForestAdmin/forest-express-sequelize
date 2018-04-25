@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.8.3 - 2018-04-25
 ## Fixed
 - Default Values - Fix the prefilled value in creation/update forms on DateOnly fields having Sequelize.NOW default value.
 
