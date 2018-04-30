@@ -7,7 +7,7 @@
 - Collections - Allow search fields customization before liana initialization.
 
 ## RELEASE 2.8.3 - 2018-04-25
-## Fixed
+### Fixed
 - Default Values - Fix the prefilled value in creation/update forms on DateOnly fields having Sequelize.NOW default value.
 
 ## RELEASE 2.8.2 - 2018-04-25
@@ -15,6 +15,7 @@
 - Premium Security - Handle mutli instances ip whitelist refresh.
 
 ## RELEASE 2.8.1 - 2018-04-17
+### Changed
 - Technical - Update yarn.lock.
 
 ## RELEASE 2.8.0 - 2018-04-17
