@@ -91,10 +91,13 @@ exports.init = function(opts) {
         return customerModel
           .findById(customerId)
           .then(function (customer) {
-            return customer.toJSON();
+            if (customer && customer[customerField]) {
+              return customer.toJSON();
+            }
+            return P.reject();
           });
       } else {
-        return new P(function (resolve) { resolve(); });
+        return P.reject();
       }
     },
     getCustomerByUserField: function (customerModel, customerField, userField) {
