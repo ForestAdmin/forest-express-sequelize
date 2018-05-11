@@ -24,7 +24,8 @@ function OperatorValueParser(options) {
 
     var schema = Interface.Schemas.schemas[modelName];
     if (schema) {
-      field = _.findWhere(schema.fields, { field: fieldName });
+      field = _.find(schema.fields,
+        function (field) { return field.field === fieldName; });
 
       if (field && field.type === 'Boolean') {
         fieldBoolean = true;

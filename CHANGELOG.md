@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Security - Upgrade the lodash dependency for security reasons (https://nodesecurity.io/advisories/577).
 
 ## RELEASE 2.8.4 - 2018-04-30
 ### Fixed
