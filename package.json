@@ -27,7 +27,7 @@
     "eslint": "4.1.1",
     "forest-express": "2.8.3",
     "http-errors": "1.6.1",
-    "lodash": "3.9.3",
+    "lodash": "4.17.10",
     "moment": "2.19.4",
     "moment-timezone": "0.5.14",
     "semver": "5.4.1",

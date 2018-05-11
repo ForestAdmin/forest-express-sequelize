@@ -19,13 +19,17 @@ function PieStatGetter(model, params, opts) {
       associationSchema, field;
 
   if (params['group_by_field'].indexOf(':') === -1) {
-    field = _.findWhere(schema.fields, { field: params['group_by_field'] });
+    field = _.find(schema.fields, function (field) {
+      return field.field === params['group_by_field'];
+    });
   } else {
     associationSplit = params['group_by_field'].split(':');
     associationCollection = associationSplit[0];
     associationField = associationSplit[1];
     associationSchema = Interface.Schemas.schemas[associationCollection];
-    field = _.findWhere(associationSchema.fields, { field: associationField });
+    field = _.find(associationSchema.fields, function (field) {
+      return field.field === associationField;
+    });
   }
 
   function getGroupByField() {

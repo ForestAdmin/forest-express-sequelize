@@ -24,9 +24,8 @@ function BaseStatGetter(model, params, options) {
           var associationSchema = Interface.Schemas.schemas[fieldSplited[0]];
 
           if (associationSchema) {
-            var associationField = _.findWhere(associationSchema.fields, {
-              field: fieldSplited[1]
-            });
+            var associationField = _.find(associationSchema.fields,
+              function (field) { return field.field === fieldSplited[1]; });
             field = '$' + associationSchema.name + '.' + associationField.columnName + '$';
           } else {
             // NOTICE: If the associationSchema is not found, try to set the field with the "raw"
