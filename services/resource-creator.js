@@ -15,7 +15,7 @@ function ResourceCreator(model, params) {
     if (model.associations) {
       _.forOwn(model.associations, function (association, name) {
         if (association.associationType === 'BelongsTo') {
-          promises.push(recordCreated['set' + _.capitalize(name)](params[name], { save: false }));
+          promises.push(recordCreated['set' + _.upperFirst(name)](params[name], { save: false }));
         }
       });
     }
@@ -30,7 +30,7 @@ function ResourceCreator(model, params) {
         if (model.associations) {
           _.forOwn(model.associations, function (association, name) {
             if (['BelongsToMany', 'HasOne', 'HasMany'].indexOf(association.associationType) > -1) {
-              promisesAfterSave.push(record['set' + _.capitalize(name)](params[name]));
+              promisesAfterSave.push(record['set' + _.upperFirst(name)](params[name]));
             }
           });
         }

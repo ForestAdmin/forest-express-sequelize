@@ -25,7 +25,7 @@ function HasManyDissociator(model, association, options, params, data) {
         }
 
         if (removeAssociation) {
-          return record['remove' + _.capitalize(params.associationName)](associatedIds);
+          return record['remove' + _.upperFirst(params.associationName)](associatedIds);
         }
         return null;
       })

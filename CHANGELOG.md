@@ -1,10 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Related Data - Fix a regression on related data access due to Lodash dependency upgrade. [Regression introduced in 2.8.5]
 
 ## RELEASE 2.8.5 - 2018-05-11
 ### Fixed
-- Security - Upgrade the lodash dependency for security reasons (https://nodesecurity.io/advisories/577).
+- Security - Upgrade the Lodash dependency for security reasons (https://nodesecurity.io/advisories/577).
 - Stripe Integration - Improve global error handling if the stripe id is missing or incorrect in the database
 
 ## RELEASE 2.8.4 - 2018-04-30

@@ -9,7 +9,7 @@ function HasManyAssociator(model, association, opts, params, data) {
         var associatedIds = _.map(data.data, function (value) {
           return value.id;
         });
-        return record['add' + _.capitalize(params.associationName)](
+        return record['add' + _.upperFirst(params.associationName)](
           associatedIds);
       });
   };

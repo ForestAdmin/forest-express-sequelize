@@ -10,7 +10,7 @@ function BelongsToUpdater(model, association, opts, params, data) {
         //             for the Sequelize 4 release with the fix of the following
         //             issue: https://github.com/sequelize/sequelize/issues/6069
         // TODO: Once Sequelize 4 is mainstream, use the following code instead:
-        //       return record['set' + _.capitalize(params.associationName)](
+        //       return record['set' + _.upperFirst(params.associationName)](
         //         data.data ? data.data.id : null);
         var isHasOne = false;
         var modelAssociation;
@@ -26,10 +26,10 @@ function BelongsToUpdater(model, association, opts, params, data) {
           return modelAssociation
             .findById(data.data.id)
             .then(function (recordAssociated) {
-              record['set' + _.capitalize(params.associationName)](recordAssociated);
+              record['set' + _.upperFirst(params.associationName)](recordAssociated);
             });
         } else {
-          return record['set' + _.capitalize(params.associationName)](
+          return record['set' + _.upperFirst(params.associationName)](
             data.data ? data.data.id : null);
         }
       });
