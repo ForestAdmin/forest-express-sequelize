@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.8.5 - 2018-05-11
 ### Fixed
 - Security - Upgrade the lodash dependency for security reasons (https://nodesecurity.io/advisories/577).
 - Stripe Integration - Improve global error handling if the stripe id is missing or incorrect in the database
