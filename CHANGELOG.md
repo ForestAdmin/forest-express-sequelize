@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.8.6 - 2018-05-11
 ### Fixed
 - Related Data - Fix a regression on related data access due to Lodash dependency upgrade. [Regression introduced in 2.8.5]
 
