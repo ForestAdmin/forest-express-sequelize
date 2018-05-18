@@ -4,6 +4,7 @@ var P = require('bluebird');
 var Interface = require('forest-express');
 var QueryBuilder = require('./query-builder');
 var SearchBuilder = require('./search-builder');
+var RecordsDecorator = require('../utils/records-decorator');
 var CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {
@@ -20,8 +21,9 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   var fieldNamesRequested = getFieldNamesRequested();
-  var where = new SearchBuilder(association, opts, params, fieldNamesRequested)
-    .perform();
+  var searchBuilder = new SearchBuilder(association, opts, params,
+    fieldNamesRequested);
+  var where = searchBuilder.perform();
   var include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
   function findQuery(queryOptions) {
@@ -38,7 +40,7 @@ function HasManyGetter(model, association, opts, params) {
       });
   }
 
-  function count() {
+  function getCount() {
     // TODO: Why not use a count that would generate a much more efficient SQL
     //       query.
     return findQuery()
@@ -71,8 +73,23 @@ function HasManyGetter(model, association, opts, params) {
       });
   }
 
-  this.perform = function () {
-    return P.all([count(), getRecords()]);
+  this.perform = async () => {
+    let decorators = null;
+    const count = await getCount();
+    const records = await getRecords();
+
+    if (params.search) {
+      const decoratorsSearch = RecordsDecorator.decorateForSearch(
+        records,
+        searchBuilder.getColumns(),
+        params.search
+      );
+      if (!_.isEmpty(decoratorsSearch)) {
+        decorators = decoratorsSearch;
+      }
+    }
+
+    return [count, decorators, records];
   };
 }
 
