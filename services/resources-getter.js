@@ -157,10 +157,7 @@ function ResourcesGetter(model, opts, params) {
     return getSegmentCondition()
       .then(getAndCountRecords)
       .spread(function (count, records) {
-        var meta = {
-          count: count,
-        };
-
+        var decorators = null;
         if (params.search) {
           var decoratorsSearch = RecordsDecorator.decorateForSearch(
             records,
@@ -168,7 +165,7 @@ function ResourcesGetter(model, opts, params) {
             params.search
           );
           if (!_.isEmpty(decoratorsSearch)) {
-            meta.decorators = decoratorsSearch;
+            decorators = decoratorsSearch;
           }
         }
 
@@ -180,7 +177,7 @@ function ResourcesGetter(model, opts, params) {
           });
         }
 
-        return [meta, records];
+        return [count, decorators, records];
       });
   };
 }

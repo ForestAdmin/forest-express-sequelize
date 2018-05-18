@@ -1,7 +1,9 @@
 'use strict';
 
 function decorateForSearch(records, columns, searchValue) {
-  records = records.map((record) => record.get({ plain: true }));
+  if (records[0] && records[0].dataValues) {
+    records = records.map((record) => record.get({ plain: true }));
+  }
   const matchFields = {};
   records.forEach((record, index) => {
     Object.entries(record).forEach(([attributeName, value]) => {
