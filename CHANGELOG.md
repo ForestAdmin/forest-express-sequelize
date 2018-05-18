@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.8.7 - 2018-05-18
 ### Fixed
 - Search - Fix potential broken search on collections that have been customized before the liana.init call.
 
