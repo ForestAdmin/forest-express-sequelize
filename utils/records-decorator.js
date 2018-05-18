@@ -6,7 +6,8 @@ function decorateForSearch(records, columns, searchValue) {
   }
   const matchFields = {};
   records.forEach((record, index) => {
-    Object.entries(record).forEach(([attributeName, value]) => {
+    Object.keys(record).forEach(attributeName => {
+      let value = record[attributeName];
       if (value) {
         value = value.toString();
         const match = columns.includes(attributeName) && value.match(new RegExp(searchValue, 'i'));
