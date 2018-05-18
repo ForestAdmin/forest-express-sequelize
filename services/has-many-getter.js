@@ -73,23 +73,27 @@ function HasManyGetter(model, association, opts, params) {
       });
   }
 
-  this.perform = async () => {
+  this.perform = function () {
     let decorators = null;
-    const count = await getCount();
-    const records = await getRecords();
 
-    if (params.search) {
-      const decoratorsSearch = RecordsDecorator.decorateForSearch(
-        records,
-        searchBuilder.getColumns(),
-        params.search
-      );
-      if (!_.isEmpty(decoratorsSearch)) {
-        decorators = decoratorsSearch;
-      }
-    }
+    return P.all([getRecords(), getCount()])
+      .then((results) => {
+        const records = results[0];
+        const count = results[1];
 
-    return [records, count, decorators];
+        if (params.search) {
+          const decoratorsSearch = RecordsDecorator.decorateForSearch(
+            records,
+            searchBuilder.getColumns(),
+            params.search
+          );
+          if (!_.isEmpty(decoratorsSearch)) {
+            decorators = decoratorsSearch;
+          }
+        }
+
+        return [records, count, decorators];
+      })
   };
 }
 
