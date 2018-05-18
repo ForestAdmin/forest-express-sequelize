@@ -74,12 +74,11 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   this.perform = function () {
-    let decorators = null;
-
     return P.all([getRecords(), getCount()])
       .then((results) => {
         const records = results[0];
         const count = results[1];
+        let decorators = null;
 
         if (params.search) {
           const decoratorsSearch = RecordsDecorator.decorateForSearch(
@@ -93,7 +92,7 @@ function HasManyGetter(model, association, opts, params) {
         }
 
         return [records, count, decorators];
-      })
+      });
   };
 }
 
