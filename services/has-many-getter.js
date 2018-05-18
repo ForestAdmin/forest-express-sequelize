@@ -89,7 +89,7 @@ function HasManyGetter(model, association, opts, params) {
       }
     }
 
-    return [count, decorators, records];
+    return [records, count, decorators];
   };
 }
 

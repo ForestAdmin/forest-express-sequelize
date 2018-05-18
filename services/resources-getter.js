@@ -177,7 +177,7 @@ function ResourcesGetter(model, opts, params) {
           });
         }
 
-        return [count, decorators, records];
+        return [records, count, decorators];
       });
   };
 }

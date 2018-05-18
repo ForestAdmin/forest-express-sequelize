@@ -470,7 +470,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(4);
+              expect(result[1]).equal(4);
               done();
             })
             .catch(done);
@@ -491,7 +491,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(4);
+              expect(result[1]).equal(4);
               done();
             })
             .catch(done);
@@ -512,7 +512,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[1]).equal(0);
               done();
             })
             .catch(done);
@@ -533,7 +533,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(0);
+                expect(result[1]).equal(0);
                 done();
               })
               .catch(done);
@@ -553,7 +553,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[1]).equal(1);
                 done();
               })
               .catch(done);
@@ -574,7 +574,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           return new ResourcesGetter(models.order, sequelizeOptions, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(1);
+              expect(result[1]).equal(1);
               done();
             })
             .catch(done);
@@ -607,7 +607,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[1]).equal(1);
                 done();
               })
               .catch(done);
@@ -621,7 +621,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(2);
+                expect(result[1]).equal(2);
                 done();
               })
               .catch(done);
@@ -635,7 +635,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(4);
+                expect(result[1]).equal(4);
                 done();
               })
               .catch(done);
@@ -649,7 +649,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(3);
+                expect(result[1]).equal(3);
                 done();
               })
               .catch(done);
@@ -663,7 +663,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(2);
+                expect(result[1]).equal(2);
                 done();
               })
               .catch(done);
@@ -677,7 +677,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[1]).equal(1);
                 done();
               })
               .catch(done);
@@ -691,7 +691,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[1]).equal(1);
                 done();
               })
               .catch(done);
@@ -705,7 +705,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(2);
+                expect(result[1]).equal(2);
                 done();
               })
               .catch(done);
@@ -719,7 +719,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(3);
+                expect(result[1]).equal(3);
                 done();
               })
               .catch(done);
@@ -733,7 +733,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(3);
+                expect(result[1]).equal(3);
                 done();
               })
               .catch(done);
@@ -747,7 +747,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(3);
+                expect(result[1]).equal(3);
                 done();
               })
               .catch(done);
@@ -761,7 +761,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[1]).equal(1);
                 done();
               })
               .catch(done);
@@ -775,7 +775,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(4);
+                expect(result[1]).equal(4);
                 done();
               })
               .catch(done);
@@ -789,7 +789,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[1]).equal(1);
                 done();
               })
               .catch(done);
@@ -803,7 +803,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(3);
+                expect(result[1]).equal(3);
                 done();
               })
               .catch(done);
@@ -817,7 +817,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                _.each(result[1], function (instance) {
+                _.each(result[0], function (instance) {
                   expect(instance.dataValues).to.include.keys('country');
                 })
                 done();
@@ -833,7 +833,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(1);
+                expect(result[1]).equal(1);
                 done();
               })
               .catch(done);
@@ -847,7 +847,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(0);
+                expect(result[1]).equal(0);
                 done();
               })
               .catch(done);
@@ -861,7 +861,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             return new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then(function (result) {
-                expect(result[0]).equal(4);
+                expect(result[1]).equal(4);
                 done();
               })
               .catch(done);
@@ -885,7 +885,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[1]).equal(0);
               done();
             })
             .catch(done);
@@ -908,7 +908,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(4);
+              expect(result[1]).equal(4);
               done();
             })
             .catch(done);
@@ -932,7 +932,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(0);
+              expect(result[1]).equal(0);
               done();
             })
             .catch(done);
@@ -956,7 +956,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             sequelizeOptions, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(4);
+              expect(result[1]).equal(4);
               done();
             })
             .catch(done);
@@ -979,7 +979,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             sequelizeOptions, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(4);
+              expect(result[1]).equal(4);
               done();
             })
             .catch(done);
@@ -1002,7 +1002,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             sequelizeOptions, params)
             .perform()
             .then(function (result) {
-              expect(result[0]).equal(4);
+              expect(result[1]).equal(4);
               done();
             })
             .catch(done);
@@ -1027,8 +1027,8 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           sequelizeOptions, params)
           .perform()
           .then(function (result) {
-            expect(result[0]).equal(1);
-            expect(result[1].length).equal(1);
+            expect(result[1]).equal(1);
+            expect(result[0].length).equal(1);
             done();
           })
           .catch(done);
