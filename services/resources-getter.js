@@ -2,6 +2,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var Operators = require('../utils/operators');
+var RecordsDecorator = require('../utils/records-decorator');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
@@ -39,6 +40,9 @@ function ResourcesGetter(model, opts, params) {
       associationsForQuery);
   })();
 
+  var searchBuilder = new SearchBuilder(model, opts, params,
+      fieldNamesRequested);
+
   function handleFilterParams() {
     var where = {};
     var conditions = [];
@@ -67,8 +71,7 @@ function ResourcesGetter(model, opts, params) {
     where[OPERATORS.AND] = [];
 
     if (params.search) {
-      where[OPERATORS.AND].push(new SearchBuilder(model, opts, params,
-          fieldNamesRequested).perform());
+      where[OPERATORS.AND].push(searchBuilder.perform());
     }
 
     if (params.filter) {
@@ -154,6 +157,21 @@ function ResourcesGetter(model, opts, params) {
     return getSegmentCondition()
       .then(getAndCountRecords)
       .spread(function (count, records) {
+        var meta = {
+          count: count,
+        };
+
+        if (params.search) {
+          var decoratorsSearch = RecordsDecorator.decorateForSearch(
+            records,
+            searchBuilder.getColumns(),
+            params.search
+          );
+          if (!_.isEmpty(decoratorsSearch)) {
+            meta.decorators = decoratorsSearch;
+          }
+        }
+
         if (schema.isCompositePrimary) {
           records.forEach(function (record) {
             record.forestCompositePrimary =
@@ -161,7 +179,8 @@ function ResourcesGetter(model, opts, params) {
                 .createCompositePrimary();
           });
         }
-        return [count, records];
+
+        return [meta, records];
       });
   };
 }

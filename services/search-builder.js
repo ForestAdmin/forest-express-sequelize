@@ -14,6 +14,11 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
   var searchAssociationFields;
   var OPERATORS = new Operators(opts);
+  var columns = [];
+
+  this.getColumns = function () {
+    return columns;
+  }
 
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
@@ -83,6 +88,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           if (value) {
             q[field.field] = value;
             or.push(q);
+            columns.push(field.field);
           }
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
@@ -92,10 +98,12 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
             lowerIfNecessary('%' + params.search + '%')
           );
           or.push(q);
+          columns.push(columnName);
         } else if (primaryKeyType instanceof DataTypes.UUID &&
           params.search.match(REGEX_UUID)) {
           q[field.field] = params.search;
           or.push(q);
+          columns.push(field.field);
         }
       } else if (field.type === 'Enum') {
         // TODO: Fix enum search for lowercase enums
@@ -104,6 +112,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         if (field.enums.indexOf(enumSearch) !== -1) {
           q[field.field] = enumSearch;
           or.push(q);
+          columns.push(field.field);
         }
       } else if (field.type === 'String') {
         if (model.attributes[field.field] &&
@@ -111,6 +120,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           if (params.search.match(REGEX_UUID)) {
             q[field.field] = params.search;
             or.push(q);
+            columns.push(field.field);
           }
         } else {
           columnName = field.columnName || field.field;
@@ -121,6 +131,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
             lowerIfNecessary('%' + params.search + '%')
           );
           or.push(q);
+          columns.push(columnName);
         }
       }
     });
@@ -177,6 +188,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 }
               }
               or.push(q);
+              columns.push(columnName);
             });
           }
         }
