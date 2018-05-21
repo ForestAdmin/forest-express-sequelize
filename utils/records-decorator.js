@@ -1,16 +1,16 @@
 'use strict';
 
-function decorateForSearch(records, columns, searchValue) {
+function decorateForSearch(records, fieldsSearched, searchValue) {
   if (records[0] && records[0].dataValues) {
     records = records.map((record) => record.get({ plain: true }));
   }
-  const matchFields = {};
+  var matchFields = {};
   records.forEach((record, index) => {
     Object.keys(record).forEach(attributeName => {
-      let value = record[attributeName];
+      var value = record[attributeName];
       if (value) {
         value = value.toString();
-        const match = columns.includes(attributeName) && value.match(new RegExp(searchValue, 'i'));
+        var match = fieldsSearched.includes(attributeName) && value.match(new RegExp(searchValue, 'i'));
         if (match) {
           if (!matchFields[index]) {
             matchFields[index] = {

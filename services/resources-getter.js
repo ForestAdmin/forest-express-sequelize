@@ -161,7 +161,7 @@ function ResourcesGetter(model, opts, params) {
         if (params.search) {
           var decoratorsSearch = RecordsDecorator.decorateForSearch(
             records,
-            searchBuilder.getColumns(),
+            searchBuilder.getFieldsSearched(),
             params.search
           );
           if (!_.isEmpty(decoratorsSearch)) {
