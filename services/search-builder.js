@@ -108,10 +108,18 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'Enum') {
-        var enumSearch = params.search;
+        var enumValueFound;
+        var searchValue = params.search.toLowerCase();
 
-        if (field.enums.indexOf(enumSearch) !== -1) {
-          condition[field.field] = enumSearch;
+        _.each(field.enums, function (enumValue) {
+          if (enumValue.toLowerCase() === searchValue) {
+            enumValueFound = enumValue;
+            return false;
+          }
+        });
+
+        if (enumValueFound) {
+          condition[field.field] = enumValueFound;
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'String') {
