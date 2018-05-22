@@ -4,6 +4,9 @@
 ### Added
 - Search - Display highlighted matches on table view when searching.
 
+### Fixed
+- Search - Fix the search on Enum fields.
+
 ## RELEASE 2.8.7 - 2018-05-18
 ### Fixed
 - Search - Fix potential broken search on collections that have been customized before the liana.init call.
