@@ -59,16 +59,13 @@ function HasManyGetter(model, association, opts, params) {
     return findQuery(queryOptions)
       .then(function (records) {
         return P.map(records, function (record) {
-          // NOTICE: Do not use "toJSON" method to prevent issues on models that
-          //         override this method.
-          var recordFormated = record.get({ plain: true });
           if (schema.isCompositePrimary) {
-            recordFormated.forestCompositePrimary =
+            record.forestCompositePrimary =
               new CompositeKeysManager(association, schema, record)
                 .createCompositePrimary();
           }
 
-          return recordFormated;
+          return record;
         });
       });
   }
