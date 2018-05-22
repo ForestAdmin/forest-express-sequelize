@@ -1,12 +1,11 @@
 'use strict';
 
+var _ = require('lodash');
+
 function decorateForSearch(records, fieldsSearched, searchValue) {
-  if (records[0] && records[0].dataValues) {
-    records = records.map((record) => record.get({ plain: true }));
-  }
   var matchFields = {};
-  records.forEach((record, index) => {
-    Object.keys(record).forEach(attributeName => {
+  records.forEach(function (record, index) {
+    Object.keys(record.rawAttributes).forEach(function (attributeName) {
       var value = record[attributeName];
       if (value) {
         value = value.toString();
@@ -23,6 +22,10 @@ function decorateForSearch(records, fieldsSearched, searchValue) {
       }
     });
   });
+
+  if (_.isEmpty(matchFields)) {
+    matchFields = null;
+  }
 
   return matchFields;
 }

@@ -159,14 +159,11 @@ function ResourcesGetter(model, opts, params) {
       .spread(function (count, records) {
         var decorators = null;
         if (params.search) {
-          var decoratorsSearch = RecordsDecorator.decorateForSearch(
+          decorators = RecordsDecorator.decorateForSearch(
             records,
             searchBuilder.getFieldsSearched(),
             params.search
           );
-          if (!_.isEmpty(decoratorsSearch)) {
-            decorators = decoratorsSearch;
-          }
         }
 
         if (schema.isCompositePrimary) {

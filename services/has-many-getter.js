@@ -72,20 +72,17 @@ function HasManyGetter(model, association, opts, params) {
 
   this.perform = function () {
     return P.all([getRecords(), getCount()])
-      .then((results) => {
+      .then(function (results) {
         var records = results[0];
         var count = results[1];
         var decorators = null;
 
         if (params.search) {
-          var decoratorsSearch = RecordsDecorator.decorateForSearch(
+          decorators = RecordsDecorator.decorateForSearch(
             records,
             searchBuilder.getFieldsSearched(),
             params.search
           );
-          if (!_.isEmpty(decoratorsSearch)) {
-            decorators = decoratorsSearch;
-          }
         }
 
         return [records, count, decorators];
