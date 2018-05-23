@@ -4,7 +4,6 @@ var P = require('bluebird');
 var Interface = require('forest-express');
 var QueryBuilder = require('./query-builder');
 var SearchBuilder = require('./search-builder');
-var RecordsDecorator = require('../utils/records-decorator');
 var CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {

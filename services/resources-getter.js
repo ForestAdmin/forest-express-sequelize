@@ -2,7 +2,6 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var Operators = require('../utils/operators');
-var RecordsDecorator = require('../utils/records-decorator');
 var OperatorValueParser = require('./operator-value-parser');
 var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
