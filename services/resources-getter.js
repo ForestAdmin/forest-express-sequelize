@@ -157,13 +157,10 @@ function ResourcesGetter(model, opts, params) {
     return getSegmentCondition()
       .then(getAndCountRecords)
       .spread(function (count, records) {
-        var decorators = null;
+        var fieldsSearched = null;
+
         if (params.search) {
-          decorators = RecordsDecorator.decorateForSearch(
-            records,
-            searchBuilder.getFieldsSearched(),
-            params.search
-          );
+          fieldsSearched = searchBuilder.getFieldsSearched();
         }
 
         if (schema.isCompositePrimary) {
@@ -174,7 +171,7 @@ function ResourcesGetter(model, opts, params) {
           });
         }
 
-        return [records, count, decorators];
+        return [records, count, fieldsSearched];
       });
   };
 }

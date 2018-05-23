@@ -75,17 +75,13 @@ function HasManyGetter(model, association, opts, params) {
       .then(function (results) {
         var records = results[0];
         var count = results[1];
-        var decorators = null;
+        var fieldsSearched = null;
 
         if (params.search) {
-          decorators = RecordsDecorator.decorateForSearch(
-            records,
-            searchBuilder.getFieldsSearched(),
-            params.search
-          );
+          fieldsSearched = searchBuilder.getFieldsSearched();
         }
 
-        return [records, count, decorators];
+        return [records, count, fieldsSearched];
       });
   };
 }
