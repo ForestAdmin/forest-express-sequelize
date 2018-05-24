@@ -41,6 +41,7 @@ function ResourcesGetter(model, opts, params) {
 
   var searchBuilder = new SearchBuilder(model, opts, params,
       fieldNamesRequested);
+  var hasSmartFieldSearch = false;
 
   function handleFilterParams() {
     var where = {};
@@ -106,12 +107,19 @@ function ResourcesGetter(model, opts, params) {
           try {
             field.search(countOpts, params.search);
             field.search(findAllOpts, params.search);
+            hasSmartFieldSearch = true;
           } catch (error) {
             Interface.logger.error('Cannot search properly on Smart Field ' +
               field.field, error);
           }
         }
       });
+
+      var fieldsSearched = searchBuilder.getFieldsSearched();
+      if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
+        // NOTICE: No search condition has been set in the queryis possible on the current model,
+        return [0, []];
+      }
     }
 
     if (segmentScope) {

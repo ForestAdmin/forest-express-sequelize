@@ -6,6 +6,7 @@
 
 ### Fixed
 - Search - Fix the search on Enum fields.
+- Search - Return empty result instead of the whole list of records if no field can be searched on the collection.
 
 ## RELEASE 2.8.7 - 2018-05-18
 ### Fixed
