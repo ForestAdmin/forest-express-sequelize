@@ -85,6 +85,8 @@ exports.init = function(opts) {
   exports.LineStatGetter = require('./services/line-stat-getter');
   exports.QueryStatGetter = require('./services/query-stat-getter');
 
+  exports.RecordsDecorator = require('./utils/records-decorator');
+
   exports.Stripe = {
     getCustomer: function (customerModel, customerField, customerId) {
       if (customerId) {

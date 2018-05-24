@@ -20,8 +20,9 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   var fieldNamesRequested = getFieldNamesRequested();
-  var where = new SearchBuilder(association, opts, params, fieldNamesRequested)
-    .perform();
+  var searchBuilder = new SearchBuilder(association, opts, params,
+    fieldNamesRequested);
+  var where = searchBuilder.perform();
   var include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
   function findQuery(queryOptions) {
@@ -38,7 +39,7 @@ function HasManyGetter(model, association, opts, params) {
       });
   }
 
-  function count() {
+  function getCount() {
     // TODO: Why not use a count that would generate a much more efficient SQL
     //       query.
     return findQuery()
@@ -57,22 +58,30 @@ function HasManyGetter(model, association, opts, params) {
     return findQuery(queryOptions)
       .then(function (records) {
         return P.map(records, function (record) {
-          // NOTICE: Do not use "toJSON" method to prevent issues on models that
-          //         override this method.
-          var recordFormated = record.get({ plain: true });
           if (schema.isCompositePrimary) {
-            recordFormated.forestCompositePrimary =
+            record.forestCompositePrimary =
               new CompositeKeysManager(association, schema, record)
                 .createCompositePrimary();
           }
 
-          return recordFormated;
+          return record;
         });
       });
   }
 
   this.perform = function () {
-    return P.all([count(), getRecords()]);
+    return P.all([getRecords(), getCount()])
+      .then(function (results) {
+        var records = results[0];
+        var count = results[1];
+        var fieldsSearched = null;
+
+        if (params.search) {
+          fieldsSearched = searchBuilder.getFieldsSearched();
+        }
+
+        return [records, count, fieldsSearched];
+      });
   };
 }
 

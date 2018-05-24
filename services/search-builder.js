@@ -14,6 +14,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
   var searchAssociationFields;
   var OPERATORS = new Operators(opts);
+  var fieldsSearched = [];
 
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
@@ -57,6 +58,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     }
   }
 
+  this.getFieldsSearched = function () {
+    return fieldsSearched;
+  };
+
   this.perform = function () {
     if (!params.search) { return null; }
 
@@ -67,12 +72,17 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     var where = {};
     var or = [];
 
+    function pushCondition(condition, fieldName) {
+      or.push(condition);
+      fieldsSearched.push(fieldName);
+    }
+
     _.each(fields, function (field) {
       if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
       if (field.integration) { return; } // NOTICE: Ignore integration fields.
       if (field.reference) { return; } // NOTICE: Handle belongsTo search below.
 
-      var q = {};
+      var condition = {};
       var columnName;
 
       if (field.field === schema.idField) {
@@ -81,46 +91,53 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         if (primaryKeyType instanceof DataTypes.INTEGER) {
           var value = parseInt(params.search, 10) || 0;
           if (value) {
-            q[field.field] = value;
-            or.push(q);
+            condition[field.field] = value;
+            pushCondition(condition, field.field);
           }
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
-          q = opts.sequelize.where(
+          condition = opts.sequelize.where(
             lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );
-          or.push(q);
+          pushCondition(condition, columnName);
         } else if (primaryKeyType instanceof DataTypes.UUID &&
           params.search.match(REGEX_UUID)) {
-          q[field.field] = params.search;
-          or.push(q);
+          condition[field.field] = params.search;
+          pushCondition(condition, field.field);
         }
       } else if (field.type === 'Enum') {
-        // TODO: Fix enum search for lowercase enums
-        var enumSearch = _.upperFirst(params.search.toLowerCase());
+        var enumValueFound;
+        var searchValue = params.search.toLowerCase();
 
-        if (field.enums.indexOf(enumSearch) !== -1) {
-          q[field.field] = enumSearch;
-          or.push(q);
+        _.each(field.enums, function (enumValue) {
+          if (enumValue.toLowerCase() === searchValue) {
+            enumValueFound = enumValue;
+            return false;
+          }
+        });
+
+        if (enumValueFound) {
+          condition[field.field] = enumValueFound;
+          pushCondition(condition, field.field);
         }
       } else if (field.type === 'String') {
         if (model.attributes[field.field] &&
           model.attributes[field.field].type instanceof DataTypes.UUID) {
           if (params.search.match(REGEX_UUID)) {
-            q[field.field] = params.search;
-            or.push(q);
+            condition[field.field] = params.search;
+            pushCondition(condition, field.field);
           }
         } else {
           columnName = field.columnName || field.field;
 
-          q = opts.sequelize.where(
+          condition = opts.sequelize.where(
             lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );
-          or.push(q);
+          pushCondition(condition, columnName);
         }
       }
     });
@@ -148,7 +165,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 return;
               }
 
-              var q = {};
+              var condition = {};
               var columnName = field.columnName || field.field;
               var column = opts.sequelize.col(association.as + '.' +
                 columnName);
@@ -157,26 +174,26 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 if (field.type === 'Number') {
                   var value = parseInt(params.search, 10) || 0;
                   if (value) {
-                    q = opts.sequelize.where(column, ' = ',
+                    condition = opts.sequelize.where(column, ' = ',
                       parseInt(params.search, 10) || 0);
                   }
                 } else if (params.search.match(REGEX_UUID)) {
-                  q = opts.sequelize.where(column, ' = ', params.search);
+                  condition = opts.sequelize.where(column, ' = ', params.search);
                 }
               } else if (field.type === 'String') {
                 if (modelAssociation.attributes[field.field] &&
                   modelAssociation.attributes[field.field].type instanceof
                   DataTypes.UUID) {
                   if (params.search.match(REGEX_UUID)) {
-                    q = opts.sequelize.where(column, '=', params.search);
+                    condition = opts.sequelize.where(column, '=', params.search);
                   }
                 } else {
-                  q = opts.sequelize.where(
+                  condition = opts.sequelize.where(
                     lowerIfNecessary(column), ' LIKE ',
                     lowerIfNecessary('%' + params.search + '%'));
                 }
               }
-              or.push(q);
+              or.push(condition);
             });
           }
         }
