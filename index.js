@@ -2,6 +2,8 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var Interface = require('forest-express');
+var orm = require('./utils/orm');
+
 var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
 
 exports.collection = Interface.collection;
@@ -35,10 +37,7 @@ exports.init = function(opts) {
   exports.getOrmVersion = function () {
     if (!opts.sequelize) { return null; }
 
-    var ormVersion = opts.sequelize.version.match(REGEX_VERSION);
-    if (ormVersion && ormVersion[0]) {
-      return ormVersion[0];
-    }
+    return orm.getVersion(opts.sequelize);
   };
 
   exports.getDatabaseType = function () {

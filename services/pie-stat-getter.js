@@ -3,6 +3,7 @@
 var _ = require('lodash');
 var P = require('bluebird');
 var moment = require('moment');
+var orm = require('../utils/orm');
 var BaseStatGetter = require('./base-stat-getter');
 var Database = require('../utils/database');
 var Interface = require('forest-express');
@@ -13,6 +14,8 @@ var ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
 function PieStatGetter(model, params, opts) {
   BaseStatGetter.call(this, model, params, opts);
+
+  var needsDateOnlyFormating = orm.isVersionLessThan4(opts.sequelize);
 
   var schema = Interface.Schemas.schemas[model.name];
   var associationSplit,associationCollection, associationField,
@@ -80,7 +83,7 @@ function PieStatGetter(model, params, opts) {
 
       if (field.type === 'Date') {
         key = moment(record[ALIAS_GROUP_BY]).format('DD/MM/YYYY HH:mm:ss');
-      } else if (field.type === 'Dateonly') {
+      } else if (field.type === 'Dateonly' && needsDateOnlyFormating) {
         var offsetServer = moment().utcOffset() / 60;
         var dateonly = moment.utc(record[ALIAS_GROUP_BY])
           .add(offsetServer, 'h');
