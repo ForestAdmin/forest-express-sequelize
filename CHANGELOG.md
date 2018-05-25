@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- SEO - Add some keywords.
 
 ## RELEASE 2.9.0 - 2018-05-25
 ### Added

@@ -12,10 +12,26 @@
   "homepage": "http://www.forestadmin.com",
   "keywords": [
     "forest",
+    "admininistrator",
     "admin",
     "panel",
+    "panel-admin",
+    "admin-panel",
     "interface",
-    "sequelize"
+    "back",
+    "office",
+    "backoffice",
+    "back-office",
+    "management",
+    "dashboard",
+    "rest",
+    "liana",
+    "express",
+    "sequelize",
+    "mysql",
+    "sqlite",
+    "postgres",
+    "mssql"
   ],
   "repository": {
     "type": "git",
