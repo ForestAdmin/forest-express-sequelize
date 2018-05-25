@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Technical - Move eslint into the dev dependencies.
+- Technical - Cleanup the dependencies.
 
 ## RELEASE 2.11.0 - 2018-06-01
 ### Added
