@@ -1,3 +1,4 @@
+'use strict';
 var semver = require('semver');
 
 var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
