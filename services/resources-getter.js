@@ -105,7 +105,9 @@ function ResourcesGetter(model, opts, params) {
 
             return resolve(where);
           }, function (error) {
-            reject(error);
+            var errorMessage = 'Invalid SQL query for this Live Query segment:\n' + error.message;
+            Interface.logger.error(errorMessage);
+            reject(new ErrorHTTP422(errorMessage));
           });
       } else {
         return resolve(where);
@@ -160,10 +162,6 @@ function ResourcesGetter(model, opts, params) {
             model.unscoped().findAll(findAllOpts)
           ]);
         }
-    })
-    .catch(function (error) {
-      Interface.logger.error('Cannot retrieve the records:', error.message);
-      throw new ErrorHTTP422(error.message);
     });
   }
 
