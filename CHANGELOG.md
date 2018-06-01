@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Cleanup the dependencies.
 
 ## RELEASE 2.11.0 - 2018-06-01
 ### Added
