@@ -7,6 +7,8 @@ var Interface = require('forest-express');
 var CompositeKeysManager = require('./composite-keys-manager');
 var QueryBuilder = require('./query-builder');
 var SearchBuilder = require('./search-builder');
+var LiveQueryChecker = require('./live-query-checker');
+var ErrorHTTP422 = require('./errors').ErrorHTTP422;
 
 function ResourcesGetter(model, opts, params) {
   var schema = Interface.Schemas.schemas[model.name];
@@ -67,72 +69,100 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getWhere() {
-    var where = {};
-    where[OPERATORS.AND] = [];
+    return new P(function (resolve, reject) {
+      var where = {};
+      where[OPERATORS.AND] = [];
 
-    if (params.search) {
-      where[OPERATORS.AND].push(searchBuilder.perform());
-    }
+      if (params.search) {
+        where[OPERATORS.AND].push(searchBuilder.perform());
+      }
 
-    if (params.filter) {
-      where[OPERATORS.AND].push(handleFilterParams());
-    }
+      if (params.filter) {
+        where[OPERATORS.AND].push(handleFilterParams());
+      }
 
-    if (segmentWhere) {
-      where[OPERATORS.AND].push(segmentWhere);
-    }
+      if (segmentWhere) {
+        where[OPERATORS.AND].push(segmentWhere);
+      }
 
-    return where;
+      if (params.segmentQuery) {
+        var queryToFilterRecords = params.segmentQuery.trim();
+        new LiveQueryChecker().perform(queryToFilterRecords);
+
+        // WARNING: Choosing the first connection might generate issues if the model
+        //          does not belongs to this database.
+        opts.connections[0]
+          .query(queryToFilterRecords, {
+            type: opts.sequelize.QueryTypes.SELECT,
+          })
+          .then(function (results) {
+            var recordIds = results.map(function (result) {
+              return result.id;
+            });
+            var condition = { id: {} };
+            condition.id[OPERATORS.IN] = recordIds;
+            where[OPERATORS.AND].push(condition);
+
+            return resolve(where);
+          }, function (error) {
+            var errorMessage = 'Invalid SQL query for this Live Query segment:\n' + error.message;
+            Interface.logger.error(errorMessage);
+            reject(new ErrorHTTP422(errorMessage));
+          });
+      } else {
+        return resolve(where);
+      }
+    });
   }
 
   function getAndCountRecords() {
-    var where = getWhere();
+    return getWhere()
+      .then(function (where) {
+        var countOpts = {
+          include: queryBuilder.getIncludes(model, fieldNamesRequested),
+          where: where
+        };
 
-    var countOpts = {
-      include: queryBuilder.getIncludes(model, fieldNamesRequested),
-      where: where
-    };
+        var findAllOpts = {
+          where: where,
+          include: queryBuilder.getIncludes(model, fieldNamesRequested),
+          order: queryBuilder.getOrder(),
+          offset: queryBuilder.getSkip(),
+          limit: queryBuilder.getLimit()
+        };
 
-    var findAllOpts = {
-      where: where,
-      include: queryBuilder.getIncludes(model, fieldNamesRequested),
-      order: queryBuilder.getOrder(),
-      offset: queryBuilder.getSkip(),
-      limit: queryBuilder.getLimit()
-    };
+        if (params.search) {
+          _.each(schema.fields, function (field) {
+            if (field.search) {
+              try {
+                field.search(countOpts, params.search);
+                field.search(findAllOpts, params.search);
+              } catch (error) {
+                Interface.logger.error('Cannot search properly on Smart Field ' +
+                  field.field, error);
+              }
+            }
+          });
 
-    if (params.search) {
-      _.each(schema.fields, function (field) {
-        if (field.search) {
-          try {
-            field.search(countOpts, params.search);
-            field.search(findAllOpts, params.search);
-            hasSmartFieldSearch = true;
-          } catch (error) {
-            Interface.logger.error('Cannot search properly on Smart Field ' +
-              field.field, error);
+          var fieldsSearched = searchBuilder.getFieldsSearched();
+          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
+            // NOTICE: No search condition has been set for the current search, no record can be found.
+            return [0, []];
           }
         }
-      });
 
-      var fieldsSearched = searchBuilder.getFieldsSearched();
-      if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
-        // NOTICE: No search condition has been set for the current search, no record can be found.
-        return [0, []];
-      }
-    }
-
-    if (segmentScope) {
-      return P.all([
-        model.scope(segmentScope).count(countOpts),
-        model.scope(segmentScope).findAll(findAllOpts)
-      ]);
-    } else {
-      return P.all([
-        model.unscoped().count(countOpts),
-        model.unscoped().findAll(findAllOpts)
-      ]);
-    }
+        if (segmentScope) {
+          return P.all([
+            model.scope(segmentScope).count(countOpts),
+            model.scope(segmentScope).findAll(findAllOpts)
+          ]);
+        } else {
+          return P.all([
+            model.unscoped().count(countOpts),
+            model.unscoped().findAll(findAllOpts)
+          ]);
+        }
+    });
   }
 
   function getSegment() {
