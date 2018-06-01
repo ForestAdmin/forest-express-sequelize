@@ -819,7 +819,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
               .then(function (result) {
                 _.each(result[0], function (instance) {
                   expect(instance.dataValues).to.include.keys('country');
-                })
+                });
                 done();
               })
               .catch(done);
@@ -933,6 +933,28 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             .perform()
             .then(function (result) {
               expect(result[1]).equal(0);
+              done();
+            })
+            .catch(done);
+        });
+      });
+
+      describe('Request on the resources getter with a Live Query segment', function () {
+        it('should respond with a valid result', function (done) {
+          var params = {
+            fields: {
+              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
+            },
+            page: { number: '2', size: '50' },
+            sort: '-id',
+            segmentQuery: 'select * from users\nwhere id in (100, 102);',
+            timezone: 'Europe/Paris'
+          };
+          return new ResourcesGetter(models.user, sequelizeOptions,
+            params)
+            .perform()
+            .then(function (result) {
+              expect(result[1]).equal(2);
               done();
             })
             .catch(done);

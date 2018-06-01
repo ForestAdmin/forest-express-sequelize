@@ -162,6 +162,7 @@ function ResourcesGetter(model, opts, params) {
         }
     })
     .catch(function (error) {
+      Interface.logger.error('Cannot retrieve the records:', error.message);
       throw new ErrorHTTP422(error.message);
     });
   }
