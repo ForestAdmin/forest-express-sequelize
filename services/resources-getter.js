@@ -85,17 +85,23 @@ function ResourcesGetter(model, opts, params) {
         where[OPERATORS.AND].push(segmentWhere);
       }
 
-      if (params.query) {
-        var rawQuery = params.query.trim();
-        new LiveQueryChecker().perform(rawQuery);
+      if (params.segmentQuery) {
+        var queryToFilterRecords = params.segmentQuery.trim();
+        new LiveQueryChecker().perform(queryToFilterRecords);
 
         // WARNING: Choosing the first connection might generate issues if the model
         //          does not belongs to this database.
         opts.connections[0]
-          .query(rawQuery, { type: opts.sequelize.QueryTypes.SELECT })
-          .then(function (result) {
-            result = result.map(function (r) { return r.id; } );
-            where[OPERATORS.AND].push({ id: { in: result } } );
+          .query(queryToFilterRecords, {
+            type: opts.sequelize.QueryTypes.SELECT,
+          })
+          .then(function (results) {
+            var recordIds = results.map(function (result) {
+              return result.id;
+            });
+            var condition = { id: {} };
+            condition.id[OPERATORS.IN] = recordIds;
+            where[OPERATORS.AND].push(condition);
 
             return resolve(where);
           }, function (error) {
