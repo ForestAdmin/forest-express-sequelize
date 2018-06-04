@@ -1,5 +1,4 @@
 'use strict';
-var ErrorHTTP422 = require('./errors').ErrorHTTP422;
 var LiveQueryChecker = require('./live-query-checker');
 
 function QueryStatGetter(params, opts) {

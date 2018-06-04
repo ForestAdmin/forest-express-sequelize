@@ -1,4 +1,6 @@
 'use strict';
+var _ = require('lodash');
+var ErrorHTTP422 = require('./errors').ErrorHTTP422;
 var Interface = require('forest-express');
 var ResourceGetter = require('./resource-getter');
 var CompositeKeysManager = require('./composite-keys-manager');
@@ -15,7 +17,13 @@ function ResourceUpdater(model, params, newRecord) {
       .perform()
       .then(function (record) {
         if (record) {
-          return record.update(newRecord);
+          _.each(newRecord, function (value, attribute) {
+            record[attribute] = value;
+          });
+
+          return record.validate()
+            .catch(function (error) { throw new ErrorHTTP422(error.message); })
+            .then(function () { return record.save(); });
         }
       })
       .then(function () {

@@ -1,6 +1,7 @@
 'use strict';
 var _ = require('lodash');
 var P = require('bluebird');
+var ErrorHTTP422 = require('./errors').ErrorHTTP422;
 var Interface = require('forest-express');
 var ResourceGetter = require('./resource-getter');
 var CompositeKeysManager = require('./composite-keys-manager');
@@ -21,6 +22,12 @@ function ResourceCreator(model, params) {
     }
 
     return P.all(promises)
+      .then(function () {
+        return recordCreated.validate()
+          .catch(function (error) {
+            throw new ErrorHTTP422(error.message);
+          });
+      })
       .then(function () { return recordCreated.save(); })
       .then(function (record) {
         var promisesAfterSave = [];

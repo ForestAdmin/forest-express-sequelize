@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Validation - On create or update, Record validation errors will now return a 422 status code (instead of 500).
+
 ### Fixed
 - Technical - Cleanup the dependencies.
 
