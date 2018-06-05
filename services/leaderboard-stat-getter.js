@@ -2,48 +2,48 @@
 var Interface = require('forest-express');
 var BaseStatGetter = require('./base-stat-getter');
 
-function LeaderboardStatGetter(model, relationshipModel, params, opts) {
-  BaseStatGetter.call(this, model, params, opts);
+function LeaderboardStatGetter(model, modelRelationship, params, options) {
+  BaseStatGetter.call(this, model, params, options);
 
-  var collectionField = params['collection_field'];
+  var collectionField = params.collection_field;
   var aggregate = params.aggregate.toUpperCase();
-  var aggregateField = params['aggregate_field'];
+  var aggregateField = params.aggregate_field;
   var limit = params.limit;
-
-  var schema = Interface.Schemas.schemas[relationshipModel.name];
-
-  var groupBy = model.name.toLowerCase() + '.' + collectionField;
+  var schema = Interface.Schemas.schemas[model.name];
+  var schemaRelationship = Interface.Schemas.schemas[modelRelationship.name];
+  var groupBy = schema.name + '.' + collectionField;
 
   function getAggregateField() {
-    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
-    //         cannot be '*'.
-    var fieldName = aggregateField || schema.primaryKeys[0] ||
-      schema.fields[0].field;
-    return schema.name + '.' + fieldName;
+    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
+    var fieldName = aggregateField || schemaRelationship.primaryKeys[0] ||
+      schemaRelationship.fields[0].field;
+    return schemaRelationship.name + '.' + fieldName;
   }
 
   this.perform = function () {
-    return relationshipModel
+    return modelRelationship
       .unscoped()
       .findAll({
-        attributes: [[opts.sequelize.fn(aggregate, opts.sequelize.col(getAggregateField())), 'value']],
+        attributes: [
+          [options.sequelize.fn(aggregate, options.sequelize.col(getAggregateField())), 'value']
+        ],
         include: [{
           model: model,
           attributes: [collectionField],
+          required: true,
         }],
         group: groupBy,
-        order: [[opts.sequelize.literal('value'), 'DESC']],
-        limit,
+        order: [[options.sequelize.literal('value'), 'DESC']],
+        limit: limit,
         raw: true
       })
-      .then(function(records) {
-        return records.map(function (data) {
+      .then(function (records) {
+        records = records.map(function (data) {
           data.key = data[groupBy];
           delete data[groupBy];
           return data;
         });
-      })
-      .then(function (records) {
+
         return { value: records };
       });
   };
