@@ -206,6 +206,7 @@ module.exports = function (model, opts) {
     var schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
+      relationship: association.associationType,
       // TODO: For BelongsTo associations, the reference does not seem to be
       //       correct; the target name is correct, but not the second part.
       reference: association.target.name + '.' + association.foreignKey,
