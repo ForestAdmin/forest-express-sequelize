@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Added
 - Charts - Users can create "Leaderboard" charts.
+- Technical - Add a new apimap property "relationship".
 
 ## RELEASE 2.11.3 - 2018-06-14
 ### Changed
