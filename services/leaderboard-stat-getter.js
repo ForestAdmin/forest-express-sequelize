@@ -5,13 +5,13 @@ var BaseStatGetter = require('./base-stat-getter');
 function LeaderboardStatGetter(model, modelRelationship, params, options) {
   BaseStatGetter.call(this, model, params, options);
 
-  var collectionField = params.collection_field;
+  var labelField = params.label_field;
   var aggregate = params.aggregate.toUpperCase();
   var aggregateField = params.aggregate_field;
   var limit = params.limit;
   var schema = Interface.Schemas.schemas[model.name];
   var schemaRelationship = Interface.Schemas.schemas[modelRelationship.name];
-  var groupBy = schema.name + '.' + collectionField;
+  var groupBy = schema.name + '.' + labelField;
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
@@ -29,7 +29,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
         ],
         include: [{
           model: model,
-          attributes: [collectionField],
+          attributes: [labelField],
           required: true,
         }],
         group: groupBy,
