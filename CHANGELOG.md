@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## RELEASE 2.11.2 - 2018-06-07
+
 ## RELEASE 2.11.1 - 2018-06-04
 ### Changed
 - Validation - On create or update, Record validation errors will now return a 422 status code (instead of 500).
