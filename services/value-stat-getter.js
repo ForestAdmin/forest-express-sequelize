@@ -92,20 +92,12 @@ function ValueStatGetter(model, params, options) {
         return undefined;
       })
       .then(function (countPrevious) {
-        var returnValue = {
+        return {
           value: {
             countCurrent: countCurrent,
             countPrevious: countPrevious
           }
         };
-
-        if (params.type === 'Objective') {
-          returnValue = {
-            current: countCurrent,
-          }
-          console.log('sequelize', returnValue);
-        }
-        return returnValue;
       });
   };
 }
