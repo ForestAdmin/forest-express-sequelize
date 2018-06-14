@@ -9,6 +9,7 @@ var CompositeKeysManager = require('./composite-keys-manager');
 function HasManyGetter(model, association, opts, params) {
   var queryBuilder = new QueryBuilder(model, opts, params);
   var schema = Interface.Schemas.schemas[association.name];
+  var primaryKeyModel = _.keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[association.name]) { return null; }
@@ -40,11 +41,17 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   function getCount() {
-    // TODO: Why not use a count that would generate a much more efficient SQL
-    //       query.
-    return findQuery()
-      .then(function (records) {
-        return records.length;
+    var whereForParent = {};
+    whereForParent[primaryKeyModel] = params.recordId;
+
+    return association
+      .count({
+        where: where,
+        scope: false,
+        include: [{
+          model: model,
+          where: whereForParent,
+        }]
       });
   }
 

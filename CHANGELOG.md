@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Performance - Make the related data count retrieval much more efficient if the result contains thousands of records.
 
 ## RELEASE 2.11.2 - 2018-06-07
 ### Fixed
