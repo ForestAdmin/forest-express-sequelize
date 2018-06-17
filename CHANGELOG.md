@@ -1,6 +1,7 @@
 # Change Log
 
 ## [Unreleased]
+- Records Serialization - Prevent DATEONLY fields being serialized to a daty behind in Sequelize 4 where UTC shift is negative
 
 ## RELEASE 2.12.0 - 2018-06-14
 ### Added
