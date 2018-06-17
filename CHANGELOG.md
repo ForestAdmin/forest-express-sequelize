@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Pie Charts - Fix potential bad "dateonly" values for projects using Sequelize 4+.
 
 ## RELEASE 2.12.0 - 2018-06-14
 ### Added
