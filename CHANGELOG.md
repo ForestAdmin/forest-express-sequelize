@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.12.1 - 2018-06-17
 ### Fixed
 - DateOnly Fields - Fix potential bad values for projects using Sequelize 4+.
 - Pie Charts - Fix potential bad "dateonly" values for projects using Sequelize 4+.
