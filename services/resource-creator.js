@@ -36,8 +36,10 @@ function ResourceCreator(model, params) {
         //         have an id.
         if (model.associations) {
           _.forOwn(model.associations, function (association, name) {
-            if (['BelongsToMany', 'HasOne', 'HasMany'].indexOf(association.associationType) > -1) {
+            if (association.associationType === 'HasOne') {
               promisesAfterSave.push(record['set' + _.upperFirst(name)](params[name]));
+            } else if (['BelongsToMany', 'HasMany'].indexOf(association.associationType) > -1) {
+              promisesAfterSave.push(record['add' + _.upperFirst(name)](params[name]));
             }
           });
         }
