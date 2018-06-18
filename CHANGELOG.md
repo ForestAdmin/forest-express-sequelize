@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Records Creation - Prevent associations defined while creating a new record from overwriting associations created by hooks. [regression introduced in 2.1.1]
+- Records List - Fix a regression on records ordering due to Lodash dependency upgrade. [Regression introduced in 2.8.5]
 
 ## RELEASE 2.12.1 - 2018-06-17
 ### Fixed
