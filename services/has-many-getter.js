@@ -41,17 +41,32 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   function getCount() {
+    var whereAssociation = where || {};
     var whereForParent = {};
     whereForParent[primaryKeyModel] = params.recordId;
 
+    var foKey;
+
+    _.values(model.associations).forEach(function (ass) {
+      if (['HasMany', 'BelongsToMany'].indexOf(ass.associationType) > -1) {
+        if (ass.target.name === association.name) {
+          foKey = ass.foreignKey;
+        }
+      }
+    });
+
+    _.values(association.associations).forEach(function (asso) {
+      if (asso.associationType === 'BelongsTo') {
+        if (asso.foreignKey === foKey) {
+          whereAssociation[asso.foreignKey] = params.recordId;
+        }
+      }
+    });
+
     return association
       .count({
-        where: where,
+        where: whereAssociation,
         scope: false,
-        include: [{
-          model: model,
-          where: whereForParent,
-        }]
       });
   }
 
