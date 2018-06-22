@@ -41,18 +41,43 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   function getCount() {
-    var whereForParent = {};
-    whereForParent[primaryKeyModel] = params.recordId;
+    var associationType;
+    var whereAssociation = where || {};
+    var foreignKey;
 
-    return association
-      .count({
-        where: where,
-        scope: false,
-        include: [{
-          model: model,
-          where: whereForParent,
-        }]
+    // NOTICE: Detect the association type and foreign key.
+    _.values(model.associations).forEach(function (modelAssociation) {
+      if (['HasMany', 'BelongsToMany'].indexOf(modelAssociation.associationType) > -1) {
+        if (modelAssociation.target.name === association.name) {
+          foreignKey = modelAssociation.foreignKey;
+          associationType = modelAssociation.associationType;
+        }
+      }
+    });
+
+    // NOTICE: Set the specific count condition for HasMany relationships.
+    if (associationType === 'HasMany') {
+      _.values(association.associations).forEach(function (modelAssociation) {
+        if (modelAssociation.associationType === 'BelongsTo' &&
+          modelAssociation.foreignKey === foreignKey) {
+          whereAssociation[modelAssociation.foreignKey] = params.recordId;
+        }
       });
+    }
+
+    var countConditions = {
+      scope: false,
+      where: whereAssociation,
+    };
+
+    // NOTICE: Set the specific count condition for BelongsToMany relationships.
+    if (associationType === 'BelongsToMany') {
+      var whereForParent = {};
+      whereForParent[primaryKeyModel] = params.recordId;
+      countConditions.include = [{ model: model, where: whereForParent }];
+    }
+
+    return association.count(countConditions);
   }
 
   function getRecords() {
