@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.12.4 - 2018-06-22
 ### Fixed
 - Related Data - Fix the related data retrieval if the foreignKey as been specified. [regression introduced in 2.11.3]
 
