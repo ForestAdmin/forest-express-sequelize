@@ -45,6 +45,7 @@ function HasManyGetter(model, association, opts, params) {
     var whereAssociation = where || {};
     var foreignKey;
 
+    // NOTICE: Detect the association type and foreign key.
     _.values(model.associations).forEach(function (modelAssociation) {
       if (['HasMany', 'BelongsToMany'].indexOf(modelAssociation.associationType) > -1) {
         if (modelAssociation.target.name === association.name) {
@@ -54,6 +55,7 @@ function HasManyGetter(model, association, opts, params) {
       }
     });
 
+    // NOTICE: Set the specific count condition for HasMany relationships.
     if (associationType === 'HasMany') {
       _.values(association.associations).forEach(function (modelAssociation) {
         if (modelAssociation.associationType === 'BelongsTo' &&
@@ -68,6 +70,7 @@ function HasManyGetter(model, association, opts, params) {
       where: whereAssociation,
     };
 
+    // NOTICE: Set the specific count condition for BelongsToMany relationships.
     if (associationType === 'BelongsToMany') {
       var whereForParent = {};
       whereForParent[primaryKeyModel] = params.recordId;
