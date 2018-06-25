@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Records Update - Allow a hook to change a field while updating an association.
 
 ## RELEASE 2.12.2 - 2018-06-18
 ### Fixed

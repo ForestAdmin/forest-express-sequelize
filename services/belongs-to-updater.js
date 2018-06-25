@@ -26,11 +26,16 @@ function BelongsToUpdater(model, association, opts, params, data) {
           return modelAssociation
             .findById(data.data.id)
             .then(function (recordAssociated) {
-              record['set' + _.upperFirst(params.associationName)](recordAssociated);
+              record['set' + _.upperFirst(params.associationName)](
+                recordAssociated,
+                { fields: null },
+              );
             });
         } else {
           return record['set' + _.upperFirst(params.associationName)](
-            data.data ? data.data.id : null);
+            data.data ? data.data.id : null,
+            { fields: null },
+          );
         }
       });
   };
