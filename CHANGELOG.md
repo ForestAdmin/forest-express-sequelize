@@ -4,7 +4,7 @@
 
 ## RELEASE 2.12.4 - 2018-06-22
 ### Fixed
-- Related Data - Fix the related data retrieval if the foreignKey as been specified. [regression introduced in 2.11.3]
+- Related Data - Fix the related data retrieval if the foreignKey has been specified. [regression introduced in 2.11.3]
 
 ## RELEASE 2.12.3 - 2018-06-21
 ### Fixed
