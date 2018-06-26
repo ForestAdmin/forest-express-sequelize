@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Records Update - Allow a hook to change a field while updating an association.
+- Records Update - Allow model hooks to change fields values while updating a belongsTo or hasOne association.
 
 ## RELEASE 2.12.2 - 2018-06-18
 ### Fixed
