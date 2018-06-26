@@ -22,15 +22,19 @@ function BelongsToUpdater(model, association, opts, params, data) {
           }
         });
 
+        var setterName = 'set' + _.upperFirst(params.associationName);
+
+        // NOTICE: Enable model hooks to change fields values during an association update.
+        var options = { fields: null };
+
         if (isHasOne && data.data) {
           return modelAssociation
             .findById(data.data.id)
             .then(function (recordAssociated) {
-              record['set' + _.upperFirst(params.associationName)](recordAssociated);
+              record[setterName](recordAssociated, options);
             });
         } else {
-          return record['set' + _.upperFirst(params.associationName)](
-            data.data ? data.data.id : null);
+          return record[setterName](data.data ? data.data.id : null, options);
         }
       });
   };
