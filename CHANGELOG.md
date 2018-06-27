@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.12.5 - 2018-06-27
 ### Fixed
 - Records Update - Allow model hooks to change fields values while updating a belongsTo or hasOne association.
 
