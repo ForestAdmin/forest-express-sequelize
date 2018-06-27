@@ -1,6 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Intercom Integration - Display the Intercom error in the server logs if the conversations list retrieval fails.
+
+### Fixed
+- Intercom Integration - Users can now access to the Intercom Details page.
+- Intercom Integration - Fix the integration routes for projects using the "expressParentApp" configuration.
 
 ## RELEASE 2.12.5 - 2018-06-27
 ### Fixed

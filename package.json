@@ -24,7 +24,7 @@
   "main": "index.js",
   "dependencies": {
     "bluebird": "2.9.25",
-    "forest-express": "2.11.2",
+    "forest-express": "2.11.3",
     "http-errors": "1.6.1",
     "lodash": "4.17.10",
     "moment": "2.19.4",
