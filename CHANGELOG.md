@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Charts - Fix leaderboard charts on models having several belongsTo targeting the same model.
+- Smart Fields - Always pass a Sequelize instance as the first parameter of the Smart Field value getter functions.
 
 ## RELEASE 2.12.7 - 2018-06-27
 ### Changed
