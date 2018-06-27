@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Associations - Deactivate the records validations on hasMany association to prevent unexpected validation error (see https://github.com/sequelize/sequelize/issues/9559).
 
 ## RELEASE 2.12.6 - 2018-06-27
 ### Changed
