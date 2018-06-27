@@ -34,7 +34,6 @@ function HasManyGetter(model, association, opts, params) {
 
     return model.findById(params.recordId)
       .then(function (record) {
-        console.log('get' + _.upperFirst(params.associationName));
         return record['get' +
           _.upperFirst(params.associationName)](queryOptions);
       });
