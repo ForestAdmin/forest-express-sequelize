@@ -157,9 +157,9 @@ exports.init = function(opts) {
           .then(function (user) {
             return user.toJSON();
           });
-      } else {
-        return new P(function (resolve) { resolve(); });
       }
+
+      return P.resolve();
     },
   };
 
