@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Charts - Fix leaderboard charts on models having several belongsTo targeting the same model.
 
 ## RELEASE 2.12.7 - 2018-06-27
 ### Changed

@@ -1,4 +1,5 @@
 'use strict';
+var _ = require('lodash');
 var Interface = require('forest-express');
 var BaseStatGetter = require('./base-stat-getter');
 
@@ -11,7 +12,15 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
   var limit = params.limit;
   var schema = Interface.Schemas.schemas[model.name];
   var schemaRelationship = Interface.Schemas.schemas[modelRelationship.name];
-  var groupBy = schema.name + '.' + labelField;
+  var associationAs = schema.name;
+
+  _.each(modelRelationship.associations, function (association) {
+    if (association.target.name === model.name && association.as) {
+      associationAs = association.as;
+    }
+  });
+
+  var groupBy = associationAs + '.' + labelField;
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
@@ -30,6 +39,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
         include: [{
           model: model,
           attributes: [labelField],
+          as: associationAs,
           required: true,
         }],
         group: groupBy,
