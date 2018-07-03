@@ -115,17 +115,12 @@ function ResourcesGetter(model, opts, params) {
     });
   }
 
-  function getAndCountRecords() {
+  function getRecords() {
     var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
     var include = queryBuilder.getIncludes(model, fieldNamesRequested);
 
     return getWhere()
       .then(function (where) {
-        var countOpts = {
-          include: include,
-          where: where
-        };
-
         var findAllOpts = {
           where: where,
           include: include,
@@ -138,7 +133,6 @@ function ResourcesGetter(model, opts, params) {
           _.each(schema.fields, function (field) {
             if (field.search) {
               try {
-                field.search(countOpts, params.search);
                 field.search(findAllOpts, params.search);
               } catch (error) {
                 Interface.logger.error('Cannot search properly on Smart Field ' +
@@ -150,14 +144,45 @@ function ResourcesGetter(model, opts, params) {
           var fieldsSearched = searchBuilder.getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             // NOTICE: No search condition has been set for the current search, no record can be found.
-            return [0, []];
+            return [];
           }
         }
 
-        return P.all([
-          scope.count(countOpts),
-          scope.findAll(findAllOpts)
-        ]);
+        return scope.findAll(findAllOpts);
+    });
+  }
+
+  function countRecords() {
+    var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
+    var include = queryBuilder.getIncludes(model, fieldNamesRequested);
+
+    return getWhere()
+      .then(function (where) {
+        var countOpts = {
+          include: include,
+          where: where
+        };
+
+        if (params.search) {
+          _.each(schema.fields, function (field) {
+            if (field.search) {
+              try {
+                field.search(countOpts, params.search);
+              } catch (error) {
+                Interface.logger.error('Cannot search properly on Smart Field ' +
+                  field.field, error);
+              }
+            }
+          });
+
+          var fieldsSearched = searchBuilder.getFieldsSearched();
+          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
+            // NOTICE: No search condition has been set for the current search, no record can be found.
+            return 0;
+          }
+        }
+
+        return scope.count(countOpts);
     });
   }
 
@@ -173,6 +198,7 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getSegmentCondition() {
+    getSegment();
     if (_.isFunction(segmentWhere)) {
       return segmentWhere(params)
         .then(function (where) {
@@ -184,28 +210,31 @@ function ResourcesGetter(model, opts, params) {
     }
   }
 
-  this.perform = function () {
-    getSegment();
+  this.perform = function (countOrList) {
+    if (countOrList === 'count') {
+      return getSegmentCondition().then(countRecords);
+    } else if (countOrList === 'list') {
+      return getSegmentCondition()
+        .then(getRecords)
+        .then(function (records) {
+          var fieldsSearched = null;
 
-    return getSegmentCondition()
-      .then(getAndCountRecords)
-      .spread(function (count, records) {
-        var fieldsSearched = null;
+          if (params.search) {
+            fieldsSearched = searchBuilder.getFieldsSearched();
+          }
 
-        if (params.search) {
-          fieldsSearched = searchBuilder.getFieldsSearched();
-        }
+          if (schema.isCompositePrimary) {
+            records.forEach(function (record) {
+              record.forestCompositePrimary =
+                new CompositeKeysManager(model, schema, record)
+                  .createCompositePrimary();
+            });
+          }
 
-        if (schema.isCompositePrimary) {
-          records.forEach(function (record) {
-            record.forestCompositePrimary =
-              new CompositeKeysManager(model, schema, record)
-                .createCompositePrimary();
-          });
-        }
-
-        return [records, count, fieldsSearched];
-      });
+          return [records, fieldsSearched];
+        });
+    }
+    return undefined;
   };
 }
 
