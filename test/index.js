@@ -4,6 +4,7 @@
 /* jshint expr: true */
 var expect = require('chai').expect;
 var _ = require('lodash');
+var P = require('bluebird');
 var Sequelize = require('sequelize');
 var sequelizeFixtures = require('sequelize-fixtures');
 var Interface = require('forest-express');
@@ -447,8 +448,9 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform()
+          new ResourcesGetter(models.user, sequelizeOptions,
+            params)
+            .perform('list')
             .then(function () {
               done();
             })
@@ -465,10 +467,11 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(4);
+          new ResourcesGetter(models.user, sequelizeOptions,
+            params)
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(4);
               done();
             })
             .catch(done);
@@ -485,10 +488,11 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(4);
+          new ResourcesGetter(models.user, sequelizeOptions,
+            params)
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(4);
               done();
             })
             .catch(done);
@@ -505,10 +509,11 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             search: 'hello',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(0);
+          new ResourcesGetter(models.user, sequelizeOptions,
+            params)
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(0);
               done();
             })
             .catch(done);
@@ -526,10 +531,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris'
             };
-            new ResourcesGetter(models.bike, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(0);
+            return new ResourcesGetter(models.bike, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(0);
                 done();
               })
               .catch(done);
@@ -546,10 +551,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris'
             };
-            new ResourcesGetter(models.bike, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(1);
+            return new ResourcesGetter(models.bike, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(1);
                 done();
               })
               .catch(done);
@@ -567,10 +572,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             search: 'gift',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.order, sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(1);
+          return new ResourcesGetter(models.order, sequelizeOptions, params)
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(1);
               done();
             })
             .catch(done);
@@ -600,10 +605,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { id: '100' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(1);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(1);
                 done();
               })
               .catch(done);
@@ -614,10 +619,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { id: '>101' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(2);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(2);
                 done();
               })
               .catch(done);
@@ -628,10 +633,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { id: '<104' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(4);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(4);
                 done();
               })
               .catch(done);
@@ -642,10 +647,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { id: '!100' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(3);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(3);
                 done();
               })
               .catch(done);
@@ -656,10 +661,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: 'null' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(2);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(2);
                 done();
               })
               .catch(done);
@@ -670,10 +675,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: 'true' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(1);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(1);
                 done();
               })
               .catch(done);
@@ -684,10 +689,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: 'false' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(1);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(1);
                 done();
               })
               .catch(done);
@@ -698,10 +703,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: '!null' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(2);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(2);
                 done();
               })
               .catch(done);
@@ -712,10 +717,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: '!true' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(3);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(3);
                 done();
               })
               .catch(done);
@@ -726,10 +731,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { email: '!richard@piedpiper.com' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(3);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(3);
                 done();
               })
               .catch(done);
@@ -740,10 +745,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { emailValid: '!false' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(3);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(3);
                 done();
               })
               .catch(done);
@@ -754,10 +759,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { firstName: '*Richa*' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(1);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(1);
                 done();
               })
               .catch(done);
@@ -768,10 +773,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { username: '!*hello*' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(4);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(4);
                 done();
               })
               .catch(done);
@@ -782,10 +787,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { email: 'dinesh@*' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(1);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(1);
                 done();
               })
               .catch(done);
@@ -796,10 +801,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { email: '*@piedpiper.com' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(3);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(3);
                 done();
               })
               .catch(done);
@@ -810,8 +815,8 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBaseAddress);
             params.filter = { country: '$present' };
-            new ResourcesGetter(models.address, sequelizeOptions, params)
-              .perform()
+            return new ResourcesGetter(models.address, sequelizeOptions, params)
+              .perform('list')
               .then(function (result) {
                 _.each(result[0], function (instance) {
                   expect(instance.dataValues).to.include.keys('country');
@@ -826,10 +831,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBaseAddress);
             params.filter = { country: '$blank' };
-            new ResourcesGetter(models.address, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(1);
+            return new ResourcesGetter(models.address, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(1);
                 done();
               })
               .catch(done);
@@ -840,10 +845,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { createdAt: '$2HoursBefore' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(0);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(0);
                 done();
               })
               .catch(done);
@@ -854,10 +859,10 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           it('should generate a valid SQL query', function (done) {
             var params = _.clone(paramsBase);
             params.filter = { createdAt: '$2HoursAfter' };
-            new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform()
-              .then(function (result) {
-                expect(result[1]).equal(4);
+            return new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform('count')
+              .then(function (count) {
+                expect(count).equal(4);
                 done();
               })
               .catch(done);
@@ -879,9 +884,9 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           };
           new ResourcesGetter(models.user, sequelizeOptions,
             params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(0);
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(0);
               done();
             })
             .catch(done);
@@ -900,10 +905,11 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             searchExtended: 1,
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.address, sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(4);
+          new ResourcesGetter(models.address, sequelizeOptions,
+            params)
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(4);
               done();
             })
             .catch(done);
@@ -923,10 +929,11 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(0);
+          new ResourcesGetter(models.user, sequelizeOptions,
+            params)
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(0);
               done();
             })
             .catch(done);
@@ -944,10 +951,11 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(2);
+          new ResourcesGetter(models.user, sequelizeOptions,
+            params)
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(2);
               done();
             })
             .catch(done);
@@ -969,9 +977,9 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           };
           new HasManyGetter(models.user, models.address,
             sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(4);
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(4);
               done();
             })
             .catch(done);
@@ -992,9 +1000,9 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           };
           new HasManyGetter(models.user, models.address,
             sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(4);
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(4);
               done();
             })
             .catch(done);
@@ -1015,9 +1023,9 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           };
           new HasManyGetter(models.user, models.address,
             sequelizeOptions, params)
-            .perform()
-            .then(function (result) {
-              expect(result[1]).equal(4);
+            .perform('count')
+            .then(function (count) {
+              expect(count).equal(4);
               done();
             })
             .catch(done);
@@ -1038,12 +1046,19 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           sort: '-user.id',
           timezone: 'Europe/Paris'
         };
-        new HasManyGetter(models.user, models.address,
+        return P.all([
+          new HasManyGetter(models.user, models.address,
           sequelizeOptions, params)
-          .perform()
+          .perform('list'),
+          new HasManyGetter(models.user, models.address,
+          sequelizeOptions, params)
+          .perform('count')
+        ])
           .then(function (result) {
-            expect(result[1]).equal(1);
-            expect(result[0].length).equal(1);
+            var list = result[0];
+            var count = result[1];
+            expect(list[0].length).equal(1);
+            expect(count).equal(1);
             done();
           })
           .catch(done);

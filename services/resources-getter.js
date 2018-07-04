@@ -212,10 +212,15 @@ function ResourcesGetter(model, opts, params) {
 
   this.perform = function (countOrList) {
     if (countOrList === 'count') {
-      return getSegmentCondition().then(countRecords);
+      return getSegmentCondition()
+        .then(function() {
+          return countRecords();
+        });
     } else if (countOrList === 'list') {
       return getSegmentCondition()
-        .then(getRecords)
+        .then(function() {
+          return getRecords();
+        })
         .then(function (records) {
           var fieldsSearched = null;
 
