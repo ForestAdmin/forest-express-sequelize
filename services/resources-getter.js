@@ -210,36 +210,35 @@ function ResourcesGetter(model, opts, params) {
     }
   }
 
-  this.perform = function (countOrList) {
-    if (countOrList === 'count') {
-      return getSegmentCondition()
-        .then(function() {
-          return countRecords();
-        });
-    } else if (countOrList === 'list') {
-      return getSegmentCondition()
-        .then(function() {
-          return getRecords();
-        })
-        .then(function (records) {
-          var fieldsSearched = null;
+  this.perform = function () {
+    return getSegmentCondition()
+      .then(function() {
+        return getRecords();
+      })
+      .then(function (records) {
+        var fieldsSearched = null;
 
-          if (params.search) {
-            fieldsSearched = searchBuilder.getFieldsSearched();
-          }
+        if (params.search) {
+          fieldsSearched = searchBuilder.getFieldsSearched();
+        }
 
-          if (schema.isCompositePrimary) {
-            records.forEach(function (record) {
-              record.forestCompositePrimary =
-                new CompositeKeysManager(model, schema, record)
-                  .createCompositePrimary();
-            });
-          }
+        if (schema.isCompositePrimary) {
+          records.forEach(function (record) {
+            record.forestCompositePrimary =
+              new CompositeKeysManager(model, schema, record)
+                .createCompositePrimary();
+          });
+        }
 
-          return [records, fieldsSearched];
-        });
-    }
-    return undefined;
+        return [records, fieldsSearched];
+      });
+  };
+
+  this.count = function () {
+    return getSegmentCondition()
+      .then(function() {
+        return countRecords();
+      });
   };
 }
 

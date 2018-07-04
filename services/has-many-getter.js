@@ -100,22 +100,21 @@ function HasManyGetter(model, association, opts, params) {
       });
   }
 
-  this.perform = function (countOrList) {
+  this.perform = function () {
+    return getRecords()
+      .then(function (records) {
+        var fieldsSearched = null;
 
-    if (countOrList === 'count') {
-      return getCount();
-    } else if (countOrList === 'list') {
-      return getRecords()
-        .then(function (records) {
-          var fieldsSearched = null;
+        if (params.search) {
+          fieldsSearched = searchBuilder.getFieldsSearched();
+        }
 
-          if (params.search) {
-            fieldsSearched = searchBuilder.getFieldsSearched();
-          }
+        return [records, fieldsSearched];
+      });
+  };
 
-          return [records, fieldsSearched];
-        });
-    }
+  this.count = function () {
+    return getCount();
   };
 }
 
