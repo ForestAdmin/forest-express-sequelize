@@ -150,7 +150,7 @@ exports.init = function(opts) {
   };
 
   exports.Mixpanel = {
-    getUser: function (userModel, userField, userId) {
+    getUser: function (userModel, userId) {
       if (userId) {
         return userModel
           .findById(userId)
