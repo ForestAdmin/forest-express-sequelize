@@ -163,25 +163,6 @@ function ResourcesGetter(model, opts, params) {
           where: where
         };
 
-        if (params.search) {
-          _.each(schema.fields, function (field) {
-            if (field.search) {
-              try {
-                field.search(countOpts, params.search);
-              } catch (error) {
-                Interface.logger.error('Cannot search properly on Smart Field ' +
-                  field.field, error);
-              }
-            }
-          });
-
-          var fieldsSearched = searchBuilder.getFieldsSearched();
-          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
-            // NOTICE: No search condition has been set for the current search, no record can be found.
-            return 0;
-          }
-        }
-
         return scope.count(countOpts);
     });
   }
