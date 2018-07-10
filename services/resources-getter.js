@@ -193,9 +193,7 @@ function ResourcesGetter(model, opts, params) {
 
   this.perform = function () {
     return getSegmentCondition()
-      .then(function() {
-        return getRecords();
-      })
+      .then(getRecords)
       .then(function (records) {
         var fieldsSearched = null;
 
@@ -217,9 +215,7 @@ function ResourcesGetter(model, opts, params) {
 
   this.count = function () {
     return getSegmentCondition()
-      .then(function() {
-        return countRecords();
-      });
+      .then(countRecords);
   };
 }
 

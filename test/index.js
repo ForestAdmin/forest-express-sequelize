@@ -1047,16 +1047,14 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           timezone: 'Europe/Paris'
         };
         return P.all([
-          new HasManyGetter(models.user, models.address,
-          sequelizeOptions, params)
-          .perform(),
-          new HasManyGetter(models.user, models.address,
-          sequelizeOptions, params)
-          .count()
-        ])
-          .then(function (result) {
-            var list = result[0];
-            var count = result[1];
+            new HasManyGetter(models.user, models.address,
+            sequelizeOptions, params)
+            .perform(),
+            new HasManyGetter(models.user, models.address,
+            sequelizeOptions, params)
+            .count()
+          ])
+          .spread(function (list, count) {
             expect(list[0].length).equal(1);
             expect(count).equal(1);
             done();

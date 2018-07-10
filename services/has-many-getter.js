@@ -113,9 +113,7 @@ function HasManyGetter(model, association, opts, params) {
       });
   };
 
-  this.count = function () {
-    return getCount();
-  };
+  this.count = getCount;
 }
 
 module.exports = HasManyGetter;
