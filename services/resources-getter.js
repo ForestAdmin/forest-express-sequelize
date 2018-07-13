@@ -163,6 +163,19 @@ function ResourcesGetter(model, opts, params) {
           where: where
         };
 
+        if (params.search) {
+          _.each(schema.fields, function (field) {
+            if (field.search) {
+              try {
+                field.search(countOpts, params.search);
+              } catch (error) {
+                Interface.logger.error('Cannot search properly on Smart Field ' +
+                  field.field, error);
+              }
+            }
+          });
+        }
+
         return scope.count(countOpts);
     });
   }
