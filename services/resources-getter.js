@@ -163,6 +163,11 @@ function ResourcesGetter(model, opts, params) {
           where: where
         };
 
+        if (!fieldNamesRequested[0]) {
+          // NOTICE: No primary key found, use * as a fallback
+          countOpts.col = '*';
+        }
+
         if (params.search) {
           _.each(schema.fields, function (field) {
             if (field.search) {
