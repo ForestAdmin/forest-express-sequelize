@@ -158,21 +158,21 @@ function ResourcesGetter(model, opts, params) {
 
     return getWhere()
       .then(function (where) {
-        var countOpts = {
+        var options = {
           include: include,
           where: where
         };
 
         if (!fieldNamesRequested[0]) {
           // NOTICE: No primary key found, use * as a fallback
-          countOpts.col = '*';
+          options.col = '*';
         }
 
         if (params.search) {
           _.each(schema.fields, function (field) {
             if (field.search) {
               try {
-                field.search(countOpts, params.search);
+                field.search(options, params.search);
               } catch (error) {
                 Interface.logger.error('Cannot search properly on Smart Field ' +
                   field.field, error);
@@ -181,7 +181,7 @@ function ResourcesGetter(model, opts, params) {
           });
         }
 
-        return scope.count(countOpts);
+        return scope.count(options);
     });
   }
 
