@@ -4,7 +4,6 @@
 /* jshint expr: true */
 var expect = require('chai').expect;
 var _ = require('lodash');
-var P = require('bluebird');
 var Sequelize = require('sequelize');
 var sequelizeFixtures = require('sequelize-fixtures');
 var Interface = require('forest-express');
@@ -1443,7 +1442,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
     });
 
     describe('Request on the hasMany getter with a search parameter', function () {
-      it('should generate a valid SQL query', function (done) {
+      it('should return the records for the specified page', function (done) {
         var params = {
           recordId: 100,
           associationName: 'addresses',
@@ -1455,16 +1454,27 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           sort: '-user.id',
           timezone: 'Europe/Paris'
         };
-        P.all([
-            new HasManyGetter(models.user, models.address,
-            sequelizeOptions, params)
-            .perform(),
-            new HasManyGetter(models.user, models.address,
-            sequelizeOptions, params)
-            .count()
-          ])
-          .spread(function (list, count) {
-            expect(list[0]).to.have.length.of(1);
+
+        new HasManyGetter(models.user, models.address, sequelizeOptions, params)
+          .perform()
+          .then(function (result) {
+            expect(result[0]).to.have.length.of(1);
+            done();
+          })
+          .catch(done);
+      });
+
+      it('should return the total records count', function (done) {
+        var params = {
+          recordId: 100,
+          associationName: 'addresses',
+          search: 'SF',
+          timezone: 'Europe/Paris'
+        };
+
+        new HasManyGetter(models.user, models.address, sequelizeOptions, params)
+          .count()
+          .then(function (count) {
             expect(count).equal(1);
             done();
           })
