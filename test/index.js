@@ -447,8 +447,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(function () {
               done();
@@ -458,7 +457,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
       });
 
       describe('Request on the resources getter with a page size', function () {
-        it('should generate a valid SQL query', function (done) {
+        it('should return the records for the specified page', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -466,8 +465,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[1]).equal(4);
@@ -478,7 +476,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
       });
 
       describe('Request on the resources getter with a sort on the primary key', function () {
-        it('should generate a valid SQL query', function (done) {
+        it('should return the records for the specified page', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -487,8 +485,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[1]).equal(4);
@@ -499,7 +496,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
       });
 
       describe('Request on the resources getter with a search', function () {
-        it('should generate a valid SQL query', function (done) {
+        it('should return the records for the specified page', function (done) {
           var params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken'
@@ -508,8 +505,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             search: 'hello',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[1]).equal(0);
@@ -904,8 +900,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             searchExtended: 1,
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.address, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.address, sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[1]).equal(4);
@@ -928,8 +923,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[1]).equal(0);
@@ -950,8 +944,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[1]).equal(2);
