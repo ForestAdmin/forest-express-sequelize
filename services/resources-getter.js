@@ -16,6 +16,7 @@ function ResourcesGetter(model, opts, params) {
   var segmentScope;
   var segmentWhere;
   var OPERATORS = new Operators(opts);
+  var primaryKey = _.keys(model.primaryKeys)[0];
 
   var fieldNamesRequested = (function() {
     if (!params.fields || !params.fields[model.name]) { return null; }
@@ -35,9 +36,7 @@ function ResourcesGetter(model, opts, params) {
 
     // NOTICE: Force the primaryKey retrieval to store the records properly in
     //         the client.
-    var primaryKeyArray = [_.keys(model.primaryKeys)[0]];
-
-    return _.union(primaryKeyArray, params.fields[model.name].split(','),
+    return _.union([primaryKey], params.fields[model.name].split(','),
       associationsForQuery);
   })();
 
@@ -163,8 +162,8 @@ function ResourcesGetter(model, opts, params) {
           where: where
         };
 
-        if (!fieldNamesRequested[0]) {
-          // NOTICE: No primary key found, use * as a fallback
+        if (!primaryKey) {
+          // NOTICE: If no primary key is found, use * as a fallback for Sequelize.
           options.col = '*';
         }
 
