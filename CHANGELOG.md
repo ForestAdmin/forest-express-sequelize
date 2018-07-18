@@ -5,7 +5,7 @@
 - Performance - Improve the speed of listing the records by executing their count into another request.
 
 ### Fixed
-- Fix an error with a query count if a table does not have a primary key or a column named "id".
+- Records List - Fix the list display of "native" collections that don't have any primary keys or a column named "id".
 
 ## RELEASE 2.13.1 - 2018-07-11
 ### Fixed
