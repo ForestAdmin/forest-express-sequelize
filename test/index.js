@@ -532,8 +532,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
             search: 'hello',
             timezone: 'Europe/Paris'
           };
-          new ResourcesGetter(models.user, sequelizeOptions,
-            params)
+          new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(function (result) {
               expect(result[0]).to.have.length.of(0);
