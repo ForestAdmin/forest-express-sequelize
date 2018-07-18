@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.14.0 - 2018-07-18
 ### Changed
 - Performance - Improve the speed of listing the records by executing their count into another request.
 
