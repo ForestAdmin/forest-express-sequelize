@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Performance - Improve the speed of listing the records by executing their count into another request.
+
+### Fixed
+- Records List - Fix the list display of "native" collections that don't have any primary keys or a column named "id".
 
 ## RELEASE 2.13.1 - 2018-07-11
 ### Fixed

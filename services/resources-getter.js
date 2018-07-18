@@ -16,6 +16,7 @@ function ResourcesGetter(model, opts, params) {
   var segmentScope;
   var segmentWhere;
   var OPERATORS = new Operators(opts);
+  var primaryKey = _.keys(model.primaryKeys)[0];
 
   var fieldNamesRequested = (function() {
     if (!params.fields || !params.fields[model.name]) { return null; }
@@ -35,9 +36,7 @@ function ResourcesGetter(model, opts, params) {
 
     // NOTICE: Force the primaryKey retrieval to store the records properly in
     //         the client.
-    var primaryKeyArray = [_.keys(model.primaryKeys)[0]];
-
-    return _.union(primaryKeyArray, params.fields[model.name].split(','),
+    return _.union([primaryKey], params.fields[model.name].split(','),
       associationsForQuery);
   })();
 
@@ -115,17 +114,12 @@ function ResourcesGetter(model, opts, params) {
     });
   }
 
-  function getAndCountRecords() {
+  function getRecords() {
     var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
     var include = queryBuilder.getIncludes(model, fieldNamesRequested);
 
     return getWhere()
       .then(function (where) {
-        var countOpts = {
-          include: include,
-          where: where
-        };
-
         var findAllOpts = {
           where: where,
           include: include,
@@ -138,7 +132,6 @@ function ResourcesGetter(model, opts, params) {
           _.each(schema.fields, function (field) {
             if (field.search) {
               try {
-                field.search(countOpts, params.search);
                 field.search(findAllOpts, params.search);
               } catch (error) {
                 Interface.logger.error('Cannot search properly on Smart Field ' +
@@ -150,14 +143,44 @@ function ResourcesGetter(model, opts, params) {
           var fieldsSearched = searchBuilder.getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             // NOTICE: No search condition has been set for the current search, no record can be found.
-            return [0, []];
+            return [];
           }
         }
 
-        return P.all([
-          scope.count(countOpts),
-          scope.findAll(findAllOpts)
-        ]);
+        return scope.findAll(findAllOpts);
+    });
+  }
+
+  function countRecords() {
+    var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
+    var include = queryBuilder.getIncludes(model, fieldNamesRequested);
+
+    return getWhere()
+      .then(function (where) {
+        var options = {
+          include: include,
+          where: where
+        };
+
+        if (!primaryKey) {
+          // NOTICE: If no primary key is found, use * as a fallback for Sequelize.
+          options.col = '*';
+        }
+
+        if (params.search) {
+          _.each(schema.fields, function (field) {
+            if (field.search) {
+              try {
+                field.search(options, params.search);
+              } catch (error) {
+                Interface.logger.error('Cannot search properly on Smart Field ' +
+                  field.field, error);
+              }
+            }
+          });
+        }
+
+        return scope.count(options);
     });
   }
 
@@ -173,6 +196,7 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getSegmentCondition() {
+    getSegment();
     if (_.isFunction(segmentWhere)) {
       return segmentWhere(params)
         .then(function (where) {
@@ -185,11 +209,9 @@ function ResourcesGetter(model, opts, params) {
   }
 
   this.perform = function () {
-    getSegment();
-
     return getSegmentCondition()
-      .then(getAndCountRecords)
-      .spread(function (count, records) {
+      .then(getRecords)
+      .then(function (records) {
         var fieldsSearched = null;
 
         if (params.search) {
@@ -204,8 +226,13 @@ function ResourcesGetter(model, opts, params) {
           });
         }
 
-        return [records, count, fieldsSearched];
+        return [records, fieldsSearched];
       });
+  };
+
+  this.count = function () {
+    return getSegmentCondition()
+      .then(countRecords);
   };
 }
 

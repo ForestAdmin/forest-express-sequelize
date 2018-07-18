@@ -101,19 +101,19 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   this.perform = function () {
-    return P.all([getRecords(), getCount()])
-      .then(function (results) {
-        var records = results[0];
-        var count = results[1];
+    return getRecords()
+      .then(function (records) {
         var fieldsSearched = null;
 
         if (params.search) {
           fieldsSearched = searchBuilder.getFieldsSearched();
         }
 
-        return [records, count, fieldsSearched];
+        return [records, fieldsSearched];
       });
   };
+
+  this.count = getCount;
 }
 
 module.exports = HasManyGetter;
