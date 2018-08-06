@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.14.1 - 2018-08-06
 ### Fixed
 - Smart Actions - Fix Smart Actions Forms fields positions on Smart Collections.
 
