@@ -6,10 +6,10 @@ function ResourceRemover(model, params) {
     return new ResourceFinder(model, params)
       .perform()
       .then(function (record) {
-        if (!record) {
-          return;
+        if (record) {
+          return record.destroy();
         }
-        return record.destroy();
+        return;
       });
   };
 }
