@@ -5,6 +5,7 @@
 ## RELEASE 2.15.0 - 2018-08-28
 ### Changed
 - Records Deletion - The deletion of a record which has already been deleted does not display an error anymore.
+- Authentication - Add two factor authentication using time-based one-time password.
 
 ## RELEASE 2.14.1 - 2018-08-06
 ### Fixed
