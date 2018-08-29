@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.15.3 - 2018-08-29
 ### Fixed
 - Search - Fix potential bad results while searching on collections having Smart Fields custom searches.
 
