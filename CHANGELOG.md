@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.15.4 - 2018-08-29
 ### Fixed
 - Technical - Add the missing "babel-runtime" dependency.
 
