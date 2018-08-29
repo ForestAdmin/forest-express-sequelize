@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.15.2 - 2018-08-29
 ### Fixed
 - Search - Fix the extended search results if the collection does not contain displayed associations.
 
