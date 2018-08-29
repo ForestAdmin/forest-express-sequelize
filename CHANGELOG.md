@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Search - Fix the extended search results if the collection does not contain searchable fields.
 
 ## RELEASE 2.15.0 - 2018-08-28
 ### Added
