@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Search - Fix potential bad results while searching on collections having Smart Fields custom searches.
 
 ## RELEASE 2.15.2 - 2018-08-29
 ### Fixed

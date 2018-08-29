@@ -133,6 +133,7 @@ function ResourcesGetter(model, opts, params) {
             if (field.search) {
               try {
                 field.search(findAllOpts, params.search);
+                hasSmartFieldSearch = true;
               } catch (error) {
                 Interface.logger.error('Cannot search properly on Smart Field ' +
                   field.field, error);
@@ -175,6 +176,7 @@ function ResourcesGetter(model, opts, params) {
             if (field.search) {
               try {
                 field.search(options, params.search);
+                hasSmartFieldSearch = true;
               } catch (error) {
                 Interface.logger.error('Cannot search properly on Smart Field ' +
                   field.field, error);
