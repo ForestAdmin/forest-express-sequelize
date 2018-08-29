@@ -141,10 +141,12 @@ function ResourcesGetter(model, opts, params) {
           });
 
           var fieldsSearched = searchBuilder.getFieldsSearched();
-          if (fieldsSearched.length === 0 && !params.searchExtended &&
-            !hasSmartFieldSearch) {
-            // NOTICE: No search condition has been set for the current search, no record can be found.
-            return [];
+          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
+            if (!params.searchExtended ||
+              !searchBuilder.hasExtendedSearchConditions()) {
+              // NOTICE: No search condition has been set for the current search, no record can be found.
+              return [];
+            }
           }
         }
 
@@ -179,6 +181,15 @@ function ResourcesGetter(model, opts, params) {
               }
             }
           });
+
+          var fieldsSearched = searchBuilder.getFieldsSearched();
+          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
+            if (!params.searchExtended ||
+              !searchBuilder.hasExtendedSearchConditions()) {
+              // NOTICE: No search condition has been set for the current search, no record can be found.
+              return 0;
+            }
+          }
         }
 
         return scope.count(options);

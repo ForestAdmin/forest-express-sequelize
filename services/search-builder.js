@@ -15,6 +15,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var searchAssociationFields;
   var OPERATORS = new Operators(opts);
   var fieldsSearched = [];
+  var hasExtendedConditions = false;
 
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
@@ -60,6 +61,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
 
   this.getFieldsSearched = function () {
     return fieldsSearched;
+  };
+
+  this.hasExtendedSearchConditions = function () {
+    return hasExtendedConditions;
   };
 
   this.perform = function () {
@@ -176,9 +181,11 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                   if (value) {
                     condition = opts.sequelize.where(column, ' = ',
                       parseInt(params.search, 10) || 0);
+                    hasExtendedConditions = true;
                   }
                 } else if (params.search.match(REGEX_UUID)) {
                   condition = opts.sequelize.where(column, ' = ', params.search);
+                  hasExtendedConditions = true;
                 }
               } else if (field.type === 'String') {
                 if (modelAssociation.attributes[field.field] &&
@@ -186,11 +193,13 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                   DataTypes.UUID) {
                   if (params.search.match(REGEX_UUID)) {
                     condition = opts.sequelize.where(column, '=', params.search);
+                    hasExtendedConditions = true;
                   }
                 } else {
                   condition = opts.sequelize.where(
                     lowerIfNecessary(column), ' LIKE ',
                     lowerIfNecessary('%' + params.search + '%'));
+                  hasExtendedConditions = true;
                 }
               }
               or.push(condition);
