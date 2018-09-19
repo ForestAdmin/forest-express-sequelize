@@ -32,51 +32,29 @@ function HasManyGetter(model, association, opts, params) {
     queryOptions.where = where;
     queryOptions.include = include;
 
-    return model.findById(params.recordId)
-      .then(function (record) {
-        return record['get' +
-          _.upperFirst(params.associationName)](queryOptions);
-      });
+    return model.findById(params.recordId, {
+      include: [{
+        model: association,
+        as: params.associationName,
+        scope: false,
+        where,
+        include,
+      }],
+    }).then(function (records) {
+      return records[params.associationName];
+    });
   }
 
   function getCount() {
-    var associationType;
-    var whereAssociation = where || {};
-    var foreignKey;
-
-    // NOTICE: Detect the association type and foreign key.
-    _.values(model.associations).forEach(function (modelAssociation) {
-      if (['HasMany', 'BelongsToMany'].indexOf(modelAssociation.associationType) > -1) {
-        if (modelAssociation.target.name === association.name) {
-          foreignKey = modelAssociation.foreignKey;
-          associationType = modelAssociation.associationType;
-        }
-      }
+    return model.count({
+      where: { [primaryKeyModel]: params.recordId },
+      include: [{
+        model: association,
+        as: params.associationName,
+        where,
+        required: true,
+      }],
     });
-
-    // NOTICE: Set the specific count condition for HasMany relationships.
-    if (associationType === 'HasMany') {
-      _.values(association.associations).forEach(function (modelAssociation) {
-        if (modelAssociation.associationType === 'BelongsTo' &&
-          modelAssociation.foreignKey === foreignKey) {
-          whereAssociation[modelAssociation.foreignKey] = params.recordId;
-        }
-      });
-    }
-
-    var countConditions = {
-      scope: false,
-      where: whereAssociation,
-    };
-
-    // NOTICE: Set the specific count condition for BelongsToMany relationships.
-    if (associationType === 'BelongsToMany') {
-      var whereForParent = {};
-      whereForParent[primaryKeyModel] = params.recordId;
-      countConditions.include = [{ model: model, where: whereForParent }];
-    }
-
-    return association.count(countConditions);
   }
 
   function getRecords() {

@@ -102,7 +102,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col((params.associationName || schema.name) + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );
@@ -138,7 +138,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           columnName = field.columnName || field.field;
 
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col((params.associationName || schema.name) + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );

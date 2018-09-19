@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- List Related Records - Fix count of related records when relation is ManyToMany.
 
 ## RELEASE 2.16.0 - 2018-09-08
 ### Added
