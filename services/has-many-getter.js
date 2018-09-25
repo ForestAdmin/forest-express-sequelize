@@ -28,15 +28,16 @@ function HasManyGetter(model, association, opts, params) {
 
   function findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
-    queryOptions.scope = false;
-    queryOptions.where = where;
-    queryOptions.include = include;
 
     return model.findById(params.recordId, {
+      order: queryOptions.order,
       include: [{
         model: association,
         as: params.associationName,
         scope: false,
+        separate: false,
+        offset: queryOptions.offset,
+        limit: queryOptions.limit,
         where,
         include,
       }],

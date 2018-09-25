@@ -64,6 +64,8 @@ function QueryBuilder(model, opts, params) {
       if (params.sort.indexOf('.') !== -1) {
         // NOTICE: Sort on the belongsTo displayed field
         return [[opts.sequelize.col(params.sort), order]];
+      } else if (params.associationName) {
+        return [[opts.sequelize.col(`${params.associationName}.${params.sort}`), order]];
       } else {
         return [[params.sort, order]];
       }
