@@ -41,8 +41,8 @@ function HasManyGetter(model, association, opts, params) {
         where,
         include,
       }],
-    }).then(function (records) {
-      return records[params.associationName];
+    }).then(function (record) {
+      return record[params.associationName];
     });
   }
 
