@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Fixed
 - List Related Records - Fix count of related records when relation is ManyToMany with an alias.
+
+### Changed
 - List Related Records - Improve the speed of the search query.
 - List Related Records - Improve the speed of counting records.
 

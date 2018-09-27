@@ -54,6 +54,7 @@ function HasManyGetter(model, association, opts, params) {
         as: params.associationName,
         where,
         required: true,
+        scope: false,
       }],
     });
   }
