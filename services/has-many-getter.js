@@ -7,7 +7,7 @@ var SearchBuilder = require('./search-builder');
 var CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {
-  var queryBuilder = new QueryBuilder(model, opts, params);
+  var queryBuilder = new QueryBuilder(model, opts, params, params.associationName);
   var schema = Interface.Schemas.schemas[association.name];
   var primaryKeyModel = _.keys(model.primaryKeys)[0];
 
@@ -22,7 +22,7 @@ function HasManyGetter(model, association, opts, params) {
 
   var fieldNamesRequested = getFieldNamesRequested();
   var searchBuilder = new SearchBuilder(association, opts, params,
-    fieldNamesRequested);
+    fieldNamesRequested, params.associationName);
   var where = searchBuilder.perform();
   var include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
