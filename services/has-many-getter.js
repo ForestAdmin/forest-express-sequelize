@@ -7,7 +7,7 @@ var SearchBuilder = require('./search-builder');
 var CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {
-  var queryBuilder = new QueryBuilder(model, opts, params);
+  var queryBuilder = new QueryBuilder(model, opts, params, params.associationName);
   var schema = Interface.Schemas.schemas[association.name];
   var primaryKeyModel = _.keys(model.primaryKeys)[0];
 
@@ -22,61 +22,41 @@ function HasManyGetter(model, association, opts, params) {
 
   var fieldNamesRequested = getFieldNamesRequested();
   var searchBuilder = new SearchBuilder(association, opts, params,
-    fieldNamesRequested);
+    fieldNamesRequested, params.associationName);
   var where = searchBuilder.perform();
   var include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
   function findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
-    queryOptions.scope = false;
-    queryOptions.where = where;
-    queryOptions.include = include;
 
-    return model.findById(params.recordId)
-      .then(function (record) {
-        return record['get' +
-          _.upperFirst(params.associationName)](queryOptions);
-      });
+    return model.findById(params.recordId, {
+      order: queryOptions.order,
+      include: [{
+        model: association,
+        as: params.associationName,
+        scope: false,
+        separate: false,
+        offset: queryOptions.offset,
+        limit: queryOptions.limit,
+        where,
+        include,
+      }],
+    }).then(function (record) {
+      return record[params.associationName];
+    });
   }
 
   function getCount() {
-    var associationType;
-    var whereAssociation = where || {};
-    var foreignKey;
-
-    // NOTICE: Detect the association type and foreign key.
-    _.values(model.associations).forEach(function (modelAssociation) {
-      if (['HasMany', 'BelongsToMany'].indexOf(modelAssociation.associationType) > -1) {
-        if (modelAssociation.target.name === association.name) {
-          foreignKey = modelAssociation.foreignKey;
-          associationType = modelAssociation.associationType;
-        }
-      }
+    return model.count({
+      where: { [primaryKeyModel]: params.recordId },
+      include: [{
+        model: association,
+        as: params.associationName,
+        where,
+        required: true,
+        scope: false,
+      }],
     });
-
-    // NOTICE: Set the specific count condition for HasMany relationships.
-    if (associationType === 'HasMany') {
-      _.values(association.associations).forEach(function (modelAssociation) {
-        if (modelAssociation.associationType === 'BelongsTo' &&
-          modelAssociation.foreignKey === foreignKey) {
-          whereAssociation[modelAssociation.foreignKey] = params.recordId;
-        }
-      });
-    }
-
-    var countConditions = {
-      scope: false,
-      where: whereAssociation,
-    };
-
-    // NOTICE: Set the specific count condition for BelongsToMany relationships.
-    if (associationType === 'BelongsToMany') {
-      var whereForParent = {};
-      whereForParent[primaryKeyModel] = params.recordId;
-      countConditions.include = [{ model: model, where: whereForParent }];
-    }
-
-    return association.count(countConditions);
   }
 
   function getRecords() {

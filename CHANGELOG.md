@@ -1,6 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- List Related Records - Fix count of related records when relation is ManyToMany with an alias.
+
+### Changed
+- List Related Records - Improve the speed of the search query.
+- List Related Records - Improve the speed of counting records.
 
 ## RELEASE 2.16.1 - 2018-09-24
 ### Changed

@@ -2,7 +2,7 @@
 var _ = require('lodash');
 var Database = require('../utils/database');
 
-function QueryBuilder(model, opts, params) {
+function QueryBuilder(model, opts, params, alias = null) {
   function hasPagination() {
     return params.page && params.page.number;
   }
@@ -64,6 +64,8 @@ function QueryBuilder(model, opts, params) {
       if (params.sort.indexOf('.') !== -1) {
         // NOTICE: Sort on the belongsTo displayed field
         return [[opts.sequelize.col(params.sort), order]];
+      } else if (alias) {
+        return [[opts.sequelize.col(`${alias}.${params.sort}`), order]];
       } else {
         return [[params.sort, order]];
       }

@@ -12,7 +12,7 @@ module.exports = {
     'quotes': ['error', 'single'],
     'no-trailing-spaces': 'error',
     'no-multi-spaces': 'error',
-    'max-len': ['error', 80, {
+    'max-len': ['error', 100, {
       'ignoreComments': true,
       'ignoreStrings': true,
       'ignoreRegExpLiterals': true,

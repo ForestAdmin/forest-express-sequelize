@@ -6,8 +6,9 @@ var Database = require('../utils/database');
 
 var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function SearchBuilder(model, opts, params, fieldNamesRequested) {
+function SearchBuilder(model, opts, params, fieldNamesRequested, alias = null) {
   var schema = Interface.Schemas.schemas[model.name];
+  var schemaName = alias || schema.name;
   var DataTypes = opts.sequelize;
   var fields = _.clone(schema.fields);
   var associations = _.clone(model.associations);
@@ -102,7 +103,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(schemaName + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );
@@ -138,7 +139,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           columnName = field.columnName || field.field;
 
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(schema.name + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(schemaName + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );
