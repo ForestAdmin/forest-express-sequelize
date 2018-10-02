@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Smart Actions - Check permission to protect access of smart actions.
 
 ## RELEASE 2.16.2 - 2018-10-01
 ### Fixed
