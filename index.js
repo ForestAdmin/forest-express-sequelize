@@ -8,7 +8,7 @@ var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
 
 exports.collection = Interface.collection;
 exports.ensureAuthenticated = Interface.ensureAuthenticated;
-exports.ensureAccess = Interface.ensureAccess;
+exports.ensureSmartActionAccess = Interface.ensureSmartActionAccess;
 exports.StatSerializer = Interface.StatSerializer;
 exports.ResourceSerializer = Interface.ResourceSerializer;
 exports.ResourceDeserializer = Interface.ResourceDeserializer;
