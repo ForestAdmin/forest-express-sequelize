@@ -96,10 +96,10 @@ function ResourcesGetter(model, opts, params) {
           })
           .then(function (results) {
             var recordIds = results.map(function (result) {
-              return result.id;
+              return result[primaryKey];
             });
-            var condition = { id: {} };
-            condition.id[OPERATORS.IN] = recordIds;
+            var condition = { [primaryKey]: {} };
+            condition[primaryKey][OPERATORS.IN] = recordIds;
             where[OPERATORS.AND].push(condition);
 
             return resolve(where);
