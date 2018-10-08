@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Smart Segments - Smart segments work if primary key is not named id.
 
 ## RELEASE 2.16.2 - 2018-10-01
 ### Fixed
