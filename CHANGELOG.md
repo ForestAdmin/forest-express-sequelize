@@ -2,11 +2,11 @@
 
 ## [Unreleased]
 ### Fixed
-- Smart Segments - Smart segments work if primary key is not named id and select return id.
+- Live Query Segments - Live Query segments work if the related collection primary key is not named "id" and select return "id".
 
 ## RELEASE 2.16.3 - 2018-10-12
 ### Fixed
-- Smart Segments - Smart segments work if primary key is not named id.
+- Live Query Segments - Live Query segments work if the related collection primary key is not named "id".
 
 ## RELEASE 2.16.2 - 2018-10-01
 ### Fixed
