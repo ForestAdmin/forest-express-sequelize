@@ -96,7 +96,7 @@ function ResourcesGetter(model, opts, params) {
           })
           .then(function (results) {
             var recordIds = results.map(function (result) {
-              return result[primaryKey];
+              return result[primaryKey] || result.id;
             });
             var condition = { [primaryKey]: {} };
             condition[primaryKey][OPERATORS.IN] = recordIds;
