@@ -7,6 +7,7 @@
 ## RELEASE 2.16.3 - 2018-10-12
 ### Fixed
 - Live Query Segments - Live Query segments work if the related collection primary key is not named "id".
+- Server start - Fix a crash if developers add a Smart Action to a generated integration collection that does not have existing one by default.
 
 ## RELEASE 2.16.2 - 2018-10-01
 ### Fixed
