@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Live Query Segments - Live Query segments work if the related collection primary key is not named "id" and select return "id".
+- Default Values - UUID fields with a dynamic default value won't be pre-filled with "[object Object]" in forms anymore.  
 
 ## RELEASE 2.16.3 - 2018-10-12
 ### Fixed

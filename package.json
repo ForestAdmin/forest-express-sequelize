@@ -45,7 +45,7 @@
     "simple-git": "1.65.0"
   },
   "scripts": {
-    "test": "./node_modules/mocha/bin/mocha test/index.js",
+    "test": "./node_modules/mocha/bin/mocha test/**",
     "lint": "./node_modules/eslint/bin/eslint.js services/ adapters/ utils/",
     "detect-vulnerabilities": "./node_modules/nsp/bin/nsp check --output summary"
   }
