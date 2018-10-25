@@ -7,7 +7,7 @@ var SearchBuilder = require('./search-builder');
 var CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {
-  var queryBuilder = new QueryBuilder(model, opts, params, params.associationName);
+  var queryBuilder = new QueryBuilder(model, opts, params);
   var schema = Interface.Schemas.schemas[association.name];
   var primaryKeyModel = _.keys(model.primaryKeys)[0];
 
@@ -21,32 +21,26 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   var fieldNamesRequested = getFieldNamesRequested();
-  var searchBuilder = new SearchBuilder(association, opts, params,
-    fieldNamesRequested, params.associationName);
-  var where = searchBuilder.perform();
+  var searchBuilder = new SearchBuilder(association, opts, params, fieldNamesRequested);
   var include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
   function findQuery(queryOptions) {
-    if (!queryOptions) { queryOptions = {}; }
+    var where = searchBuilder.perform();
 
-    return model.findById(params.recordId, {
-      order: queryOptions.order,
-      include: [{
-        model: association,
-        as: params.associationName,
-        scope: false,
-        separate: false,
-        offset: queryOptions.offset,
-        limit: queryOptions.limit,
-        where,
-        include,
-      }],
-    }).then(function (record) {
-      return record[params.associationName];
-    });
+    if (!queryOptions) { queryOptions = {}; }
+    queryOptions.scope = false;
+    queryOptions.where = where;
+    queryOptions.include = include;
+
+    return model.findById(params.recordId)
+      .then(function (record) {
+        return record['get' + _.upperFirst(params.associationName)](queryOptions);
+      });
   }
 
   function getCount() {
+    var where = searchBuilder.perform(params.associationName);
+
     return model.count({
       where: { [primaryKeyModel]: params.recordId },
       include: [{

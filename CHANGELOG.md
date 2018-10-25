@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Simplify hasMany requests building.
 
 ## RELEASE 2.16.4 - 2018-10-22
 ### Fixed

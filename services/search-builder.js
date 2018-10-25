@@ -6,9 +6,8 @@ var Database = require('../utils/database');
 
 var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-function SearchBuilder(model, opts, params, fieldNamesRequested, alias = null) {
+function SearchBuilder(model, opts, params, fieldNamesRequested) {
   var schema = Interface.Schemas.schemas[model.name];
-  var schemaName = alias || schema.name;
   var DataTypes = opts.sequelize;
   var fields = _.clone(schema.fields);
   var associations = _.clone(model.associations);
@@ -68,13 +67,14 @@ function SearchBuilder(model, opts, params, fieldNamesRequested, alias = null) {
     return hasExtendedConditions;
   };
 
-  this.perform = function () {
+  this.perform = function (associationName) {
     if (!params.search) { return null; }
 
     if (hasSearchFields) {
       selectSearchFields();
     }
 
+    var aliasName = associationName || schema.name;
     var where = {};
     var or = [];
 
@@ -103,7 +103,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested, alias = null) {
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(schemaName + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(aliasName + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );
@@ -139,7 +139,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested, alias = null) {
           columnName = field.columnName || field.field;
 
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(schemaName + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(aliasName + '.' + columnName)),
             ' LIKE ',
             lowerIfNecessary('%' + params.search + '%')
           );
