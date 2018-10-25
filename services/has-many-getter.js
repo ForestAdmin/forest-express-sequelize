@@ -31,13 +31,13 @@ function HasManyGetter(model, association, opts, params) {
 
     return model.findById(params.recordId, {
       order: queryOptions.order,
+      subQuery: false,
+      offset: queryOptions.offset,
+      limit: queryOptions.limit,
       include: [{
         model: association,
         as: params.associationName,
         scope: false,
-        separate: false,
-        offset: queryOptions.offset,
-        limit: queryOptions.limit,
         where,
         include,
       }],
