@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.16.5 - 2018-10-26
 ### Fixed
 - Associations - Fix limit and offset of the query getting has many associations.
 
