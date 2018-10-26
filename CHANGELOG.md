@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Light changes in associations code for readability.
 
 ## RELEASE 2.16.5 - 2018-10-26
 ### Fixed
