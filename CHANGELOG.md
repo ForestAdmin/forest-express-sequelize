@@ -4,6 +4,9 @@
 ### Changed
 - Technical - Light changes in associations code for readability.
 
+### Fixed
+- Associations - Fix error on related data search if no record is found. [Regression introduced in 2.16.2]
+
 ## RELEASE 2.16.5 - 2018-10-26
 ### Fixed
 - Associations - Fix limit and offset of the query getting has many associations.

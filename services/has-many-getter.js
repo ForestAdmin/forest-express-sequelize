@@ -37,6 +37,7 @@ function HasManyGetter(model, association, opts, params) {
         model: association,
         as: params.associationName,
         scope: false,
+        required: false,
         where,
         include,
       }],
