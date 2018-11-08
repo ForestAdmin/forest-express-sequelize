@@ -1,10 +1,15 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Smart Fields - Display a warning to show Smart Fields declared without a field attribute.
+
+### Fixed
+- Smart Fields - Smart Fields declared without a field attribute are not sent in the Apimap anymore.
 
 ## RELEASE 2.16.8 - 2018-11-08
 ### Fixed
-- Validations - Fix bad "is longer than" validation definition in the Apimap for `len` validation if the minimal value is 0 (for instance, `len: [0, 255]`). 
+- Validations - Fix bad "is longer than" validation definition in the Apimap for `len` validation if the minimal value is 0 (for instance, `len: [0, 255]`).
 
 ## RELEASE 2.16.7 - 2018-10-30
 ### Fixed
