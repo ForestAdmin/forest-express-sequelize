@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Validations - Fix bad "is longer than" validation definition in the Apimap for `len` validation if the minimal value is 0 (for instance, `len: [0, 255]`). 
 
 ## RELEASE 2.16.7 - 2018-10-30
 ### Fixed

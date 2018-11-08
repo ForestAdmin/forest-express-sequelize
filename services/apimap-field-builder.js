@@ -61,7 +61,7 @@ function ApimapFieldBuilder(model, column, options) {
     if (column.validate.len) {
       var length = column.validate.len.args || column.validate.len;
 
-      if (_.isArray(length) && length[0]) {
+      if (_.isArray(length) && !_.isNull(length[0]) && !_.isUndefined(length[0])) {
         validations.push({
           type: 'is longer than',
           value: length[0],

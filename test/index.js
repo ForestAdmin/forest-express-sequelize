@@ -46,7 +46,12 @@ var HasManyDissociator = require('../services/has-many-dissociator');
     },
     emailValid: { type: Sequelize.BOOLEAN },
     firstName: { type: Sequelize.STRING },
-    lastName: { type: Sequelize.STRING },
+    lastName: {
+      type: Sequelize.STRING,
+      validate: {
+        len: [0, 50],
+      }
+    },
     username: { type: Sequelize.STRING },
     password: { type: Sequelize.STRING },
     createdAt: { type: Sequelize.DATE },
@@ -206,7 +211,7 @@ var HasManyDissociator = require('../services/has-many-dissociator');
 
   describe('Dialect ' + sequelize.options.dialect, function () {
     describe('Schema Adapter', function () {
-      describe('on a simple collection with 13 fields', function () {
+      describe('on a collection with 13 fields and a few validations', function () {
         var schema;
         before(function (done) {
           new SchemaAdapter(models.user, sequelizeOptions)
@@ -245,6 +250,14 @@ var HasManyDissociator = require('../services/has-many-dissociator');
           expect(schema.fields[10].type).equal('String');
           expect(schema.fields[11].type[0]).equal('Number');
           expect(schema.fields[12].type[0]).equal('Number');
+        });
+
+        it('should setup validations', function () {
+          expect(schema.fields[4].validations.length).equal(2);
+          expect(schema.fields[4].validations[0].type).equal('is longer than');
+          expect(schema.fields[4].validations[0].value).equal(0);
+          expect(schema.fields[4].validations[1].type).equal('is shorter than');
+          expect(schema.fields[4].validations[1].value).equal(50);
         });
       });
 
