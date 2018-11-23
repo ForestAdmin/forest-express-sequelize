@@ -7,7 +7,7 @@ var _ = require('lodash');
 var Sequelize = require('sequelize');
 var sequelizeFixtures = require('sequelize-fixtures');
 var Interface = require('forest-express');
-var SchemaAdapter = require('../adapters/sequelize');
+var SchemaAdapter = require('../src/adapters/sequelize');
 
 var databaseOptions = {
   logging: false,
@@ -22,14 +22,14 @@ var sequelizeMySQL = new Sequelize(
   'mysql://forest:secret@localhost:8999/forest-express-sequelize-test',
   databaseOptions);
 
-var PieStatGetter = require('../services/pie-stat-getter');
-var LineStatGetter = require('../services/line-stat-getter');
-var ResourcesGetter = require('../services/resources-getter');
-var ResourceGetter = require('../services/resource-getter');
-var ResourceCreator = require('../services/resource-creator');
-var ResourceRemover = require('../services/resource-remover');
-var HasManyGetter = require('../services/has-many-getter');
-var HasManyDissociator = require('../services/has-many-dissociator');
+var PieStatGetter = require('../src/services/pie-stat-getter');
+var LineStatGetter = require('../src/services/line-stat-getter');
+var ResourcesGetter = require('../src/services/resources-getter');
+var ResourceGetter = require('../src/services/resource-getter');
+var ResourceCreator = require('../src/services/resource-creator');
+var ResourceRemover = require('../src/services/resource-remover');
+var HasManyGetter = require('../src/services/has-many-getter');
+var HasManyDissociator = require('../src/services/has-many-dissociator');
 
 [sequelizePostgres, sequelizeMySQL].forEach(function (sequelize) {
   var models = {};

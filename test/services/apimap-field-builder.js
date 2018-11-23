@@ -5,7 +5,7 @@
 var expect = require('chai').expect;
 var _ = require('lodash');
 var Sequelize = require('sequelize');
-var ApimapFieldBuilder = require('../../services/apimap-field-builder');
+var ApimapFieldBuilder = require('../../src/services/apimap-field-builder');
 
 var databaseOptions = {
   logging: false,
