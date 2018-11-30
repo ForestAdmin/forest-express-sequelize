@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Add babel.
 
 ## RELEASE 2.16.9 - 2018-11-08
 ### Changed
