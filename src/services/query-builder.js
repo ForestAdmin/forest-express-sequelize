@@ -24,20 +24,24 @@ function QueryBuilder(model, opts, params) {
   };
 
   this.getIncludes = function (modelForIncludes, fieldNamesRequested) {
-    var includes = [];
-    _.values(modelForIncludes.associations).forEach(function (association) {
-      if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.as) !== -1)) {
-        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-          includes.push({
-            model: association.target.unscoped(),
-            as: association.associationAccessor
-          });
-        }
-      }
-    });
-
-    return includes;
+    return _.values(modelForIncludes.associations)
+      .filter(function (association) {
+        return (
+          (!fieldNamesRequested ||
+            fieldNamesRequested.includes(association.as)) &&
+          ['HasOne', 'BelongsTo'].includes(association.associationType) &&
+          // Don't include models that are already included by the segment scope
+          (modelForIncludes._scope.include || []).every(function (include) {
+            return include.model !== association.target
+          })
+        );
+      })
+      .map(function (association) {
+        return {
+          model: association.target.unscoped(),
+          as: association.associationAccessor
+        };
+      });
   };
 
   this.getOrder = function (aliasName) {

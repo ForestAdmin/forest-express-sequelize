@@ -4,6 +4,9 @@
 ### Added
 - Technical - Add babel.
 
+### Changed
+- Smart Segments - Prevent includes from queryBuilder to overwrite include from segment scope.
+
 ## RELEASE 2.16.9 - 2018-11-08
 ### Changed
 - Smart Fields - Display a warning to show Smart Fields declared without a field attribute.
