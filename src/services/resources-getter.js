@@ -116,7 +116,7 @@ function ResourcesGetter(model, opts, params) {
 
   function getRecords() {
     var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
-    var include = queryBuilder.getIncludes(model, fieldNamesRequested);
+    var include = queryBuilder.getIncludes(scope, fieldNamesRequested);
 
     return getWhere()
       .then(function (where) {
@@ -157,7 +157,7 @@ function ResourcesGetter(model, opts, params) {
 
   function countRecords() {
     var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
-    var include = queryBuilder.getIncludes(model, fieldNamesRequested);
+    var include = queryBuilder.getIncludes(scope, fieldNamesRequested);
 
     return getWhere()
       .then(function (where) {
