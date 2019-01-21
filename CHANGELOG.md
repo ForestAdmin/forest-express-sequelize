@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 
-## RELEASE 2.16.10 - 2019-01-21
+## RELEASE 2.17.0 - 2019-01-21
 ### Added
 - Technical - Add babel.
 - Configuration - Developers can define a blacklist or whitelist of models they want to see in their admin panel (using `includedModels` or `excludedModels` options).
