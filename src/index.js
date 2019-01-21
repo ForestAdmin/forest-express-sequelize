@@ -49,11 +49,23 @@ exports.init = function(opts) {
   exports.SchemaAdapter = require('./adapters/sequelize');
 
   exports.getModels = function () {
+    // NOTICE: The default Forest configuration detects all models.
+    var detectAllModels = _.isEmpty(opts.includedModels) && _.isEmpty(opts.excludedModels);
     var models = {};
 
     _.each(opts.connections, function (connection) {
       _.each(connection.models, function (model) {
-        models[model.name] = model;
+        if (detectAllModels) {
+          models[model.name] = model;
+        } else {
+          if (!_.isEmpty(opts.includedModels) &&
+            _.includes(opts.includedModels, model.name)) {
+            models[model.name] = model;
+          } else if (!_.isEmpty(opts.excludedModels) &&
+            !_.includes(opts.excludedModels, model.name)) {
+            models[model.name] = model;
+          }
+        }
       });
     });
 
