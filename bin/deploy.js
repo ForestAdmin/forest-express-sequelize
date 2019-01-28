@@ -41,7 +41,6 @@ const tag = `v${version}`;
 
 simpleGit
   .checkout(BRANCH_DEVEL)
-  .then(() => { console.log(`Starting pull on ${BRANCH_DEVEL}...`); })
   .pull((error) => { if (error) { console.log(error); } })
   .then(() => { console.log(`Pull ${BRANCH_DEVEL} done.`); })
   .then(() => {
