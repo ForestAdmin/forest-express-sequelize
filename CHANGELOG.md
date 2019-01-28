@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Build - Tag versions on git for each release.
+- Build - Developers can now create beta versions.
+- Build - The deploy script now automatically publishes the package.
 
 ## RELEASE 2.17.0 - 2019-01-21
 ### Added
