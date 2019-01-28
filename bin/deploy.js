@@ -2,7 +2,7 @@ const moment = require('moment');
 const fs = require('fs');
 const simpleGit = require('simple-git')();
 const semver = require('semver');
-const { exec } = require('child_process');
+// const { exec } = require('child_process');
 
 const BRANCH_MASTER = 'master';
 const BRANCH_DEVEL = 'devel';
@@ -60,13 +60,14 @@ simpleGit
   .push()
   .addTag(tag)
   .push('origin', tag)
-  .checkout(BRANCH_DEVEL)
-  .then(() => {
-    let command = 'npm publish';
-    if (prereleaseTag) { command += ` --tag ${prereleaseTag}`; }
-    const processPublish = exec(command);
-
-    processPublish.on('exit', (code) => {
-      process.exit(code);
-    });
-  });
+  .checkout(BRANCH_DEVEL);
+// .then(() => {
+//   let command = 'npm publish';
+//   if (prereleaseTag) { command += ` --tag ${prereleaseTag}`; }
+//   const processPublish = exec(command);
+//
+//   processPublish.on('exit', (code) => {
+//     console.log(command, code);
+//     process.exit(code);
+//   });
+// });
