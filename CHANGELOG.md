@@ -1,12 +1,14 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Schema - Fix JSON formatting for action names containing `"` characters.
+- Schema - The liana can now read properly the schema file in production mode.
 
 ## RELEASE 3.0.0-beta.1 - 2019-01-28
 ### Added
 - Build - Tag versions on git for each release.
 - Build - Developers can now create beta versions.
-- Build - The deploy script now automatically publishes the package.
 - Developer Experience - On start, create a `.forestadmin-schema.json` file that contains the schema definition.
 - Developer Experience - On production, load `.forestadmin-schema.json` for schema update.
 - Developer Experience - Developers can deactivate the automatic schema synchronisation on server start using the `FOREST_DISABLE_AUTO_SCHEMA_APPLY` environment variable.
