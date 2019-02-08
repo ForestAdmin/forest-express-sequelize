@@ -1,10 +1,32 @@
-'use strict';
-var _ = require('lodash');
-var P = require('bluebird');
-var Interface = require('forest-express');
-var orm = require('./utils/orm');
+const _ = require('lodash');
+const P = require('bluebird');
+const Interface = require('forest-express');
+const orm = require('./utils/orm');
+const lianaPackage = require('../package.json');
 
-var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
+const SchemaAdapter = require('./adapters/sequelize');
+
+const ResourcesGetter = require('./services/resources-getter');
+const ResourceGetter = require('./services/resource-getter');
+const ResourceCreator = require('./services/resource-creator');
+const ResourceUpdater = require('./services/resource-updater');
+const ResourceRemover = require('./services/resource-remover');
+const RecordsExporter = require('./services/records-exporter');
+
+const HasManyGetter = require('./services/has-many-getter');
+const HasManyAssociator = require('./services/has-many-associator');
+const HasManyDissociator = require('./services/has-many-dissociator');
+const BelongsToUpdater = require('./services/belongs-to-updater');
+
+const ValueStatGetter = require('./services/value-stat-getter');
+const PieStatGetter = require('./services/pie-stat-getter');
+const LineStatGetter = require('./services/line-stat-getter');
+const LeaderboardStatGetter = require('./services/leaderboard-stat-getter');
+const QueryStatGetter = require('./services/query-stat-getter');
+
+const RecordsDecorator = require('./utils/records-decorator');
+
+const REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
 
 exports.collection = Interface.collection;
 exports.ensureAuthenticated = Interface.ensureAuthenticated;
@@ -14,7 +36,7 @@ exports.ResourceDeserializer = Interface.ResourceDeserializer;
 exports.Schemas = Interface.Schemas;
 exports.ResourcesRoute = Interface.ResourcesRoute;
 
-exports.init = function(opts) {
+exports.init = function init(opts) {
   exports.opts = opts;
 
   // NOTICE: Ensure compatibility with the old middleware configuration.
@@ -23,48 +45,47 @@ exports.init = function(opts) {
     opts.sequelize = opts.sequelize.Sequelize;
   }
 
-  exports.getLianaName = function () {
+  exports.getLianaName = function getLianaName() {
     return 'forest-express-sequelize';
   };
 
-  exports.getLianaVersion = function () {
-    var lianaVersion = require('../package.json').version.match(REGEX_VERSION);
+  exports.getLianaVersion = function getLianaVersion() {
+    const lianaVersion = lianaPackage.version.match(REGEX_VERSION);
     if (lianaVersion && lianaVersion[0]) {
       return lianaVersion[0];
     }
+    return null;
   };
 
-  exports.getOrmVersion = function () {
+  exports.getOrmVersion = function getOrmVersion() {
     if (!opts.sequelize) { return null; }
 
     return orm.getVersion(opts.sequelize);
   };
 
-  exports.getDatabaseType = function () {
+  exports.getDatabaseType = function getDatabaseType() {
     if (!opts.connections) { return null; }
 
     return opts.connections[0].options.dialect;
   };
 
-  exports.SchemaAdapter = require('./adapters/sequelize');
+  exports.SchemaAdapter = SchemaAdapter;
 
-  exports.getModels = function () {
+  exports.getModels = function getModels() {
     // NOTICE: The default Forest configuration detects all models.
-    var detectAllModels = _.isEmpty(opts.includedModels) && _.isEmpty(opts.excludedModels);
-    var models = {};
+    const detectAllModels = _.isEmpty(opts.includedModels) && _.isEmpty(opts.excludedModels);
+    const models = {};
 
-    _.each(opts.connections, function (connection) {
-      _.each(connection.models, function (model) {
+    _.each(opts.connections, (connection) => {
+      _.each(connection.models, (model) => {
         if (detectAllModels) {
           models[model.name] = model;
-        } else {
-          if (!_.isEmpty(opts.includedModels) &&
-            _.includes(opts.includedModels, model.name)) {
-            models[model.name] = model;
-          } else if (!_.isEmpty(opts.excludedModels) &&
-            !_.includes(opts.excludedModels, model.name)) {
-            models[model.name] = model;
-          }
+        } else if (!_.isEmpty(opts.includedModels) &&
+          _.includes(opts.includedModels, model.name)) {
+          models[model.name] = model;
+        } else if (!_.isEmpty(opts.excludedModels) &&
+          !_.includes(opts.excludedModels, model.name)) {
+          models[model.name] = model;
         }
       });
     });
@@ -72,35 +93,35 @@ exports.init = function(opts) {
     return models;
   };
 
-  exports.getModelName = function (model) {
+  exports.getModelName = function getModelName(model) {
     return model.name;
   };
 
   // TODO: Remove nameOld attribute once the lianas versions older than 2.0.0 are minority
   exports.getModelNameOld = exports.getModelName;
 
-  exports.ResourcesGetter = require('./services/resources-getter');
-  exports.ResourceGetter = require('./services/resource-getter');
-  exports.ResourceCreator = require('./services/resource-creator');
-  exports.ResourceUpdater = require('./services/resource-updater');
-  exports.ResourceRemover = require('./services/resource-remover');
-  exports.RecordsExporter = require('./services/records-exporter');
+  exports.ResourcesGetter = ResourcesGetter;
+  exports.ResourceGetter = ResourceGetter;
+  exports.ResourceCreator = ResourceCreator;
+  exports.ResourceUpdater = ResourceUpdater;
+  exports.ResourceRemover = ResourceRemover;
+  exports.RecordsExporter = RecordsExporter;
 
-  exports.HasManyGetter = require('./services/has-many-getter');
-  exports.HasManyAssociator = require('./services/has-many-associator');
-  exports.HasManyDissociator = require('./services/has-many-dissociator');
-  exports.BelongsToUpdater = require('./services/belongs-to-updater');
+  exports.HasManyGetter = HasManyGetter;
+  exports.HasManyAssociator = HasManyAssociator;
+  exports.HasManyDissociator = HasManyDissociator;
+  exports.BelongsToUpdater = BelongsToUpdater;
 
-  exports.ValueStatGetter = require('./services/value-stat-getter');
-  exports.PieStatGetter = require('./services/pie-stat-getter');
-  exports.LineStatGetter = require('./services/line-stat-getter');
-  exports.LeaderboardStatGetter = require('./services/leaderboard-stat-getter');
-  exports.QueryStatGetter = require('./services/query-stat-getter');
+  exports.ValueStatGetter = ValueStatGetter;
+  exports.PieStatGetter = PieStatGetter;
+  exports.LineStatGetter = LineStatGetter;
+  exports.LeaderboardStatGetter = LeaderboardStatGetter;
+  exports.QueryStatGetter = QueryStatGetter;
 
-  exports.RecordsDecorator = require('./utils/records-decorator');
+  exports.RecordsDecorator = RecordsDecorator;
 
   exports.Stripe = {
-    getCustomer: function (customerModel, customerField, customerId) {
+    getCustomer: (customerModel, customerField, customerId) => {
       if (customerId) {
         return customerModel
           .findById(customerId)
@@ -114,61 +135,58 @@ exports.init = function(opts) {
         return P.resolve();
       }
     },
-    getCustomerByUserField: function (customerModel, customerField, userField) {
+    getCustomerByUserField: (customerModel, customerField, userField) => {
       if (!customerModel) {
-        return new P(function (resolve) { resolve(); });
+        return new P(resolve => resolve());
       }
 
-      var query = {};
+      const query = {};
       query[customerField] = userField;
 
       return customerModel
         .findOne({ where: query })
-        .then(function (customer) {
+        .then((customer) => {
           if (!customer) { return null; }
           return customer.toJSON();
         });
-    }
+    },
   };
 
   exports.Intercom = {
-    getCustomer: function (userModel, customerId) {
+    getCustomer: (userModel, customerId) => {
       return userModel.findById(customerId);
-    }
+    },
   };
 
   exports.Closeio = {
-    getCustomer: function (userModel, customerId) {
+    getCustomer: (userModel, customerId) => {
       return userModel.findById(customerId);
-    }
+    },
   };
 
   exports.Layer = {
-    getUser: function (customerModel, customerField, customerId) {
-      return new P(function (resolve, reject) {
+    getUser: (customerModel, customerField, customerId) => {
+      return new P((resolve, reject) => {
         if (customerId) {
           return customerModel
             .findById(customerId)
-            .then(function (customer) {
+            .then((customer) => {
               if (!customer || !customer[customerField]) { return reject(); }
 
-              resolve(customer);
+              return resolve(customer);
             });
-        } else {
-          resolve();
         }
+        return resolve();
       });
-    }
+    },
   };
 
   exports.Mixpanel = {
-    getUser: function (userModel, userId) {
+    getUser: (userModel, userId) => {
       if (userId) {
         return userModel
           .findById(userId)
-          .then(function (user) {
-            return user.toJSON();
-          });
+          .then(user => user.toJSON());
       }
 
       return P.resolve();
