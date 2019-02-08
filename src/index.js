@@ -57,16 +57,40 @@ exports.init = function init(opts) {
     return null;
   };
 
-  exports.getOrmVersion = function getOrmVersion() {
-    if (!opts.sequelize) { return null; }
+  exports.getFrameworkName = function getFrameworkName() {
+    if (!opts.framework) { return null; }
+    return opts.framework.name || null;
+  };
 
-    return orm.getVersion(opts.sequelize);
+  exports.getFrameworkVersion = function getFrameworkVersion() {
+    if (!opts.framework) { return null; }
+    const frameworkVersion = opts.framework.version.match(REGEX_VERSION);
+    if (frameworkVersion && frameworkVersion[0]) {
+      return frameworkVersion[0];
+    }
+    return null;
   };
 
   exports.getDatabaseType = function getDatabaseType() {
     if (!opts.connections) { return null; }
 
     return opts.connections[0].options.dialect;
+  };
+
+  exports.getDatabaseVersion = function getDatabaseVersion() {
+    if (!opts.connections) { return null; }
+    const { databaseVersion } = opts.connections[0].options.databaseVersion;
+    return databaseVersion || null;
+  };
+
+  exports.getOrmName = function getOrmName() {
+    return 'sequelize';
+  };
+
+  exports.getOrmVersion = function getOrmVersion() {
+    if (!opts.sequelize) { return null; }
+
+    return orm.getVersion(opts.sequelize);
   };
 
   exports.SchemaAdapter = SchemaAdapter;
