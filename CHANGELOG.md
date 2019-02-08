@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Apimap - Send engine name, engine version, framework name, framework version, database version and orm name in apimap meta.
 
 ## RELEASE 2.17.2 - 2019-02-17
 ### Fixed
