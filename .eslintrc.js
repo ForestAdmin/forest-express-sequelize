@@ -34,6 +34,7 @@ module.exports = {
           'test/**/*.js'
         ]
       }
-    ]
+    ],
+    "arrow-body-style": 0
   },
 };

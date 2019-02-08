@@ -3,5 +3,6 @@
   ".eslint-bin/pre-commit-hook.js",
   ".eslintrc.js",
   "bin/.eslintrc.js",
-  "bin/deploy.js"
+  "bin/deploy.js",
+  "src/index.js"
 ]
