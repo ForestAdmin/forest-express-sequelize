@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - In development environment, ensure that the schema send has the exact same data and format like with the toolbelt.
 
 ## RELEASE 3.0.0-beta.2 - 2019-01-28
 ### Fixed
