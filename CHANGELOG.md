@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Build - Republish the beta version on the beta tag.
 
 ## RELEASE 3.0.0-beta.3 - 2019-02-08
 ### Changed
