@@ -9,7 +9,7 @@ function CompositeKeysManager(model, schema, record) {
     var primaryKeyValues = recordId.split(GLUE);
 
     // NOTICE: Prevent liana to crash when a composite primary keys is null,
-    //         this behaviour should be avoid instead of fixed. 
+    //         this behaviour should be avoid instead of fixed.
     primaryKeyValues.forEach(function (key, index) {
       if (key === 'null') { primaryKeyValues[index] = null; }
     });

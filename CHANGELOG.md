@@ -23,6 +23,14 @@
 - Developer Experience - On production, load `.forestadmin-schema.json` for schema update.
 - Developer Experience - Developers can deactivate the automatic schema synchronisation on server start using the `FOREST_DISABLE_AUTO_SCHEMA_APPLY` environment variable.
 
+## RELEASE 2.17.2 - 2019-02-17
+### Fixed
+- Integrations - Fix Stripe global payments list display.
+
+## RELEASE 2.17.1 - 2019-02-15
+### Fixed
+- Build - Republish the regular version on the latest tag.
+
 ## RELEASE 2.17.0 - 2019-01-21
 ### Added
 - Technical - Add babel.
@@ -65,12 +73,12 @@
 - Server start - Fix a crash if developers add a Smart Action to a generated integration collection that does not have existing one by default.
 
 ## RELEASE 2.16.2 - 2018-10-01
-### Fixed
-- List Related Records - Fix count of related records when relation is ManyToMany with an alias.
-
 ### Changed
 - List Related Records - Improve the speed of the search query.
 - List Related Records - Improve the speed of counting records.
+
+### Fixed
+- List Related Records - Fix count of related records when relation is ManyToMany with an alias.
 
 ## RELEASE 2.16.1 - 2018-09-24
 ### Changed

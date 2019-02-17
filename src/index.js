@@ -111,7 +111,7 @@ exports.init = function(opts) {
             return P.reject();
           });
       } else {
-        return P.reject();
+        return P.resolve();
       }
     },
     getCustomerByUserField: function (customerModel, customerField, userField) {
