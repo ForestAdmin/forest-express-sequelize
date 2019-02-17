@@ -48,12 +48,12 @@
 - Server start - Fix a crash if developers add a Smart Action to a generated integration collection that does not have existing one by default.
 
 ## RELEASE 2.16.2 - 2018-10-01
-### Fixed
-- List Related Records - Fix count of related records when relation is ManyToMany with an alias.
-
 ### Changed
 - List Related Records - Improve the speed of the search query.
 - List Related Records - Improve the speed of counting records.
+
+### Fixed
+- List Related Records - Fix count of related records when relation is ManyToMany with an alias.
 
 ## RELEASE 2.16.1 - 2018-09-24
 ### Changed
