@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 2.17.2 - 2019-02-17
 ### Fixed
 - Integrations - Fix Stripe global payments list display.
 
