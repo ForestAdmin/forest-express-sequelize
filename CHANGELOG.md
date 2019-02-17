@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Integrations - Fix Stripe global payments list display.
 
 ## RELEASE 3.0.0-beta.4 - 2019-02-15
 ### Fixed
