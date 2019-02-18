@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Actions - Fix default action route generation if the action name contains camelcase words.
 
 ## RELEASE 3.0.0-beta.5 - 2019-02-17
 ### Fixed
