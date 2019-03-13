@@ -23,8 +23,11 @@ generates a highly flexible admin REST API and deploys a WYSIWYG interface to <a
 - [Shadow](https://shadow.tech)
 - And hundreds more…
 
+## Getting started
+[https://docs.forestadmin.com/documentation/getting-started/installation](https://docs.forestadmin.com/documentation/getting-started/installation)
+
 ## Documentation
-[https://docs.forestadmin.com/express-sequelize](https://docs.forestadmin.com/express-sequelize)
+[https://docs.forestadmin.com/documentation/](https://docs.forestadmin.com/documentation/)
 
 ## What is it for?
 
