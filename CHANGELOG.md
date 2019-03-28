@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.0.0-beta.9 - 2019-03-28
 ### Fixed
 - Technical - Fix the latest built version.
 
