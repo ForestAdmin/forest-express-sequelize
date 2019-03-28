@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Build - Improve build script for beta versions.
+
 ### Fixed
 - Security - Fix implementation of session token passed in headers while downloading collections records.
 
