@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.0.0-beta.10 - 2019-03-29
 ### Fixed
 - Authentication - Fix the 2FA authentication with the new implementation of exports authentication.
 
