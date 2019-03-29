@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Sequelize - Support new Sequelize version 5.
 
 ## RELEASE 3.0.0-beta.10 - 2019-03-29
 ### Fixed

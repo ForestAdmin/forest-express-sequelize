@@ -9,7 +9,7 @@ module.exports = (model, opts) => {
   const fieldNamesToExclude = [];
 
   function getTypeForAssociation(association) {
-    const attribute = association.target.attributes[association.targetKey];
+    const attribute = association.target.rawAttributes[association.targetKey];
     const type = attribute ? new ApimapFieldTypeDetector(attribute, opts).perform() : 'Number';
 
     switch (association.associationType) {
