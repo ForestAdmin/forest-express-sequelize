@@ -1,21 +1,20 @@
-'use strict';
-var _ = require('lodash');
-var Operators = require('../utils/operators');
-var Interface = require('forest-express');
-var Database = require('../utils/database');
+const _ = require('lodash');
+const Operators = require('../utils/operators');
+const Interface = require('forest-express');
+const Database = require('../utils/database');
 
-var REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function SearchBuilder(model, opts, params, fieldNamesRequested) {
-  var schema = Interface.Schemas.schemas[model.name];
-  var DataTypes = opts.sequelize;
-  var fields = _.clone(schema.fields);
-  var associations = _.clone(model.associations);
-  var hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
-  var searchAssociationFields;
-  var OPERATORS = new Operators(opts);
-  var fieldsSearched = [];
-  var hasExtendedConditions = false;
+  const schema = Interface.Schemas.schemas[model.name];
+  const DataTypes = opts.sequelize;
+  const fields = _.clone(schema.fields);
+  let associations = _.clone(model.associations);
+  const hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
+  let searchAssociationFields;
+  const OPERATORS = new Operators(opts);
+  const fieldsSearched = [];
+  let hasExtendedConditions = false;
 
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
@@ -25,77 +24,68 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   }
 
   function selectSearchFields() {
-    var searchFields = _.clone(schema.searchFields);
-    searchAssociationFields = _.remove(searchFields, function (field) {
-      return field.indexOf('.') !== -1;
-    });
+    const searchFields = _.clone(schema.searchFields);
+    searchAssociationFields = _.remove(searchFields, field => field.indexOf('.') !== -1);
 
-    _.remove(fields, function (field) {
-      return !_.includes(schema.searchFields, field.field);
-    });
+    _.remove(fields, field => !_.includes(schema.searchFields, field.field));
 
-    var searchAssociationNames = _.map(searchAssociationFields,
-      function (association) { return association.split('.')[0]; });
+    const searchAssociationNames = _.map(searchAssociationFields, association =>
+      association.split('.')[0]);
     associations = _.pick(associations, searchAssociationNames);
 
     // NOTICE: Compute warnings to help developers to configure the
     //         searchFields.
-    var fieldsSimpleNotFound = _.xor(searchFields,
-      _.map(fields, function (field) { return field.field; }));
-    var fieldsAssociationNotFound = _.xor(
-      _.map(searchAssociationFields, function (association) {
-        return association.split('.')[0];
-      }), _.keys(associations));
+    const fieldsSimpleNotFound = _.xor(
+      searchFields,
+      _.map(fields, field => field.field),
+    );
+    const fieldsAssociationNotFound = _.xor(
+      _.map(searchAssociationFields, association => association.split('.')[0]),
+      _.keys(associations),
+    );
 
     if (fieldsSimpleNotFound.length) {
-      Interface.logger.warn('Cannot find the fields [' + fieldsSimpleNotFound +
-        '] while searching records in model ' + model.name + '.');
+      Interface.logger.warn(`Cannot find the fields [${fieldsSimpleNotFound}] while searching records in model ${model.name}.`);
     }
 
     if (fieldsAssociationNotFound.length) {
-      Interface.logger.warn('Cannot find the associations [' +
-        fieldsAssociationNotFound + '] while searching records in model ' +
-        model.name + '.');
+      Interface.logger.warn(`Cannot find the associations [${fieldsAssociationNotFound}] while searching records in model ${model.name}.`);
     }
   }
 
-  this.getFieldsSearched = function () {
-    return fieldsSearched;
-  };
+  this.getFieldsSearched = () => fieldsSearched;
 
-  this.hasExtendedSearchConditions = function () {
-    return hasExtendedConditions;
-  };
+  this.hasExtendedSearchConditions = () => hasExtendedConditions;
 
-  this.perform = function (associationName) {
+  this.perform = (associationName) => {
     if (!params.search) { return null; }
 
     if (hasSearchFields) {
       selectSearchFields();
     }
 
-    var aliasName = associationName || schema.name;
-    var where = {};
-    var or = [];
+    const aliasName = associationName || schema.name;
+    const where = {};
+    const or = [];
 
     function pushCondition(condition, fieldName) {
       or.push(condition);
       fieldsSearched.push(fieldName);
     }
 
-    _.each(fields, function (field) {
+    _.each(fields, (field) => {
       if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
       if (field.integration) { return; } // NOTICE: Ignore integration fields.
       if (field.reference) { return; } // NOTICE: Handle belongsTo search below.
 
-      var condition = {};
-      var columnName;
+      let condition = {};
+      let columnName;
 
       if (field.field === schema.idField) {
-        var primaryKeyType = model.primaryKeys[schema.idField].type;
+        const primaryKeyType = model.primaryKeys[schema.idField].type;
 
         if (primaryKeyType instanceof DataTypes.INTEGER) {
-          var value = parseInt(params.search, 10) || 0;
+          const value = parseInt(params.search, 10) || 0;
           if (value) {
             condition[field.field] = value;
             pushCondition(condition, field.field);
@@ -103,9 +93,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(aliasName + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(`${aliasName}.${columnName}`)),
             ' LIKE ',
-            lowerIfNecessary('%' + params.search + '%')
+            lowerIfNecessary(`%${params.search}%`),
           );
           pushCondition(condition, columnName);
         } else if (primaryKeyType instanceof DataTypes.UUID &&
@@ -114,13 +104,12 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'Enum') {
-        var enumValueFound;
-        var searchValue = params.search.toLowerCase();
+        let enumValueFound;
+        const searchValue = params.search.toLowerCase();
 
-        _.each(field.enums, function (enumValue) {
+        _.each(field.enums, (enumValue) => {
           if (enumValue.toLowerCase() === searchValue) {
             enumValueFound = enumValue;
-            return false;
           }
         });
 
@@ -139,9 +128,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           columnName = field.columnName || field.field;
 
           condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(aliasName + '.' + columnName)),
+            lowerIfNecessary(opts.sequelize.col(`${aliasName}.${columnName}`)),
             ' LIKE ',
-            lowerIfNecessary('%' + params.search + '%')
+            lowerIfNecessary(`%${params.search}%`),
           );
           pushCondition(condition, columnName);
         }
@@ -149,39 +138,39 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     });
 
     // NOTICE: Handle search on displayed belongsTo
-    if (parseInt(params.searchExtended)) {
-      _.each(associations, function (association) {
+    if (parseInt(params.searchExtended, 10)) {
+      _.each(associations, (association) => {
         if (!fieldNamesRequested ||
           (fieldNamesRequested.indexOf(association.as) !== -1)) {
           if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+            const modelAssociation = association.target;
+            const schemaAssociation = Interface.Schemas.schemas[modelAssociation.name];
+            const fieldsAssociation = schemaAssociation.fields;
 
-            var modelAssociation = association.target;
-            var schemaAssociation = Interface.Schemas
-              .schemas[modelAssociation.name];
-            var fieldsAssociation = schemaAssociation.fields;
-
-            _.each(fieldsAssociation, function(field) {
+            _.each(fieldsAssociation, (field) => {
               if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
               if (field.integration) { return; } // NOTICE: Ignore integration fields.
               if (field.reference) { return; } // NOTICE: Ignore associations.
               if (field.isSearchable === false) { return; }
 
-              if (hasSearchFields && !_.includes(searchAssociationFields,
-                association.as + '.' + field.field)) {
+              if (hasSearchFields
+                && !_.includes(searchAssociationFields, `${association.as}.${field.field}`)) {
                 return;
               }
 
-              var condition = {};
-              var columnName = field.columnName || field.field;
-              var column = opts.sequelize.col(association.as + '.' +
-                columnName);
+              let condition = {};
+              const columnName = field.columnName || field.field;
+              const column = opts.sequelize.col(`${association.as}.${columnName}`);
 
               if (field.field === schemaAssociation.idField) {
                 if (field.type === 'Number') {
-                  var value = parseInt(params.search, 10) || 0;
+                  const value = parseInt(params.search, 10) || 0;
                   if (value) {
-                    condition = opts.sequelize.where(column, ' = ',
-                      parseInt(params.search, 10) || 0);
+                    condition = opts.sequelize.where(
+                      column,
+                      ' = ',
+                      parseInt(params.search, 10) || 0,
+                    );
                     hasExtendedConditions = true;
                   }
                 } else if (params.search.match(REGEX_UUID)) {
@@ -199,7 +188,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 } else {
                   condition = opts.sequelize.where(
                     lowerIfNecessary(column), ' LIKE ',
-                    lowerIfNecessary('%' + params.search + '%'));
+                    lowerIfNecessary(`%${params.search}%`),
+                  );
                   hasExtendedConditions = true;
                 }
               }
