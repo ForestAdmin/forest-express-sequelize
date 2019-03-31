@@ -38,7 +38,7 @@ function ResourceFinder(model, params, withIncludes) {
       conditions.where[schema.idField] = params.recordId;
     }
 
-    return model.find(conditions);
+    return model.findOne(conditions);
   };
 }
 

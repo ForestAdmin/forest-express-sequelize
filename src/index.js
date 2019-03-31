@@ -103,7 +103,7 @@ exports.init = function(opts) {
     getCustomer: function (customerModel, customerField, customerId) {
       if (customerId) {
         return customerModel
-          .findById(customerId)
+          .findByPk(customerId)
           .then(function (customer) {
             if (customer && customer[customerField]) {
               return customer.toJSON();
@@ -133,13 +133,13 @@ exports.init = function(opts) {
 
   exports.Intercom = {
     getCustomer: function (userModel, customerId) {
-      return userModel.findById(customerId);
+      return userModel.findByPk(customerId);
     }
   };
 
   exports.Closeio = {
     getCustomer: function (userModel, customerId) {
-      return userModel.findById(customerId);
+      return userModel.findByPk(customerId);
     }
   };
 
@@ -148,7 +148,7 @@ exports.init = function(opts) {
       return new P(function (resolve, reject) {
         if (customerId) {
           return customerModel
-            .findById(customerId)
+            .findByPk(customerId)
             .then(function (customer) {
               if (!customer || !customer[customerField]) { return reject(); }
 
@@ -165,7 +165,7 @@ exports.init = function(opts) {
     getUser: function (userModel, userId) {
       if (userId) {
         return userModel
-          .findById(userId)
+          .findByPk(userId)
           .then(function (user) {
             return user.toJSON();
           });

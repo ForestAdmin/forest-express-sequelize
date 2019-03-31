@@ -28,7 +28,7 @@ function HasManyGetter(model, association, opts, params) {
   function findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
 
-    return model.findById(params.recordId, {
+    return model.findByPk(params.recordId, {
       order: queryOptions.order,
       subQuery: false,
       offset: queryOptions.offset,

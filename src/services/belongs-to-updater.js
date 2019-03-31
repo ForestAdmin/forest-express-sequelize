@@ -4,7 +4,7 @@ var _ = require('lodash');
 function BelongsToUpdater(model, association, opts, params, data) {
   this.perform = function () {
     return model
-      .findById(params.recordId)
+      .findByPk(params.recordId)
       .then(function (record) {
         // WORKAROUND: Make the hasOne associations update work while waiting
         //             for the Sequelize 4 release with the fix of the following
@@ -29,7 +29,7 @@ function BelongsToUpdater(model, association, opts, params, data) {
 
         if (isHasOne && data.data) {
           return modelAssociation
-            .findById(data.data.id)
+            .findByPk(data.data.id)
             .then(function (recordAssociated) {
               record[setterName](recordAssociated, options);
             });

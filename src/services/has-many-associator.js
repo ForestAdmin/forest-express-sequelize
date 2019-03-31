@@ -4,7 +4,7 @@ var _ = require('lodash');
 function HasManyAssociator(model, association, opts, params, data) {
   this.perform = function () {
     return model
-      .findById(params.recordId)
+      .findByPk(params.recordId)
       .then(function (record) {
         var associatedIds = _.map(data.data, function (value) {
           return value.id;

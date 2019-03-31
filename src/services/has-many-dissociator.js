@@ -10,7 +10,7 @@ function HasManyDissociator(model, association, options, params, data) {
   this.perform = function () {
     var associatedIds = _.map(data.data, function (value) { return value.id; });
     return model
-      .findById(params.recordId)
+      .findByPk(params.recordId)
       .then(function (record) {
         var removeAssociation = false;
 
