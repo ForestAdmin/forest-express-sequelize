@@ -1,9 +1,7 @@
-'use strict';
-
 function ApimapFieldTypeDetector(column, options) {
-  var DataTypes = options.sequelize;
+  const DataTypes = options.sequelize;
 
-  this.perform = function () {
+  this.perform = () => {
     if (column.type instanceof DataTypes.STRING ||
       column.type instanceof DataTypes.TEXT ||
       column.type instanceof DataTypes.UUID ||
@@ -35,6 +33,7 @@ function ApimapFieldTypeDetector(column, options) {
     } else if (column.type.type) {
       return [new ApimapFieldTypeDetector({ type: column.type.type }, options).perform()];
     }
+    return null;
   };
 }
 

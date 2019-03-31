@@ -1,20 +1,19 @@
-'use strict';
-var _ = require('lodash');
-var Interface = require('forest-express');
-var CompositeKeysManager = require('./composite-keys-manager');
+const _ = require('lodash');
+const Interface = require('forest-express');
+const CompositeKeysManager = require('./composite-keys-manager');
 
 function ResourceFinder(model, params, withIncludes) {
-  var schema = Interface.Schemas.schemas[model.name];
-  var compositeKeysManager = new CompositeKeysManager(model, schema, params);
+  const schema = Interface.Schemas.schemas[model.name];
+  const compositeKeysManager = new CompositeKeysManager(model, schema, params);
 
   function getIncludes() {
-    var includes = [];
+    const includes = [];
 
-    _.values(model.associations).forEach(function (association) {
+    _.values(model.associations).forEach((association) => {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
         includes.push({
           model: association.target.unscoped(),
-          as: association.associationAccessor
+          as: association.associationAccessor,
         });
       }
     });
@@ -25,8 +24,8 @@ function ResourceFinder(model, params, withIncludes) {
     return includes.length === 0 ? null : includes;
   }
 
-  this.perform = function () {
-    var conditions = { where: {} };
+  this.perform = () => {
+    const conditions = { where: {} };
 
     if (withIncludes) {
       conditions.include = getIncludes();
