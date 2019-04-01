@@ -5,7 +5,8 @@ function ApimapFieldTypeDetector(column, options) {
     if (column.type instanceof DataTypes.STRING ||
       column.type instanceof DataTypes.TEXT ||
       column.type instanceof DataTypes.UUID ||
-      column.type === 'citext') {
+      (DataTypes.CITEXT && column.type instanceof DataTypes.CITEXT) ||
+      column.type === 'citext') { // TODO: Remove 'citext' once Sequelize 4 has been unsupported.
       return 'String';
     } else if (column.type instanceof DataTypes.ENUM) {
       return 'Enum';

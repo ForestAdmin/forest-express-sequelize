@@ -102,8 +102,7 @@ exports.init = function(opts) {
   exports.Stripe = {
     getCustomer: function (customerModel, customerField, customerId) {
       if (customerId) {
-        return customerModel
-          .findById(customerId)
+        return orm.findRecord(customerModel, customerId)
           .then(function (customer) {
             if (customer && customer[customerField]) {
               return customer.toJSON();
@@ -133,13 +132,13 @@ exports.init = function(opts) {
 
   exports.Intercom = {
     getCustomer: function (userModel, customerId) {
-      return userModel.findById(customerId);
+      return orm.findRecord(userModel, customerId);
     }
   };
 
   exports.Closeio = {
     getCustomer: function (userModel, customerId) {
-      return userModel.findById(customerId);
+      return orm.findRecord(userModel, customerId);
     }
   };
 
@@ -147,8 +146,7 @@ exports.init = function(opts) {
     getUser: function (customerModel, customerField, customerId) {
       return new P(function (resolve, reject) {
         if (customerId) {
-          return customerModel
-            .findById(customerId)
+          return orm.findRecord(customerModel, customerId)
             .then(function (customer) {
               if (!customer || !customer[customerField]) { return reject(); }
 
@@ -164,8 +162,7 @@ exports.init = function(opts) {
   exports.Mixpanel = {
     getUser: function (userModel, userId) {
       if (userId) {
-        return userModel
-          .findById(userId)
+        return orm.findRecord(userModel, userId)
           .then(function (user) {
             return user.toJSON();
           });

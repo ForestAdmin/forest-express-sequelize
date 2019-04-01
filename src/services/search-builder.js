@@ -118,8 +118,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'String') {
-        if (model.attributes[field.field] &&
-          model.attributes[field.field].type instanceof DataTypes.UUID) {
+        if (model.rawAttributes[field.field] &&
+          model.rawAttributes[field.field].type instanceof DataTypes.UUID) {
           if (params.search.match(REGEX_UUID)) {
             condition[field.field] = params.search;
             pushCondition(condition, field.field);
@@ -178,8 +178,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                   hasExtendedConditions = true;
                 }
               } else if (field.type === 'String') {
-                if (modelAssociation.attributes[field.field] &&
-                  modelAssociation.attributes[field.field].type instanceof
+                if (modelAssociation.rawAttributes[field.field] &&
+                  modelAssociation.rawAttributes[field.field].type instanceof
                   DataTypes.UUID) {
                   if (params.search.match(REGEX_UUID)) {
                     condition = opts.sequelize.where(column, '=', params.search);

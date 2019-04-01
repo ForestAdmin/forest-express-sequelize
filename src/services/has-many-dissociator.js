@@ -1,7 +1,7 @@
-'use strict';
-var _ = require('lodash');
-var Operators = require('../utils/operators');
-var ErrorHTTP422 = require('./errors').ErrorHTTP422;
+const _ = require('lodash');
+const Operators = require('../utils/operators');
+const orm = require('../utils/orm');
+const ErrorHTTP422 = require('./errors').ErrorHTTP422;
 
 function HasManyDissociator(model, association, options, params, data) {
   var OPERATORS = new Operators(options);
@@ -9,8 +9,7 @@ function HasManyDissociator(model, association, options, params, data) {
 
   this.perform = function () {
     var associatedIds = _.map(data.data, function (value) { return value.id; });
-    return model
-      .findById(params.recordId)
+    return orm.findRecord(model, params.recordId)
       .then(function (record) {
         var removeAssociation = false;
 

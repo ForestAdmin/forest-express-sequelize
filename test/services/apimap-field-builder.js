@@ -32,7 +32,7 @@ describe('Services > ApimapFieldBuilder', () => {
         .then(() => {
           field = new ApimapFieldBuilder(
             model,
-            _.values(model.attributes)[1],
+            _.values(model.rawAttributes)[1],
             { sequelize: Sequelize },
           )
             .perform();

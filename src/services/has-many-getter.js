@@ -1,10 +1,10 @@
-'use strict';
-var _ = require('lodash');
-var P = require('bluebird');
-var Interface = require('forest-express');
-var QueryBuilder = require('./query-builder');
-var SearchBuilder = require('./search-builder');
-var CompositeKeysManager = require('./composite-keys-manager');
+const _ = require('lodash');
+const P = require('bluebird');
+const orm = require('../utils/orm');
+const Interface = require('forest-express');
+const QueryBuilder = require('./query-builder');
+const SearchBuilder = require('./search-builder');
+const CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {
   var queryBuilder = new QueryBuilder(model, opts, params);
@@ -28,7 +28,7 @@ function HasManyGetter(model, association, opts, params) {
   function findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
 
-    return model.findById(params.recordId, {
+    return orm.findRecord(model, params.recordId, {
       order: queryOptions.order,
       subQuery: false,
       offset: queryOptions.offset,

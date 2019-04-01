@@ -1,10 +1,9 @@
-'use strict';
-var _ = require('lodash');
+const _ = require('lodash');
+const orm = require('../utils/orm');
 
 function BelongsToUpdater(model, association, opts, params, data) {
   this.perform = function () {
-    return model
-      .findById(params.recordId)
+    return orm.findRecord(model, params.recordId)
       .then(function (record) {
         // WORKAROUND: Make the hasOne associations update work while waiting
         //             for the Sequelize 4 release with the fix of the following
@@ -28,8 +27,7 @@ function BelongsToUpdater(model, association, opts, params, data) {
         var options = { fields: null };
 
         if (isHasOne && data.data) {
-          return modelAssociation
-            .findById(data.data.id)
+          return orm.findRecord(modelAssociation, data.data.id)
             .then(function (recordAssociated) {
               record[setterName](recordAssociated, options);
             });
