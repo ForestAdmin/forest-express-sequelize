@@ -1,17 +1,16 @@
-'use strict';
-var semver = require('semver');
+const semver = require('semver');
 
-var REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
+const REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
 
-var getVersion = function (sequelize) {
-  var version = sequelize.version.match(REGEX_VERSION);
+const getVersion = (sequelize) => {
+  const version = sequelize.version.match(REGEX_VERSION);
   if (version && version[0]) {
     return version[0];
   }
   return null;
 };
 
-var isVersionLessThan4 = function (sequelize) {
+const isVersionLessThan4 = (sequelize) => {
   try {
     return semver.lt(getVersion(sequelize), '4.0.0');
   } catch (error) {

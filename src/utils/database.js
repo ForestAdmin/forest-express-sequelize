@@ -1,5 +1,3 @@
-'use strict';
-
 function optionsInvalid(options) {
   // TODO: This function only works with the connection 0, we should add a index
   //       parameter in case of multiple database with different dialect.
@@ -7,17 +5,17 @@ function optionsInvalid(options) {
     options.connections[0].options && options.connections[0].options.dialect);
 }
 
-exports.isMySQL = function(options) {
+exports.isMySQL = (options) => {
   if (optionsInvalid(options)) { return false; }
   return ['mysql', 'mariadb'].indexOf(options.connections[0].options.dialect) > -1;
 };
 
-exports.isMSSQL = function(options) {
+exports.isMSSQL = (options) => {
   if (optionsInvalid(options)) { return false; }
   return options.connections[0].options.dialect === 'mssql';
 };
 
-exports.isSQLite = function(options) {
+exports.isSQLite = (options) => {
   if (optionsInvalid(options)) { return false; }
   return options.connections[0].options.dialect === 'sqlite';
 };

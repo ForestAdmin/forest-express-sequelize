@@ -29,7 +29,8 @@
     "http-errors": "1.6.1",
     "lodash": "4.17.10",
     "moment": "2.19.4",
-    "moment-timezone": "0.5.14"
+    "moment-timezone": "0.5.14",
+    "semver": "5.4.1"
   },
   "devDependencies": {
     "babel-cli": "6.26.0",
@@ -49,7 +50,6 @@
     "onchange": "4.0.0",
     "pg": "6.3.1",
     "pre-commit": "1.2.2",
-    "semver": "5.4.1",
     "sequelize": "3.29.0",
     "sequelize-fixtures": "0.6.0",
     "simple-git": "1.65.0"

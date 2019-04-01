@@ -1,8 +1,6 @@
-'use strict';
-
 function Operators(options) {
   if (options && options.sequelize && options.sequelize.Op) {
-    var Op = options.sequelize.Op;
+    const { Op } = options.sequelize;
     return {
       AND: Op.and,
       EQ: Op.eq,
