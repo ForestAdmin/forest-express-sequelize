@@ -9,5 +9,6 @@
   "src/services/apimap-field-type-detector.js",
   "src/services/resource-finder.js",
   "src/services/search-builder.js",
+  "test/index.js",
   "test/services/apimap-field-builder.js"
 ]
