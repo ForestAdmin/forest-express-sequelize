@@ -18,5 +18,13 @@ const isVersionLessThan4 = (sequelize) => {
   }
 };
 
+const findRecord = (model, recordId, options) => {
+  if (model.findByPk) {
+    return model.findByPk(recordId, options);
+  }
+  return model.findById(recordId, options);
+};
+
 exports.getVersion = getVersion;
 exports.isVersionLessThan4 = isVersionLessThan4;
+exports.findRecord = findRecord;
