@@ -1,59 +1,59 @@
-'use strict';
 /* global describe, before, it */
 /* jshint camelcase: false */
 /* jshint expr: true */
-var expect = require('chai').expect;
-var _ = require('lodash');
-var Sequelize = require('sequelize');
-var ApimapFieldBuilder = require('../../src/services/apimap-field-builder');
+const _ = require('lodash');
+const Sequelize = require('sequelize');
+const { expect } = require('chai');
+const ApimapFieldBuilder = require('../../src/services/apimap-field-builder');
 
-var databaseOptions = {
+const databaseOptions = {
   logging: false,
-  pool: { maxConnections: 10, minConnections: 1 }
+  pool: { maxConnections: 10, minConnections: 1 },
 };
 
-var sequelize = new Sequelize(
+const sequelize = new Sequelize(
   'postgres://forest:secret@localhost:5436/forest-express-sequelize-test',
-  databaseOptions);
+  databaseOptions,
+);
 
-describe('Services > ApimapFieldBuilder', function () {
-  describe('on a UUID column with a UUIDV4 defaultValue', function () {
-    var field;
+describe('Services > ApimapFieldBuilder', () => {
+  describe('on a UUID column with a UUIDV4 defaultValue', () => {
+    let field;
 
-    before(function (done) {
-      var model = sequelize.define('user', {
+    before((done) => {
+      const model = sequelize.define('user', {
         uuid: {
           type: Sequelize.DataTypes.UUID,
           defaultValue: Sequelize.DataTypes.UUIDV4,
-        }
+        },
       });
 
       sequelize.sync({ force: true })
-        .then(function() {
+        .then(() => {
           field = new ApimapFieldBuilder(
             model,
             _.values(model.attributes)[1],
-            { sequelize: Sequelize }
+            { sequelize: Sequelize },
           )
             .perform();
           done();
         });
     });
 
-    it('should have a name uuid', function () {
+    it('should have a name uuid', () => {
       expect(field.field).equal('uuid');
     });
 
-    it('should have a String type', function () {
+    it('should have a String type', () => {
       expect(field.type).equal('String');
     });
 
-    it('should not be set as required', function () {
-      expect(field.isRequired).to.be.false;
+    it('should not be set as required', () => {
+      expect(field.isRequired).to.be.false; // eslint-disable-line
     });
 
-    it('should not have a default value', function () {
-      expect(field.defaultValue).to.be.undefined;
+    it('should not have a default value', () => {
+      expect(field.defaultValue).to.be.undefined; // eslint-disable-line
     });
   });
 });
