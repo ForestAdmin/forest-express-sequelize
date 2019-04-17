@@ -49,7 +49,7 @@
     "pg": "6.3.1",
     "pre-commit": "1.2.2",
     "sequelize": "4.43.2",
-    "sequelize-fixtures": "0.6.0",
+    "sequelize-fixtures": "0.10.0",
     "simple-git": "1.65.0"
   },
   "scripts": {

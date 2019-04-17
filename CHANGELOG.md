@@ -11,6 +11,7 @@
 - Security - Patch vulnerabilities using the latest `babel` dependencies.
 - Security - Patch vulnerabilities using the latest `mocha` dependency.
 - Security - Patch vulnerabilities using the latest `sequelize` dependency.
+- Security - Patch vulnerabilities using the latest `sequelize-fixtures` dependency.
 
 ## RELEASE 3.0.0-beta.11 - 2019-04-01
 ### Fixed
