@@ -2,7 +2,6 @@
   ".eslint-bin/lint-registered-files.js",
   ".eslint-bin/pre-commit-hook.js",
   ".eslintrc.js",
-  "bin/.eslintrc.js",
   "bin/deploy.js",
   "src/adapters/sequelize.js",
   "src/services/apimap-field-builder.js",
