@@ -46,7 +46,6 @@
     "gulp": "3.9.1",
     "mocha": "2.2.5",
     "mysql": "2.13.0",
-    "nsp": "2.8.1",
     "onchange": "4.0.0",
     "pg": "6.3.1",
     "pre-commit": "1.2.2",
@@ -59,7 +58,6 @@
     "build:watch": "onchange 'src/**/*.js' -i -- yarn build",
     "deploy": "yarn build && node ./bin/deploy.js",
     "test": "./node_modules/mocha/bin/mocha test/**",
-    "detect-vulnerabilities": "./node_modules/nsp/bin/nsp check --output summary",
     "lint": "./node_modules/eslint/bin/eslint.js src",
     "lint:ci": "node ./.eslint-bin/lint-registered-files.js",
     "pre-commit": "node ./.eslint-bin/pre-commit-hook.js"

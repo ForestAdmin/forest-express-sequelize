@@ -4,6 +4,9 @@
 ### Changes
 - Technical - Update forest-express to v3.0.5.
 
+### Fixed
+- Security - Patch vulnerabilities removing the unused `nsp` dependency.
+
 ## RELEASE 3.0.0-beta.11 - 2019-04-01
 ### Fixed
 - Sequelize - Support new Sequelize version 5.
