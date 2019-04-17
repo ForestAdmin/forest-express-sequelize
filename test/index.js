@@ -287,7 +287,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     });
 
     describe('Stats > Pie Stat Getter', () => {
-      before(done =>
+      before(() =>
         sequelize.sync({ force: true })
           .then(() =>
             sequelizeFixtures.loadFile(
@@ -295,8 +295,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               models,
               { log: () => {} },
             ))
-          .then(() => { done(); })
-          .catch(done));
+          .catch());
 
       describe('A simple Pie Chart on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
