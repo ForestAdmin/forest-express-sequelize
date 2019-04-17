@@ -6,6 +6,7 @@
 
 ### Fixed
 - Security - Patch vulnerabilities removing the unused `nsp` dependency.
+- Security - Patch vulnerabilities removing the unused `gulp` dependency.
 
 ## RELEASE 3.0.0-beta.11 - 2019-04-01
 ### Fixed

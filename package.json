@@ -43,7 +43,6 @@
     "eslint-plugin-import": "2.8.0",
     "eslint-plugin-jsx-a11y": "6.0.2",
     "eslint-plugin-react": "7.5.1",
-    "gulp": "3.9.1",
     "mocha": "2.2.5",
     "mysql": "2.13.0",
     "onchange": "4.0.0",
