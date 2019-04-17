@@ -794,18 +794,18 @@ babel-register@7.0.0-beta.3:
     pirates "^3.0.1"
     source-map-support "^0.4.2"
 
-babel-runtime@6.26.0, babel-runtime@^6.26.0:
-  version "6.26.0"
-  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
-  integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
-  dependencies:
-    core-js "^2.4.0"
-    regenerator-runtime "^0.11.0"
-
 babel-runtime@7.0.0-beta.3:
   version "7.0.0-beta.3"
   resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-7.0.0-beta.3.tgz#7c750de5514452c27612172506b49085a4a630f2"
   integrity sha512-jlzZ8RACjt0QGxq+wqsw5bCQE9RcUyWpw987mDY3GYxTpOQT2xoyNoG++oVCHzr/nACLBIprfVBNvv/If1ZYcg==
+  dependencies:
+    core-js "^2.4.0"
+    regenerator-runtime "^0.11.0"
+
+babel-runtime@^6.26.0:
+  version "6.26.0"
+  resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
+  integrity sha1-llxwWGaOgrVde/4E/yM3vItWR/4=
   dependencies:
     core-js "^2.4.0"
     regenerator-runtime "^0.11.0"
@@ -912,7 +912,7 @@ bluebird@3.3.4:
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-3.3.4.tgz#f780fe43e1a7a6510f67abd7d0d79533a40ddde6"
   integrity sha1-94D+Q+GnplEPZ6vX0NeVM6QN3eY=
 
-bluebird@^2.10.2, bluebird@^2.4.2:
+bluebird@^2.4.2:
   version "2.11.0"
   resolved "https://registry.yarnpkg.com/bluebird/-/bluebird-2.11.0.tgz#534b9033c022c9579c56ba3b3e5a5caafbb650e1"
   integrity sha1-U0uQM8AiyVecVro7Plpcqvu2UOE=
@@ -1511,6 +1511,13 @@ dottie@^2.0.0:
   resolved "https://registry.yarnpkg.com/dottie/-/dottie-2.0.1.tgz#697ad9d72004db7574d21f892466a3c285893659"
   integrity sha512-ch5OQgvGDK2u8pSZeSYAQaV/lczImd7pMJ7BcEPXmnFVjy4yJIzP6CsODJUTH8mg1tyH1Z2abOiuJO3DjZ/GBw==
 
+ecdsa-sig-formatter@1.0.11:
+  version "1.0.11"
+  resolved "https://registry.yarnpkg.com/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.11.tgz#ae0f0fa2d85045ef14a817daa3ce9acd0489e5bf"
+  integrity sha512-nagl3RYrbNv6kQkeJIpt6NJZy8twLB/2vtz6yN9Z4vRKHN4/QZJIEbqohALSgwKdnksuY3k5Addp5lg8sVoVcQ==
+  dependencies:
+    safe-buffer "^5.0.1"
+
 ecdsa-sig-formatter@1.0.9:
   version "1.0.9"
   resolved "https://registry.yarnpkg.com/ecdsa-sig-formatter/-/ecdsa-sig-formatter-1.0.9.tgz#4bc926274ec3b5abb5016e7e1d60921ac262b2a1"
@@ -2041,12 +2048,12 @@ for-own@^0.1.4:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@3.0.5:
-  version "3.0.5"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-3.0.5.tgz#602b315f224e2251e0b292ce9a0195b42d44aa92"
-  integrity sha512-Br0hiFz1khC5fEkyMtMeFvZdHDlRF+6cWkb6NwromGeyQxmmXpYN4gbVpjQIlPuRSStHzKnp91hvGtax+ZLjcw==
+forest-express@3.0.6:
+  version "3.0.6"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-3.0.6.tgz#378a834c1dce06bfca9bcf95d31708b7c33ddc08"
+  integrity sha512-6rU9bGNSQUHrvOxUs4GD+U58mIXykI9pw1bMIlTr5evr/a2t/gMzCK+hkiGiUVPYWSZTEnAxuf8LrA44c1e0HQ==
   dependencies:
-    babel-runtime "6.26.0"
+    babel-runtime "7.0.0-beta.3"
     base32-encode "1.1.0"
     bcryptjs "2.4.3"
     bitwise-xor "0.0.0"
@@ -2060,9 +2067,9 @@ forest-express@3.0.5:
     forest-ip-utils "1.0.1"
     http-errors "1.7.2"
     inflected "2.0.4"
-    jsonapi-serializer "3.4.1"
-    jsonwebtoken "8.1.1"
-    lodash "4.10.0"
+    jsonapi-serializer "3.6.4"
+    jsonwebtoken "8.5.1"
+    lodash "4.17.11"
     moment "2.19.4"
     otplib "10.0.0"
     superagent "3.7.0"
@@ -2835,21 +2842,20 @@ json5@^0.5.0:
   resolved "https://registry.yarnpkg.com/json5/-/json5-0.5.1.tgz#1eade7acc012034ad84e2396767ead9fa5495821"
   integrity sha1-Hq3nrMASA0rYTiOWdn6tn6VJWCE=
 
-jsonapi-serializer@3.4.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/jsonapi-serializer/-/jsonapi-serializer-3.4.1.tgz#61f5b4a66aba9003f39a4780ea091e01ce87a59f"
-  integrity sha1-YfW0pmq6kAPzmkeA6gkeAc6HpZ8=
+jsonapi-serializer@3.6.4:
+  version "3.6.4"
+  resolved "https://registry.yarnpkg.com/jsonapi-serializer/-/jsonapi-serializer-3.6.4.tgz#70b61c2eb6e9366e1b49cf18a01fd4a04473791e"
+  integrity sha512-n0FVi4Cs7Gzk6dH9kn+8to7yGYhVpdsFRtMHi3SaC80EWap2wjCcXPioSlq0hnqzdEFXtay0hRR4yRqXkLTJSA==
   dependencies:
-    bluebird "^2.10.2"
     inflected "^1.1.6"
-    lodash "^3.9.3"
+    lodash "^4.16.3"
 
-jsonwebtoken@8.1.1:
-  version "8.1.1"
-  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.1.1.tgz#b04d8bb2ad847bc93238c3c92170ffdbdd1cb2ea"
-  integrity sha512-+ijVOtfLMlCII8LJkvabaKX3+8tGrGjiCTfzoed2D1b/ebKTO1hIYBQUJHbd9dJ9Fa4kH+dhYEd1qDwyzDLUUw==
+jsonwebtoken@8.5.1:
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/jsonwebtoken/-/jsonwebtoken-8.5.1.tgz#00e71e0b8df54c2121a1f26137df2280673bcc0d"
+  integrity sha512-XjwVfRS6jTMsqYs0EsuJ4LGxXV14zQybNd4L2r0UvbVnSF9Af8x7p5MzbJ90Ioz/9TI41/hTCvznF/loiSzn8w==
   dependencies:
-    jws "^3.1.4"
+    jws "^3.2.2"
     lodash.includes "^4.3.0"
     lodash.isboolean "^3.0.3"
     lodash.isinteger "^4.0.4"
@@ -2858,7 +2864,7 @@ jsonwebtoken@8.1.1:
     lodash.isstring "^4.0.1"
     lodash.once "^4.0.0"
     ms "^2.1.1"
-    xtend "^4.0.1"
+    semver "^5.6.0"
 
 jsonwebtoken@^8.1.0:
   version "8.2.0"
@@ -2898,6 +2904,15 @@ jwa@^1.1.4:
     ecdsa-sig-formatter "1.0.9"
     safe-buffer "^5.0.1"
 
+jwa@^1.4.1:
+  version "1.4.1"
+  resolved "https://registry.yarnpkg.com/jwa/-/jwa-1.4.1.tgz#743c32985cb9e98655530d53641b66c8645b039a"
+  integrity sha512-qiLX/xhEEFKUAJ6FiBMbes3w9ATzyk5W7Hvzpa/SLYdxNtng+gcurvrI7TbACjIXlsJyr05/S1oUhZrc63evQA==
+  dependencies:
+    buffer-equal-constant-time "1.0.1"
+    ecdsa-sig-formatter "1.0.11"
+    safe-buffer "^5.0.1"
+
 jws@^3.1.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/jws/-/jws-3.1.4.tgz#f9e8b9338e8a847277d6444b1464f61880e050a2"
@@ -2905,6 +2920,14 @@ jws@^3.1.4:
   dependencies:
     base64url "^2.0.0"
     jwa "^1.1.4"
+    safe-buffer "^5.0.1"
+
+jws@^3.2.2:
+  version "3.2.2"
+  resolved "https://registry.yarnpkg.com/jws/-/jws-3.2.2.tgz#001099f3639468c9414000e99995fa52fb478304"
+  integrity sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==
+  dependencies:
+    jwa "^1.4.1"
     safe-buffer "^5.0.1"
 
 kind-of@^3.0.2, kind-of@^3.0.3, kind-of@^3.2.0:
@@ -3054,22 +3077,12 @@ lodash.set@^4.0.0:
   resolved "https://registry.yarnpkg.com/lodash.set/-/lodash.set-4.3.2.tgz#d8757b1da807dde24816b0d6a84bea1a76230b23"
   integrity sha1-2HV7HagH3eJIFrDWqEvqGnYjCyM=
 
-lodash@4.10.0:
-  version "4.10.0"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.10.0.tgz#3d8f3ac7a5a904fdb01e2cfe1401879bf9652c6a"
-  integrity sha1-PY86x6WpBP2wHiz+FAGHm/llLGo=
-
 lodash@4.17.10:
   version "4.17.10"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.10.tgz#1b7793cf7259ea38fb3661d4d38b3260af8ae4e7"
   integrity sha512-UejweD1pDoXu+AD825lWwp4ZGtSwgnpZxb3JDViD7StjQz+Nb/6l093lx4OQ0foGWNRoc19mWy7BzL+UAK2iVg==
 
-lodash@^3.9.3:
-  version "3.10.1"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-3.10.1.tgz#5bf45e8e49ba4189e17d482789dfd15bd140b7b6"
-  integrity sha1-W/Rejkm6QYnhfUgnid/RW9FAt7Y=
-
-lodash@^4.17.1, lodash@^4.17.11, lodash@^4.2.0:
+lodash@4.17.11, lodash@^4.16.3, lodash@^4.17.1, lodash@^4.17.11, lodash@^4.2.0:
   version "4.17.11"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.11.tgz#b39ea6229ef607ecd89e2c8df12536891cac9b8d"
   integrity sha512-cQKh8igo5QUhZ7lg38DYWAxMvjSAKG0A8wGSVimP07SIUEK2UO+arSRKbRZWtelMtN5V0Hkwh5ryOto/SshYIg==
@@ -4315,7 +4328,7 @@ semver@5.4.1:
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.4.1.tgz#e059c09d8571f0540823733433505d3a2f00b18e"
   integrity sha512-WfG/X9+oATh81XtllIo/I8gOiY9EXRdv1cQdyykeXK17YcUW3EXUAi2To4pcH6nZtJPr7ZOpM5OMyWJZm+8Rsg==
 
-semver@^5.5.1, semver@^5.7.0:
+semver@^5.5.1, semver@^5.6.0, semver@^5.7.0:
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/semver/-/semver-5.7.0.tgz#790a7cf6fea5459bac96110b29b60412dc8ff96b"
   integrity sha512-Ya52jSX2u7QKghxeoFGpLwCtGlt7j0oY9DYb5apt9nPlJ42ID+ulTXESnt/qAQcoSERyZ5sl3LDIOw0nAn/5DA==

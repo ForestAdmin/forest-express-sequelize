@@ -2,7 +2,6 @@
 
 ## [Unreleased]
 ### Changes
-- Technical - Update forest-express to v3.0.5.
 - Technical - Use the latest `onchange` dependency.
 
 ### Fixed
@@ -14,6 +13,7 @@
 - Security - Patch vulnerabilities using the latest `sequelize` dependency.
 - Security - Patch vulnerabilities using the latest `sequelize-fixtures` dependency.
 - Security - Patch vulnerabilities using the latest `pg` dependency.
+- Security - Patch vulnerabilities using the latest `forest-express` dependency.
 
 ## RELEASE 3.0.0-beta.11 - 2019-04-01
 ### Fixed
