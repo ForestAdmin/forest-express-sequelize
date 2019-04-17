@@ -14,6 +14,7 @@
 - Security - Patch vulnerabilities using the latest `sequelize-fixtures` dependency.
 - Security - Patch vulnerabilities using the latest `pg` dependency.
 - Security - Patch vulnerabilities using the latest `forest-express` dependency.
+- Security - Patch a vulnerability using the latest `lodash` dependency.
 
 ## RELEASE 3.0.0-beta.11 - 2019-04-01
 ### Fixed
