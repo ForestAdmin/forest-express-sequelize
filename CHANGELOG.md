@@ -8,6 +8,7 @@
 - Security - Patch vulnerabilities removing the unused `nsp` dependency.
 - Security - Patch vulnerabilities removing the unused `gulp` dependency.
 - Security - Patch vulnerabilities using the latest `eslint` dependency.
+- Security - Patch vulnerabilities using the latest `babel` dependencies.
 
 ## RELEASE 3.0.0-beta.11 - 2019-04-01
 ### Fixed

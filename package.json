@@ -23,7 +23,7 @@
   },
   "main": "dist/index.js",
   "dependencies": {
-    "babel-runtime": "6.26.0",
+    "babel-runtime": "7.0.0-beta.3",
     "bluebird": "2.9.25",
     "forest-express": "3.0.5",
     "http-errors": "1.6.1",
@@ -33,10 +33,10 @@
     "semver": "5.4.1"
   },
   "devDependencies": {
-    "babel-cli": "6.26.0",
-    "babel-core": "6.26.0",
-    "babel-plugin-transform-runtime": "6.23.0",
-    "babel-preset-env": "1.6.1",
+    "babel-cli": "7.0.0-beta.3",
+    "babel-plugin-transform-runtime": "7.0.0-beta.3",
+    "babel-preset-env": "7.0.0-beta.3",
+    "babel-register": "7.0.0-beta.3",
     "chai": "2.3.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "16.1.0",
@@ -56,7 +56,7 @@
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir dist && echo '\n\\033[0;34m[+] \\033[0;32mBuild done\\033[0m'",
     "build:watch": "onchange 'src/**/*.js' -i -- yarn build",
     "deploy": "yarn build && node ./bin/deploy.js",
-    "test": "./node_modules/mocha/bin/mocha test/**",
+    "test": "./node_modules/mocha/bin/mocha test/** --require babel-register",
     "lint": "./node_modules/eslint/bin/eslint.js src",
     "lint:ci": "node ./.eslint-bin/lint-registered-files.js",
     "pre-commit": "node ./.eslint-bin/pre-commit-hook.js"
