@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.0.0-beta.12 - 2019-04-17
 ### Changes
 - Technical - Use the latest `onchange` dependency.
 
