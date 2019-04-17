@@ -44,11 +44,11 @@
     "eslint-plugin-jsx-a11y": "6.0.2",
     "eslint-plugin-react": "7.5.1",
     "mocha": "6.1.3",
-    "mysql": "2.13.0",
+    "mysql2": "1.6.5",
     "onchange": "4.0.0",
     "pg": "6.3.1",
     "pre-commit": "1.2.2",
-    "sequelize": "3.29.0",
+    "sequelize": "4.43.2",
     "sequelize-fixtures": "0.6.0",
     "simple-git": "1.65.0"
   },
