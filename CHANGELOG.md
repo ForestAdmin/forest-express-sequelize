@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changes
 - Technical - Update forest-express to v3.0.5.
+- Technical - Use the latest `onchange` dependency.
 
 ### Fixed
 - Security - Patch vulnerabilities removing the unused `nsp` dependency.
