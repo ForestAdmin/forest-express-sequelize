@@ -419,7 +419,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               expect(result.username).equal('Jacouille');
 
               return models.user
-                .find({ where: { email: 'jack@forestadmin.com' } })
+                .findOne({ where: { email: 'jack@forestadmin.com' } })
                 .then((user) => {
                   expect(user).not.to.be.null; // eslint-disable-line
                   done();
@@ -440,7 +440,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               expect(result.code).equal('G@G#F@G@');
               expect(result.trace).equal('Ggg23g242@');
               return models.log
-                .find({ where: { code: 'G@G#F@G@' } })
+                .findOne({ where: { code: 'G@G#F@G@' } })
                 .then((log) => {
                   expect(log).not.to.be.null; // eslint-disable-line
                   done();
@@ -1565,7 +1565,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             .perform()
             .then(() =>
               models.user
-                .find({ where: { email: 'jack@forestadmin.com' } })
+                .findOne({ where: { email: 'jack@forestadmin.com' } })
                 .then((user) => {
                   expect(user).to.be.null; // eslint-disable-line
                   done();
@@ -1583,7 +1583,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             .perform()
             .then(() =>
               models.log
-                .find({ where: { code: 'G@G#F@G@' } })
+                .findOne({ where: { code: 'G@G#F@G@' } })
                 .then((log) => {
                   expect(log).to.be.null; // eslint-disable-line
                   done();
@@ -1616,7 +1616,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform()
               .then(() =>
                 models.address
-                  .find({ where: { id: '103' } })
+                  .findOne({ where: { id: '103' } })
                   .then((address) => {
                     expect(address).to.have.property('userId', null);
                     done();
@@ -1646,7 +1646,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform()
               .then(() =>
                 models.userTeam
-                  .find({ where: { userId: '100', teamId: '100' } })
+                  .findOne({ where: { userId: '100', teamId: '100' } })
                   .then((userTeam) => {
                     expect(userTeam).to.be.null; // eslint-disable-line
                     done();
@@ -1679,7 +1679,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform()
               .then(() =>
                 models.address
-                  .find({ where: { id: '103' } })
+                  .findOne({ where: { id: '103' } })
                   .then((address) => {
                     expect(address).to.be.null; // eslint-disable-line
                     done();
@@ -1710,7 +1710,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform()
               .then(() =>
                 models.userTeam
-                  .find({ where: { userId: '100', teamId: '100' } })
+                  .findOne({ where: { userId: '100', teamId: '100' } })
                   .then((userTeam) => {
                     expect(userTeam).to.be.null; // eslint-disable-line
                     done();
