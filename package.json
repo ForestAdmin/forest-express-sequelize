@@ -46,7 +46,7 @@
     "pg": "6.3.1",
     "pre-commit": "1.2.2",
     "semver": "5.4.1",
-    "sequelize": "3.29.0",
+    "sequelize": "5.7.0",
     "sequelize-fixtures": "0.6.0",
     "simple-git": "1.65.0"
   },
