@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Changes
-- Technical - Update nodejs version to v11.14.0 for travis.
+- CI - Update NodeJS version to v11.14.0 for Travis.
 - Technical - Update yarn.lock.
 
 ## RELEASE 3.0.0-beta.13 - 2019-04-18
