@@ -4,6 +4,9 @@
 ### Fixed
 - Security - Patch a vulnerability using the latest `mocha` dependency.
 
+### Changed
+- Dependency - Upgrade the forest-express dependency for onlyCrudModule option.
+
 ## RELEASE 3.0.0 - 2019-04-22
 ### Changes
 - CI - Update NodeJS version to v11.14.0 for Travis.
