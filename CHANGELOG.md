@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Security - Patch a vulnerability using the latest `mocha` dependency.
 
 ## RELEASE 3.0.0 - 2019-04-22
 ### Changes
