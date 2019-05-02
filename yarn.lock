@@ -1986,10 +1986,10 @@ for-own@^0.1.4:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@3.0.8:
-  version "3.0.8"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-3.0.8.tgz#ad05fd474dbf55b112cbb73b7cb7f9beb7296755"
-  integrity sha512-BQ/Fale0KFBI1MxYC8cx5AphyBlhOAxUTMXj2P1g9JUALuLK4ZzD5YlTXeegNWzqM4J721ZtT4mENGmhvm6hsA==
+forest-express@3.1.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-3.1.0.tgz#6706f1151e4db29d715edee24d8e0966d73c1911"
+  integrity sha512-gXbH9VR6RlSRq6iy/GGxmPvOacjaZurs+9I/+LwiDc6cicvIbkO5pVdPq8tJlufHVq6euvExzh5+efhhlKRLpg==
   dependencies:
     babel-runtime "7.0.0-beta.3"
     base32-encode "1.1.0"
@@ -4163,10 +4163,10 @@ sequelize-pool@^1.0.2:
   dependencies:
     bluebird "^3.5.3"
 
-sequelize@5.3.0:
-  version "5.3.0"
-  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-5.3.0.tgz#e62e70ba65a68b8fa76e01c026456211ac500a05"
-  integrity sha512-UYW7Surds+2zR+UfRQ/IbJ8gg0bSvnIrBvmPPNax+Z9NgSCOibJs5BoM5d+OK0NHMsZCVGYBjI/6ZzMXgDtOHw==
+sequelize@5.8.2:
+  version "5.8.2"
+  resolved "https://registry.yarnpkg.com/sequelize/-/sequelize-5.8.2.tgz#19674a86fe12815b1fbceb010869538c9d6ec60c"
+  integrity sha512-UUNPza1twZKpc4wwO23X8aqjrdk2AB7nU2RX6KTXZm6FnxrJtPQaZgPyeHplCnmzXfXzX/OsFCZqGiCDY0oejw==
   dependencies:
     bluebird "^3.5.0"
     cls-bluebird "^2.1.0"
