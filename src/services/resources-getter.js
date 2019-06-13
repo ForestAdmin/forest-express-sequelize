@@ -22,7 +22,7 @@ function ResourcesGetter(model, opts, params) {
 
     // NOTICE: Populate the necessary associations for filters
     const associationsForQuery = [];
-    _.each(params.filter, (_values, key) => {
+    _.each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
         const association = key.split(':')[0];
         associationsForQuery.push(association);
@@ -33,10 +33,10 @@ function ResourcesGetter(model, opts, params) {
       associationsForQuery.push(params.sort.split('.')[0]);
     }
 
-    // NOTICE: Force the primaryKey retrieval to store the records properly in
-    //         the client.
+    // NOTICE: Force the primaryKey retrieval to store the records properly in the client.
     return _.union(
-      [primaryKey], params.fields[model.name].split(','),
+      [primaryKey],
+      params.fields[model.name].split(','),
       associationsForQuery,
     );
   }
@@ -44,7 +44,9 @@ function ResourcesGetter(model, opts, params) {
   const fieldNamesRequested = getFieldNamesRequested();
 
   const searchBuilder = new SearchBuilder(
-    model, opts, params,
+    model,
+    opts,
+    params,
     fieldNamesRequested,
   );
   let hasSmartFieldSearch = false;
@@ -73,7 +75,7 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getWhere() {
-    return new P(((resolve, reject) => {
+    return new P((resolve, reject) => {
       const where = {};
       where[OPERATORS.AND] = [];
 
@@ -93,8 +95,8 @@ function ResourcesGetter(model, opts, params) {
         const queryToFilterRecords = params.segmentQuery.trim();
         new LiveQueryChecker().perform(queryToFilterRecords);
 
-        // WARNING: Choosing the first connection might generate issues if the model
-        //          does not belongs to this database.
+        // WARNING: Choosing the first connection might generate issues if the model does not
+        //          belongs to this database.
         return opts.connections[0]
           .query(queryToFilterRecords, {
             type: opts.sequelize.QueryTypes.SELECT,
@@ -113,7 +115,7 @@ function ResourcesGetter(model, opts, params) {
           });
       }
       return resolve(where);
-    }));
+    });
   }
 
 
@@ -138,8 +140,10 @@ function ResourcesGetter(model, opts, params) {
                 field.search(findAllOpts, params.search);
                 hasSmartFieldSearch = true;
               } catch (error) {
-                Interface.logger.error(`Cannot search properly on Smart Field ${
-                  field.field}`, error);
+                Interface.logger.error(
+                  `Cannot search properly on Smart Field ${field.field}`,
+                  error,
+                );
               }
             }
           });
@@ -148,8 +152,8 @@ function ResourcesGetter(model, opts, params) {
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             if (!params.searchExtended ||
               !searchBuilder.hasExtendedSearchConditions()) {
-              // NOTICE: No search condition has been set for the current
-              //         search, no record can be found.
+              // NOTICE: No search condition has been set for the current search, no record can be
+              //         found.
               return [];
             }
           }
@@ -182,8 +186,10 @@ function ResourcesGetter(model, opts, params) {
                 field.search(options, params.search);
                 hasSmartFieldSearch = true;
               } catch (error) {
-                Interface.logger.error(`Cannot search properly on Smart Field ${
-                  field.field}`, error);
+                Interface.logger.error(
+                  `Cannot search properly on Smart Field ${field.field}`,
+                  error,
+                );
               }
             }
           });
@@ -192,8 +198,8 @@ function ResourcesGetter(model, opts, params) {
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             if (!params.searchExtended ||
               !searchBuilder.hasExtendedSearchConditions()) {
-              // NOTICE: No search condition has been set for the current
-              //         search, no record can be found.
+              // NOTICE: No search condition has been set for the current search, no record can be
+              //         found.
               return 0;
             }
           }
@@ -223,28 +229,29 @@ function ResourcesGetter(model, opts, params) {
           segmentWhere = where;
         });
     }
-    return new P((resolve => resolve()));
+    return P.resolve();
   }
 
-  this.perform = () => getSegmentCondition()
-    .then(getRecords)
-    .then((records) => {
-      let fieldsSearched = null;
+  this.perform = () =>
+    getSegmentCondition()
+      .then(getRecords)
+      .then((records) => {
+        let fieldsSearched = null;
 
-      if (params.search) {
-        fieldsSearched = searchBuilder.getFieldsSearched();
-      }
+        if (params.search) {
+          fieldsSearched = searchBuilder.getFieldsSearched();
+        }
 
-      if (schema.isCompositePrimary) {
-        records.forEach((record) => {
-          record.forestCompositePrimary =
-            new CompositeKeysManager(model, schema, record)
-              .createCompositePrimary();
-        });
-      }
+        if (schema.isCompositePrimary) {
+          records.forEach((record) => {
+            record.forestCompositePrimary =
+              new CompositeKeysManager(model, schema, record)
+                .createCompositePrimary();
+          });
+        }
 
-      return [records, fieldsSearched];
-    });
+        return [records, fieldsSearched];
+      });
 
   this.count = () => getSegmentCondition().then(countRecords);
 }
