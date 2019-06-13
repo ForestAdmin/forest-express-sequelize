@@ -7,6 +7,7 @@
   "src/services/apimap-field-builder.js",
   "src/services/apimap-field-type-detector.js",
   "src/services/resource-finder.js",
+  "src/services/resources-getter.js",
   "src/services/search-builder.js",
   "src/utils/database.js",
   "src/utils/operators.js",

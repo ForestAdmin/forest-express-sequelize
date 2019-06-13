@@ -1,31 +1,30 @@
-'use strict';
-var _ = require('lodash');
-var P = require('bluebird');
-var Operators = require('../utils/operators');
-var OperatorValueParser = require('./operator-value-parser');
-var Interface = require('forest-express');
-var CompositeKeysManager = require('./composite-keys-manager');
-var QueryBuilder = require('./query-builder');
-var SearchBuilder = require('./search-builder');
-var LiveQueryChecker = require('./live-query-checker');
-var ErrorHTTP422 = require('./errors').ErrorHTTP422;
+const _ = require('lodash');
+const P = require('bluebird');
+const Operators = require('../utils/operators');
+const OperatorValueParser = require('./operator-value-parser');
+const Interface = require('forest-express');
+const CompositeKeysManager = require('./composite-keys-manager');
+const QueryBuilder = require('./query-builder');
+const SearchBuilder = require('./search-builder');
+const LiveQueryChecker = require('./live-query-checker');
+const { ErrorHTTP422 } = require('./errors');
 
 function ResourcesGetter(model, opts, params) {
-  var schema = Interface.Schemas.schemas[model.name];
-  var queryBuilder = new QueryBuilder(model, opts, params);
-  var segmentScope;
-  var segmentWhere;
-  var OPERATORS = new Operators(opts);
-  var primaryKey = _.keys(model.primaryKeys)[0];
+  const schema = Interface.Schemas.schemas[model.name];
+  const queryBuilder = new QueryBuilder(model, opts, params);
+  let segmentScope;
+  let segmentWhere;
+  const OPERATORS = new Operators(opts);
+  const primaryKey = _.keys(model.primaryKeys)[0];
 
-  var fieldNamesRequested = (function() {
+  function getFieldNamesRequested() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
     // NOTICE: Populate the necessary associations for filters
-    var associationsForQuery = [];
-    _.each(params.filter, function (values, key) {
+    const associationsForQuery = [];
+    _.each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
-        var association = key.split(':')[0];
+        const association = key.split(':')[0];
         associationsForQuery.push(association);
       }
     });
@@ -34,26 +33,34 @@ function ResourcesGetter(model, opts, params) {
       associationsForQuery.push(params.sort.split('.')[0]);
     }
 
-    // NOTICE: Force the primaryKey retrieval to store the records properly in
-    //         the client.
-    return _.union([primaryKey], params.fields[model.name].split(','),
-      associationsForQuery);
-  })();
+    // NOTICE: Force the primaryKey retrieval to store the records properly in the client.
+    return _.union(
+      [primaryKey],
+      params.fields[model.name].split(','),
+      associationsForQuery,
+    );
+  }
 
-  var searchBuilder = new SearchBuilder(model, opts, params,
-      fieldNamesRequested);
-  var hasSmartFieldSearch = false;
+  const fieldNamesRequested = getFieldNamesRequested();
+
+  const searchBuilder = new SearchBuilder(
+    model,
+    opts,
+    params,
+    fieldNamesRequested,
+  );
+  let hasSmartFieldSearch = false;
 
   function handleFilterParams() {
-    var where = {};
-    var conditions = [];
+    const where = {};
+    const conditions = [];
 
-    _.each(params.filter, function (values, key) {
+    _.each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
-        key = '$' + key.replace(':', '.') + '$';
+        key = `$${key.replace(':', '.')}$`;
       }
-      values.split(',').forEach(function (value) {
-        var condition = {};
+      values.split(',').forEach((value) => {
+        const condition = {};
         condition[key] = new OperatorValueParser(opts)
           .perform(model, key, value, params.timezone);
         conditions.push(condition);
@@ -68,8 +75,8 @@ function ResourcesGetter(model, opts, params) {
   }
 
   function getWhere() {
-    return new P(function (resolve, reject) {
-      var where = {};
+    return new P((resolve, reject) => {
+      const where = {};
       where[OPERATORS.AND] = [];
 
       if (params.search) {
@@ -85,85 +92,86 @@ function ResourcesGetter(model, opts, params) {
       }
 
       if (params.segmentQuery) {
-        var queryToFilterRecords = params.segmentQuery.trim();
+        const queryToFilterRecords = params.segmentQuery.trim();
         new LiveQueryChecker().perform(queryToFilterRecords);
 
-        // WARNING: Choosing the first connection might generate issues if the model
-        //          does not belongs to this database.
-        opts.connections[0]
+        // WARNING: Choosing the first connection might generate issues if the model does not
+        //          belongs to this database.
+        return opts.connections[0]
           .query(queryToFilterRecords, {
             type: opts.sequelize.QueryTypes.SELECT,
           })
-          .then(function (results) {
-            var recordIds = results.map(function (result) {
-              return result[primaryKey] || result.id;
-            });
-            var condition = { [primaryKey]: {} };
+          .then((results) => {
+            const recordIds = results.map(result => result[primaryKey] || result.id);
+            const condition = { [primaryKey]: {} };
             condition[primaryKey][OPERATORS.IN] = recordIds;
             where[OPERATORS.AND].push(condition);
 
             return resolve(where);
-          }, function (error) {
-            var errorMessage = 'Invalid SQL query for this Live Query segment:\n' + error.message;
+          }, (error) => {
+            const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
             Interface.logger.error(errorMessage);
             reject(new ErrorHTTP422(errorMessage));
           });
-      } else {
-        return resolve(where);
       }
+      return resolve(where);
     });
   }
 
+
   function getRecords() {
-    var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
-    var include = queryBuilder.getIncludes(model, fieldNamesRequested);
+    const scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
+    const include = queryBuilder.getIncludes(model, fieldNamesRequested);
 
     return getWhere()
-      .then(function (where) {
-        var findAllOpts = {
-          where: where,
-          include: include,
+      .then((where) => {
+        const findAllOpts = {
+          where,
+          include,
           order: queryBuilder.getOrder(),
           offset: queryBuilder.getSkip(),
-          limit: queryBuilder.getLimit()
+          limit: queryBuilder.getLimit(),
         };
 
         if (params.search) {
-          _.each(schema.fields, function (field) {
+          _.each(schema.fields, (field) => {
             if (field.search) {
               try {
                 field.search(findAllOpts, params.search);
                 hasSmartFieldSearch = true;
               } catch (error) {
-                Interface.logger.error('Cannot search properly on Smart Field ' +
-                  field.field, error);
+                Interface.logger.error(
+                  `Cannot search properly on Smart Field ${field.field}`,
+                  error,
+                );
               }
             }
           });
 
-          var fieldsSearched = searchBuilder.getFieldsSearched();
+          const fieldsSearched = searchBuilder.getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             if (!params.searchExtended ||
               !searchBuilder.hasExtendedSearchConditions()) {
-              // NOTICE: No search condition has been set for the current search, no record can be found.
+              // NOTICE: No search condition has been set for the current search, no record can be
+              //         found.
               return [];
             }
           }
         }
 
         return scope.findAll(findAllOpts);
-    });
+      });
   }
 
   function countRecords() {
-    var scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
-    var include = queryBuilder.getIncludes(model, fieldNamesRequested);
+    const scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
+    const include = queryBuilder.getIncludes(model, fieldNamesRequested);
 
     return getWhere()
-      .then(function (where) {
-        var options = {
-          include: include,
-          where: where
+      .then((where) => {
+        const options = {
+          include,
+          where,
         };
 
         if (!primaryKey) {
@@ -172,37 +180,41 @@ function ResourcesGetter(model, opts, params) {
         }
 
         if (params.search) {
-          _.each(schema.fields, function (field) {
+          _.each(schema.fields, (field) => {
             if (field.search) {
               try {
                 field.search(options, params.search);
                 hasSmartFieldSearch = true;
               } catch (error) {
-                Interface.logger.error('Cannot search properly on Smart Field ' +
-                  field.field, error);
+                Interface.logger.error(
+                  `Cannot search properly on Smart Field ${field.field}`,
+                  error,
+                );
               }
             }
           });
 
-          var fieldsSearched = searchBuilder.getFieldsSearched();
+          const fieldsSearched = searchBuilder.getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             if (!params.searchExtended ||
               !searchBuilder.hasExtendedSearchConditions()) {
-              // NOTICE: No search condition has been set for the current search, no record can be found.
+              // NOTICE: No search condition has been set for the current search, no record can be
+              //         found.
               return 0;
             }
           }
         }
 
         return scope.count(options);
-    });
+      });
   }
 
   function getSegment() {
     if (schema.segments && params.segment) {
-      var segment = _.find(schema.segments, function (segment) {
-        return segment.name === params.segment;
-      });
+      const segment = _.find(
+        schema.segments,
+        schemaSegment => schemaSegment.name === params.segment,
+      );
 
       segmentScope = segment.scope;
       segmentWhere = segment.where;
@@ -213,27 +225,25 @@ function ResourcesGetter(model, opts, params) {
     getSegment();
     if (_.isFunction(segmentWhere)) {
       return segmentWhere(params)
-        .then(function (where) {
+        .then((where) => {
           segmentWhere = where;
-          return;
         });
-    } else {
-      return new P(function (resolve) { return resolve(); });
     }
+    return P.resolve();
   }
 
-  this.perform = function () {
-    return getSegmentCondition()
+  this.perform = () =>
+    getSegmentCondition()
       .then(getRecords)
-      .then(function (records) {
-        var fieldsSearched = null;
+      .then((records) => {
+        let fieldsSearched = null;
 
         if (params.search) {
           fieldsSearched = searchBuilder.getFieldsSearched();
         }
 
         if (schema.isCompositePrimary) {
-          records.forEach(function (record) {
+          records.forEach((record) => {
             record.forestCompositePrimary =
               new CompositeKeysManager(model, schema, record)
                 .createCompositePrimary();
@@ -242,12 +252,8 @@ function ResourcesGetter(model, opts, params) {
 
         return [records, fieldsSearched];
       });
-  };
 
-  this.count = function () {
-    return getSegmentCondition()
-      .then(countRecords);
-  };
+  this.count = () => getSegmentCondition().then(countRecords);
 }
 
 module.exports = ResourcesGetter;
