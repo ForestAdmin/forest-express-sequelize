@@ -1,5 +1,5 @@
-import { keys, each, union, find, isFunction } from 'lodash';
-import P, { resolve as _resolve } from 'bluebird';
+import _ from 'lodash';
+import P from 'bluebird';
 import { Schemas, logger } from 'forest-express';
 import Operators from '../utils/operators';
 import OperatorValueParser from './operator-value-parser';
@@ -15,14 +15,14 @@ function ResourcesGetter(model, opts, params) {
   let segmentScope;
   let segmentWhere;
   const OPERATORS = new Operators(opts);
-  const primaryKey = keys(model.primaryKeys)[0];
+  const primaryKey = _.keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
     // NOTICE: Populate the necessary associations for filters
     const associationsForQuery = [];
-    each(params.filter, (values, key) => {
+    _.each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
         const association = key.split(':')[0];
         associationsForQuery.push(association);
@@ -34,7 +34,7 @@ function ResourcesGetter(model, opts, params) {
     }
 
     // NOTICE: Force the primaryKey retrieval to store the records properly in the client.
-    return union(
+    return _.union(
       [primaryKey],
       params.fields[model.name].split(','),
       associationsForQuery,
@@ -55,7 +55,7 @@ function ResourcesGetter(model, opts, params) {
     const where = {};
     const conditions = [];
 
-    each(params.filter, (values, key) => {
+    _.each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
         key = `$${key.replace(':', '.')}$`;
       }
@@ -134,7 +134,7 @@ function ResourcesGetter(model, opts, params) {
         };
 
         if (params.search) {
-          each(schema.fields, (field) => {
+          _.each(schema.fields, (field) => {
             if (field.search) {
               try {
                 field.search(findAllOpts, params.search);
@@ -180,7 +180,7 @@ function ResourcesGetter(model, opts, params) {
         }
 
         if (params.search) {
-          each(schema.fields, (field) => {
+          _.each(schema.fields, (field) => {
             if (field.search) {
               try {
                 field.search(options, params.search);
@@ -211,7 +211,7 @@ function ResourcesGetter(model, opts, params) {
 
   function getSegment() {
     if (schema.segments && params.segment) {
-      const segment = find(
+      const segment = _.find(
         schema.segments,
         schemaSegment => schemaSegment.name === params.segment,
       );
@@ -223,13 +223,13 @@ function ResourcesGetter(model, opts, params) {
 
   function getSegmentCondition() {
     getSegment();
-    if (isFunction(segmentWhere)) {
+    if (_.isFunction(segmentWhere)) {
       return segmentWhere(params)
         .then((where) => {
           segmentWhere = where;
         });
     }
-    return _resolve();
+    return P.resolve();
   }
 
   this.perform = () =>
