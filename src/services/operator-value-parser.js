@@ -29,6 +29,7 @@ class OperatorValueParser {
       modelName = fieldSplit[0];
       fieldName = fieldSplit[1];
     }
+
     const schema = Schemas.schemas[modelName];
     if (schema) {
       field = find(schema.fields, currentField => currentField.field === fieldName);
@@ -41,6 +42,7 @@ class OperatorValueParser {
         }
       }
     }
+
     const condition = {};
     if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
@@ -72,8 +74,7 @@ class OperatorValueParser {
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
     } else if (fieldBoolean) {
-      condition[this.OPERATORS.EQ] = isUndefined(valueBoolean) ? null :
-        valueBoolean;
+      condition[this.OPERATORS.EQ] = isUndefined(valueBoolean) ? null : valueBoolean;
     } else {
       condition[this.OPERATORS.EQ] = value;
     }
