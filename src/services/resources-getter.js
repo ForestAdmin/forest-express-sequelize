@@ -2,12 +2,12 @@ import _ from 'lodash';
 import P from 'bluebird';
 import { Schemas, logger } from 'forest-express';
 import Operators from '../utils/operators';
-import OperatorValueParser from './operator-value-parser';
 import CompositeKeysManager from './composite-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
 import LiveQueryChecker from './live-query-checker';
 import { ErrorHTTP422 } from './errors';
+import ConditionsParser from './conditions-parser';
 
 function ResourcesGetter(model, options, params) {
   const schema = Schemas.schemas[model.name];
@@ -52,26 +52,7 @@ function ResourcesGetter(model, options, params) {
   let hasSmartFieldSearch = false;
 
   function handleFilterParams() {
-    const where = {};
-    const conditions = [];
-
-    _.each(params.filter, (values, key) => {
-      if (key.indexOf(':') !== -1) {
-        key = `$${key.replace(':', '.')}$`;
-      }
-      values.split(',').forEach((value) => {
-        const condition = {};
-        condition[key] = new OperatorValueParser(options)
-          .perform(model, key, value, params.timezone);
-        conditions.push(condition);
-      });
-    });
-
-    if (params.filterType) {
-      where[OPERATORS[params.filterType.toUpperCase()]] = conditions;
-    }
-
-    return where;
+    return new ConditionsParser(params.filters, params.timezone, options).perform();
   }
 
   function getWhere() {
@@ -83,7 +64,7 @@ function ResourcesGetter(model, options, params) {
         where[OPERATORS.AND].push(searchBuilder.perform());
       }
 
-      if (params.filter) {
+      if (params.filters) {
         where[OPERATORS.AND].push(handleFilterParams());
       }
 

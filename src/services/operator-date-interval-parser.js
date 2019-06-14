@@ -1,199 +1,174 @@
-'use strict';
-var Operators = require('../utils/operators');
-var moment = require('moment-timezone');
+import moment from 'moment-timezone';
+import Operators from '../utils/operators';
 
-function OperatorDateIntervalParser(value, timezone, options) {
-  var OPERATORS = new Operators(options);
+const PERIODS = {
+  yesterday: 'days',
+  previous_week: 'weeks',
+  previous_week_to_date: 'weeks',
+  previous_month: 'months',
+  previous_month_to_date: 'months',
+  previous_quarter: 'quarters',
+  previous_quarter_to_date: 'quarters',
+  previous_year: 'years',
+  previous_year_to_date: 'years',
+};
 
-  var PERIODS = {
-    $yesterday: { duration: 1, period: 'days' },
-    $previousWeek: { duration: 1, period: 'weeks' },
-    $previousMonth: { duration: 1, period: 'months' },
-    $previousQuarter: { duration: 1, period: 'quarters' },
-    $previousYear: { duration: 1, period: 'years' },
-    $weekToDate: { duration: 1, period: 'weeks', toDate: true },
-    $monthToDate: { duration: 1, period: 'months', toDate: true },
-    $quarterToDate: { duration: 1, period: 'quarters', toDate: true },
-    $yearToDate: { duration: 1, period: 'years', toDate: true }
-  };
+const PERIODS_VALUES = {
+  days: 'day',
+  weeks: 'isoWeek',
+  months: 'month',
+  quarters: 'quarter',
+  years: 'year',
+};
 
-  var PERIODS_PAST = '$past';
-  var PERIODS_FUTURE = '$future';
-  var PERIODS_TODAY = '$today';
-  var PERIODS_PREVIOUS_X_DAYS = /^\$previous(\d+)Days$/;
-  var PERIODS_X_DAYS_TO_DATE = /^\$(\d+)DaysToDate$/;
-  var PERIODS_X_HOURS_BEFORE = /^\$(\d+)HoursBefore$/;
-  var PERIODS_X_HOURS_AFTER = /^\$(\d+)HoursAfter$/;
+const DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL = [
+  'today',
+  'yesterday',
+  'previous_week',
+  'previous_month',
+  'previous_quarter',
+  'previous_year',
+  'previous_week_to_date',
+  'previous_month_to_date',
+  'previous_quarter_to_date',
+  'previous_year_to_date',
+  'previous_x_days',
+  'previous_x_days_to_date',
+];
 
-  var PERIODS_VALUES = {
-    days: 'day',
-    weeks: 'isoWeek',
-    months: 'month',
-    quarters: 'quarter',
-    years: 'year'
-  };
+const DATE_OPERATORS = DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL + [
+  'past',
+  'future',
+  'before_x_hours_ago',
+  'after_x_hours_ago',
+];
 
-  var offsetClient = parseInt(moment().tz(timezone).format('Z'), 10);
-  var offsetServer = moment().utcOffset() / 60;
-  var offsetHours = offsetServer - offsetClient;
+export default class OperatorDateIntervalParser {
+  constructor(timezone, options) {
+    const offsetClient = parseInt(moment().tz(timezone).format('Z'), 10);
+    const offsetServer = moment().utcOffset() / 60;
 
-  function toDateWithTimezone(moment) {
-    return moment.add(offsetHours, 'h').toDate();
+    this.offsetHours = offsetServer - offsetClient;
+    this.OPERATORS = new Operators(options);
   }
 
-  this.isIntervalDateValue = function () {
-    if (PERIODS[value]) { return true; }
+  toDateWithTimezone(customMoment) {
+    return customMoment.add(this.offsetHours, 'h').toDate();
+  }
 
-    if ([PERIODS_PAST, PERIODS_FUTURE, PERIODS_TODAY].indexOf(value) !== -1) {
-      return true;
+  // NOTICE: Old func => isIntervalDateValue
+  static isDateIntervalOperator(operator) {
+    return DATE_OPERATORS.includes(operator);
+  }
+
+  // NOTICE: Old func => hasPreviousInterval
+  static hasPreviousDateInterval(operator) {
+    return DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL.includes(operator);
+  }
+
+  // NOTICE: Old func => getIntervalDateFilter
+  getDateIntervalFilter(operator, value) {
+    const condition = {};
+
+    switch (operator) {
+      case 'today':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment().startOf('day'));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment().endOf('day'));
+        break;
+      case 'past':
+        condition[this.OPERATORS.LTE] = moment().toDate();
+        break;
+      case 'future':
+        condition[this.OPERATORS.GTE] = moment().toDate();
+        break;
+      case 'yesterday':
+      case 'previous_week':
+      case 'previous_month':
+      case 'previous_quarter':
+      case 'previous_year':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract(1, PERIODS[operator]).startOf(PERIODS_VALUES[PERIODS[operator]]));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment()
+          .subtract(1, PERIODS[operator]).endOf(PERIODS_VALUES[PERIODS[operator]]));
+        break;
+      case 'previous_week_to_date':
+      case 'previous_month_to_date':
+      case 'previous_quarter_to_date':
+      case 'previous_year_to_date':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .startOf(PERIODS_VALUES[PERIODS[operator]]));
+        condition[this.OPERATORS.LTE] = moment().toDate();
+        break;
+      case 'previous_x_days':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract(value, 'days').startOf('day'));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment()
+          .subtract(1, 'days').endOf('day'));
+        break;
+      case 'previous_x_days_to_date':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract(value - 1, 'days').startOf('day'));
+        condition[this.OPERATORS.LTE] = moment().toDate();
+        break;
+      case 'before_x_hours_ago':
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment().subtract(value, 'hours'));
+        break;
+      case 'after_x_hours_ago':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment().subtract(value, 'hours'));
+        break;
+      default:
+        console.log('ERROR: No matching date operator');
+        return null;
     }
+    return condition;
+  }
 
-    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
-    if (match && match[1]) { return true; }
+  // NOTICE: Old func => getIntervalDateFilterForPreviousInterval
+  getPreviousDateIntervalFilter(operator, value) {
+    const condition = {};
 
-    match = value.match(PERIODS_X_HOURS_BEFORE);
-    if (match && match[1]) { return true; }
-
-    match = value.match(PERIODS_X_HOURS_AFTER);
-    if (match && match[1]) { return true; }
-
-    match = value.match(PERIODS_X_DAYS_TO_DATE);
-    if (match && match[1]) { return true; }
-
-    return false;
-  };
-
-  this.hasPreviousInterval = function () {
-    if (PERIODS[value]) { return true; }
-
-    if (value === PERIODS_TODAY) { return true; }
-
-    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
-    if (match && match[1]) { return true; }
-
-    match = value.match(PERIODS_X_DAYS_TO_DATE);
-    if (match && match[1]) { return true; }
-
-    return false;
-  };
-
-  this.getIntervalDateFilter = function () {
-    if (!this.isIntervalDateValue()) { return; }
-
-    var condition = {};
-    if (value === PERIODS_PAST) {
-      condition[OPERATORS.LTE] = moment().toDate();
-      return condition;
+    switch (operator) {
+      case 'today':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract(1, 'days').startOf('day'));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment()
+          .subtract(1, 'days').endOf('day'));
+        break;
+      case 'previous_x_days':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract(value * 2, 'days').startOf('day'));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment()
+          .subtract(value + 1, 'days').endOf('day'));
+        break;
+      case 'previous_x_days_to_date':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract((value * 2) - 1, 'days').startOf('day'));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment()
+          .subtract(value, 'days'));
+        break;
+      case 'yesterday':
+      case 'previous_week':
+      case 'previous_month':
+      case 'previous_quarter':
+      case 'previous_year':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract(2, PERIODS[operator]).startOf(PERIODS_VALUES[PERIODS[operator]]));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment()
+          .subtract(2, PERIODS[operator]).endOf(PERIODS_VALUES[PERIODS[operator]]));
+        break;
+      case 'previous_week_to_date':
+      case 'previous_month_to_date':
+      case 'previous_quarter_to_date':
+      case 'previous_year_to_date':
+        condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment()
+          .subtract(1, PERIODS[operator]).startOf(PERIODS_VALUES[PERIODS[operator]]));
+        condition[this.OPERATORS.LTE] = this.toDateWithTimezone(moment()
+          .subtract(1, PERIODS[operator]));
+        break;
+      default:
+        console.log('ERROR: No matching date operator');
+        return null;
     }
-
-    if (value === PERIODS_FUTURE) {
-      condition[OPERATORS.GTE] = moment().toDate();
-      return condition;
-    }
-
-    if (value === PERIODS_TODAY) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment().startOf('day'));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment().endOf('day'));
-      return condition;
-    }
-
-    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
-    if (match && match[1]) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract(match[1], 'days').startOf('day'));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
-        .subtract(1, 'days').endOf('day'));
-      return condition;
-    }
-
-    match = value.match(PERIODS_X_DAYS_TO_DATE);
-    if (match && match[1]) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract(match[1] - 1, 'days').startOf('day'));
-      condition[OPERATORS.LTE] = moment().toDate();
-      return condition;
-    }
-
-    match = value.match(PERIODS_X_HOURS_BEFORE);
-    if (match && match[1]) {
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment().subtract(match[1], 'hours'));
-      return condition;
-    }
-
-    match = value.match(PERIODS_X_HOURS_AFTER);
-    if (match && match[1]) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment().subtract(match[1], 'hours'));
-      return condition;
-    }
-
-    var duration = PERIODS[value].duration;
-    var period = PERIODS[value].period;
-    var periodValue = PERIODS_VALUES[period];
-    var toDate = PERIODS[value].toDate;
-
-    if (toDate) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .startOf(periodValue));
-      condition[OPERATORS.LTE] = moment().toDate();
-      return condition;
-    } else {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract(duration, period).startOf(periodValue));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
-        .subtract(1, period).endOf(periodValue));
-      return condition;
-    }
-  };
-
-  this.getIntervalDateFilterForPreviousInterval = function () {
-    if (!this.hasPreviousInterval()) { return; }
-
-    var condition = {};
-    if (value === PERIODS_TODAY) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract(1, 'days').startOf('day'));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
-        .subtract(1, 'days').endOf('day'));
-      return condition;
-    }
-
-    var match = value.match(PERIODS_PREVIOUS_X_DAYS);
-    if (match && match[1]) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract(match[1] * 2, 'days').startOf('day'));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
-        .subtract(parseInt(match[1], 10) + 1, 'days').endOf('day'));
-      return condition;
-    }
-
-    match = value.match(PERIODS_X_DAYS_TO_DATE);
-    if (match && match[1]) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract((match[1] * 2) - 1, 'days').startOf('day'));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
-        .subtract(match[1], 'days'));
-      return condition;
-    }
-
-    var duration = PERIODS[value].duration;
-    var period = PERIODS[value].period;
-    var periodValue = PERIODS_VALUES[period];
-    var toDate = PERIODS[value].toDate;
-
-    if (toDate) {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract(duration, period).startOf(periodValue));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
-        .subtract(duration, period));
-      return condition;
-    } else {
-      condition[OPERATORS.GTE] = toDateWithTimezone(moment()
-        .subtract(duration * 2, period).startOf(periodValue));
-      condition[OPERATORS.LTE] = toDateWithTimezone(moment()
-        .subtract(1 + duration, period).endOf(periodValue));
-      return condition;
-    }
-  };
+    return condition;
+  }
 }
-
-module.exports = OperatorDateIntervalParser;

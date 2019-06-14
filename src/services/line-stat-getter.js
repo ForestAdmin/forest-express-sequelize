@@ -2,13 +2,10 @@ import _ from 'lodash';
 import P from 'bluebird';
 import moment from 'moment';
 import { Schemas } from 'forest-express';
-import BaseStatGetter from './base-stat-getter';
 import { isMySQL, isMSSQL, isSQLite } from '../utils/database';
+import ConditionsParser from './conditions-parser';
 
-// jshint sub: true
 function LineStatGetter(model, params, options) {
-  BaseStatGetter.call(this, model, params, options);
-
   const schema = Schemas.schemas[model.name];
   const timeRange = params.time_range.toLowerCase();
 
@@ -213,21 +210,24 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     return isMSSQL(options) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [options.sequelize.literal('1')];
   }
 
-  this.perform = () => model
-    .unscoped()
-    .findAll({
+  this.perform = () => {
+    const conditionsParser = new ConditionsParser(params.filters, params.timezone, options);
+    const where = conditionsParser.perform();
+
+    return model.unscoped().findAll({
       attributes: [getGroupByDateInterval(), getAggregate()],
       include: getIncludes(),
-      where: this.getFilters(),
+      where,
       group: getGroupBy(),
       order: getOrder(),
       raw: true,
     })
-    .then(records => P.map(records, record => ({
-      label: record.date,
-      values: { value: parseInt(record.value, 10) },
-    })))
-    .then(records => ({ value: fillEmptyDateInterval(records) }));
+      .then(records => P.map(records, record => ({
+        label: record.date,
+        values: { value: parseInt(record.value, 10) },
+      })))
+      .then(records => ({ value: fillEmptyDateInterval(records) }));
+  };
 }
 
 module.exports = LineStatGetter;
