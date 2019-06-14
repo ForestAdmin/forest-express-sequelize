@@ -1,28 +1,28 @@
-const _ = require('lodash');
-const P = require('bluebird');
-const Operators = require('../utils/operators');
-const OperatorValueParser = require('./operator-value-parser');
-const Interface = require('forest-express');
-const CompositeKeysManager = require('./composite-keys-manager');
-const QueryBuilder = require('./query-builder');
-const SearchBuilder = require('./search-builder');
-const LiveQueryChecker = require('./live-query-checker');
-const { ErrorHTTP422 } = require('./errors');
+import { keys, each, union, find, isFunction } from 'lodash';
+import P, { resolve as _resolve } from 'bluebird';
+import { Schemas, logger } from 'forest-express';
+import Operators from '../utils/operators';
+import OperatorValueParser from './operator-value-parser';
+import CompositeKeysManager from './composite-keys-manager';
+import QueryBuilder from './query-builder';
+import SearchBuilder from './search-builder';
+import LiveQueryChecker from './live-query-checker';
+import { ErrorHTTP422 } from './errors';
 
 function ResourcesGetter(model, opts, params) {
-  const schema = Interface.Schemas.schemas[model.name];
+  const schema = Schemas.schemas[model.name];
   const queryBuilder = new QueryBuilder(model, opts, params);
   let segmentScope;
   let segmentWhere;
   const OPERATORS = new Operators(opts);
-  const primaryKey = _.keys(model.primaryKeys)[0];
+  const primaryKey = keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
     // NOTICE: Populate the necessary associations for filters
     const associationsForQuery = [];
-    _.each(params.filter, (values, key) => {
+    each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
         const association = key.split(':')[0];
         associationsForQuery.push(association);
@@ -34,7 +34,7 @@ function ResourcesGetter(model, opts, params) {
     }
 
     // NOTICE: Force the primaryKey retrieval to store the records properly in the client.
-    return _.union(
+    return union(
       [primaryKey],
       params.fields[model.name].split(','),
       associationsForQuery,
@@ -55,7 +55,7 @@ function ResourcesGetter(model, opts, params) {
     const where = {};
     const conditions = [];
 
-    _.each(params.filter, (values, key) => {
+    each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
         key = `$${key.replace(':', '.')}$`;
       }
@@ -110,7 +110,7 @@ function ResourcesGetter(model, opts, params) {
             return resolve(where);
           }, (error) => {
             const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
-            Interface.logger.error(errorMessage);
+            logger.error(errorMessage);
             reject(new ErrorHTTP422(errorMessage));
           });
       }
@@ -134,13 +134,13 @@ function ResourcesGetter(model, opts, params) {
         };
 
         if (params.search) {
-          _.each(schema.fields, (field) => {
+          each(schema.fields, (field) => {
             if (field.search) {
               try {
                 field.search(findAllOpts, params.search);
                 hasSmartFieldSearch = true;
               } catch (error) {
-                Interface.logger.error(
+                logger.error(
                   `Cannot search properly on Smart Field ${field.field}`,
                   error,
                 );
@@ -180,13 +180,13 @@ function ResourcesGetter(model, opts, params) {
         }
 
         if (params.search) {
-          _.each(schema.fields, (field) => {
+          each(schema.fields, (field) => {
             if (field.search) {
               try {
                 field.search(options, params.search);
                 hasSmartFieldSearch = true;
               } catch (error) {
-                Interface.logger.error(
+                logger.error(
                   `Cannot search properly on Smart Field ${field.field}`,
                   error,
                 );
@@ -211,7 +211,7 @@ function ResourcesGetter(model, opts, params) {
 
   function getSegment() {
     if (schema.segments && params.segment) {
-      const segment = _.find(
+      const segment = find(
         schema.segments,
         schemaSegment => schemaSegment.name === params.segment,
       );
@@ -223,13 +223,13 @@ function ResourcesGetter(model, opts, params) {
 
   function getSegmentCondition() {
     getSegment();
-    if (_.isFunction(segmentWhere)) {
+    if (isFunction(segmentWhere)) {
       return segmentWhere(params)
         .then((where) => {
           segmentWhere = where;
         });
     }
-    return P.resolve();
+    return _resolve();
   }
 
   this.perform = () =>

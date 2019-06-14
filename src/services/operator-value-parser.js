@@ -1,19 +1,27 @@
-'use strict';
-var _ = require('lodash');
-var Operators = require('../utils/operators');
-var OperatorDateIntervalParser = require('./operator-date-interval-parser');
-var Interface = require('forest-express');
+import { Schemas } from 'forest-express';
+import { find, isUndefined } from 'lodash';
+import Operators from '../utils/operators';
+import OperatorDateIntervalParser from './operator-date-interval-parser';
 
-function OperatorValueParser(options) {
-  var OPERATORS = new Operators(options);
+class OperatorValueParser {
+  constructor(options) {
+    this.OPERATORS = new Operators(options);
+    this.options = options;
+  }
 
-  this.perform = function (model, fieldName, value, timezone) {
-    var operatorDateIntervalParser = new OperatorDateIntervalParser(value,
-      timezone, options);
-
+  perform(model, fieldName, value, timezone) {
+    const operatorDateIntervalParser = new OperatorDateIntervalParser(
+      value,
+      timezone,
+      this.options,
+    );
     // NOTICE: Handle boolean for MySQL database
-    var modelName, field, fieldSplit, valueBoolean;
-    var fieldBoolean = false;
+    let modelName;
+    let field;
+    let fieldSplit;
+    let valueBoolean;
+    let fieldBoolean = false;
+
     if (fieldName.indexOf(':') === -1) {
       modelName = model.name;
     } else {
@@ -21,12 +29,9 @@ function OperatorValueParser(options) {
       modelName = fieldSplit[0];
       fieldName = fieldSplit[1];
     }
-
-    var schema = Interface.Schemas.schemas[modelName];
+    const schema = Schemas.schemas[modelName];
     if (schema) {
-      field = _.find(schema.fields,
-        function (field) { return field.field === fieldName; });
-
+      field = find(schema.fields, currentField => currentField.field === fieldName);
       if (field && field.type === 'Boolean') {
         fieldBoolean = true;
         if (value.indexOf('true') > -1) {
@@ -36,48 +41,44 @@ function OperatorValueParser(options) {
         }
       }
     }
-
-    var condition = {};
-
+    const condition = {};
     if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
       if (fieldBoolean) {
-        condition[OPERATORS.NOT] = _.isUndefined(valueBoolean) ? null :
+        condition[this.OPERATORS.NOT] = isUndefined(valueBoolean) ? null :
           valueBoolean;
       } else {
-        condition[OPERATORS.NE] = value;
+        condition[this.OPERATORS.NE] = value;
       }
     } else if (value[0] === '>') {
-      condition[OPERATORS.GT] = value.substring(1);
+      condition[this.OPERATORS.GT] = value.substring(1);
     } else if (value[0] === '<') {
-      condition[OPERATORS.LT] = value.substring(1);
+      condition[this.OPERATORS.LT] = value.substring(1);
     } else if (value[0] === '*' && value[value.length - 1] === '*') {
-      condition[OPERATORS.LIKE] = '%' + value.substring(1, value.length - 1) + '%';
+      condition[this.OPERATORS.LIKE] = `%${value.substring(1, value.length - 1)}%`;
     } else if (value[0] === '!' && value[1] === '*' &&
       value[value.length - 1] === '*') {
       // TODO : Include null values
       // return { $or: { $notLike: '%' + value + '%', $eq: null } };
-      condition[OPERATORS.NOT_LIKE] = '%' + value.substring(2, value.length - 1) + '%';
+      condition[this.OPERATORS.NOT_LIKE] = `%${value.substring(2, value.length - 1)}%`;
     } else if (value[0] === '*') {
-      condition[OPERATORS.LIKE] = '%' + value.substring(1);
+      condition[this.OPERATORS.LIKE] = `%${value.substring(1)}`;
     } else if (value[value.length - 1] === '*') {
-      condition[OPERATORS.LIKE] = value.substring(0, value.length - 1) + '%';
+      condition[this.OPERATORS.LIKE] = `${value.substring(0, value.length - 1)}%`;
     } else if (value === '$present') {
-      condition[OPERATORS.NE] = null;
+      condition[this.OPERATORS.NE] = null;
     } else if (value === '$blank') {
-      condition[OPERATORS.EQ] = null;
+      condition[this.OPERATORS.EQ] = null;
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
+    } else if (fieldBoolean) {
+      condition[this.OPERATORS.EQ] = isUndefined(valueBoolean) ? null :
+        valueBoolean;
     } else {
-      if (fieldBoolean) {
-        condition[OPERATORS.EQ] = _.isUndefined(valueBoolean) ? null :
-          valueBoolean;
-      } else {
-        condition[OPERATORS.EQ] = value;
-      }
+      condition[this.OPERATORS.EQ] = value;
     }
     return condition;
-  };
+  }
 }
 
-module.exports = OperatorValueParser;
+export default OperatorValueParser;
