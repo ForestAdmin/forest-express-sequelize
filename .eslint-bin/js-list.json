@@ -4,6 +4,7 @@
   ".eslintrc.js",
   "bin/deploy.js",
   "src/adapters/sequelize.js",
+  "src/index.js",
   "src/services/apimap-field-builder.js",
   "src/services/apimap-field-type-detector.js",
   "src/services/resource-finder.js",

@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Apply ESLint rules to an old code.
 
 ## RELEASE 3.1.1 - 2019-05-15
 ### Fixed

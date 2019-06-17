@@ -124,15 +124,14 @@ exports.init = function init(opts) {
     getCustomer: (customerModel, customerField, customerId) => {
       if (customerId) {
         return orm.findRecord(customerModel, customerId)
-          .then(function (customer) {
+          .then((customer) => {
             if (customer && customer[customerField]) {
               return customer.toJSON();
             }
             return P.reject();
           });
-      } else {
-        return P.resolve();
       }
+      return P.resolve();
     },
     getCustomerByUserField: (customerModel, customerField, userField) => {
       if (!customerModel) {
@@ -152,40 +151,33 @@ exports.init = function init(opts) {
   };
 
   exports.Intercom = {
-    getCustomer: function (userModel, customerId) {
-      return orm.findRecord(userModel, customerId);
-    }
+    getCustomer: (userModel, customerId) => orm.findRecord(userModel, customerId),
   };
 
   exports.Closeio = {
-    getCustomer: function (userModel, customerId) {
-      return orm.findRecord(userModel, customerId);
-    }
+    getCustomer: (userModel, customerId) => orm.findRecord(userModel, customerId),
   };
 
   exports.Layer = {
-    getUser: (customerModel, customerField, customerId) => {
-      return new P((resolve, reject) => {
+    getUser: (customerModel, customerField, customerId) =>
+      new P((resolve, reject) => {
         if (customerId) {
           return orm.findRecord(customerModel, customerId)
-            .then(function (customer) {
+            .then((customer) => {
               if (!customer || !customer[customerField]) { return reject(); }
 
               return resolve(customer);
             });
         }
         return resolve();
-      });
-    },
+      }),
   };
 
   exports.Mixpanel = {
     getUser: (userModel, userId) => {
       if (userId) {
         return orm.findRecord(userModel, userId)
-          .then(function (user) {
-            return user.toJSON();
-          });
+          .then(user => user.toJSON());
       }
 
       return P.resolve();
