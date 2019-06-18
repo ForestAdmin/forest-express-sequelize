@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.2.1 - 2019-06-18
 ### Fixed
 - Validations - Fix the regexp content transmission for "is like" validations.
 
