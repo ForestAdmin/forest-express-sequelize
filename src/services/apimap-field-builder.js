@@ -98,7 +98,7 @@ function ApimapFieldBuilder(model, column, options) {
 
       validations.push({
         type: 'is like',
-        value: value.toString().replace(/\\/g, ''), // NOTICE: Stringify properly the RegExp
+        value: value.toString(),
         message: column.validate.is.msg,
       });
     }
