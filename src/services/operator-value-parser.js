@@ -1,5 +1,5 @@
+import _ from 'lodash';
 import { Schemas } from 'forest-express';
-import { find, isUndefined } from 'lodash';
 import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
 
@@ -32,7 +32,7 @@ class OperatorValueParser {
 
     const schema = Schemas.schemas[modelName];
     if (schema) {
-      field = find(schema.fields, currentField => currentField.field === fieldName);
+      field = _.find(schema.fields, currentField => currentField.field === fieldName);
       if (field && field.type === 'Boolean') {
         fieldBoolean = true;
         if (value.indexOf('true') > -1) {
@@ -47,7 +47,7 @@ class OperatorValueParser {
     if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
       if (fieldBoolean) {
-        condition[this.OPERATORS.NOT] = isUndefined(valueBoolean) ? null :
+        condition[this.OPERATORS.NOT] = _.isUndefined(valueBoolean) ? null :
           valueBoolean;
       } else {
         condition[this.OPERATORS.NE] = value;
@@ -74,7 +74,7 @@ class OperatorValueParser {
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
     } else if (fieldBoolean) {
-      condition[this.OPERATORS.EQ] = isUndefined(valueBoolean) ? null : valueBoolean;
+      condition[this.OPERATORS.EQ] = _.isUndefined(valueBoolean) ? null : valueBoolean;
     } else {
       condition[this.OPERATORS.EQ] = value;
     }
