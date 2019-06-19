@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Apply ESLint rules to some files.
 
 ## RELEASE 3.2.1 - 2019-06-18
 ### Fixed
