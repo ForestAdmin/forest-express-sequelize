@@ -7,7 +7,7 @@
 - Technical - Apply ESLint rules to some files.
 
 ### Fixed
-- Schema - Schemas having fields with validations based on complex regexps are now properly sent in remote environments.
+- Schema - Schemas having fields with validations based on complex regex are now properly sent in remote environments.
 
 ## RELEASE 3.2.1 - 2019-06-18
 ### Fixed
