@@ -4,6 +4,9 @@
 ### Changed
 - Technical - Apply ESLint rules to some files.
 
+### Fixed
+- Schema - Schemas having fields with validations based on complex regexps are now properly sent in remote environments.
+
 ## RELEASE 3.2.1 - 2019-06-18
 ### Fixed
 - Validations - Fix the regexp content transmission for "is like" validations.
