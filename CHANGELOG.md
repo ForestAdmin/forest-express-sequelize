@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Filters - Fix potential chart / records retrieval errors (Regression introduced in v3.2.2).
 
 ## RELEASE 3.2.2 - 2019-06-20
 ### Changed

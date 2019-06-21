@@ -3,18 +3,16 @@ import { Schemas } from 'forest-express';
 import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
 
-class OperatorValueParser {
-  constructor(options) {
-    this.OPERATORS = new Operators(options);
-    this.options = options;
-  }
+function OperatorValueParser(options) {
+  const OPERATORS = new Operators(options);
 
-  perform(model, fieldName, value, timezone) {
+  this.perform = (model, fieldName, value, timezone) => {
     const operatorDateIntervalParser = new OperatorDateIntervalParser(
       value,
       timezone,
-      this.options,
+      options,
     );
+
     // NOTICE: Handle boolean for MySQL database
     let modelName;
     let field;
@@ -47,39 +45,37 @@ class OperatorValueParser {
     if (value[0] === '!' && value[1] !== '*') {
       value = value.substring(1);
       if (fieldBoolean) {
-        condition[this.OPERATORS.NOT] = _.isUndefined(valueBoolean) ? null :
-          valueBoolean;
+        condition[OPERATORS.NOT] = _.isUndefined(valueBoolean) ? null : valueBoolean;
       } else {
-        condition[this.OPERATORS.NE] = value;
+        condition[OPERATORS.NE] = value;
       }
     } else if (value[0] === '>') {
-      condition[this.OPERATORS.GT] = value.substring(1);
+      condition[OPERATORS.GT] = value.substring(1);
     } else if (value[0] === '<') {
-      condition[this.OPERATORS.LT] = value.substring(1);
+      condition[OPERATORS.LT] = value.substring(1);
     } else if (value[0] === '*' && value[value.length - 1] === '*') {
-      condition[this.OPERATORS.LIKE] = `%${value.substring(1, value.length - 1)}%`;
-    } else if (value[0] === '!' && value[1] === '*' &&
-      value[value.length - 1] === '*') {
+      condition[OPERATORS.LIKE] = `%${value.substring(1, value.length - 1)}%`;
+    } else if (value[0] === '!' && value[1] === '*' && value[value.length - 1] === '*') {
       // TODO : Include null values
       // return { $or: { $notLike: '%' + value + '%', $eq: null } };
-      condition[this.OPERATORS.NOT_LIKE] = `%${value.substring(2, value.length - 1)}%`;
+      condition[OPERATORS.NOT_LIKE] = `%${value.substring(2, value.length - 1)}%`;
     } else if (value[0] === '*') {
-      condition[this.OPERATORS.LIKE] = `%${value.substring(1)}`;
+      condition[OPERATORS.LIKE] = `%${value.substring(1)}`;
     } else if (value[value.length - 1] === '*') {
-      condition[this.OPERATORS.LIKE] = `${value.substring(0, value.length - 1)}%`;
+      condition[OPERATORS.LIKE] = `${value.substring(0, value.length - 1)}%`;
     } else if (value === '$present') {
-      condition[this.OPERATORS.NE] = null;
+      condition[OPERATORS.NE] = null;
     } else if (value === '$blank') {
-      condition[this.OPERATORS.EQ] = null;
+      condition[OPERATORS.EQ] = null;
     } else if (operatorDateIntervalParser.isIntervalDateValue()) {
       return operatorDateIntervalParser.getIntervalDateFilter();
     } else if (fieldBoolean) {
-      condition[this.OPERATORS.EQ] = _.isUndefined(valueBoolean) ? null : valueBoolean;
+      condition[OPERATORS.EQ] = _.isUndefined(valueBoolean) ? null : valueBoolean;
     } else {
-      condition[this.OPERATORS.EQ] = value;
+      condition[OPERATORS.EQ] = value;
     }
     return condition;
-  }
+  };
 }
 
-export default OperatorValueParser;
+module.exports = OperatorValueParser;
