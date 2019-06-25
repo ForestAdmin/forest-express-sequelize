@@ -1,49 +1,48 @@
-'use strict';
-/* jshint sub: true */
-var _ = require('lodash');
-var P = require('bluebird');
-var moment = require('moment');
-var orm = require('../utils/orm');
-var BaseStatGetter = require('./base-stat-getter');
-var Database = require('../utils/database');
-var Interface = require('forest-express');
+import _ from 'lodash';
+import P from 'bluebird';
+import moment from 'moment';
+import { Schemas } from 'forest-express';
+import { isVersionLessThan4 } from '../utils/orm';
+import BaseStatGetter from './base-stat-getter';
+import { isMSSQL } from '../utils/database';
 
 // NOTICE: These aliases are not camelcased to prevent issues with Sequelize.
-var ALIAS_GROUP_BY = 'forest_alias_groupby';
-var ALIAS_AGGREGATE = 'forest_alias_aggregate';
+const ALIAS_GROUP_BY = 'forest_alias_groupby';
+const ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
 function PieStatGetter(model, params, opts) {
   BaseStatGetter.call(this, model, params, opts);
 
-  var needsDateOnlyFormating = orm.isVersionLessThan4(opts.sequelize);
+  const needsDateOnlyFormating = isVersionLessThan4(opts.sequelize);
 
-  var schema = Interface.Schemas.schemas[model.name];
-  var associationSplit,associationCollection, associationField,
-      associationSchema, field;
+  const schema = Schemas.schemas[model.name];
+  let associationSplit;
+  let associationCollection;
+  let associationField;
+  let associationSchema;
+  let field;
 
-  if (params['group_by_field'].indexOf(':') === -1) {
-    field = _.find(schema.fields, function (field) {
-      return field.field === params['group_by_field'];
-    });
+  if (params.group_by_field.indexOf(':') === -1) {
+    field = _.find(schema.fields, currentField => currentField.field === params.group_by_field);
   } else {
-    associationSplit = params['group_by_field'].split(':');
+    associationSplit = params.group_by_field.split(':');
     associationCollection = associationSplit[0];
     associationField = associationSplit[1];
-    associationSchema = Interface.Schemas.schemas[associationCollection];
-    field = _.find(associationSchema.fields, function (field) {
-      return field.field === associationField;
-    });
+    associationSchema = Schemas.schemas[associationCollection];
+    field = _.find(
+      associationSchema.fields,
+      currentField => currentField.field === associationField,
+    );
   }
 
   function getGroupByField() {
-    if (params['group_by_field'].indexOf(':') === -1) {
-      return schema.name + '.' + params['group_by_field'];
-    } else {
-      return params['group_by_field'].replace(':', '.');
+    if (params.group_by_field.indexOf(':') === -1) {
+      return `${schema.name}.${params.group_by_field}`;
     }
+    return params.group_by_field.replace(':', '.');
   }
 
-  var groupByField = getGroupByField();
+  const groupByField = getGroupByField();
 
   function getAggregate() {
     return params.aggregate.toLowerCase();
@@ -52,19 +51,19 @@ function PieStatGetter(model, params, opts) {
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
     //         cannot be '*'.
-    var fieldName = params['aggregate_field'] || schema.primaryKeys[0] ||
+    const fieldName = params.aggregate_field || schema.primaryKeys[0] ||
       schema.fields[0].field;
-    return schema.name + '.' + fieldName;
+    return `${schema.name}.${fieldName}`;
   }
 
   function getIncludes() {
-    var includes = [];
-    _.values(model.associations).forEach(function (association) {
+    const includes = [];
+    _.values(model.associations).forEach((association) => {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
         includes.push({
           model: association.target.unscoped(),
           as: association.associationAccessor,
-          attributes: []
+          attributes: [],
         });
       }
     });
@@ -73,19 +72,18 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    return Database.isMSSQL(opts) ? [opts.sequelize.col(groupByField)] :
-      [ALIAS_GROUP_BY];
+    return isMSSQL(opts) ? [opts.sequelize.col(groupByField)] : [ALIAS_GROUP_BY];
   }
 
-  function formatResults (records) {
-    return P.map(records, function (record) {
-      var key;
+  function formatResults(records) {
+    return P.map(records, (record) => {
+      let key;
 
       if (field.type === 'Date') {
         key = moment(record[ALIAS_GROUP_BY]).format('DD/MM/YYYY HH:mm:ss');
       } else if (field.type === 'Dateonly' && needsDateOnlyFormating) {
-        var offsetServer = moment().utcOffset() / 60;
-        var dateonly = moment.utc(record[ALIAS_GROUP_BY])
+        const offsetServer = moment().utcOffset() / 60;
+        const dateonly = moment.utc(record[ALIAS_GROUP_BY])
           .add(offsetServer, 'h');
         key = dateonly.format('DD/MM/YYYY');
       } else {
@@ -93,36 +91,36 @@ function PieStatGetter(model, params, opts) {
       }
 
       return {
-        key: key,
-        value: record[ALIAS_AGGREGATE]
+        key,
+        value: record[ALIAS_AGGREGATE],
       };
     });
   }
 
-  this.perform = function () {
-    return model.unscoped().findAll({
+  this.perform = () => model
+    .unscoped()
+    .findAll({
       attributes: [
         [
           opts.sequelize.col(groupByField),
-          ALIAS_GROUP_BY
+          ALIAS_GROUP_BY,
         ],
         [
-          opts.sequelize.fn(getAggregate(),
-          opts.sequelize.col(getAggregateField())),
-          ALIAS_AGGREGATE
-        ]
+          opts.sequelize.fn(
+            getAggregate(),
+            opts.sequelize.col(getAggregateField()),
+          ),
+          ALIAS_AGGREGATE,
+        ],
       ],
       include: getIncludes(),
       where: this.getFilters(),
       group: getGroupBy(),
       order: [[opts.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
-      raw: true
+      raw: true,
     })
     .then(formatResults)
-    .then(function (records) {
-      return { value: records };
-    });
-  };
+    .then(records => ({ value: records }));
 }
 
 module.exports = PieStatGetter;
