@@ -1,4 +1,4 @@
-import { each } from 'lodash';
+import _ from 'lodash';
 import { Schemas } from 'forest-express';
 import BaseStatGetter from './base-stat-getter';
 
@@ -13,7 +13,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
   const schemaRelationship = Schemas.schemas[modelRelationship.name];
   let associationAs = schema.name;
 
-  each(modelRelationship.associations, (association) => {
+  _.each(modelRelationship.associations, (association) => {
     if (association.target.name === model.name && association.as) {
       associationAs = association.as;
     }

@@ -1,5 +1,5 @@
-import { find, sortBy, map, values as _values } from 'lodash';
-import { map as _map } from 'bluebird';
+import _ from 'lodash';
+import P from 'bluebird';
 import moment from 'moment';
 import { Schemas } from 'forest-express';
 import BaseStatGetter from './base-stat-getter';
@@ -32,7 +32,8 @@ function LineStatGetter(model, params, opts) {
     switch (currentTimeRange) {
       case 'day':
         return opts.sequelize.fn(
-          'DATE_FORMAT', opts.sequelize.col(groupByDateField),
+          'DATE_FORMAT',
+          opts.sequelize.col(groupByDateField),
           '%Y-%m-%d 00:00:00',
         );
       case 'week':
@@ -41,12 +42,14 @@ function LineStatGetter(model, params, opts) {
 INTERVAL ((7 + WEEKDAY(${groupByDateFieldFormated})) % 7) DAY), '%Y-%m-%d 00:00:00')`);
       case 'month':
         return opts.sequelize.fn(
-          'DATE_FORMAT', opts.sequelize.col(groupByDateField),
+          'DATE_FORMAT',
+          opts.sequelize.col(groupByDateField),
           '%Y-%m-01 00:00:00',
         );
       case 'year':
         return opts.sequelize.fn(
-          'DATE_FORMAT', opts.sequelize.col(groupByDateField),
+          'DATE_FORMAT',
+          opts.sequelize.col(groupByDateField),
           '%Y-01-01 00:00:00',
         );
       default:
@@ -59,7 +62,8 @@ INTERVAL ((7 + WEEKDAY(${groupByDateFieldFormated})) % 7) DAY), '%Y-%m-%d 00:00:
     switch (currentTimeRange) {
       case 'day':
         return opts.sequelize.fn(
-          'FORMAT', opts.sequelize.col(groupByDateField),
+          'FORMAT',
+          opts.sequelize.col(groupByDateField),
           'yyyy-MM-dd 00:00:00',
         );
       case 'week':
@@ -68,12 +72,14 @@ INTERVAL ((7 + WEEKDAY(${groupByDateFieldFormated})) % 7) DAY), '%Y-%m-%d 00:00:
 ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
       case 'month':
         return opts.sequelize.fn(
-          'FORMAT', opts.sequelize.col(groupByDateField),
+          'FORMAT',
+          opts.sequelize.col(groupByDateField),
           'yyyy-MM-01 00:00:00',
         );
       case 'year':
         return opts.sequelize.fn(
-          'FORMAT', opts.sequelize.col(groupByDateField),
+          'FORMAT',
+          opts.sequelize.col(groupByDateField),
           'yyyy-01-01 00:00:00',
         );
       default:
@@ -85,25 +91,29 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     switch (currentTimeRange) {
       case 'day': {
         return opts.sequelize.fn(
-          'STRFTIME', '%Y-%m-%d',
+          'STRFTIME',
+          '%Y-%m-%d',
           opts.sequelize.col(groupByDateField),
         );
       }
       case 'week': {
         return opts.sequelize.fn(
-          'STRFTIME', '%Y-%W',
+          'STRFTIME',
+          '%Y-%W',
           opts.sequelize.col(groupByDateField),
         );
       }
       case 'month': {
         return opts.sequelize.fn(
-          'STRFTIME', '%Y-%m-01',
+          'STRFTIME',
+          '%Y-%m-01',
           opts.sequelize.col(groupByDateField),
         );
       }
       case 'year': {
         return opts.sequelize.fn(
-          'STRFTIME', '%Y-01-01',
+          'STRFTIME',
+          '%Y-01-01',
           opts.sequelize.col(groupByDateField),
         );
       }
@@ -122,10 +132,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     }
     return [
       opts.sequelize.fn(
-        'to_char', opts.sequelize.fn(
-          'date_trunc', params.time_range,
-          opts.sequelize.literal(`"${getGroupByDateField()
-            .replace('.', '"."')}" at time zone '${params.timezone}'`),
+        'to_char',
+        opts.sequelize.fn(
+          'date_trunc',
+          params.time_range,
+          opts.sequelize.literal(`"${getGroupByDateField().replace('.', '"."')}" at time zone '${params.timezone}'`),
         ),
         'YYYY-MM-DD 00:00:00',
       ),
@@ -155,13 +166,13 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
 
       for (let i = firstDate; i.toDate() <= lastDate.toDate(); i = i.add(1, timeRange)) {
         const label = i.format(sqlFormat);
-        if (!find(records, { label })) {
+        if (!_.find(records, { label })) {
           records.push({ label, values: { value: 0 } });
         }
       }
 
-      records = sortBy(records, 'label');
-      return map(records, record => ({
+      records = _.sortBy(records, 'label');
+      return _.map(records, record => ({
         label: moment(record.label, sqlFormat).format(getFormat()),
         values: record.values,
       }));
@@ -178,7 +189,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
 
   function getIncludes() {
     const includes = [];
-    _values(model.associations).forEach((association) => {
+    _.values(model.associations).forEach((association) => {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
         includes.push({
           model: association.target.unscoped(),
@@ -199,15 +210,17 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     return isMSSQL(opts) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [opts.sequelize.literal('1')];
   }
 
-  this.perform = () => model.unscoped().findAll({
-    attributes: [getGroupByDateInterval(), getAggregate()],
-    include: getIncludes(),
-    where: this.getFilters(),
-    group: getGroupBy(),
-    order: getOrder(),
-    raw: true,
-  })
-    .then(records => _map(records, record => ({
+  this.perform = () => model
+    .unscoped()
+    .findAll({
+      attributes: [getGroupByDateInterval(), getAggregate()],
+      include: getIncludes(),
+      where: this.getFilters(),
+      group: getGroupBy(),
+      order: getOrder(),
+      raw: true,
+    })
+    .then(records => P.map(records, record => ({
       label: record.date,
       values: { value: parseInt(record.value, 10) },
     })))

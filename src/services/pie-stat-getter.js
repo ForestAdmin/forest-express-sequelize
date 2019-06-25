@@ -1,7 +1,6 @@
-/* jshint sub: true */
-import { find, values } from 'lodash';
-import { map } from 'bluebird';
-import moment, { utc } from 'moment';
+import _ from 'lodash';
+import P from 'bluebird';
+import moment from 'moment';
 import { Schemas } from 'forest-express';
 import { isVersionLessThan4 } from '../utils/orm';
 import BaseStatGetter from './base-stat-getter';
@@ -24,13 +23,13 @@ function PieStatGetter(model, params, opts) {
   let field;
 
   if (params.group_by_field.indexOf(':') === -1) {
-    field = find(schema.fields, currentField => currentField.field === params.group_by_field);
+    field = _.find(schema.fields, currentField => currentField.field === params.group_by_field);
   } else {
     associationSplit = params.group_by_field.split(':');
     associationCollection = associationSplit[0];
     associationField = associationSplit[1];
     associationSchema = Schemas.schemas[associationCollection];
-    field = find(
+    field = _.find(
       associationSchema.fields,
       currentField => currentField.field === associationField,
     );
@@ -59,7 +58,7 @@ function PieStatGetter(model, params, opts) {
 
   function getIncludes() {
     const includes = [];
-    values(model.associations).forEach((association) => {
+    _.values(model.associations).forEach((association) => {
       if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
         includes.push({
           model: association.target.unscoped(),
@@ -73,19 +72,18 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    return isMSSQL(opts) ? [opts.sequelize.col(groupByField)] :
-      [ALIAS_GROUP_BY];
+    return isMSSQL(opts) ? [opts.sequelize.col(groupByField)] : [ALIAS_GROUP_BY];
   }
 
   function formatResults(records) {
-    return map(records, (record) => {
+    return P.map(records, (record) => {
       let key;
 
       if (field.type === 'Date') {
         key = moment(record[ALIAS_GROUP_BY]).format('DD/MM/YYYY HH:mm:ss');
       } else if (field.type === 'Dateonly' && needsDateOnlyFormating) {
         const offsetServer = moment().utcOffset() / 60;
-        const dateonly = utc(record[ALIAS_GROUP_BY])
+        const dateonly = moment.utc(record[ALIAS_GROUP_BY])
           .add(offsetServer, 'h');
         key = dateonly.format('DD/MM/YYYY');
       } else {
@@ -99,26 +97,28 @@ function PieStatGetter(model, params, opts) {
     });
   }
 
-  this.perform = () => model.unscoped().findAll({
-    attributes: [
-      [
-        opts.sequelize.col(groupByField),
-        ALIAS_GROUP_BY,
+  this.perform = () => model
+    .unscoped()
+    .findAll({
+      attributes: [
+        [
+          opts.sequelize.col(groupByField),
+          ALIAS_GROUP_BY,
+        ],
+        [
+          opts.sequelize.fn(
+            getAggregate(),
+            opts.sequelize.col(getAggregateField()),
+          ),
+          ALIAS_AGGREGATE,
+        ],
       ],
-      [
-        opts.sequelize.fn(
-          getAggregate(),
-          opts.sequelize.col(getAggregateField()),
-        ),
-        ALIAS_AGGREGATE,
-      ],
-    ],
-    include: getIncludes(),
-    where: this.getFilters(),
-    group: getGroupBy(),
-    order: [[opts.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
-    raw: true,
-  })
+      include: getIncludes(),
+      where: this.getFilters(),
+      group: getGroupBy(),
+      order: [[opts.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
+      raw: true,
+    })
     .then(formatResults)
     .then(records => ({ value: records }));
 }
