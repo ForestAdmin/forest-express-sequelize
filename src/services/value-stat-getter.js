@@ -41,7 +41,7 @@ function ValueStatGetter(model, params, options) {
     const aggregate = getAggregate();
     const conditionsParser = new ConditionsParser(params.filters, params.timezone, options);
     const where = conditionsParser.perform();
-    const rawPreviousInterval = conditionsParser.getPreviousInterval();
+    const rawPreviousInterval = conditionsParser.getPreviousIntervalCondition();
 
     return model
       .unscoped()

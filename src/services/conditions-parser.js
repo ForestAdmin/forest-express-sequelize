@@ -1,5 +1,6 @@
 import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
+import { NoMatchingOperatorError } from './errors';
 
 export default class ConditionsParser {
   constructor(conditions, timezone, options) {
@@ -8,7 +9,7 @@ export default class ConditionsParser {
     this.formattedConditions = conditions ? JSON.parse(conditions) : null;
   }
 
-  getPreviousInterval() {
+  getPreviousIntervalCondition() {
     let currentPreviousInterval = null;
 
     // NOTICE: Leaf condition at root
@@ -88,8 +89,7 @@ export default class ConditionsParser {
       case 'or':
         return this.OPERATORS.OR;
       default:
-        console.log('ERROR: No operator matching this aggregator');
-        return null;
+        throw new NoMatchingOperatorError();
     }
   }
 
@@ -114,8 +114,7 @@ export default class ConditionsParser {
       case 'equal':
         return this.OPERATORS.EQ;
       default:
-        console.log('ERROR: No matching operator');
-        return null;
+        throw new NoMatchingOperatorError();
     }
   }
 
@@ -138,8 +137,7 @@ export default class ConditionsParser {
       case 'blank':
         return null;
       default:
-        console.log('ERROR: No matching operator');
-        return null;
+        throw new NoMatchingOperatorError();
     }
   }
 
