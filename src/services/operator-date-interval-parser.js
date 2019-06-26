@@ -1,5 +1,6 @@
 import moment from 'moment-timezone';
 import Operators from '../utils/operators';
+import { NoMatchingOperatorError } from './errors';
 
 const PERIODS = {
   yesterday: 'days',
@@ -117,8 +118,7 @@ export default class OperatorDateIntervalParser {
         condition[this.OPERATORS.GTE] = this.toDateWithTimezone(moment().subtract(value, 'hours'));
         break;
       default:
-        console.log('ERROR: No matching date operator');
-        return null;
+        throw new NoMatchingOperatorError();
     }
     return condition;
   }
@@ -166,8 +166,7 @@ export default class OperatorDateIntervalParser {
           .subtract(1, PERIODS[operator]));
         break;
       default:
-        console.log('ERROR: No matching date operator');
-        return null;
+        throw new NoMatchingOperatorError();
     }
     return condition;
   }

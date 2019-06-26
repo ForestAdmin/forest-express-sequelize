@@ -1,4 +1,4 @@
-/* global describe, before, it */
+/* global describe, it */
 
 import { expect } from 'chai';
 import moment from 'moment';
