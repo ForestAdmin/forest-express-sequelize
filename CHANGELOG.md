@@ -16,6 +16,7 @@
 ### Changed
 - Naming - Rename opts to options in stat getters.
 - Technical - Apply ESLint rules to old files.
+- Filters - Improve filter genericity
 
 ### Fixed
 - Security - Upgrade `lodash` dependency for security patch.
