@@ -5,7 +5,7 @@ export default class ConditionsParser {
   constructor(conditions, timezone, options) {
     this.OPERATORS = new Operators(options);
     this.operatorDateIntervalParser = new OperatorDateIntervalParser(timezone, options);
-    this.formattedConditions = JSON.parse(conditions);
+    this.formattedConditions = conditions ? JSON.parse(conditions) : null;
   }
 
   getPreviousInterval() {
@@ -42,6 +42,8 @@ export default class ConditionsParser {
   }
 
   perform() {
+    if (!this.formattedConditions) return null;
+
     return this.formatAggregation(this.formattedConditions);
   }
 

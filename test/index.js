@@ -306,7 +306,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             group_by_field: 'firstName',
             aggregate: 'Count',
             time_range: null,
-            filters: [],
+            filters: null,
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
@@ -326,7 +326,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             group_by_date_field: 'createdAt',
             aggregate: 'Count',
             time_range: 'Day',
-            filters: [],
+            filters: null,
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
@@ -348,7 +348,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             group_by_date_field: 'createdAt',
             aggregate: 'Count',
             time_range: 'Week',
-            filters: [],
+            filters: null,
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
@@ -368,7 +368,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             group_by_date_field: 'createdAt',
             aggregate: 'Count',
             time_range: 'Month',
-            filters: [],
+            filters: null,
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
@@ -388,7 +388,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             group_by_date_field: 'createdAt',
             aggregate: 'Count',
             time_range: 'Year',
-            filters: [],
+            filters: null,
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
@@ -679,12 +679,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
           },
           page: { number: '1', size: '30' },
-          filterType: 'and',
           timezone: 'Europe/Paris',
         };
 
         const paramsBaseCount = {
-          filterType: 'and',
           timezone: 'Europe/Paris',
         };
 
@@ -693,19 +691,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             address: 'id,city,country',
           },
           page: { number: '1', size: '30' },
-          filterType: 'and',
           timezone: 'Europe/Paris',
         };
 
         const paramsAddressCount = {
-          filterType: 'and',
           timezone: 'Europe/Paris',
         };
 
         describe('with a "is" condition on a number field', () => {
           it('should return the records for the specified page', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { id: '100' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'equal',
+              value: 100,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -717,7 +717,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { id: '100' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'equal',
+              value: 100,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -731,7 +735,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "greater than" condition on a number field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { id: '>101' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'greater_than',
+              value: 101,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -743,7 +751,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { id: '>101' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'greater_than',
+              value: 101,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -757,7 +769,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "less than" condition on a number field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { id: '<104' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'less_than',
+              value: 104,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -769,7 +785,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { id: '<104' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'less_than',
+              value: 104,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -783,7 +803,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not" condition on a number field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { id: '!100' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'not_equal',
+              value: 100,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -795,7 +819,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the records result', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { id: '!100' };
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'not_equal',
+              value: 100,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -809,7 +837,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is null" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { emailValid: 'null' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'equal',
+              value: null,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -821,7 +853,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { emailValid: 'null' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'equal',
+              value: null,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -835,7 +871,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is true" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { emailValid: 'true' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'equal',
+              value: true,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -847,7 +887,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { emailValid: 'true' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'equal',
+              value: true,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -861,7 +905,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is false" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { emailValid: 'false' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'equal',
+              value: false,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -873,7 +921,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { emailValid: 'false' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'equal',
+              value: false,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -887,7 +939,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not null" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { emailValid: '!null' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'not_equal',
+              value: null,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -899,7 +955,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { emailValid: '!null' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'not',
+              value: null,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -913,7 +973,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not true" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { emailValid: '!true' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'not',
+              value: true,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -925,7 +989,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { emailValid: '!true' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'not',
+              value: true,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -939,7 +1007,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { email: '!richard@piedpiper.com' };
+            params.filters = JSON.stringify({
+              field: 'email',
+              operator: 'not_equal',
+              value: 'richard@piedpiper.com',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -951,7 +1023,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { email: '!richard@piedpiper.com' };
+            params.filters = JSON.stringify({
+              field: 'email',
+              operator: 'not_equal',
+              value: 'richard@piedpiper.com',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -965,7 +1041,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not false" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { emailValid: '!false' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'not',
+              value: false,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -977,7 +1057,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { emailValid: '!false' };
+            params.filters = JSON.stringify({
+              field: 'emailValid',
+              operator: 'not',
+              value: false,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -991,7 +1075,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "contains" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { firstName: '*Richa*' };
+            params.filters = JSON.stringify({
+              field: 'firstName',
+              operator: 'contains',
+              value: 'Richa',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1003,7 +1091,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { firstName: '*Richa*' };
+            params.filters = JSON.stringify({
+              field: 'firstName',
+              operator: 'contains',
+              value: 'Richa',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -1017,7 +1109,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "not contains" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { username: '!*hello*' };
+            params.filters = JSON.stringify({
+              field: 'username',
+              operator: 'not_contains',
+              value: 'hello',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1029,7 +1125,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { username: '!*hello*' };
+            params.filters = JSON.stringify({
+              field: 'username',
+              operator: 'not_contains',
+              value: 'hello',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -1043,7 +1143,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "starts with" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { email: 'dinesh@*' };
+            params.filters = JSON.stringify({
+              field: 'email',
+              operator: 'starts_with',
+              value: 'dinesh@',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1055,7 +1159,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { email: 'dinesh@*' };
+            params.filters = JSON.stringify({
+              field: 'email',
+              operator: 'starts_with',
+              value: 'dinesh@',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -1069,7 +1177,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "ends with" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { email: '*@piedpiper.com' };
+            params.filters = JSON.stringify({
+              field: 'email',
+              operator: 'ends_with',
+              value: '@piedpiper.com',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1081,7 +1193,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { email: '*@piedpiper.com' };
+            params.filters = JSON.stringify({
+              field: 'email',
+              operator: 'ends_with',
+              value: '@piedpiper.com',
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -1095,7 +1211,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is present" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsAddressList);
-            params.filter = { country: '$present' };
+            params.filters = JSON.stringify({
+              field: 'country',
+              operator: 'present',
+            });
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1111,7 +1230,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is blank" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsAddressList);
-            params.filter = { country: '$blank' };
+            params.filters = JSON.stringify({
+              field: 'country',
+              operator: 'blank',
+            });
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1123,7 +1245,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsAddressCount);
-            params.filter = { country: '$blank' };
+            params.filters = JSON.stringify({
+              field: 'country',
+              operator: 'blank',
+            });
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -1137,7 +1262,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "before x hours" condition on a date field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { createdAt: '$2HoursBefore' };
+            params.filters = JSON.stringify({
+              field: 'createdAt',
+              operator: 'before_x_hours_ago',
+              value: 2,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1149,7 +1278,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { createdAt: '$2HoursBefore' };
+            params.filters = JSON.stringify({
+              field: 'createdAt',
+              operator: 'before_x_hours_ago',
+              value: 2,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -1163,7 +1296,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "after x hours" condition on a date field', () => {
           it('should generate a valid SQL query', (done) => {
             const params = _.clone(paramsBaseList);
-            params.filter = { createdAt: '$2HoursAfter' };
+            params.filters = JSON.stringify({
+              field: 'createdAt',
+              operator: 'after_x_hours_ago',
+              value: 2,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1175,7 +1312,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should return the total records count', (done) => {
             const params = _.clone(paramsBaseCount);
-            params.filter = { createdAt: '$2HoursAfter' };
+            params.filters = JSON.stringify({
+              field: 'createdAt',
+              operator: 'after_x_hours_ago',
+              value: 2,
+            });
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
@@ -1194,8 +1335,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
             },
             page: { number: '2', size: '50' },
-            filterType: 'and',
-            filter: { username: '*hello*' },
+            filters: JSON.stringify({
+              field: 'username',
+              operator: 'contains',
+              value: 'hello',
+            }),
             search: 'world',
             timezone: 'Europe/Paris',
           };
@@ -1210,8 +1354,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         it('should return the total records count', (done) => {
           const params = {
-            filterType: 'and',
-            filter: { username: '*hello*' },
+            filters: JSON.stringify({
+              field: 'username',
+              operator: 'contains',
+              value: 'hello',
+            }),
             search: 'world',
             timezone: 'Europe/Paris',
           };
@@ -1269,8 +1416,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
             },
             page: { number: '2', size: '50' },
-            filterType: 'and',
-            filter: { username: '*hello*' },
+            filters: JSON.stringify({
+              field: 'username',
+              operator: 'contains',
+              value: 'hello',
+            }),
             sort: '-id',
             search: 'world',
             timezone: 'Europe/Paris',
@@ -1286,7 +1436,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         it('should return the total records count', (done) => {
           const params = {
-            filterType: 'and',
             filter: { username: '*hello*' },
             search: 'world',
             timezone: 'Europe/Paris',
