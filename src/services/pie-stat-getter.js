@@ -10,10 +10,10 @@ import { isMSSQL } from '../utils/database';
 const ALIAS_GROUP_BY = 'forest_alias_groupby';
 const ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
-function PieStatGetter(model, params, opts) {
-  BaseStatGetter.call(this, model, params, opts);
+function PieStatGetter(model, params, options) {
+  BaseStatGetter.call(this, model, params, options);
 
-  const needsDateOnlyFormating = isVersionLessThan4(opts.sequelize);
+  const needsDateOnlyFormating = isVersionLessThan4(options.sequelize);
 
   const schema = Schemas.schemas[model.name];
   let associationSplit;
@@ -72,7 +72,7 @@ function PieStatGetter(model, params, opts) {
   }
 
   function getGroupBy() {
-    return isMSSQL(opts) ? [opts.sequelize.col(groupByField)] : [ALIAS_GROUP_BY];
+    return isMSSQL(options) ? [options.sequelize.col(groupByField)] : [ALIAS_GROUP_BY];
   }
 
   function formatResults(records) {
@@ -102,13 +102,13 @@ function PieStatGetter(model, params, opts) {
     .findAll({
       attributes: [
         [
-          opts.sequelize.col(groupByField),
+          options.sequelize.col(groupByField),
           ALIAS_GROUP_BY,
         ],
         [
-          opts.sequelize.fn(
+          options.sequelize.fn(
             getAggregate(),
-            opts.sequelize.col(getAggregateField()),
+            options.sequelize.col(getAggregateField()),
           ),
           ALIAS_AGGREGATE,
         ],
@@ -116,7 +116,7 @@ function PieStatGetter(model, params, opts) {
       include: getIncludes(),
       where: this.getFilters(),
       group: getGroupBy(),
-      order: [[opts.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
+      order: [[options.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
       raw: true,
     })
     .then(formatResults)
