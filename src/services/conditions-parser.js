@@ -50,7 +50,7 @@ function ConditionsParser(conditions, timezone, options) {
   this.formatAggregation = (node) => {
     if (!node.aggregator) return this.formatCondition(node);
 
-    const res = {};
+    const formatedAggregator = {};
     const formatedConditions = [];
 
     node.conditions.forEach(condition =>
@@ -58,8 +58,8 @@ function ConditionsParser(conditions, timezone, options) {
 
     const aggregatorOperator = this.formatAggregatorOperator(node.aggregator);
 
-    res[aggregatorOperator] = formatedConditions;
-    return res;
+    formatedAggregator[aggregatorOperator] = formatedConditions;
+    return formatedAggregator;
   };
 
   this.formatCondition = (condition) => {

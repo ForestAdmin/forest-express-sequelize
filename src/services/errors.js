@@ -11,7 +11,7 @@ function NoMatchingOperatorError(message) {
   this.message = message || 'The given operator is not handled.';
   this.stack = (new Error()).stack;
 }
-ErrorHTTP422.prototype = new Error();
+NoMatchingOperatorError.prototype = new Error();
 
 exports.ErrorHTTP422 = ErrorHTTP422;
 exports.NoMatchingOperatorError = NoMatchingOperatorError;

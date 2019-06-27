@@ -1326,6 +1326,55 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .catch(done);
           });
         });
+
+        describe('with complex filters conditions', () => {
+          const filters = JSON.stringify({
+            aggregator: 'and',
+            conditions: [{
+              field: 'createdAt',
+              operator: 'after_x_hours_ago',
+              value: 2,
+            }, {
+              aggregator: 'or',
+              conditions: [{
+                field: 'firstName',
+                operator: 'contains',
+                value: 'h',
+              }, {
+                field: 'lastName',
+                operator: 'starts_with',
+                value: 'Lumb',
+              }],
+            }, {
+              field: 'id',
+              operator: 'greater_than',
+              value: 12,
+            }],
+          });
+          it('should generate a valid SQL query', (done) => {
+            const params = _.clone(paramsBaseList);
+            params.filters = filters;
+            new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform()
+              .then((result) => {
+                expect(result[0]).to.have.length.of(3);
+                done();
+              })
+              .catch(done);
+          });
+
+          it('should return the total records count', (done) => {
+            const params = _.clone(paramsBaseCount);
+            params.filters = filters;
+            new ResourcesGetter(models.user, sequelizeOptions, params)
+              .count()
+              .then((count) => {
+                expect(count).equal(3);
+                done();
+              })
+              .catch(done);
+          });
+        });
       });
 
       describe('Request on the resources getter with a filter condition and search', () => {
@@ -1436,7 +1485,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         it('should return the total records count', (done) => {
           const params = {
-            filter: { username: '*hello*' },
+            filters: JSON.stringify({
+              field: 'username',
+              operator: 'contains',
+              value: 'hello',
+            }),
             search: 'world',
             timezone: 'Europe/Paris',
           };
