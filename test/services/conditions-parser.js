@@ -92,7 +92,6 @@ describe('Services > ConditionsParser', () => {
     });
   });
 
-
   describe('formatAggregatorOperator function', () => {
     it('should return the appropriate sequelize operator', () => {
       expect(defaultConditionsParser.formatAggregatorOperator('and')).equal(OPERATORS.AND);
