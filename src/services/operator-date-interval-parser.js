@@ -44,31 +44,21 @@ const DATE_OPERATORS = DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL + [
   'after_x_hours_ago',
 ];
 
-export default class OperatorDateIntervalParser {
-  constructor(timezone, options) {
-    const offsetClient = parseInt(moment().tz(timezone).format('Z'), 10);
-    const offsetServer = moment().utcOffset() / 60;
+function OperatorDateIntervalParser(timezone, options) {
+  const offsetClient = parseInt(moment().tz(timezone).format('Z'), 10);
+  const offsetServer = moment().utcOffset() / 60;
 
-    this.offsetHours = offsetServer - offsetClient;
-    this.OPERATORS = new Operators(options);
-  }
+  this.offsetHours = offsetServer - offsetClient;
+  this.OPERATORS = new Operators(options);
 
-  toDateWithTimezone(customMoment) {
-    return customMoment.add(this.offsetHours, 'h').toDate();
-  }
+  this.toDateWithTimezone = customMoment => customMoment.add(this.offsetHours, 'h').toDate();
 
-  // NOTICE: Old func => isIntervalDateValue
-  static isDateIntervalOperator(operator) {
-    return DATE_OPERATORS.includes(operator);
-  }
+  this.isDateIntervalOperator = operator => DATE_OPERATORS.includes(operator);
 
-  // NOTICE: Old func => hasPreviousInterval
-  static hasPreviousDateInterval(operator) {
-    return DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL.includes(operator);
-  }
+  this.hasPreviousDateInterval = operator => DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL
+    .includes(operator);
 
-  // NOTICE: Old func => getIntervalDateFilter
-  getDateIntervalFilter(operator, value) {
+  this.getDateIntervalFilter = (operator, value) => {
     const condition = {};
 
     switch (operator) {
@@ -121,10 +111,9 @@ export default class OperatorDateIntervalParser {
         throw new NoMatchingOperatorError();
     }
     return condition;
-  }
+  };
 
-  // NOTICE: Old func => getIntervalDateFilterForPreviousInterval
-  getPreviousDateIntervalFilter(operator, value) {
+  this.getPreviousDateIntervalFilter = (operator, value) => {
     const condition = {};
 
     switch (operator) {
@@ -169,5 +158,7 @@ export default class OperatorDateIntervalParser {
         throw new NoMatchingOperatorError();
     }
     return condition;
-  }
+  };
 }
+
+module.exports = OperatorDateIntervalParser;

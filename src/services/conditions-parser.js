@@ -2,19 +2,18 @@ import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
 import { NoMatchingOperatorError } from './errors';
 
-export default class ConditionsParser {
-  constructor(conditions, timezone, options) {
-    this.OPERATORS = new Operators(options);
-    this.operatorDateIntervalParser = new OperatorDateIntervalParser(timezone, options);
-    this.formattedConditions = conditions ? JSON.parse(conditions) : null;
-  }
+function ConditionsParser(conditions, timezone, options) {
+  this.OPERATORS = new Operators(options);
+  this.operatorDateIntervalParser = new OperatorDateIntervalParser(timezone, options);
+  this.formattedConditions = conditions ? JSON.parse(conditions) : null;
 
-  getPreviousIntervalCondition() {
+  this.getPreviousIntervalCondition = () => {
     let currentPreviousInterval = null;
 
     // NOTICE: Leaf condition at root
     if (!this.formattedConditions.aggregator) {
-      if (OperatorDateIntervalParser.hasPreviousDateInterval(this.formattedConditions.operator)) {
+      if (this.operatorDateIntervalParser
+        .hasPreviousDateInterval(this.formattedConditions.operator)) {
         return this.formattedConditions;
       }
       return null;
@@ -29,7 +28,7 @@ export default class ConditionsParser {
           return null;
         }
 
-        if (OperatorDateIntervalParser.hasPreviousDateInterval(condition.operator)) {
+        if (this.operatorDateIntervalParser.hasPreviousDateInterval(condition.operator)) {
           // NOTICE: There can't be two previousInterval.
           if (currentPreviousInterval) {
             return null;
@@ -40,15 +39,15 @@ export default class ConditionsParser {
     }
 
     return currentPreviousInterval;
-  }
+  };
 
-  perform() {
+  this.perform = () => {
     if (!this.formattedConditions) return null;
 
     return this.formatAggregation(this.formattedConditions);
-  }
+  };
 
-  formatAggregation(node) {
+  this.formatAggregation = (node) => {
     if (!node.aggregator) return this.formatCondition(node);
 
     const res = {};
@@ -61,28 +60,28 @@ export default class ConditionsParser {
 
     res[aggregatorOperator] = formatedConditions;
     return res;
-  }
+  };
 
-  formatCondition(condition) {
+  this.formatCondition = (condition) => {
     const formatedCondition = {};
     let operatorAndValue = {};
-    const formatedField = ConditionsParser.formatField(condition.field);
+    const formatedField = this.formatField(condition.field);
 
-    if (OperatorDateIntervalParser.isDateIntervalOperator(condition.operator)) {
+    if (this.operatorDateIntervalParser.isDateIntervalOperator(condition.operator)) {
       operatorAndValue = this.operatorDateIntervalParser
         .getDateIntervalFilter(condition.operator, condition.value);
     } else {
       const formatedOperator = this.formatOperator(condition.operator);
-      const formatedValue = ConditionsParser.formatValue(condition.operator, condition.value);
+      const formatedValue = this.formatValue(condition.operator, condition.value);
       operatorAndValue[formatedOperator] = formatedValue;
     }
 
     formatedCondition[formatedField] = operatorAndValue;
 
     return formatedCondition;
-  }
+  };
 
-  formatAggregatorOperator(aggregatorOperator) {
+  this.formatAggregatorOperator = (aggregatorOperator) => {
     switch (aggregatorOperator) {
       case 'and':
         return this.OPERATORS.AND;
@@ -91,9 +90,9 @@ export default class ConditionsParser {
       default:
         throw new NoMatchingOperatorError();
     }
-  }
+  };
 
-  formatOperator(operator) {
+  this.formatOperator = (operator) => {
     switch (operator) {
       case 'not':
         return this.OPERATORS.NOT;
@@ -116,9 +115,9 @@ export default class ConditionsParser {
       default:
         throw new NoMatchingOperatorError();
     }
-  }
+  };
 
-  static formatValue(operator, value) {
+  this.formatValue = (operator, value) => {
     switch (operator) {
       case 'not':
       case 'greater_than':
@@ -139,9 +138,9 @@ export default class ConditionsParser {
       default:
         throw new NoMatchingOperatorError();
     }
-  }
+  };
 
-  static formatField(field) {
-    return field.includes(':') ? `$${field.replace(':', '.')}$` : field;
-  }
+  this.formatField = field => (field.includes(':') ? `$${field.replace(':', '.')}$` : field);
 }
+
+module.exports = ConditionsParser;

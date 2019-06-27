@@ -73,21 +73,21 @@ describe('Services > ConditionsParser', () => {
 
     values.forEach((value) => {
       it(`should return the appropriate value (${typeof value})`, () => {
-        expect(ConditionsParser.formatValue('starts_with', value)).equal(`${value}%`);
-        expect(ConditionsParser.formatValue('ends_with', value)).equal(`%${value}`);
-        expect(ConditionsParser.formatValue('contains', value)).equal(`%${value}%`);
-        expect(ConditionsParser.formatValue('not', value)).equal(value);
-        expect(ConditionsParser.formatValue('greater_than', value)).equal(value);
-        expect(ConditionsParser.formatValue('less_than', value)).equal(value);
-        expect(ConditionsParser.formatValue('not_contains', value)).equal(`%${value}%`);
-        expect(ConditionsParser.formatValue('not_equal', value)).equal(value);
-        expect(ConditionsParser.formatValue('present', value)).equal(null);
-        expect(ConditionsParser.formatValue('equal', value)).equal(value);
-        expect(ConditionsParser.formatValue('blank', value)).equal(null);
+        expect(defaultConditionsParser.formatValue('starts_with', value)).equal(`${value}%`);
+        expect(defaultConditionsParser.formatValue('ends_with', value)).equal(`%${value}`);
+        expect(defaultConditionsParser.formatValue('contains', value)).equal(`%${value}%`);
+        expect(defaultConditionsParser.formatValue('not', value)).equal(value);
+        expect(defaultConditionsParser.formatValue('greater_than', value)).equal(value);
+        expect(defaultConditionsParser.formatValue('less_than', value)).equal(value);
+        expect(defaultConditionsParser.formatValue('not_contains', value)).equal(`%${value}%`);
+        expect(defaultConditionsParser.formatValue('not_equal', value)).equal(value);
+        expect(defaultConditionsParser.formatValue('present', value)).equal(null);
+        expect(defaultConditionsParser.formatValue('equal', value)).equal(value);
+        expect(defaultConditionsParser.formatValue('blank', value)).equal(null);
       });
 
       it('should raise an error on unknown operator', () => {
-        expect(ConditionsParser.formatValue.bind('random', value)).to.throw(NoMatchingOperatorError);
+        expect(defaultConditionsParser.formatValue.bind('random', value)).to.throw(NoMatchingOperatorError);
       });
     });
   });
@@ -106,11 +106,11 @@ describe('Services > ConditionsParser', () => {
 
   describe('formatField function', () => {
     it('should format default field correctly', () => {
-      expect(ConditionsParser.formatField('myField')).equal('myField');
+      expect(defaultConditionsParser.formatField('myField')).equal('myField');
     });
 
     it('should format nested fields correctly', () => {
-      expect(ConditionsParser.formatField('my:field')).equal('$my.field$');
+      expect(defaultConditionsParser.formatField('my:field')).equal('$my.field$');
     });
   });
 
