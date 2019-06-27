@@ -9,12 +9,12 @@ import SearchBuilder from './search-builder';
 import LiveQueryChecker from './live-query-checker';
 import { ErrorHTTP422 } from './errors';
 
-function ResourcesGetter(model, opts, params) {
+function ResourcesGetter(model, options, params) {
   const schema = Schemas.schemas[model.name];
-  const queryBuilder = new QueryBuilder(model, opts, params);
+  const queryBuilder = new QueryBuilder(model, options, params);
   let segmentScope;
   let segmentWhere;
-  const OPERATORS = new Operators(opts);
+  const OPERATORS = new Operators(options);
   const primaryKey = _.keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
@@ -45,7 +45,7 @@ function ResourcesGetter(model, opts, params) {
 
   const searchBuilder = new SearchBuilder(
     model,
-    opts,
+    options,
     params,
     fieldNamesRequested,
   );
@@ -61,7 +61,7 @@ function ResourcesGetter(model, opts, params) {
       }
       values.split(',').forEach((value) => {
         const condition = {};
-        condition[key] = new OperatorValueParser(opts)
+        condition[key] = new OperatorValueParser(options)
           .perform(model, key, value, params.timezone);
         conditions.push(condition);
       });
@@ -97,9 +97,9 @@ function ResourcesGetter(model, opts, params) {
 
         // WARNING: Choosing the first connection might generate issues if the model does not
         //          belongs to this database.
-        return opts.connections[0]
+        return options.connections[0]
           .query(queryToFilterRecords, {
-            type: opts.sequelize.QueryTypes.SELECT,
+            type: options.sequelize.QueryTypes.SELECT,
           })
           .then((results) => {
             const recordIds = results.map(result => result[primaryKey] || result.id);
@@ -169,21 +169,21 @@ function ResourcesGetter(model, opts, params) {
 
     return getWhere()
       .then((where) => {
-        const options = {
+        const countOptions = {
           include,
           where,
         };
 
         if (!primaryKey) {
           // NOTICE: If no primary key is found, use * as a fallback for Sequelize.
-          options.col = '*';
+          countOptions.col = '*';
         }
 
         if (params.search) {
           _.each(schema.fields, (field) => {
             if (field.search) {
               try {
-                field.search(options, params.search);
+                field.search(countOptions, params.search);
                 hasSmartFieldSearch = true;
               } catch (error) {
                 logger.error(
@@ -205,7 +205,7 @@ function ResourcesGetter(model, opts, params) {
           }
         }
 
-        return scope.count(options);
+        return scope.count(countOptions);
       });
   }
 
