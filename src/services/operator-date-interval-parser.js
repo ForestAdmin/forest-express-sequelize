@@ -37,7 +37,8 @@ const DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL = [
   'previous_x_days_to_date',
 ];
 
-const DATE_OPERATORS = DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL + [
+const DATE_OPERATORS = [
+  ...DATE_OPERATORS_HAVING_PREVIOUS_INTERVAL,
   'past',
   'future',
   'before_x_hours_ago',
