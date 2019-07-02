@@ -56,6 +56,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     username: { type: Sequelize.STRING },
     password: { type: Sequelize.STRING },
     createdAt: { type: Sequelize.DATE },
+    mappedCreatedAt: { field: 'createdAt', type: Sequelize.DATE },
     updatedAt: { type: Sequelize.DATE },
     resetPasswordToken: { type: Sequelize.STRING },
     uuid: { type: Sequelize.UUID },
@@ -318,6 +319,24 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
 
       describe('A simple Line Chart per day on an empty users table', () => {
+        it('should generate a valid SQL query when models mapped to another field', (done) => {
+          new LineStatGetter(models.user, {
+            type: 'Line',
+            collection: 'user',
+            timezone: 'Europe/Paris',
+            group_by_date_field: 'mappedCreatedAt',
+            aggregate: 'Count',
+            time_range: 'Day',
+            filters: [],
+          }, sequelizeOptions)
+            .perform()
+            .then((stat) => {
+              expect(stat.value.length).equal(1);
+              done();
+            })
+            .catch(done);
+        });
+
         it('should generate a valid SQL query', (done) => {
           new LineStatGetter(models.user, {
             type: 'Line',
