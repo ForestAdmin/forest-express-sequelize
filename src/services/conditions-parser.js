@@ -97,8 +97,10 @@ function ConditionsParser(conditions, timezone, options) {
       case 'not':
         return this.OPERATORS.NOT;
       case 'greater_than':
+      case 'after':
         return this.OPERATORS.GT;
       case 'less_than':
+      case 'before':
         return this.OPERATORS.LT;
       case 'contains':
       case 'starts_with':
@@ -124,6 +126,8 @@ function ConditionsParser(conditions, timezone, options) {
       case 'less_than':
       case 'not_equal':
       case 'equal':
+      case 'before':
+      case 'after':
         return value;
       case 'contains':
       case 'not_contains':

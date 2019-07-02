@@ -56,6 +56,8 @@ describe('Services > ConditionsParser', () => {
       expect(defaultConditionsParser.formatOperator('not')).equal(OPERATORS.NOT);
       expect(defaultConditionsParser.formatOperator('greater_than')).equal(OPERATORS.GT);
       expect(defaultConditionsParser.formatOperator('less_than')).equal(OPERATORS.LT);
+      expect(defaultConditionsParser.formatOperator('after')).equal(OPERATORS.GT);
+      expect(defaultConditionsParser.formatOperator('before')).equal(OPERATORS.LT);
       expect(defaultConditionsParser.formatOperator('not_contains')).equal(OPERATORS.NOT_LIKE);
       expect(defaultConditionsParser.formatOperator('not_equal')).equal(OPERATORS.NE);
       expect(defaultConditionsParser.formatOperator('present')).equal(OPERATORS.NE);
@@ -79,6 +81,8 @@ describe('Services > ConditionsParser', () => {
         expect(defaultConditionsParser.formatValue('not', value)).equal(value);
         expect(defaultConditionsParser.formatValue('greater_than', value)).equal(value);
         expect(defaultConditionsParser.formatValue('less_than', value)).equal(value);
+        expect(defaultConditionsParser.formatValue('before', value)).equal(value);
+        expect(defaultConditionsParser.formatValue('after', value)).equal(value);
         expect(defaultConditionsParser.formatValue('not_contains', value)).equal(`%${value}%`);
         expect(defaultConditionsParser.formatValue('not_equal', value)).equal(value);
         expect(defaultConditionsParser.formatValue('present', value)).equal(null);
