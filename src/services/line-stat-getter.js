@@ -17,12 +17,16 @@ function LineStatGetter(model, params, options) {
     //         cannot be '*'.
     const fieldName = params.aggregate_field || schema.primaryKeys[0] ||
       schema.fields[0].field;
-    return `${schema.name}.${fieldName}`;
+    const schemaField = schema.fields.find(schemaField => schemaField.field === fieldName);
+    const columnName = schemaField ? schemaField.columnName : fieldName;
+    return `${schema.name}.${columnName}`;
   }
 
   function getGroupByDateField() {
     const fieldName = params.group_by_date_field;
-    return `${schema.name}.${fieldName}`;
+    const schemaField = schema.fields.find(schemaField => schemaField.field === fieldName);
+    const columnName = schemaField ? schemaField.columnName : fieldName;
+    return `${schema.name}.${columnName}`;
   }
 
   const groupByDateField = getGroupByDateField();
