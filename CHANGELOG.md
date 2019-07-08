@@ -6,7 +6,8 @@
 - Technical - Apply ESLint rules to old files.
 
 ### Fixed
-- Schema - fixing group by when sequelize model mapping to another field.
+- Charts - Fix group by on fields having an unconventional  column name.
+- Charts - Fix aggregation on fields having an unconventional  column name.
 
 ## RELEASE 3.2.3 - 2019-06-21
 ### Fixed
