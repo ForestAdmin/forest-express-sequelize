@@ -39,9 +39,13 @@ function ValueStatGetter(model, params, options) {
     let countCurrent;
     const aggregateField = getAggregateField();
     const aggregate = getAggregate();
-    const conditionsParser = new ConditionsParser(params.filters, params.timezone, options);
-    const where = conditionsParser.perform();
-    const rawPreviousInterval = conditionsParser.getPreviousIntervalCondition();
+    let where;
+    let rawPreviousInterval;
+    if (params.filters) {
+      const conditionsParser = new ConditionsParser(params.filters, params.timezone, options);
+      where = conditionsParser.perform();
+      rawPreviousInterval = conditionsParser.getPreviousIntervalCondition();
+    }
 
     return model
       .unscoped()
