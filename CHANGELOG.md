@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.2.4 - 2019-07-16
 ### Changed
 - Naming - Rename opts to options in stat getters.
 - Technical - Apply ESLint rules to old files.
