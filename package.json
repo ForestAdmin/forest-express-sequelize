@@ -46,7 +46,7 @@
     "mocha": "6.1.4",
     "mysql2": "1.6.5",
     "onchange": "6.0.0",
-    "pg": "7.10.0",
+    "pg": "7.11.0",
     "pre-commit": "1.2.2",
     "sequelize": "5.10.1",
     "sequelize-fixtures": "0.10.0",
