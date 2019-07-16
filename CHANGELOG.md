@@ -5,6 +5,9 @@
 - Naming - Rename opts to options in stat getters.
 - Technical - Apply ESLint rules to old files.
 
+### Fixed
+- Security - Upgrade `lodash` dependency for security patch.
+
 ## RELEASE 3.2.3 - 2019-06-21
 ### Fixed
 - Filters - Fix potential chart / records retrieval errors (Regression introduced in v3.2.2).
