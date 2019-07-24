@@ -11,8 +11,9 @@ function addCommitedFilesToEslint(callback) {
       process.exit(-1);
     }
 
-    filesListChanged = status.files
-      .map((file) => file.path)
+    jsFilesListChanged = status.files
+      .map(file => (file.path.includes(' -> ')
+        ? file.path.substring(file.path.indexOf(' -> ') + 4) : file.path))
       .filter(file => file.endsWith('.js'));
 
     const addedFiles = _.difference(filesListChanged, filesListValid);
@@ -20,7 +21,7 @@ function addCommitedFilesToEslint(callback) {
     filesListValid = _.uniq(filesListValid.concat(filesListChanged).sort());
 
     if (addedFiles.length !== 0) {
-      fs.writeFileSync(`${__dirname}/js-list.json`, JSON.stringify(filesListValid, null, 2));
+      fs.writeFileSync(`${__dirname}/js-list.json`, `${JSON.stringify(filesListValid, null, 2)}\n`);
       console.log(`[ESLint] Adding some files for CI validation:\n${addedFiles.join('\n')}`);
     }
 
