@@ -16,7 +16,7 @@
 ### Changed
 - Naming - Rename opts to options in stat getters.
 - Technical - Apply ESLint rules to old files.
-- Filters - Improve filter genericity
+- Filters - Add support for complex/generic conditions chaining.
 
 ### Fixed
 - Security - Upgrade `lodash` dependency for security patch.

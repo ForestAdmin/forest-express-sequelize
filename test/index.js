@@ -957,7 +957,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
-              operator: 'not',
+              operator: 'not_equal',
               value: null,
             });
             new ResourcesGetter(models.user, sequelizeOptions, params)

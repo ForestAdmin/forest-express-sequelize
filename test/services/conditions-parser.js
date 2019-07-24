@@ -113,7 +113,7 @@ describe('Services > ConditionsParser', () => {
     });
 
     it('should format nested fields correctly', () => {
-      expect(defaultConditionsParser.formatField('my:field')).equal('$my.field$');
+      expect(defaultConditionsParser.formatField('myCollection:myField')).equal('$myCollection.myField$');
     });
   });
 
@@ -140,9 +140,9 @@ describe('Services > ConditionsParser', () => {
         aggregator: 'and',
         conditions: [defaultCondition, defaultDateCondition],
       };
-      const expectedFormatedAggregation = {};
-      expectedFormatedAggregation[OPERATORS.AND] = [
-        defaultExpectedCondition, defaultExpectedDateCondition];
+      const expectedFormatedAggregation = {
+        [OPERATORS.AND]: [defaultExpectedCondition, defaultExpectedDateCondition],
+      };
 
       expect(defaultConditionsParser.formatAggregation(node))
         .to.deep.equal(expectedFormatedAggregation);
@@ -153,9 +153,9 @@ describe('Services > ConditionsParser', () => {
         aggregator: 'or',
         conditions: [defaultCondition, defaultDateCondition],
       };
-      const expectedFormatedAggregation = {};
-      expectedFormatedAggregation[OPERATORS.OR] = [
-        defaultExpectedCondition, defaultExpectedDateCondition];
+      const expectedFormatedAggregation = {
+        [OPERATORS.OR]: [defaultExpectedCondition, defaultExpectedDateCondition],
+      };
 
       expect(defaultConditionsParser.formatAggregation(node))
         .to.deep.equal(expectedFormatedAggregation);
@@ -163,20 +163,20 @@ describe('Services > ConditionsParser', () => {
 
     it('should format correctly with \'and\' as nested aggregators', () => {
       const nestedNode = {
-        aggregator: 'or',
+        aggregator: 'and',
         conditions: [defaultCondition, defaultCondition2],
       };
       const node = {
-        aggregator: 'and',
+        aggregator: 'or',
         conditions: [defaultDateCondition, nestedNode],
       };
       const expectedFormatedAggregation = {};
       const expectedNestedAggregation = {};
-      expectedNestedAggregation[OPERATORS.OR] = [
+      expectedNestedAggregation[OPERATORS.AND] = [
         defaultExpectedCondition,
         defaultExpectedCondition2,
       ];
-      expectedFormatedAggregation[OPERATORS.AND] = [
+      expectedFormatedAggregation[OPERATORS.OR] = [
         defaultExpectedDateCondition,
         expectedNestedAggregation,
       ];

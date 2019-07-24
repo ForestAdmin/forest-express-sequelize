@@ -1,84 +1,51 @@
 import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
-import { NoMatchingOperatorError } from './errors';
+import { NoMatchingOperatorError, InvalidFiltersFormatError } from './errors';
 
-function ConditionsParser(conditions, timezone, options) {
+function ConditionsParser(conditionsString, timezone, options) {
   this.OPERATORS = new Operators(options);
   this.operatorDateIntervalParser = new OperatorDateIntervalParser(timezone, options);
-  this.formattedConditions = conditions ? JSON.parse(conditions) : null;
 
-  this.getPreviousIntervalCondition = () => {
-    let currentPreviousInterval = null;
-
-    // NOTICE: Leaf condition at root
-    if (!this.formattedConditions.aggregator) {
-      if (this.operatorDateIntervalParser
-        .hasPreviousDateInterval(this.formattedConditions.operator)) {
-        return this.formattedConditions;
-      }
-      return null;
-    }
-
-    if (this.formattedConditions.aggregator === 'and') {
-      for (let i = 0; i < this.formattedConditions.conditions.length; i += 1) {
-        const condition = this.formattedConditions.conditions[i];
-
-        // NOTICE: Nested conditions
-        if (condition.aggregator) {
-          return null;
-        }
-
-        if (this.operatorDateIntervalParser.hasPreviousDateInterval(condition.operator)) {
-          // NOTICE: There can't be two previousInterval.
-          if (currentPreviousInterval) {
-            return null;
-          }
-          currentPreviousInterval = condition;
-        }
-      }
-    }
-
-    return currentPreviousInterval;
-  };
+  try {
+    this.conditions = conditionsString ? JSON.parse(conditionsString) : null;
+  } catch (error) {
+    throw new InvalidFiltersFormatError();
+  }
 
   this.perform = () => {
-    if (!this.formattedConditions) return null;
+    if (!this.conditions) return null;
 
-    return this.formatAggregation(this.formattedConditions);
+    return this.formatAggregation(this.conditions);
   };
 
   this.formatAggregation = (node) => {
+    if (!node) throw new InvalidFiltersFormatError('Empty condition in filter');
     if (!node.aggregator) return this.formatCondition(node);
 
-    const formatedAggregator = {};
+    const aggregatorOperator = this.formatAggregatorOperator(node.aggregator);
     const formatedConditions = [];
 
     node.conditions.forEach(condition =>
       formatedConditions.push(this.formatAggregation(condition)));
 
-    const aggregatorOperator = this.formatAggregatorOperator(node.aggregator);
-
-    formatedAggregator[aggregatorOperator] = formatedConditions;
-    return formatedAggregator;
+    return { [aggregatorOperator]: formatedConditions };
   };
 
   this.formatCondition = (condition) => {
-    const formatedCondition = {};
-    let operatorAndValue = {};
+    if (!condition) throw new InvalidFiltersFormatError('Empty condition in filter');
     const formatedField = this.formatField(condition.field);
 
     if (this.operatorDateIntervalParser.isDateIntervalOperator(condition.operator)) {
-      operatorAndValue = this.operatorDateIntervalParser
-        .getDateIntervalFilter(condition.operator, condition.value);
-    } else {
-      const formatedOperator = this.formatOperator(condition.operator);
-      const formatedValue = this.formatValue(condition.operator, condition.value);
-      operatorAndValue[formatedOperator] = formatedValue;
+      return {
+        [formatedField]: this.operatorDateIntervalParser
+          .getDateIntervalFilter(condition.operator, condition.value),
+      };
     }
 
-    formatedCondition[formatedField] = operatorAndValue;
+    const formatedOperator = this.formatOperator(condition.operator);
+    const formatedValue = this.formatValue(condition.operator, condition.value);
 
-    return formatedCondition;
+    return { [formatedField]: { [formatedOperator]: formatedValue } };
   };
 
   this.formatAggregatorOperator = (aggregatorOperator) => {
@@ -145,6 +112,46 @@ function ConditionsParser(conditions, timezone, options) {
   };
 
   this.formatField = field => (field.includes(':') ? `$${field.replace(':', '.')}$` : field);
+
+  // NOTICE: Look for a previous interval condition matching the following:
+  //         - If the filter is a simple condition at the root the check is done right away.
+  //         - There can't be a previous interval condition if the aggregator is 'or' (no meaning).
+  //         - The condition's operator has to be elligible for a previous interval.
+  //         - There can't be two previous interval condition.
+  this.getPreviousIntervalCondition = () => {
+    let currentPreviousInterval = null;
+
+    // NOTICE: Leaf condition at root
+    if (this.conditions && !this.conditions.aggregator) {
+      if (this.operatorDateIntervalParser
+        .hasPreviousDateInterval(this.conditions.operator)) {
+        return this.conditions;
+      }
+      return null;
+    }
+
+    // NOTICE: No previous interval condition when 'or' aggregator
+    if (this.conditions.aggregator === 'and') {
+      for (let i = 0; i < this.conditions.conditions.length; i += 1) {
+        const condition = this.conditions.conditions[i];
+
+        // NOTICE: Nested conditions
+        if (condition.aggregator) {
+          return null;
+        }
+
+        if (this.operatorDateIntervalParser.hasPreviousDateInterval(condition.operator)) {
+          // NOTICE: There can't be two previousInterval.
+          if (currentPreviousInterval) {
+            return null;
+          }
+          currentPreviousInterval = condition;
+        }
+      }
+    }
+
+    return currentPreviousInterval;
+  };
 }
 
 module.exports = ConditionsParser;
