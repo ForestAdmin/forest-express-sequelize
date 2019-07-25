@@ -9,7 +9,7 @@ function FiltersParser(filtersString, timezone, options) {
   try {
     this.filters = filtersString ? JSON.parse(filtersString) : null;
   } catch (error) {
-    throw new InvalidFiltersFormatError();
+    throw new InvalidFiltersFormatError('Invalid filters JSON format');
   }
 
   this.perform = () => {
