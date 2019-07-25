@@ -2,7 +2,7 @@ import _ from 'lodash';
 import { Schemas } from 'forest-express';
 import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
-import ConditionsParser from './conditions-parser';
+import FiltersParser from './filters-parser';
 
 function ValueStatGetter(model, params, options) {
   const OPERATORS = new Operators(options);
@@ -42,7 +42,7 @@ function ValueStatGetter(model, params, options) {
     let where;
     let rawPreviousInterval;
     if (params.filters) {
-      const conditionsParser = new ConditionsParser(params.filters, params.timezone, options);
+      const conditionsParser = new FiltersParser(params.filters, params.timezone, options);
       where = conditionsParser.perform();
       rawPreviousInterval = conditionsParser.getPreviousIntervalCondition();
     }

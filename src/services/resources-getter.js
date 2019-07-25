@@ -7,7 +7,7 @@ import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
 import LiveQueryChecker from './live-query-checker';
 import { ErrorHTTP422 } from './errors';
-import ConditionsParser from './conditions-parser';
+import FiltersParser from './filters-parser';
 
 function ResourcesGetter(model, options, params) {
   const schema = Schemas.schemas[model.name];
@@ -52,7 +52,7 @@ function ResourcesGetter(model, options, params) {
   let hasSmartFieldSearch = false;
 
   function handleFilterParams() {
-    return new ConditionsParser(params.filters, params.timezone, options).perform();
+    return new FiltersParser(params.filters, params.timezone, options).perform();
   }
 
   function getWhere() {

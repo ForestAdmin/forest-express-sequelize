@@ -3,7 +3,7 @@ import P from 'bluebird';
 import moment from 'moment';
 import { Schemas } from 'forest-express';
 import { isMySQL, isMSSQL, isSQLite } from '../utils/database';
-import ConditionsParser from './conditions-parser';
+import FiltersParser from './filters-parser';
 
 function LineStatGetter(model, params, options) {
   const schema = Schemas.schemas[model.name];
@@ -211,7 +211,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   this.perform = () => {
-    const conditionsParser = new ConditionsParser(params.filters, params.timezone, options);
+    const conditionsParser = new FiltersParser(params.filters, params.timezone, options);
     const where = conditionsParser.perform();
 
     return model.unscoped().findAll({

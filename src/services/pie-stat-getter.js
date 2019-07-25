@@ -4,7 +4,7 @@ import moment from 'moment';
 import { Schemas } from 'forest-express';
 import { isVersionLessThan4 } from '../utils/orm';
 import { isMSSQL } from '../utils/database';
-import ConditionsParser from './conditions-parser';
+import FiltersParser from './filters-parser';
 
 // NOTICE: These aliases are not camelcased to prevent issues with Sequelize.
 const ALIAS_GROUP_BY = 'forest_alias_groupby';
@@ -96,7 +96,7 @@ function PieStatGetter(model, params, options) {
   }
 
   this.perform = () => {
-    const conditionsParser = new ConditionsParser(params.filters, params.timezone, options);
+    const conditionsParser = new FiltersParser(params.filters, params.timezone, options);
     const where = conditionsParser.perform();
 
     return model.unscoped().findAll({
