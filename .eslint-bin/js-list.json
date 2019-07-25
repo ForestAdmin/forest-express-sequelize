@@ -7,7 +7,6 @@
   "src/index.js",
   "src/services/apimap-field-builder.js",
   "src/services/apimap-field-type-detector.js",
-  "src/services/conditions-parser.js",
   "src/services/errors.js",
   "src/services/filters-parser.js",
   "src/services/leaderboard-stat-getter.js",
@@ -24,6 +23,5 @@
   "src/utils/records-decorator.js",
   "test/index.js",
   "test/services/apimap-field-builder.js",
-  "test/services/conditions-parser.js",
   "test/services/filters-parser.js"
 ]
