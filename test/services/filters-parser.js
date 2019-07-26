@@ -5,7 +5,7 @@ import moment from 'moment';
 import Sequelize from 'sequelize';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
-import { NoMatchingOperatorError } from '../../src/services/errors';
+import { NoMatchingOperatorError, InvalidFiltersFormatError } from '../../src/services/errors';
 
 describe('Services > FiltersParser', () => {
   const sequelizeOptions = {
@@ -47,6 +47,10 @@ describe('Services > FiltersParser', () => {
     { operator: OPERATORS.GTE, value: moment().subtract(7, 'd').format('YYYY-MM-DD') },
     { operator: OPERATORS.LTE, value: moment().format('YYYY-MM-DD') },
   ]);
+
+  describe('initialization', () => {
+    expect(() => new FiltersParser('{ filters', timezone, sequelizeOptions)).to.throw(InvalidFiltersFormatError);
+  });
 
   describe('formatOperatorValue function', () => {
     const values = [5, 'toto', null];
