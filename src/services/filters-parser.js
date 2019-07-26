@@ -1,3 +1,4 @@
+import _ from 'lodash';
 import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
 import { NoMatchingOperatorError, InvalidFiltersFormatError } from './errors';
@@ -19,7 +20,8 @@ function FiltersParser(filtersString, timezone, options) {
   };
 
   this.formatAggregation = (node) => {
-    if (!node) throw new InvalidFiltersFormatError('Empty condition in filter');
+    if (_.isEmpty(node)) throw new InvalidFiltersFormatError('Empty condition in filter');
+
     if (!node.aggregator) return this.formatCondition(node);
 
     const aggregatorOperator = this.formatAggregatorOperator(node.aggregator);
@@ -32,7 +34,7 @@ function FiltersParser(filtersString, timezone, options) {
   };
 
   this.formatCondition = (condition) => {
-    if (!condition) throw new InvalidFiltersFormatError('Empty condition in filter');
+    if (_.isEmpty(condition)) throw new InvalidFiltersFormatError('Empty condition in filter');
     const formatedField = this.formatField(condition.field);
 
     if (this.operatorDateIntervalParser.isDateIntervalOperator(condition.operator)) {

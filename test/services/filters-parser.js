@@ -109,6 +109,11 @@ describe('Services > FiltersParser', () => {
       expect(defaultFiltersParser.formatCondition(defaultDateCondition))
         .to.deep.equal(defaultExpectedDateCondition);
     });
+
+    it('should throw an error on empty condition', () => {
+      expect(() => defaultFiltersParser.formatCondition()).to.throw(InvalidFiltersFormatError);
+      expect(() => defaultFiltersParser.formatCondition({})).to.throw(InvalidFiltersFormatError);
+    });
   });
 
   describe('formatAggregation function', () => {
@@ -165,6 +170,11 @@ describe('Services > FiltersParser', () => {
 
       expect(defaultFiltersParser.formatAggregation(node))
         .to.deep.equal(expectedFormatedAggregation);
+    });
+
+    it('should throw an error on empty condition', () => {
+      expect(() => defaultFiltersParser.formatAggregation()).to.throw(InvalidFiltersFormatError);
+      expect(() => defaultFiltersParser.formatAggregation({})).to.throw(InvalidFiltersFormatError);
     });
   });
 
