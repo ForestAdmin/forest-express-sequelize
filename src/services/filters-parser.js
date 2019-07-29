@@ -21,11 +21,17 @@ function FiltersParser(filtersString, timezone, options) {
 
   this.formatAggregation = (node) => {
     if (_.isEmpty(node)) throw new InvalidFiltersFormatError('Empty condition in filter');
+    if (!_.isObject(node)) throw new InvalidFiltersFormatError('Filters cannot be a raw value');
+    if (_.isArray(node)) throw new InvalidFiltersFormatError('Filters cannot be a raw array');
 
     if (!node.aggregator) return this.formatCondition(node);
 
     const aggregatorOperator = this.formatAggregatorOperator(node.aggregator);
     const formatedConditions = [];
+
+    if (!_.isArray(node.conditions)) {
+      throw new InvalidFiltersFormatError('Filters\' conditions must be an array');
+    }
 
     node.conditions.forEach(condition =>
       formatedConditions.push(this.formatAggregation(condition)));
