@@ -21,22 +21,18 @@ function ResourcesGetter(model, options, params) {
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
-    let associationsForQuery = [];
     // NOTICE: Populate the necessary associations for filters
-    if (params.filters) {
-      associationsForQuery = associationsForQuery
-        .concat(filterParser.getAssociations(params.filters));
-    }
+    const associations = params.filters ? filterParser.getAssociations(params.filters) : [];
 
     if (params.sort && params.sort.indexOf('.') !== -1) {
-      associationsForQuery.push(params.sort.split('.')[0]);
+      associations.push(params.sort.split('.')[0]);
     }
 
     // NOTICE: Force the primaryKey retrieval to store the records properly in the client.
     return _.union(
       [primaryKey],
       params.fields[model.name].split(','),
-      associationsForQuery,
+      associations,
     );
   }
 

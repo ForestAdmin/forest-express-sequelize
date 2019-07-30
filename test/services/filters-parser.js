@@ -114,56 +114,42 @@ describe('Services > FiltersParser', () => {
 
   describe('formatAggregation function', () => {
     it('should format correctly with \'and\' as aggregator', () => {
-      const node = {
-        aggregator: 'and',
-        conditions: [defaultCondition, defaultDateCondition],
-      };
       const expectedFormatedAggregation = {
         [OPERATORS.AND]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
 
-      expect(defaultFiltersParser.formatAggregation(node.aggregator, [
+      expect(defaultFiltersParser.formatAggregation('and', [
         defaultExpectedCondition,
         defaultExpectedDateCondition,
       ])).to.deep.equal(expectedFormatedAggregation);
     });
 
     it('should format correctly with \'or\' as aggregator', () => {
-      const node = {
-        aggregator: 'or',
-        conditions: [defaultCondition, defaultDateCondition],
-      };
       const expectedFormatedAggregation = {
         [OPERATORS.OR]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
 
-      expect(defaultFiltersParser.formatAggregation(node.aggregator, [
+      expect(defaultFiltersParser.formatAggregation('or', [
         defaultExpectedCondition,
         defaultExpectedDateCondition,
       ])).to.deep.equal(expectedFormatedAggregation);
     });
 
     it('should format correctly with \'and\' as nested aggregators', () => {
-      const nestedNode = {
-        aggregator: 'and',
-        conditions: [defaultCondition, defaultCondition2],
+      const expectedNestedAggregation = {
+        [OPERATORS.AND]: [
+          defaultExpectedCondition,
+          defaultExpectedCondition2,
+        ],
       };
-      const node = {
-        aggregator: 'or',
-        conditions: [defaultDateCondition, nestedNode],
+      const expectedFormatedAggregation = {
+        [OPERATORS.OR]: [
+          defaultExpectedDateCondition,
+          expectedNestedAggregation,
+        ],
       };
-      const expectedFormatedAggregation = {};
-      const expectedNestedAggregation = {};
-      expectedNestedAggregation[OPERATORS.AND] = [
-        defaultExpectedCondition,
-        defaultExpectedCondition2,
-      ];
-      expectedFormatedAggregation[OPERATORS.OR] = [
-        defaultExpectedDateCondition,
-        expectedNestedAggregation,
-      ];
 
-      expect(defaultFiltersParser.formatAggregation(node.aggregator, [
+      expect(defaultFiltersParser.formatAggregation('or', [
         defaultExpectedDateCondition,
         expectedNestedAggregation,
       ]))
