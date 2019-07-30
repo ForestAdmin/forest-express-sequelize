@@ -1,46 +1,21 @@
-import _ from 'lodash';
+import { BaseFiltersParser } from 'forest-express';
 import Operators from '../utils/operators';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
-import { NoMatchingOperatorError, InvalidFiltersFormatError } from './errors';
+import { NoMatchingOperatorError } from './errors';
 
-function FiltersParser(filtersString, timezone, options) {
+function FiltersParser(timezone, options) {
   this.OPERATORS = new Operators(options);
   this.operatorDateIntervalParser = new OperatorDateIntervalParser(timezone, options);
 
-  try {
-    this.filters = filtersString ? JSON.parse(filtersString) : null;
-  } catch (error) {
-    throw new InvalidFiltersFormatError('Invalid filters JSON format');
-  }
+  this.perform = filtersString =>
+    BaseFiltersParser.perform(filtersString, this.formatAggregation, this.formatCondition);
 
-  this.perform = () => {
-    if (!this.filters) return null;
-
-    return this.formatAggregation(this.filters);
-  };
-
-  this.formatAggregation = (node) => {
-    if (_.isEmpty(node)) throw new InvalidFiltersFormatError('Empty condition in filter');
-    if (!_.isObject(node)) throw new InvalidFiltersFormatError('Filters cannot be a raw value');
-    if (_.isArray(node)) throw new InvalidFiltersFormatError('Filters cannot be a raw array');
-
-    if (!node.aggregator) return this.formatCondition(node);
-
-    const aggregatorOperator = this.formatAggregatorOperator(node.aggregator);
-    const formatedConditions = [];
-
-    if (!_.isArray(node.conditions)) {
-      throw new InvalidFiltersFormatError('Filters\' conditions must be an array');
-    }
-
-    node.conditions.forEach(condition =>
-      formatedConditions.push(this.formatAggregation(condition)));
-
+  this.formatAggregation = (aggregator, formatedConditions) => {
+    const aggregatorOperator = this.formatAggregatorOperator(aggregator);
     return { [aggregatorOperator]: formatedConditions };
   };
 
   this.formatCondition = (condition) => {
-    if (_.isEmpty(condition)) throw new InvalidFiltersFormatError('Empty condition in filter');
     const formatedField = this.formatField(condition.field);
 
     if (this.operatorDateIntervalParser.isDateIntervalOperator(condition.operator)) {
@@ -154,21 +129,22 @@ function FiltersParser(filtersString, timezone, options) {
   //         - There can't be a previous interval condition if the aggregator is 'or' (no meaning).
   //         - The condition's operator has to be elligible for a previous interval.
   //         - There can't be two previous interval condition.
-  this.getPreviousIntervalCondition = () => {
+  this.getPreviousIntervalCondition = (filtersString) => {
+    const filters = BaseFiltersParser.parseFiltersString(filtersString);
     let currentPreviousInterval = null;
 
     // NOTICE: Leaf condition at root
-    if (this.filters && !this.filters.aggregator) {
-      if (this.operatorDateIntervalParser.hasPreviousDateInterval(this.filters.operator)) {
-        return this.filters;
+    if (filters && !filters.aggregator) {
+      if (this.operatorDateIntervalParser.hasPreviousDateInterval(filters.operator)) {
+        return filters;
       }
       return null;
     }
 
     // NOTICE: No previous interval condition when 'or' aggregator
-    if (this.filters.aggregator === 'and') {
-      for (let i = 0; i < this.filters.conditions.length; i += 1) {
-        const condition = this.filters.conditions[i];
+    if (filters.aggregator === 'and') {
+      for (let i = 0; i < filters.conditions.length; i += 1) {
+        const condition = filters.conditions[i];
 
         // NOTICE: Nested filters
         if (condition.aggregator) {
@@ -187,6 +163,8 @@ function FiltersParser(filtersString, timezone, options) {
 
     return currentPreviousInterval;
   };
+
+  this.getAssociations = filtersString => BaseFiltersParser.getAssociations(filtersString);
 }
 
 module.exports = FiltersParser;

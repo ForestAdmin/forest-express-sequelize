@@ -14,14 +14,5 @@ function NoMatchingOperatorError(message) {
 }
 NoMatchingOperatorError.prototype = new Error();
 
-function InvalidFiltersFormatError(message) {
-  this.name = 'InvalidFiltersFormatError';
-  this.message = message || 'The filters format is not a valid JSON string.';
-  this.status = 422;
-  this.stack = (new Error()).stack;
-}
-InvalidFiltersFormatError.prototype = new Error();
-
 exports.ErrorHTTP422 = ErrorHTTP422;
 exports.NoMatchingOperatorError = NoMatchingOperatorError;
-exports.InvalidFiltersFormatError = InvalidFiltersFormatError;

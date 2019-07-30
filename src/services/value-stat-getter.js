@@ -42,9 +42,9 @@ function ValueStatGetter(model, params, options) {
     let where;
     let rawPreviousInterval;
     if (params.filters) {
-      const conditionsParser = new FiltersParser(params.filters, params.timezone, options);
-      where = conditionsParser.perform();
-      rawPreviousInterval = conditionsParser.getPreviousIntervalCondition();
+      const conditionsParser = new FiltersParser(params.timezone, options);
+      where = conditionsParser.perform(params.filters);
+      rawPreviousInterval = conditionsParser.getPreviousIntervalCondition(params.filters);
     }
 
     return model

@@ -16,18 +16,17 @@ function ResourcesGetter(model, options, params) {
   let segmentWhere;
   const OPERATORS = new Operators(options);
   const primaryKey = _.keys(model.primaryKeys)[0];
+  const filterParser = new FiltersParser(params.timezone, options);
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
+    let associationsForQuery = [];
     // NOTICE: Populate the necessary associations for filters
-    const associationsForQuery = [];
-    _.each(params.filter, (values, key) => {
-      if (key.indexOf(':') !== -1) {
-        const association = key.split(':')[0];
-        associationsForQuery.push(association);
-      }
-    });
+    if (params.filters) {
+      associationsForQuery = associationsForQuery
+        .concat(filterParser.getAssociations(params.filters));
+    }
 
     if (params.sort && params.sort.indexOf('.') !== -1) {
       associationsForQuery.push(params.sort.split('.')[0]);
@@ -52,7 +51,7 @@ function ResourcesGetter(model, options, params) {
   let hasSmartFieldSearch = false;
 
   function handleFilterParams() {
-    return new FiltersParser(params.filters, params.timezone, options).perform();
+    return filterParser.perform(params.filters);
   }
 
   function getWhere() {

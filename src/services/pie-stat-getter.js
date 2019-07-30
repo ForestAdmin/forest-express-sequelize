@@ -96,8 +96,7 @@ function PieStatGetter(model, params, options) {
   }
 
   this.perform = () => {
-    const conditionsParser = new FiltersParser(params.filters, params.timezone, options);
-    const where = conditionsParser.perform();
+    const where = new FiltersParser(params.timezone, options).perform(params.filters);
 
     return model.unscoped().findAll({
       attributes: [

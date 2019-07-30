@@ -5,7 +5,7 @@ import moment from 'moment';
 import Sequelize from 'sequelize';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
-import { NoMatchingOperatorError, InvalidFiltersFormatError } from '../../src/services/errors';
+import { NoMatchingOperatorError } from '../../src/services/errors';
 
 describe('Services > FiltersParser', () => {
   const sequelizeOptions = {
@@ -13,7 +13,7 @@ describe('Services > FiltersParser', () => {
   };
   const timezone = 'Europe/Paris';
   const OPERATORS = new Operators(sequelizeOptions);
-  const defaultFiltersParser = new FiltersParser(null, timezone, sequelizeOptions);
+  const defaultFiltersParser = new FiltersParser(timezone, sequelizeOptions);
 
   const getExpectedCondition = (field, conditions) => {
     const result = {};
@@ -47,10 +47,6 @@ describe('Services > FiltersParser', () => {
     { operator: OPERATORS.GTE, value: moment().subtract(7, 'd').format('YYYY-MM-DD') },
     { operator: OPERATORS.LTE, value: moment().format('YYYY-MM-DD') },
   ]);
-
-  describe('initialization', () => {
-    expect(() => new FiltersParser('{ filters', timezone, sequelizeOptions)).to.throw(InvalidFiltersFormatError);
-  });
 
   describe('formatOperatorValue function', () => {
     const values = [5, 'toto', null];
@@ -111,17 +107,12 @@ describe('Services > FiltersParser', () => {
     });
 
     it('should throw an error on empty condition', () => {
-      expect(() => defaultFiltersParser.formatCondition()).to.throw(InvalidFiltersFormatError);
-      expect(() => defaultFiltersParser.formatCondition({})).to.throw(InvalidFiltersFormatError);
+      expect(() => defaultFiltersParser.formatCondition()).to.throw(Error);
+      expect(() => defaultFiltersParser.formatCondition({})).to.throw(Error);
     });
   });
 
   describe('formatAggregation function', () => {
-    it('should format correctly when simple condition', () => {
-      expect(defaultFiltersParser.formatAggregation(defaultCondition))
-        .to.deep.equal(defaultExpectedCondition);
-    });
-
     it('should format correctly with \'and\' as aggregator', () => {
       const node = {
         aggregator: 'and',
@@ -131,8 +122,10 @@ describe('Services > FiltersParser', () => {
         [OPERATORS.AND]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
 
-      expect(defaultFiltersParser.formatAggregation(node))
-        .to.deep.equal(expectedFormatedAggregation);
+      expect(defaultFiltersParser.formatAggregation(node.aggregator, [
+        defaultExpectedCondition,
+        defaultExpectedDateCondition,
+      ])).to.deep.equal(expectedFormatedAggregation);
     });
 
     it('should format correctly with \'or\' as aggregator', () => {
@@ -144,8 +137,10 @@ describe('Services > FiltersParser', () => {
         [OPERATORS.OR]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
 
-      expect(defaultFiltersParser.formatAggregation(node))
-        .to.deep.equal(expectedFormatedAggregation);
+      expect(defaultFiltersParser.formatAggregation(node.aggregator, [
+        defaultExpectedCondition,
+        defaultExpectedDateCondition,
+      ])).to.deep.equal(expectedFormatedAggregation);
     });
 
     it('should format correctly with \'and\' as nested aggregators', () => {
@@ -168,13 +163,16 @@ describe('Services > FiltersParser', () => {
         expectedNestedAggregation,
       ];
 
-      expect(defaultFiltersParser.formatAggregation(node))
+      expect(defaultFiltersParser.formatAggregation(node.aggregator, [
+        defaultExpectedDateCondition,
+        expectedNestedAggregation,
+      ]))
         .to.deep.equal(expectedFormatedAggregation);
     });
 
     it('should throw an error on empty condition', () => {
-      expect(() => defaultFiltersParser.formatAggregation()).to.throw(InvalidFiltersFormatError);
-      expect(() => defaultFiltersParser.formatAggregation({})).to.throw(InvalidFiltersFormatError);
+      expect(() => defaultFiltersParser.formatAggregation()).to.throw(Error);
+      expect(() => defaultFiltersParser.formatAggregation({})).to.throw(Error);
     });
   });
 
@@ -191,16 +189,18 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(aggregator, timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition()).to.deep.equal(defaultDateCondition);
+        expect(filtersParser.getPreviousIntervalCondition(aggregator))
+          .to.deep.equal(defaultDateCondition);
       });
 
       it('no aggregator + flat conditions + 1 previous interval, ', () => {
         const aggregator = JSON.stringify(defaultDateCondition);
-        const filtersParser = new FiltersParser(aggregator, timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition()).to.deep.equal(defaultDateCondition);
+        expect(filtersParser.getPreviousIntervalCondition(aggregator))
+          .to.deep.equal(defaultDateCondition);
       });
     });
 
@@ -210,9 +210,9 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [defaultCondition, defaultDateCondition, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(aggregator, timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition()).to.equal(null);
+        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
       });
 
       it('\'or\' aggregator + flat conditions + 1 previous interval, ', () => {
@@ -220,9 +220,9 @@ describe('Services > FiltersParser', () => {
           aggregator: 'or',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(aggregator, timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition()).to.equal(null);
+        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
       });
 
       it('\'and\' aggregator + flat conditions + 0 previous interval, ', () => {
@@ -230,9 +230,9 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2],
         });
-        const filtersParser = new FiltersParser(aggregator, timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition()).to.equal(null);
+        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
       });
 
       it('\'and\' aggregator + nested conditions + 1 previous interval, ', () => {
@@ -240,16 +240,16 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [{ aggregator: 'or', conditions: [defaultCondition, defaultCondition2] }, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(aggregator, timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition()).to.equal(null);
+        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
       });
 
       it('no aggregator + flat conditions + 0 previous interval, ', () => {
         const aggregator = JSON.stringify(defaultCondition);
-        const filtersParser = new FiltersParser(aggregator, timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition()).to.equal(null);
+        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
       });
     });
   });
