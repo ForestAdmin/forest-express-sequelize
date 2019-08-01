@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0-beta.0 - 2019-08-01
 ### Fixed
 - Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
 - Technical - Set default prerelease tag to beta if nothing specified on deploy.
