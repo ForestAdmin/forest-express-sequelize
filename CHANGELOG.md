@@ -1,14 +1,16 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Makes the JWT lighter and consistent across lianas.
 
 ## RELEASE 4.0.0-beta.0 - 2019-08-01
+### Changed
+- Filters - Add support for complex/generic conditions chaining.
+
 ### Fixed
 - Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
 - Technical - Set default prerelease tag to beta if nothing specified on deploy.
-
-### Changed
-- Filters - Add support for complex/generic conditions chaining.
 
 ## RELEASE 3.2.6 - 2019-07-24
 ### Fixed
