@@ -7,9 +7,11 @@
   "src/index.js",
   "src/services/apimap-field-builder.js",
   "src/services/apimap-field-type-detector.js",
+  "src/services/errors.js",
+  "src/services/filters-parser.js",
   "src/services/leaderboard-stat-getter.js",
   "src/services/line-stat-getter.js",
-  "src/services/operator-value-parser.js",
+  "src/services/operator-date-interval-parser.js",
   "src/services/pie-stat-getter.js",
   "src/services/resource-finder.js",
   "src/services/resources-getter.js",
@@ -20,5 +22,6 @@
   "src/utils/orm.js",
   "src/utils/records-decorator.js",
   "test/index.js",
-  "test/services/apimap-field-builder.js"
+  "test/services/apimap-field-builder.js",
+  "test/services/filters-parser.js"
 ]

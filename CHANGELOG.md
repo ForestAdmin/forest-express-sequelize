@@ -5,6 +5,9 @@
 - Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
 - Technical - Set default prerelease tag to beta if nothing specified on deploy.
 
+### Changed
+- Filters - Add support for complex/generic conditions chaining.
+
 ## RELEASE 3.2.6 - 2019-07-24
 ### Fixed
 - Schema - Schemas having fields with descriptions containing "\n" are now properly sent in remote environments.

@@ -1,10 +1,7 @@
 import _ from 'lodash';
 import { Schemas } from 'forest-express';
-import BaseStatGetter from './base-stat-getter';
 
 function LeaderboardStatGetter(model, modelRelationship, params, options) {
-  BaseStatGetter.call(this, model, params, options);
-
   const labelField = params.label_field;
   const aggregate = params.aggregate.toUpperCase();
   const aggregateField = params.aggregate_field;
