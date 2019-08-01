@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0-beta.1 - 2019-08-01
 ### Changed
 - Technical - Makes the JWT lighter and consistent across lianas.
 
