@@ -11,7 +11,7 @@
 - Filters - Add support for complex/generic conditions chaining.
 
 ### Fixed
-- Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
+- Technical - Fix pre-commit hook to avoid renamed file and add new line at the end of the file.
 - Technical - Set default prerelease tag to beta if nothing specified on deploy.
 
 ## RELEASE 3.2.6 - 2019-07-24
