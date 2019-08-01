@@ -1214,6 +1214,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params.filters = JSON.stringify({
               field: 'country',
               operator: 'present',
+              value: null,
             });
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
@@ -1233,6 +1234,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params.filters = JSON.stringify({
               field: 'country',
               operator: 'blank',
+              value: null,
             });
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
@@ -1248,6 +1250,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params.filters = JSON.stringify({
               field: 'country',
               operator: 'blank',
+              value: null,
             });
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .count()
