@@ -4,6 +4,9 @@
 ### Fixed
 - Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
 
+### Changed
+- Filters - Add support for complex/generic conditions chaining.
+
 ## RELEASE 3.2.6 - 2019-07-24
 ### Fixed
 - Schema - Schemas having fields with descriptions containing "\n" are now properly sent in remote environments.
@@ -16,7 +19,6 @@
 ### Changed
 - Naming - Rename opts to options in stat getters.
 - Technical - Apply ESLint rules to old files.
-- Filters - Add support for complex/generic conditions chaining.
 
 ### Fixed
 - Security - Upgrade `lodash` dependency for security patch.
