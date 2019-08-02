@@ -2001,10 +2001,10 @@ for-own@^0.1.4:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@4.0.0-beta.1:
-  version "4.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-4.0.0-beta.1.tgz#3475036da4cd3052c6b9ab8fa03a2e1127837d7d"
-  integrity sha512-qoS3yyFqvrEL7+R/FfXYiqOeIPA3GYBbHNI6tzLuhVog+Cjbtg4LdKUV6RgiH5egxFXQwxWkzfGxYx+mtHociQ==
+forest-express@4.0.0-beta.2:
+  version "4.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-4.0.0-beta.2.tgz#0a1f83a63fdad5c1ddb8ba2ec5415498bfc44ad7"
+  integrity sha512-cLhHUCPL8FifWrmpV09MxxvlxJ965K5HQ7nvOKSTvvlN5uFOeduFgrjwAzIOClY1las1IYcciUU0gWOoVMpikA==
   dependencies:
     babel-runtime "7.0.0-beta.3"
     base32-encode "1.1.0"

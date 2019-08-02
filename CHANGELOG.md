@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Error Handling - Fix error handling crash (regression introduced in 4.0.0-beta.0).
 
 ## RELEASE 4.0.0-beta.1 - 2019-08-01
 ### Changed
