@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Error Handling - Fix error handling crash trial 2.
 
 ## RELEASE 4.0.0-beta.2 - 2019-08-02
 ### Fixed
