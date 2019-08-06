@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Fixed
 - Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
+- Technical - Apply ESLint rules to `has-many-getter` and `query-builder`.
 
 ## RELEASE 3.2.6 - 2019-07-24
 ### Fixed

@@ -7,23 +7,23 @@ const SearchBuilder = require('./search-builder');
 const CompositeKeysManager = require('./composite-keys-manager');
 
 function HasManyGetter(model, association, opts, params) {
-  var queryBuilder = new QueryBuilder(model, opts, params);
-  var schema = Interface.Schemas.schemas[association.name];
-  var primaryKeyModel = _.keys(model.primaryKeys)[0];
+  const queryBuilder = new QueryBuilder(model, opts, params);
+  const schema = Interface.Schemas.schemas[association.name];
+  const primaryKeyModel = _.keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[association.name]) { return null; }
     // NOTICE: Force the primaryKey retrieval to store the records properly in
     //         the client.
-    var primaryKeyArray = [_.keys(association.primaryKeys)[0]];
+    const primaryKeyArray = [_.keys(association.primaryKeys)[0]];
 
     return _.union(primaryKeyArray, params.fields[association.name].split(','));
   }
 
-  var fieldNamesRequested = getFieldNamesRequested();
-  var searchBuilder = new SearchBuilder(association, opts, params, fieldNamesRequested);
-  var where = searchBuilder.perform(params.associationName);
-  var include = queryBuilder.getIncludes(association, fieldNamesRequested);
+  const fieldNamesRequested = getFieldNamesRequested();
+  const searchBuilder = new SearchBuilder(association, opts, params, fieldNamesRequested);
+  const where = searchBuilder.perform(params.associationName);
+  const include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
   function findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
@@ -41,9 +41,8 @@ function HasManyGetter(model, association, opts, params) {
         where,
         include,
       }],
-    }).then(function (record) {
-      return record[params.associationName];
-    });
+    })
+      .then(record => record[params.associationName]);
   }
 
   function getCount() {
@@ -60,38 +59,34 @@ function HasManyGetter(model, association, opts, params) {
   }
 
   function getRecords() {
-    var queryOptions = {
+    const queryOptions = {
       order: queryBuilder.getOrder(params.associationName),
       offset: queryBuilder.getSkip(),
-      limit: queryBuilder.getLimit()
+      limit: queryBuilder.getLimit(),
     };
 
     return findQuery(queryOptions)
-      .then(function (records) {
-        return P.map(records, function (record) {
-          if (schema.isCompositePrimary) {
-            record.forestCompositePrimary =
-              new CompositeKeysManager(association, schema, record)
-                .createCompositePrimary();
-          }
-
-          return record;
-        });
-      });
-  }
-
-  this.perform = function () {
-    return getRecords()
-      .then(function (records) {
-        var fieldsSearched = null;
-
-        if (params.search) {
-          fieldsSearched = searchBuilder.getFieldsSearched();
+      .then(records => P.map(records, (record) => {
+        if (schema.isCompositePrimary) {
+          record.forestCompositePrimary =
+            new CompositeKeysManager(association, schema, record)
+              .createCompositePrimary();
         }
 
-        return [records, fieldsSearched];
-      });
-  };
+        return record;
+      }));
+  }
+
+  this.perform = () => getRecords()
+    .then((records) => {
+      let fieldsSearched = null;
+
+      if (params.search) {
+        fieldsSearched = searchBuilder.getFieldsSearched();
+      }
+
+      return [records, fieldsSearched];
+    });
 
   this.count = getCount;
 }
