@@ -64,7 +64,8 @@ function QueryBuilder(model, opts, params) {
       if (params.sort.indexOf('.') !== -1) {
         // NOTICE: Sort on the belongsTo displayed field
         const [associationName, fieldName] = params.sort.split('.');
-        const schemaField = schema.fields.find(field => field.field === associationName);
+        const schemaField = (aliasSchema || schema).fields
+          .find(field => field.field === associationName);
         const [tableName] = schemaField.reference.split('.');
         const associationSchema = Schemas.schemas[tableName];
         const belongsToColumnName = Orm.getColumnName(associationSchema, fieldName);
