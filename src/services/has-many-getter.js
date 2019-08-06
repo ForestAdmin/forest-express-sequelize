@@ -60,7 +60,7 @@ function HasManyGetter(model, association, opts, params) {
 
   function getRecords() {
     const queryOptions = {
-      order: queryBuilder.getOrder(params.associationName),
+      order: queryBuilder.getOrder(params.associationName, schema),
       offset: queryBuilder.getSkip(),
       limit: queryBuilder.getLimit(),
     };

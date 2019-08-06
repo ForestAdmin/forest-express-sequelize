@@ -25,6 +25,12 @@ const findRecord = (model, recordId, options) => {
   return model.findById(recordId, options);
 };
 
+const getColumnName = (schema, fieldName) => {
+  const schemaField = schema.fields.find(field => field.field === fieldName);
+  return (schemaField && schemaField.columnName) ? schemaField.columnName : fieldName;
+};
+
 exports.getVersion = getVersion;
 exports.isVersionLessThan4 = isVersionLessThan4;
 exports.findRecord = findRecord;
+exports.getColumnName = getColumnName;

@@ -9,6 +9,11 @@
 ### Fixed
 - Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
 - Technical - Apply ESLint rules to `has-many-getter` and `query-builder`.
+- Pie Chart - Fix groupBy/aggregate on a field with custom column name.
+- Time Chart - Fix groupBy/aggregate on a field with custom column name.
+- Leaderboard Chart - Fix groupBy on a field with custom column name.
+- List Records - Fix sort on a field with custom column name.
+- List Related Records - Fix sort on a field with custom column name.
 
 ## RELEASE 3.2.6 - 2019-07-24
 ### Fixed
