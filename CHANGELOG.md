@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Field Types - Define properly the type of `UUIDV1` and `UUIDV4` fields in the schema.
+
 ### Fixed
 - Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
 - Technical - Apply ESLint rules to `has-many-getter` and `query-builder`.
