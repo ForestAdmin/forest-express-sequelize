@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.0 - 2019-08-07
 ### Added
 - Field Types - Define properly the type of `UUIDV1` and `UUIDV4` fields in the schema.
 
