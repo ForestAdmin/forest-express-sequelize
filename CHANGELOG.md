@@ -47,7 +47,7 @@
 ### Added
 - Configuration - The liana now requires recursively model files in `modelsDir` and customization files in `configDir`.
 
-### Changed
+### Changed
 - Technical - Apply ESLint rules to an old code.
 
 ## RELEASE 3.1.1 - 2019-05-15
