@@ -73,7 +73,7 @@ function QueryBuilder(model, opts, params) {
       } else if (aliasName) {
         return [[opts.sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
       }
-      return [[Orm.getColumnName(schema, params.sort), order]];
+      return [[params.sort, order]];
     }
 
     return null;
