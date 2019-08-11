@@ -1,6 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Pie Chart - Fix groupBy/aggregate on a field with custom column name.
+- Time Chart - Fix groupBy/aggregate on a field with custom column name.
+- Leaderboard Chart - Fix groupBy on a field with custom column name.
+- List Records - Fix sort on a belongsTo association having a reference field with custom column name.
+- List Related Records - Fix sort on a field with custom column name.
 
 ## RELEASE 3.3.0 - 2019-08-07
 ### Added

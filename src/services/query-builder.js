@@ -1,7 +1,11 @@
 import _ from 'lodash';
+import { Schemas } from 'forest-express';
+import Orm from '../utils/orm';
 import Database from '../utils/database';
 
 function QueryBuilder(model, opts, params) {
+  const schema = Schemas.schemas[model.name];
+
   function hasPagination() {
     return params.page && params.page.number;
   }
@@ -37,7 +41,7 @@ function QueryBuilder(model, opts, params) {
     return includes;
   };
 
-  this.getOrder = (aliasName) => {
+  this.getOrder = (aliasName, aliasSchema) => {
     if (params.sort) {
       let order = 'ASC';
 
@@ -59,9 +63,15 @@ function QueryBuilder(model, opts, params) {
 
       if (params.sort.indexOf('.') !== -1) {
         // NOTICE: Sort on the belongsTo displayed field
-        return [[opts.sequelize.col(params.sort), order]];
+        const [associationName, fieldName] = params.sort.split('.');
+        const schemaField = (aliasSchema || schema).fields
+          .find(field => field.field === associationName);
+        const [tableName] = schemaField.reference.split('.');
+        const associationSchema = Schemas.schemas[tableName];
+        const belongsToColumnName = Orm.getColumnName(associationSchema, fieldName);
+        return [[opts.sequelize.col(`${associationName}.${belongsToColumnName}`), order]];
       } else if (aliasName) {
-        return [[opts.sequelize.col(`${aliasName}.${params.sort}`), order]];
+        return [[opts.sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
       }
       return [[params.sort, order]];
     }
