@@ -5,7 +5,7 @@ import FiltersParser from './filters-parser';
 
 function ValueStatGetter(model, params, options) {
   const OPERATORS = new Operators(options);
-  const dateOperatorParserOptions = { ops: OPERATORS, timezone: params.timezone };
+  const dateOperatorParserOptions = { operators: OPERATORS, timezone: params.timezone };
 
   this.operatorDateParser = new BaseOperatorDateParser(dateOperatorParserOptions);
 
