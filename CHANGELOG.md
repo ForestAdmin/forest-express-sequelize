@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0-beta.4 - 2019-08-12
 ### Fixed
 - Filters - Fix filters `was in previous xxx` issue due to moment mutability.
 
