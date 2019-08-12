@@ -4,9 +4,7 @@ import { NoMatchingOperatorError } from './errors';
 
 function FiltersParser(timezone, options) {
   this.OPERATORS = new Operators(options);
-  const dateOperatorParserOptions = { ops: this.OPERATORS, timezone };
-
-  this.operatorDateParser = new BaseOperatorDateParser(dateOperatorParserOptions);
+  this.operatorDateParser = new BaseOperatorDateParser({ operators: this.OPERATORS, timezone });
 
   this.perform = filtersString =>
     BaseFiltersParser.perform(filtersString, this.formatAggregation, this.formatCondition);
