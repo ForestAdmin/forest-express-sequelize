@@ -2001,10 +2001,10 @@ for-own@^0.1.4:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@4.0.0-beta.3:
-  version "4.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-4.0.0-beta.3.tgz#08ff0458eb711bcb9f1d3f1aed507aed621a2461"
-  integrity sha512-rMcNwW/MUla5QTtpcExoUmnVeq5Y30jJF8UhzEIbavtpBIp5W0GLPML/6bLLgt5sJIM3dC1ZT3SSRem2kiajAg==
+forest-express@4.0.0-beta.5:
+  version "4.0.0-beta.5"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-4.0.0-beta.5.tgz#4271008bb094bfc06942071271ab30ad740e7624"
+  integrity sha512-Z31CmU1B6a3FwNC2BaOIvqnbQlD/VdqyK7g1nba/r8XmzirKGo1bXzjK/bWv7TelxYyTKGrk5PQhbRyq7ySrag==
   dependencies:
     babel-runtime "7.0.0-beta.3"
     base32-encode "1.1.0"
@@ -2024,6 +2024,7 @@ forest-express@4.0.0-beta.3:
     jsonwebtoken "8.5.1"
     lodash "4.17.13"
     moment "2.19.4"
+    moment-timezone "0.5.26"
     otplib "10.0.0"
     require-all "3.0.0"
     superagent "3.7.0"
@@ -3198,6 +3199,13 @@ moment-timezone@0.5.14:
   version "0.5.14"
   resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.14.tgz#4eb38ff9538b80108ba467a458f3ed4268ccfcb1"
   integrity sha1-TrOP+VOLgBCLpGekWPPtQmjM/LE=
+  dependencies:
+    moment ">= 2.9.0"
+
+moment-timezone@0.5.26:
+  version "0.5.26"
+  resolved "https://registry.yarnpkg.com/moment-timezone/-/moment-timezone-0.5.26.tgz#c0267ca09ae84631aa3dc33f65bedbe6e8e0d772"
+  integrity sha512-sFP4cgEKTCymBBKgoxZjYzlSovC20Y6J7y3nanDc5RoBIXKlZhoYwBoZGe3flwU6A372AcRwScH8KiwV6zjy1g==
   dependencies:
     moment ">= 2.9.0"
 

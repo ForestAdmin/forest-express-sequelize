@@ -1,12 +1,15 @@
 import _ from 'lodash';
-import { Schemas } from 'forest-express';
+import { Schemas, BaseOperatorDateParser } from 'forest-express';
 import Operators from '../utils/operators';
-import OperatorDateIntervalParser from './operator-date-interval-parser';
 import FiltersParser from './filters-parser';
 
 function ValueStatGetter(model, params, options) {
   const OPERATORS = new Operators(options);
-  const operatorDateIntervalParser = new OperatorDateIntervalParser(params.timezone, options);
+
+  this.operatorDateParser = new BaseOperatorDateParser({
+    operators: OPERATORS,
+    timezone: params.timezone,
+  });
 
   const schema = Schemas.schemas[model.name];
   function getAggregate() {
@@ -57,7 +60,7 @@ function ValueStatGetter(model, params, options) {
         countCurrent = count || 0;
 
         if (rawPreviousInterval) {
-          const formatedPreviousDateInterval = operatorDateIntervalParser
+          const formatedPreviousDateInterval = this.operatorDateParser
             .getPreviousDateIntervalFilter(rawPreviousInterval.operator, rawPreviousInterval.value);
 
           if (where[OPERATORS.AND]) {

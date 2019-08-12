@@ -11,7 +11,6 @@
   "src/services/filters-parser.js",
   "src/services/leaderboard-stat-getter.js",
   "src/services/line-stat-getter.js",
-  "src/services/operator-date-interval-parser.js",
   "src/services/pie-stat-getter.js",
   "src/services/resource-finder.js",
   "src/services/resources-getter.js",

@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Filters - Fix filters `was in previous xxx` issue due to moment mutability.
+
+### Changed
+- Technical - Make filters date operator parser generic through forest-express.
 
 ## RELEASE 4.0.0-beta.3 - 2019-08-02
 ### Fixed
