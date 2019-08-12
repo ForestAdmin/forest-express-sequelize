@@ -1,11 +1,12 @@
-import { BaseFiltersParser } from 'forest-express';
+import { BaseFiltersParser, BaseOperatorDateParser } from 'forest-express';
 import Operators from '../utils/operators';
-import OperatorDateIntervalParser from './operator-date-interval-parser';
 import { NoMatchingOperatorError } from './errors';
 
 function FiltersParser(timezone, options) {
   this.OPERATORS = new Operators(options);
-  this.operatorDateIntervalParser = new OperatorDateIntervalParser(timezone, options);
+  const dateOperatorParserOptions = { ops: this.OPERATORS, timezone };
+
+  this.operatorDateParser = new BaseOperatorDateParser(dateOperatorParserOptions);
 
   this.perform = filtersString =>
     BaseFiltersParser.perform(filtersString, this.formatAggregation, this.formatCondition);
@@ -18,10 +19,10 @@ function FiltersParser(timezone, options) {
   this.formatCondition = (condition) => {
     const formatedField = this.formatField(condition.field);
 
-    if (this.operatorDateIntervalParser.isDateIntervalOperator(condition.operator)) {
+    if (this.operatorDateParser.isDateOperator(condition.operator)) {
       return {
-        [formatedField]: this.operatorDateIntervalParser
-          .getDateIntervalFilter(condition.operator, condition.value),
+        [formatedField]: this.operatorDateParser
+          .getDateFilter(condition.operator, condition.value),
       };
     }
 
@@ -135,7 +136,7 @@ function FiltersParser(timezone, options) {
 
     // NOTICE: Leaf condition at root
     if (filters && !filters.aggregator) {
-      if (this.operatorDateIntervalParser.hasPreviousDateInterval(filters.operator)) {
+      if (this.operatorDateParser.hasPreviousDateInterval(filters.operator)) {
         return filters;
       }
       return null;
@@ -151,7 +152,7 @@ function FiltersParser(timezone, options) {
           return null;
         }
 
-        if (this.operatorDateIntervalParser.hasPreviousDateInterval(condition.operator)) {
+        if (this.operatorDateParser.hasPreviousDateInterval(condition.operator)) {
           // NOTICE: There can't be two previousInterval.
           if (currentPreviousInterval) {
             return null;
