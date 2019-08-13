@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Readme - Add a community section.
+- Readme - Remove the Licence section as it is already accessible in the Github page header.
+
 ### Fixed
 - Pie Chart - Fix groupBy/aggregate on a field with custom column name.
 - Time Chart - Fix groupBy/aggregate on a field with custom column name.
