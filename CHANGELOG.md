@@ -4,6 +4,9 @@
 ### Changed
 - Technical - Apply ESLint rules.
 
+### Fixed
+- Has Many - Fix an internal error if a search is done on a page different that the first one and the search returns no results.
+
 ## RELEASE 4.0.0-beta.4 - 2019-08-12
 ### Fixed
 - Filters - Fix filters `was in previous xxx` issue due to moment mutability.

@@ -42,7 +42,7 @@ function HasManyGetter(model, association, opts, params) {
         include,
       }],
     })
-      .then(record => record[params.associationName]);
+      .then(record => ((record && record[params.associationName]) || []));
   }
 
   function getCount() {
