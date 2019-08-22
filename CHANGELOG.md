@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.2 - 2019-08-22
 ### Fixed
 - Pie Charts - Fix capability to have a chart grouped by a reference field with an alias.
 
