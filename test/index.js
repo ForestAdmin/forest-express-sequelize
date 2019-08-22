@@ -80,7 +80,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     userId: { type: Sequelize.INTEGER },
   });
 
-  models.addressWithUserAlias = sequelize.define('address', {
+  models.addressWithUserAlias = sequelize.define('addressWithUserAlias', {
     line: { type: Sequelize.STRING },
     zipCode: { type: Sequelize.STRING },
     city: { type: Sequelize.STRING },
@@ -166,6 +166,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           { field: 'city', type: 'String' },
           { field: 'country', type: 'String' },
           { field: 'user', type: 'Number', reference: 'user.id' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+        ],
+      },
+      addressWithUserAlias: {
+        name: 'addressWithUserAlias',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'line', type: 'String' },
+          { field: 'zipCode', type: 'String' },
+          { field: 'city', type: 'String' },
+          { field: 'country', type: 'String' },
+          { field: 'user', type: 'Number', reference: 'userAlias.id' },
           { field: 'createdAt', type: 'Date' },
           { field: 'updatedAt', type: 'Date' },
         ],
@@ -331,7 +347,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should respond correct data', (done) => {
             new PieStatGetter(models.addressWithUserAlias, {
               type: 'Pie',
-              collection: 'user',
+              collection: 'addressWithUserAlias',
               timezone: 'Europe/Paris',
               group_by_field: 'userAlias:id',
               aggregate: 'Count',
@@ -340,8 +356,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             }, sequelizeOptions)
               .perform()
               .then((stat) => {
-                expect(stat.value.length).equal(1);
-                expect(Number(stat.value[0].value)).equal(4);
+                expect(stat.value.length).equal(0);
                 done();
               })
               .catch(done);
