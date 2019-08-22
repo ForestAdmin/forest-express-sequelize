@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.3 - 2019-08-22
 ### Fixed
 - Serializer - Fix serialization of records with id 0.
 
