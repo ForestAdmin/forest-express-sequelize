@@ -366,7 +366,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             .catch(done);
         });
       });
-
     });
 
     describe('Stats > Line Stat Getter', () => {
