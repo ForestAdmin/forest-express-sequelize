@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0-beta.5 - 2019-08-22
 ### Changed
 - Technical - Apply ESLint rules.
 
