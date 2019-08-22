@@ -306,47 +306,51 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             ))
           .catch());
 
-      describe('A simple Pie Chart on an empty users table', () => {
-        it('should generate a valid SQL query', (done) => {
-          new PieStatGetter(models.user, {
-            type: 'Pie',
-            collection: 'user',
-            timezone: 'Europe/Paris',
-            group_by_field: 'firstName',
-            aggregate: 'Count',
-            time_range: null,
-            filters: [],
-          }, sequelizeOptions)
-            .perform()
-            .then((stat) => {
-              expect(stat.value.length).equal(3);
-              done();
-            })
-            .catch(done);
+      describe('A simple Pie Chart', () => {
+        describe('on an empty users table', () => {
+          it('should generate a valid SQL query', (done) => {
+            new PieStatGetter(models.user, {
+              type: 'Pie',
+              collection: 'user',
+              timezone: 'Europe/Paris',
+              group_by_field: 'firstName',
+              aggregate: 'Count',
+              time_range: null,
+              filters: [],
+            }, sequelizeOptions)
+              .perform()
+              .then((stat) => {
+                expect(stat.value.length).equal(3);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a group by on a belongsTo association using an alias', () => {
+          it('should respond correct data', (done) => {
+            new PieStatGetter(models.addressWithUserAlias, {
+              type: 'Pie',
+              collection: 'user',
+              timezone: 'Europe/Paris',
+              group_by_field: 'userAlias:id',
+              aggregate: 'Count',
+              time_range: null,
+              filters: [],
+            }, sequelizeOptions)
+              .perform()
+              .then((stat) => {
+                expect(stat.value.length).equal(1);
+                expect(Number(stat.value[0].value)).equal(4);
+                done();
+              })
+              .catch(done);
+          });
         });
       });
+    });
 
-      describe('A simple Pie Chart on addressWithUserAlias', () => {
-        it('should respond correct datas', (done) => {
-          new PieStatGetter(models.addressWithUserAlias, {
-            type: 'Pie',
-            collection: 'user',
-            timezone: 'Europe/Paris',
-            group_by_field: 'userAlias:id',
-            aggregate: 'Count',
-            time_range: null,
-            filters: [],
-          }, sequelizeOptions)
-            .perform()
-            .then((stat) => {
-              expect(stat.value.length).equal(1);
-              expect(Number(stat.value[0].value)).equal(4);
-              done();
-            })
-            .catch(done);
-        });
-      });
-
+    describe('Stats > Line Stat Getter', () => {
       describe('A simple Line Chart per day on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
           new LineStatGetter(models.user, {
@@ -366,9 +370,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             .catch(done);
         });
       });
-    });
 
-    describe('Stats > Line Stat Getter', () => {
       describe('A simple Line Chart per week on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
           new LineStatGetter(models.user, {
