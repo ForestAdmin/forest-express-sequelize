@@ -12,12 +12,12 @@
 - Readme - Fix the CI badge.
 
 ### Fixed
-- Pie Chart - Fix capability to have a chart grouped by a reference field with an alias.
 - Pie Chart - Fix groupBy/aggregate on a field with custom column name.
 - Time Chart - Fix groupBy/aggregate on a field with custom column name.
 - Leaderboard Chart - Fix groupBy on a field with custom column name.
 - List Records - Fix sort on a belongsTo association having a reference field with custom column name.
 - List Related Records - Fix sort on a field with custom column name.
+- Pie Charts - Fix capability to have a chart grouped by a reference field with an alias.
 
 ## RELEASE 3.3.0 - 2019-08-07
 ### Added
