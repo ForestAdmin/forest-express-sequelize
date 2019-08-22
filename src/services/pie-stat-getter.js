@@ -26,7 +26,7 @@ function PieStatGetter(model, params, options) {
     field = _.find(schema.fields, currentField => currentField.field === params.group_by_field);
   } else {
     associationSplit = params.group_by_field.split(':');
-    associationCollection = associationSplit[0];
+    associationCollection = model.associations[associationSplit[0]].target.name;
     associationField = associationSplit[1];
     associationSchema = Schemas.schemas[associationCollection];
     field = _.find(

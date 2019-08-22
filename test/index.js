@@ -80,6 +80,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     userId: { type: Sequelize.INTEGER },
   });
 
+  models.addressWithUserAlias = sequelize.define('address', {
+    line: { type: Sequelize.STRING },
+    zipCode: { type: Sequelize.STRING },
+    city: { type: Sequelize.STRING },
+    country: { type: Sequelize.STRING },
+    userId: { type: Sequelize.INTEGER },
+  });
+
   models.team = sequelize.define('team', {
     name: { type: Sequelize.STRING },
   });
@@ -107,6 +115,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
   });
 
   models.address.belongsTo(models.user);
+  models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
   models.user.hasMany(models.address);
   models.team.belongsToMany(models.user, { through: 'userTeam' });
   models.user.belongsToMany(models.team, { through: 'userTeam' });
@@ -317,6 +326,27 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
+      describe('A simple Pie Chart on addressWithUserAlias', () => {
+        it('should generate a valid SQL query', (done) => {
+          new PieStatGetter(models.addressWithUserAlias, {
+            type: 'Pie',
+            collection: 'user',
+            timezone: 'Europe/Paris',
+            group_by_field: 'userAlias:id',
+            aggregate: 'Count',
+            time_range: null,
+            filters: [],
+          }, sequelizeOptions)
+            .perform()
+            .then((stat) => {
+              expect(stat.value.length).equal(1);
+              expect(Number(stat.value[0].value)).equal(4);
+              done();
+            })
+            .catch(done);
+        });
+      });
+
       describe('A simple Line Chart per day on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
           new LineStatGetter(models.user, {
@@ -336,6 +366,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             .catch(done);
         });
       });
+
     });
 
     describe('Stats > Line Stat Getter', () => {
