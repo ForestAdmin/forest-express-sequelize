@@ -327,7 +327,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
 
       describe('A simple Pie Chart on addressWithUserAlias', () => {
-        it('should generate a valid SQL query', (done) => {
+        it('should respond correct datas', (done) => {
           new PieStatGetter(models.addressWithUserAlias, {
             type: 'Pie',
             collection: 'user',
