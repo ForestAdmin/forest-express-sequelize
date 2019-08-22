@@ -2,7 +2,7 @@ import _ from 'lodash';
 import P from 'bluebird';
 import moment from 'moment';
 import { Schemas } from 'forest-express';
-import { isVersionLessThan4 } from '../utils/orm';
+import Orm, { isVersionLessThan4 } from '../utils/orm';
 import { isMSSQL } from '../utils/database';
 import FiltersParser from './filters-parser';
 
@@ -24,7 +24,7 @@ function PieStatGetter(model, params, options) {
     field = _.find(schema.fields, currentField => currentField.field === params.group_by_field);
   } else {
     associationSplit = params.group_by_field.split(':');
-    associationCollection = associationSplit[0];
+    associationCollection = model.associations[associationSplit[0]].target.name;
     associationField = associationSplit[1];
     associationSchema = Schemas.schemas[associationCollection];
     field = _.find(
@@ -34,10 +34,11 @@ function PieStatGetter(model, params, options) {
   }
 
   function getGroupByField() {
-    if (params.group_by_field.indexOf(':') === -1) {
-      return `${schema.name}.${params.group_by_field}`;
+    if (params.group_by_field.includes(':')) {
+      const [associationName, fieldName] = params.group_by_field.split(':');
+      return `${associationName}.${Orm.getColumnName(associationSchema, fieldName)}`;
     }
-    return params.group_by_field.replace(':', '.');
+    return `${schema.name}.${Orm.getColumnName(schema, params.group_by_field)}`;
   }
 
   const groupByField = getGroupByField();
@@ -51,7 +52,7 @@ function PieStatGetter(model, params, options) {
     //         cannot be '*'.
     const fieldName = params.aggregate_field || schema.primaryKeys[0] ||
       schema.fields[0].field;
-    return `${schema.name}.${fieldName}`;
+    return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 
   function getIncludes() {

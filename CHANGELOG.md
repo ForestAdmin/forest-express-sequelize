@@ -34,6 +34,34 @@
 - Technical - Fix pre-commit hook to avoid renamed file and add new line at the end of the file.
 - Technical - Set default prerelease tag to beta if nothing specified on deploy.
 
+## RELEASE 3.3.2 - 2019-08-22
+### Fixed
+- Pie Charts - Fix capability to have a chart grouped by a reference field with an alias.
+
+## RELEASE 3.3.1 - 2019-08-22
+### Added
+- Readme - Add a badge for the NPM package version.
+
+### Changed
+- Readme - Add a community section.
+- Readme - Remove the Licence section as it is already accessible in the Github page header.
+- Readme - Fix the CI badge.
+
+### Fixed
+- Pie Chart - Fix groupBy/aggregate on a field with custom column name.
+- Time Chart - Fix groupBy/aggregate on a field with custom column name.
+- Leaderboard Chart - Fix groupBy on a field with custom column name.
+- List Records - Fix sort on a belongsTo association having a reference field with custom column name.
+- List Related Records - Fix sort on a field with custom column name.
+
+## RELEASE 3.3.0 - 2019-08-07
+### Added
+- Field Types - Define properly the type of `UUIDV1` and `UUIDV4` fields in the schema.
+
+### Fixed
+- Technical - Fix pre-commit hook to avoid renamed file and add new lina at the end of the file.
+- Technical - Apply ESLint rules to `has-many-getter` and `query-builder`.
+
 ## RELEASE 3.2.6 - 2019-07-24
 ### Fixed
 - Schema - Schemas having fields with descriptions containing "\n" are now properly sent in remote environments.
@@ -71,7 +99,7 @@
 ### Added
 - Configuration - The liana now requires recursively model files in `modelsDir` and customization files in `configDir`.
 
-### Changed
+### Changed
 - Technical - Apply ESLint rules to an old code.
 
 ## RELEASE 3.1.1 - 2019-05-15

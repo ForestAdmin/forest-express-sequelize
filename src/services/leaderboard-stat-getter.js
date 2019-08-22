@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { Schemas } from 'forest-express';
+import Orm from '../utils/orm';
 
 function LeaderboardStatGetter(model, modelRelationship, params, options) {
   const labelField = params.label_field;
@@ -22,7 +23,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
     const fieldName = aggregateField || schemaRelationship.primaryKeys[0] ||
       schemaRelationship.fields[0].field;
-    return `${schemaRelationship.name}.${fieldName}`;
+    return `${schemaRelationship.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 
   this.perform = () => modelRelationship

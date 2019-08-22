@@ -80,6 +80,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     userId: { type: Sequelize.INTEGER },
   });
 
+  models.addressWithUserAlias = sequelize.define('addressWithUserAlias', {
+    line: { type: Sequelize.STRING },
+    zipCode: { type: Sequelize.STRING },
+    city: { type: Sequelize.STRING },
+    country: { type: Sequelize.STRING },
+    userId: { type: Sequelize.INTEGER },
+  });
+
   models.team = sequelize.define('team', {
     name: { type: Sequelize.STRING },
   });
@@ -107,6 +115,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
   });
 
   models.address.belongsTo(models.user);
+  models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
   models.user.hasMany(models.address);
   models.team.belongsToMany(models.user, { through: 'userTeam' });
   models.user.belongsToMany(models.team, { through: 'userTeam' });
@@ -156,7 +165,23 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           { field: 'zipCode', type: 'String' },
           { field: 'city', type: 'String' },
           { field: 'country', type: 'String' },
-          { field: 'user', type: 'Number', references: 'user.id' },
+          { field: 'user', type: 'Number', reference: 'user.id' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+        ],
+      },
+      addressWithUserAlias: {
+        name: 'addressWithUserAlias',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'line', type: 'String' },
+          { field: 'zipCode', type: 'String' },
+          { field: 'city', type: 'String' },
+          { field: 'country', type: 'String' },
+          { field: 'user', type: 'Number', reference: 'userAlias.id' },
           { field: 'createdAt', type: 'Date' },
           { field: 'updatedAt', type: 'Date' },
         ],
@@ -203,8 +228,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         primaryKeys: ['userId', 'teamId'],
         isCompositePrimary: true,
         fields: [
-          { field: 'user', type: 'Number', references: 'user.id' },
-          { field: 'team', type: 'Number', references: 'team.id' },
+          { field: 'user', type: 'Number', reference: 'user.id' },
+          { field: 'team', type: 'Number', reference: 'team.id' },
         ],
       },
     },
@@ -297,26 +322,50 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             ))
           .catch());
 
-      describe('A simple Pie Chart on an empty users table', () => {
-        it('should generate a valid SQL query', (done) => {
-          new PieStatGetter(models.user, {
-            type: 'Pie',
-            collection: 'user',
-            timezone: 'Europe/Paris',
-            group_by_field: 'firstName',
-            aggregate: 'Count',
-            time_range: null,
-            filters: null,
-          }, sequelizeOptions)
-            .perform()
-            .then((stat) => {
-              expect(stat.value.length).equal(3);
-              done();
-            })
-            .catch(done);
+      describe('A simple Pie Chart', () => {
+        describe('on an empty users table', () => {
+          it('should generate a valid SQL query', (done) => {
+            new PieStatGetter(models.user, {
+              type: 'Pie',
+              collection: 'user',
+              timezone: 'Europe/Paris',
+              group_by_field: 'firstName',
+              aggregate: 'Count',
+              time_range: null,
+              filters: null,
+            }, sequelizeOptions)
+              .perform()
+              .then((stat) => {
+                expect(stat.value.length).equal(3);
+                done();
+              })
+              .catch(done);
+          });
+        });
+
+        describe('with a group by on a belongsTo association using an alias', () => {
+          it('should respond correct data', (done) => {
+            new PieStatGetter(models.addressWithUserAlias, {
+              type: 'Pie',
+              collection: 'addressWithUserAlias',
+              timezone: 'Europe/Paris',
+              group_by_field: 'userAlias:id',
+              aggregate: 'Count',
+              time_range: null,
+              filters: null,
+            }, sequelizeOptions)
+              .perform()
+              .then((stat) => {
+                expect(stat.value.length).equal(0);
+                done();
+              })
+              .catch(done);
+          });
         });
       });
+    });
 
+    describe('Stats > Line Stat Getter', () => {
       describe('A simple Line Chart per day on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
           new LineStatGetter(models.user, {
@@ -336,9 +385,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             .catch(done);
         });
       });
-    });
 
-    describe('Stats > Line Stat Getter', () => {
       describe('A simple Line Chart per week on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
           new LineStatGetter(models.user, {

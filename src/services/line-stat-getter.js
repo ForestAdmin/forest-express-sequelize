@@ -4,6 +4,7 @@ import moment from 'moment';
 import { Schemas } from 'forest-express';
 import { isMySQL, isMSSQL, isSQLite } from '../utils/database';
 import FiltersParser from './filters-parser';
+import Orm from '../utils/orm';
 
 function LineStatGetter(model, params, options) {
   const schema = Schemas.schemas[model.name];
@@ -12,14 +13,14 @@ function LineStatGetter(model, params, options) {
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
     //         cannot be '*'.
-    const fieldName = params.aggregate_field || schema.primaryKeys[0] ||
-      schema.fields[0].field;
-    return `${schema.name}.${fieldName}`;
+    const fieldName = params.aggregate_field
+      || schema.primaryKeys[0]
+      || schema.fields[0].field;
+    return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 
   function getGroupByDateField() {
-    const fieldName = params.group_by_date_field;
-    return `${schema.name}.${fieldName}`;
+    return `${schema.name}.${Orm.getColumnName(schema, params.group_by_date_field)}`;
   }
 
   const groupByDateField = getGroupByDateField();
