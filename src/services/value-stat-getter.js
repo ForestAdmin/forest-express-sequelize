@@ -61,7 +61,7 @@ function ValueStatGetter(model, params, options) {
 
         if (rawPreviousInterval) {
           const formatedPreviousDateInterval = this.operatorDateParser
-            .getPreviousDateIntervalFilter(rawPreviousInterval.operator, rawPreviousInterval.value);
+            .getPreviousDateFilter(rawPreviousInterval.operator, rawPreviousInterval.value);
 
           if (where[OPERATORS.AND]) {
             where[OPERATORS.AND].forEach((condition) => {
