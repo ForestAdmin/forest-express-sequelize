@@ -2,6 +2,8 @@
 
 ## [Unreleased]
 
+## RELEASE 4.0.0-beta.7 - 2019-08-23
+
 ## RELEASE 4.0.0-beta.6 - 2019-08-23
 ### Fixed
 - Charts - Fix charts with previous interval.
