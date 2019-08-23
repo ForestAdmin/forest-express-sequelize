@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0-beta.6 - 2019-08-23
 ### Fixed
 - Charts - Fix charts with previous interval.
 
