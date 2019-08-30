@@ -30,7 +30,13 @@ const getColumnName = (schema, fieldName) => {
   return (schemaField && schemaField.columnName) ? schemaField.columnName : fieldName;
 };
 
+const isUUID = (DataTypes, fieldType) =>
+  fieldType instanceof DataTypes.UUID
+    || fieldType instanceof DataTypes.UUIDV1
+    || fieldType instanceof DataTypes.UUIDV4;
+
 exports.getVersion = getVersion;
 exports.isVersionLessThan4 = isVersionLessThan4;
 exports.findRecord = findRecord;
 exports.getColumnName = getColumnName;
+exports.isUUID = isUUID;
