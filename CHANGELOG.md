@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.4 - 2019-09-05
 ### Fixed
 - List Records - Search on table with uuidv1 or v4 does not crash.
 
