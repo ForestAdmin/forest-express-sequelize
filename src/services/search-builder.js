@@ -2,6 +2,7 @@ const _ = require('lodash');
 const Operators = require('../utils/operators');
 const Interface = require('forest-express');
 const Database = require('../utils/database');
+const { isUUID } = require('../utils/orm');
 
 const REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
@@ -98,7 +99,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
             lowerIfNecessary(`%${params.search}%`),
           );
           pushCondition(condition, columnName);
-        } else if (primaryKeyType instanceof DataTypes.UUID &&
+        } else if (isUUID(DataTypes, primaryKeyType) &&
           params.search.match(REGEX_UUID)) {
           condition[field.field] = params.search;
           pushCondition(condition, field.field);
@@ -119,7 +120,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         }
       } else if (field.type === 'String') {
         if (model.rawAttributes[field.field] &&
-          model.rawAttributes[field.field].type instanceof DataTypes.UUID) {
+          isUUID(DataTypes, model.rawAttributes[field.field].type)) {
           if (params.search.match(REGEX_UUID)) {
             condition[field.field] = params.search;
             pushCondition(condition, field.field);
@@ -179,8 +180,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 }
               } else if (field.type === 'String') {
                 if (modelAssociation.rawAttributes[field.field] &&
-                  modelAssociation.rawAttributes[field.field].type instanceof
-                  DataTypes.UUID) {
+                  isUUID(DataTypes, modelAssociation.rawAttributes[field.field].type)) {
                   if (params.search.match(REGEX_UUID)) {
                     condition = opts.sequelize.where(column, '=', params.search);
                     hasExtendedConditions = true;
