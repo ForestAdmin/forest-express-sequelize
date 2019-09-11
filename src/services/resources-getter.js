@@ -24,8 +24,12 @@ function ResourcesGetter(model, options, params) {
     // NOTICE: Populate the necessary associations for filters
     const associations = params.filters ? filterParser.getAssociations(params.filters) : [];
 
-    if (params.sort && params.sort.indexOf('.') !== -1) {
-      associations.push(params.sort.split('.')[0]);
+    if (params.sort && params.sort.includes('.')) {
+      let associationFromSorting = params.sort.split('.')[0];
+      if (associationFromSorting[0] === '-') {
+        associationFromSorting = associationFromSorting.substring(1);
+      }
+      associations.push(associationFromSorting);
     }
 
     // NOTICE: Force the primaryKey retrieval to store the records properly in the client.

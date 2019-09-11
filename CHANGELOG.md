@@ -1,9 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Resources Getter - Prevent API crash if the sorting field is a reference field that is not among the displayed columns.
 
 ## RELEASE 4.0.0-beta.7 - 2019-08-23
-
 ## RELEASE 4.0.0-beta.6 - 2019-08-23
 ### Fixed
 - Charts - Fix charts with previous interval.
