@@ -7,12 +7,15 @@ import Operators from '../../src/utils/operators';
 import { NoMatchingOperatorError } from '../../src/services/errors';
 
 describe('Services > FiltersParser', () => {
+  const schema = {
+    fields: [],
+  };
   const sequelizeOptions = {
     sequelize: Sequelize,
   };
   const timezone = 'Europe/Paris';
   const OPERATORS = new Operators(sequelizeOptions);
-  const defaultFiltersParser = new FiltersParser(timezone, sequelizeOptions);
+  const defaultFiltersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
   const getExpectedCondition = (field, conditions) => {
     const result = {};
@@ -169,8 +172,12 @@ describe('Services > FiltersParser', () => {
     });
 
     describe('with a filter on a reference', () => {
+      const schemaWithFieldUnconventional = {
+        fields: [{ field: 'car', reference: 'car.id' }],
+      };
       const filters = '{ "field": "car:brandName", "operator": "starts_with", "value": "Ferrari" }';
       const filtersParser = new FiltersParser(
+        schemaWithFieldUnconventional,
         timezone,
         sequelizeOptions,
       );
@@ -189,7 +196,7 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should generate the right condition', () => {
           expect(filtersParser.getPreviousIntervalCondition(aggregator))
@@ -199,7 +206,7 @@ describe('Services > FiltersParser', () => {
 
       describe('with no aggregator + flat conditions + 1 previous interval', () => {
         const aggregator = JSON.stringify(defaultDateCondition);
-        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should generate the right condition', () => {
           expect(filtersParser.getPreviousIntervalCondition(aggregator))
@@ -214,7 +221,7 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [defaultCondition, defaultDateCondition, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
           expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
@@ -226,7 +233,7 @@ describe('Services > FiltersParser', () => {
           aggregator: 'or',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
           expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
@@ -238,7 +245,7 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2],
         });
-        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
           expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
@@ -250,14 +257,14 @@ describe('Services > FiltersParser', () => {
           aggregator: 'and',
           conditions: [{ aggregator: 'or', conditions: [defaultCondition, defaultCondition2] }, defaultDateCondition],
         });
-        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
       });
 
       describe('with no aggregator + flat conditions + 0 previous interval', () => {
         const aggregator = JSON.stringify(defaultCondition);
-        const filtersParser = new FiltersParser(timezone, sequelizeOptions);
+        const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
           expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
