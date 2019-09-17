@@ -16,7 +16,7 @@ function ResourcesGetter(model, options, params) {
   let segmentWhere;
   const OPERATORS = new Operators(options);
   const primaryKey = _.keys(model.primaryKeys)[0];
-  const filterParser = new FiltersParser(params.timezone, options);
+  const filterParser = new FiltersParser(schema, params.timezone, options);
 
   function getFieldNamesRequested() {
     if (!params.fields || !params.fields[model.name]) { return null; }

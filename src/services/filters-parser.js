@@ -1,8 +1,9 @@
-import { BaseFiltersParser, BaseOperatorDateParser } from 'forest-express';
+import { BaseFiltersParser, BaseOperatorDateParser, Schemas } from 'forest-express';
+import Orm from '../utils/orm';
 import Operators from '../utils/operators';
 import { NoMatchingOperatorError } from './errors';
 
-function FiltersParser(timezone, options) {
+function FiltersParser(modelSchema, timezone, options) {
   this.OPERATORS = new Operators(options);
   this.operatorDateParser = new BaseOperatorDateParser({ operators: this.OPERATORS, timezone });
 
@@ -121,7 +122,19 @@ function FiltersParser(timezone, options) {
     }
   };
 
-  this.formatField = field => (field.includes(':') ? `$${field.replace(':', '.')}$` : field);
+  this.formatField = (field) => {
+    if (field.includes(':')) {
+      const [associationName, fieldName] = field.split(':');
+
+      const schemaField = modelSchema.fields.find(currentfield => currentfield.field === associationName);
+      const [tableName] = schemaField.reference.split('.');
+      const associationSchema = Schemas.schemas[tableName];
+      const belongsToColumnName = Orm.getColumnName(associationSchema, fieldName);
+
+      return `$${associationName}.${belongsToColumnName}$`;
+    }
+    return field;
+  };
 
   // NOTICE: Look for a previous interval condition matching the following:
   //         - If the filter is a simple condition at the root the check is done right away.
