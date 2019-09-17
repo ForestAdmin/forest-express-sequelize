@@ -167,6 +167,18 @@ describe('Services > FiltersParser', () => {
         expect(defaultFiltersParser.perform()).to.equal(null);
       });
     });
+
+    describe('with a filter on a reference', () => {
+      const filters = '{ "field": "car:brandName", "operator": "starts_with", "value": "Ferrari" }';
+      const filtersParser = new FiltersParser(
+        timezone,
+        sequelizeOptions,
+      );
+
+      it('should not be null', () => {
+        expect(filtersParser.perform(filters))
+          .to.deep.equal({ '$car.brandName$': { [OPERATORS.LIKE]: 'Ferrari%' } });
+      });
     });
   });
 
