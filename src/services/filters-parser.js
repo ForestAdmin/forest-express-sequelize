@@ -1,5 +1,5 @@
-import { BaseFiltersParser, BaseOperatorDateParser, Schemas } from 'forest-express';
-import Orm from '../utils/orm';
+import { BaseFiltersParser, BaseOperatorDateParser } from 'forest-express';
+import { getReferenceField } from '../utils/query';
 import Operators from '../utils/operators';
 import { NoMatchingOperatorError } from './errors';
 
@@ -125,13 +125,7 @@ function FiltersParser(modelSchema, timezone, options) {
   this.formatField = (field) => {
     if (field.includes(':')) {
       const [associationName, fieldName] = field.split(':');
-
-      const schemaField = modelSchema.fields.find(currentfield => currentfield.field === associationName);
-      const [tableName] = schemaField.reference.split('.');
-      const associationSchema = Schemas.schemas[tableName];
-      const belongsToColumnName = Orm.getColumnName(associationSchema, fieldName);
-
-      return `$${associationName}.${belongsToColumnName}$`;
+      return `$${getReferenceField(modelSchema, associationName, fieldName)}$`;
     }
     return field;
   };
