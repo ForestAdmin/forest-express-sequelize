@@ -172,15 +172,11 @@ describe('Services > FiltersParser', () => {
     });
 
     describe('with a filter on a reference', () => {
-      const schemaWithFieldUnconventional = {
+      const schemaWithFields = {
         fields: [{ field: 'car', reference: 'car.id' }],
       };
       const filters = '{ "field": "car:brandName", "operator": "starts_with", "value": "Ferrari" }';
-      const filtersParser = new FiltersParser(
-        schemaWithFieldUnconventional,
-        timezone,
-        sequelizeOptions,
-      );
+      const filtersParser = new FiltersParser(schemaWithFields, timezone, sequelizeOptions);
 
       it('should not be null', () => {
         expect(filtersParser.perform(filters))
