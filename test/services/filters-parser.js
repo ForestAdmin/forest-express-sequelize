@@ -1,5 +1,4 @@
 /* global describe, it */
-
 import { expect } from 'chai';
 import moment from 'moment';
 import Sequelize from 'sequelize';
@@ -163,65 +162,78 @@ describe('Services > FiltersParser', () => {
   });
 
   describe('perform function', () => {
-    it('should be null when nothing is provided', () => {
-      expect(defaultFiltersParser.perform()).to.equal(null);
+    describe('with nothing provided', () => {
+      it('should be null', () => {
+        expect(defaultFiltersParser.perform()).to.equal(null);
+      });
+    });
     });
   });
 
   describe('getPreviousIntervalCondition function', () => {
     describe('working scenarii', () => {
-      it('\'and\' aggregator + flat conditions + 1 previous interval, ', () => {
+      describe('with \'and\' aggregator + flat conditions + 1 previous interval', () => {
         const aggregator = JSON.stringify({
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
         });
         const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition(aggregator))
-          .to.deep.equal(defaultDateCondition);
+        it('should generate the right condition', () => {
+          expect(filtersParser.getPreviousIntervalCondition(aggregator))
+            .to.deep.equal(defaultDateCondition);
+        });
       });
 
-      it('no aggregator + flat conditions + 1 previous interval, ', () => {
+      describe('with no aggregator + flat conditions + 1 previous interval', () => {
         const aggregator = JSON.stringify(defaultDateCondition);
         const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition(aggregator))
-          .to.deep.equal(defaultDateCondition);
+        it('should generate the right condition', () => {
+          expect(filtersParser.getPreviousIntervalCondition(aggregator))
+            .to.deep.equal(defaultDateCondition);
+        });
       });
     });
 
     describe('not working scenarii', () => {
-      it('\'and\' aggregator + flat conditions + 2 previous interval, ', () => {
+      describe('with \'and\' aggregator + flat conditions + 2 previous intervals', () => {
         const aggregator = JSON.stringify({
           aggregator: 'and',
           conditions: [defaultCondition, defaultDateCondition, defaultDateCondition],
         });
         const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        it('should not generate conditions', () => {
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        });
       });
 
-      it('\'or\' aggregator + flat conditions + 1 previous interval, ', () => {
+      describe('with \'or\' aggregator + flat conditions + 1 previous interval', () => {
         const aggregator = JSON.stringify({
           aggregator: 'or',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
         });
         const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        it('should not generate conditions', () => {
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        });
       });
 
-      it('\'and\' aggregator + flat conditions + 0 previous interval, ', () => {
+      describe('with \'and\' aggregator + flat conditions + 0 previous interval', () => {
         const aggregator = JSON.stringify({
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2],
         });
         const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        it('should not generate conditions', () => {
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        });
       });
 
-      it('\'and\' aggregator + nested conditions + 1 previous interval, ', () => {
+      describe('with \'and\' aggregator + nested conditions + 1 previous interval', () => {
         const aggregator = JSON.stringify({
           aggregator: 'and',
           conditions: [{ aggregator: 'or', conditions: [defaultCondition, defaultCondition2] }, defaultDateCondition],
@@ -231,11 +243,13 @@ describe('Services > FiltersParser', () => {
         expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
       });
 
-      it('no aggregator + flat conditions + 0 previous interval, ', () => {
+      describe('with no aggregator + flat conditions + 0 previous interval', () => {
         const aggregator = JSON.stringify(defaultCondition);
         const filtersParser = new FiltersParser(timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        it('should not generate conditions', () => {
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        });
       });
     });
   });
