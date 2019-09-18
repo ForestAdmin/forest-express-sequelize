@@ -212,7 +212,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   this.perform = () => {
-    const where = new FiltersParser(params.timezone, options).perform(params.filters);
+    const where = new FiltersParser(schema, params.timezone, options).perform(params.filters);
 
     return model.unscoped().findAll({
       attributes: [getGroupByDateInterval(), getAggregate()],

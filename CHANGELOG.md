@@ -4,6 +4,9 @@
 ### Changed
 - Technical - Improve tests descriptions.
 
+### Fixed
+- Filters - Fix filtering on references fields that have an unconventional column name.
+
 ## RELEASE 4.0.0-beta.8 - 2019-09-11
 ### Fixed
 - Resources Getter - Prevent API crash if the sorting field is a reference field that is not among the displayed columns.
