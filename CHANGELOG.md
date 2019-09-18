@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0-beta.9 - 2019-09-18
 ### Changed
 - Technical - Improve tests descriptions.
 
