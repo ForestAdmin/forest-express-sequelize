@@ -8,7 +8,7 @@
 
 ### Fixed
 - List Records - Search on table with uuidv1 or v4 does not crash.
-- Value Charts - Pie Chart - Fix aggregate on a field with custom column name.
+- Value Charts - Fix aggregate on a field with custom column name.
 
 ## RELEASE 4.0.0-beta.9 - 2019-09-18
 ### Changed
