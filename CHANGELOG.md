@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0-beta.10 - 2019-09-26
 ### Changed
 - Technical - Make the stats code more consistent.
 
