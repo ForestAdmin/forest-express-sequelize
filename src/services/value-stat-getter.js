@@ -3,6 +3,7 @@ import { Schemas } from 'forest-express';
 import Operators from '../utils/operators';
 import BaseStatGetter from './base-stat-getter';
 import OperatorDateIntervalParser from './operator-date-interval-parser';
+import Orm from '../utils/orm';
 
 // jshint sub: true
 function ValueStatGetter(model, params, options) {
@@ -20,7 +21,7 @@ function ValueStatGetter(model, params, options) {
     const fieldName = params.aggregate_field
       || schema.primaryKeys[0]
       || schema.fields[0].field;
-    return `${schema.name}.${fieldName}`;
+    return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 
   function getIncludes() {
