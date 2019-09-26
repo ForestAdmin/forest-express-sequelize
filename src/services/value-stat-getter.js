@@ -16,9 +16,10 @@ function ValueStatGetter(model, params, options) {
   }
 
   function getAggregateField() {
-    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
-    //         cannot be '*'.
-    const fieldName = params.aggregate_field || schema.primaryKeys[0] || schema.fields[0].field;
+    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
+    const fieldName = params.aggregate_field
+      || schema.primaryKeys[0]
+      || schema.fields[0].field;
     return `${schema.name}.${fieldName}`;
   }
 
