@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 3.3.5 - 2019-09-26
 ### Changed
 - Technical - Make the stats code more consistent.
 
