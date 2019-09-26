@@ -2,6 +2,7 @@ import _ from 'lodash';
 import { Schemas, BaseOperatorDateParser } from 'forest-express';
 import Operators from '../utils/operators';
 import FiltersParser from './filters-parser';
+import Orm from '../utils/orm';
 
 function ValueStatGetter(model, params, options) {
   const OPERATORS = new Operators(options);
@@ -17,10 +18,11 @@ function ValueStatGetter(model, params, options) {
   }
 
   function getAggregateField() {
-    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
-    //         cannot be '*'.
-    const fieldName = params.aggregate_field || schema.primaryKeys[0] || schema.fields[0].field;
-    return `${schema.name}.${fieldName}`;
+    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
+    const fieldName = params.aggregate_field
+      || schema.primaryKeys[0]
+      || schema.fields[0].field;
+    return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 
   function getIncludes() {

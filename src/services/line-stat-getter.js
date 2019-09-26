@@ -11,8 +11,7 @@ function LineStatGetter(model, params, options) {
   const timeRange = params.time_range.toLowerCase();
 
   function getAggregateField() {
-    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName
-    //         cannot be '*'.
+    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
     const fieldName = params.aggregate_field
       || schema.primaryKeys[0]
       || schema.fields[0].field;

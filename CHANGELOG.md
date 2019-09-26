@@ -1,6 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Make the stats code more consistent.
+
+### Fixed
+- List Records - Search on table with uuidv1 or v4 does not crash.
+- Value Charts - Pie Chart - Fix aggregate on a field with custom column name.
 
 ## RELEASE 4.0.0-beta.9 - 2019-09-18
 ### Changed
@@ -51,6 +57,21 @@
 ### Fixed
 - Technical - Fix pre-commit hook to avoid renamed file and add new line at the end of the file.
 - Technical - Set default prerelease tag to beta if nothing specified on deploy.
+
+## RELEASE 3.3.5 - 2019-09-26
+### Changed
+- Technical - Make the stats code more consistent.
+
+### Fixed
+- Value Charts - Pie Chart - Fix aggregate on a field with custom column name.
+
+## RELEASE 3.3.4 - 2019-09-05
+### Fixed
+- List Records - Search on table with uuidv1 or v4 does not crash.
+
+## RELEASE 3.3.3 - 2019-08-22
+### Fixed
+- Serializer - Fix serialization of records with id 0.
 
 ## RELEASE 3.3.2 - 2019-08-22
 ### Fixed
