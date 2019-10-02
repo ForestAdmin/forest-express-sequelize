@@ -59,11 +59,8 @@ function ResourcesGetter(model, options, params) {
     _.each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
         const [associationName, fieldName] = key.split(':');
-        const schemaField = schema.fields.find(field => field.field === associationName);
-        const [tableName] = schemaField.reference.split('.');
-        const associationSchema = Schemas.schemas[tableName];
-        const belongsToColumnName = Orm.getColumnName(associationSchema, fieldName);
-        key = `$${associationName}.${belongsToColumnName}$`;
+        const columnName = Orm.getColumnNameForReferenceField(schema, associationName, fieldName);
+        key = `$${associationName}.${columnName}$`;
       }
       values.split(',').forEach((value) => {
         const condition = {};

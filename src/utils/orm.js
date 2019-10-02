@@ -1,3 +1,5 @@
+import { Schemas } from 'forest-express';
+
 const semver = require('semver');
 
 const REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
@@ -30,6 +32,13 @@ const getColumnName = (schema, fieldName) => {
   return (schemaField && schemaField.columnName) ? schemaField.columnName : fieldName;
 };
 
+const getColumnNameForReferenceField = (schema, associationName, fieldName) => {
+  const schemaField = schema.fields.find(field => field.field === associationName);
+  const [tableName] = schemaField.reference.split('.');
+  const associationSchema = Schemas.schemas[tableName];
+  return getColumnName(associationSchema, fieldName);
+};
+
 const isUUID = (DataTypes, fieldType) =>
   fieldType instanceof DataTypes.UUID
     || fieldType instanceof DataTypes.UUIDV1
@@ -39,4 +48,5 @@ exports.getVersion = getVersion;
 exports.isVersionLessThan4 = isVersionLessThan4;
 exports.findRecord = findRecord;
 exports.getColumnName = getColumnName;
+exports.getColumnNameForReferenceField = getColumnNameForReferenceField;
 exports.isUUID = isUUID;
