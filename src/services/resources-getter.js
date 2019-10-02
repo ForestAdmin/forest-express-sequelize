@@ -8,6 +8,7 @@ import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
 import LiveQueryChecker from './live-query-checker';
 import { ErrorHTTP422 } from './errors';
+import Orm from '../utils/orm';
 
 function ResourcesGetter(model, options, params) {
   const schema = Schemas.schemas[model.name];
@@ -57,7 +58,9 @@ function ResourcesGetter(model, options, params) {
 
     _.each(params.filter, (values, key) => {
       if (key.indexOf(':') !== -1) {
-        key = `$${key.replace(':', '.')}$`;
+        const [associationName, fieldName] = key.split(':');
+        const columnName = Orm.getColumnNameForReferenceField(schema, associationName, fieldName);
+        key = `$${associationName}.${columnName}$`;
       }
       values.split(',').forEach((value) => {
         const condition = {};
