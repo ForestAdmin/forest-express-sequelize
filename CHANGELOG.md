@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- List Records - Fix filter on belongs to with name different from fieldName.
+- Filters - Fix filters on references having a primary key column name different than the model field name.
 
 ## RELEASE 3.3.5 - 2019-09-26
 ### Changed
