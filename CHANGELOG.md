@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - A Release now also automatically publish the release note to Slack.
+
 ### Fixed
 - Filters - Fix filters on references having a primary key column name different than the model field name.
 
