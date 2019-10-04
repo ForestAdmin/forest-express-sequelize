@@ -1,15 +1,16 @@
 import _ from 'lodash';
-import { Schemas } from 'forest-express';
+import { Schemas, BaseOperatorDateParser } from 'forest-express';
 import Operators from '../utils/operators';
-import BaseStatGetter from './base-stat-getter';
-import OperatorDateIntervalParser from './operator-date-interval-parser';
+import FiltersParser from './filters-parser';
 import Orm from '../utils/orm';
 
-// jshint sub: true
 function ValueStatGetter(model, params, options) {
-  BaseStatGetter.call(this, model, params, options);
-
   const OPERATORS = new Operators(options);
+
+  this.operatorDateParser = new BaseOperatorDateParser({
+    operators: OPERATORS,
+    timezone: params.timezone,
+  });
 
   const schema = Schemas.schemas[model.name];
   function getAggregate() {
@@ -39,57 +40,50 @@ function ValueStatGetter(model, params, options) {
     return includes;
   }
 
-  function getIntervalDateFilterForPrevious() {
-    let intervalDateFilter;
-
-    params.filters.forEach((filter) => {
-      const operatorValueParser =
-        new OperatorDateIntervalParser(filter.value, params.timezone, options);
-      if (operatorValueParser.hasPreviousInterval()) {
-        intervalDateFilter = filter;
-      }
-    });
-    return intervalDateFilter;
-  }
-
   this.perform = () => {
     let countCurrent;
     const aggregateField = getAggregateField();
     const aggregate = getAggregate();
-    const filters = this.getFilters();
-    const filterDateIntervalForPrevious = getIntervalDateFilterForPrevious();
+    let where;
+    let rawPreviousInterval;
+    if (params.filters) {
+      const conditionsParser = new FiltersParser(schema, params.timezone, options);
+      where = conditionsParser.perform(params.filters);
+      rawPreviousInterval = conditionsParser.getPreviousIntervalCondition(params.filters);
+    }
 
     return model
       .unscoped()
       .aggregate(aggregateField, aggregate, {
         include: getIncludes(),
-        where: filters,
+        where,
       })
       .then((count) => {
         countCurrent = count || 0;
 
-        // NOTICE: Search for previous interval value only if the filterType is
-        //         'AND', it would not be pertinent for a 'OR' filterType.
-        if (filterDateIntervalForPrevious && params.filterType === 'and') {
-          const operatorValueParser = new OperatorDateIntervalParser(
-            filterDateIntervalForPrevious.value,
-            params.timezone,
-            options,
-          );
-          const conditions = filters[OPERATORS.AND];
-          conditions.forEach((condition) => {
-            if (condition[filterDateIntervalForPrevious.field]) {
-              condition[filterDateIntervalForPrevious.field] =
-                operatorValueParser.getIntervalDateFilterForPreviousInterval();
-            }
-          });
+        if (rawPreviousInterval) {
+          const formatedPreviousDateInterval = this.operatorDateParser
+            .getPreviousDateFilter(rawPreviousInterval.operator, rawPreviousInterval.value);
+
+          if (where[OPERATORS.AND]) {
+            where[OPERATORS.AND].forEach((condition) => {
+              if (condition[rawPreviousInterval.field]) {
+                // NOTICE: Might not work on super edgy cases (when the 'rawPreviousInterval.field'
+                //        appears twice ont the filters)
+                condition[rawPreviousInterval.field] = formatedPreviousDateInterval;
+              }
+            });
+          } else {
+            where[rawPreviousInterval.field] = formatedPreviousDateInterval;
+          }
+
           return model
             .unscoped()
             .aggregate(aggregateField, aggregate, {
               include: getIncludes(),
-              where: filters,
+              where,
             })
-            .then(currentCount => currentCount || 0);
+            .then(resultCount => resultCount || 0);
         }
         return undefined;
       })

@@ -42,7 +42,7 @@ function HasManyGetter(model, association, opts, params) {
         include,
       }],
     })
-      .then(record => record[params.associationName]);
+      .then(record => ((record && record[params.associationName]) || []));
   }
 
   function getCount() {
@@ -77,16 +77,17 @@ function HasManyGetter(model, association, opts, params) {
       }));
   }
 
-  this.perform = () => getRecords()
-    .then((records) => {
-      let fieldsSearched = null;
+  this.perform = () =>
+    getRecords()
+      .then((records) => {
+        let fieldsSearched = null;
 
-      if (params.search) {
-        fieldsSearched = searchBuilder.getFieldsSearched();
-      }
+        if (params.search) {
+          fieldsSearched = searchBuilder.getFieldsSearched();
+        }
 
-      return [records, fieldsSearched];
-    });
+        return [records, fieldsSearched];
+      });
 
   this.count = getCount;
 }

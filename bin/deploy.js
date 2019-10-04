@@ -5,7 +5,8 @@ const semver = require('semver');
 
 const BRANCH_MASTER = 'master';
 const BRANCH_DEVEL = 'devel';
-const RELEASE_OPTIONS = ['major', 'minor', 'patch', 'premajor', 'preminor', 'prepatch', 'prerelease'];
+const PRERELEASE_OPTIONS = ['premajor', 'preminor', 'prepatch', 'prerelease'];
+const RELEASE_OPTIONS = ['major', 'minor', 'patch', ...PRERELEASE_OPTIONS];
 
 let releaseType = 'patch';
 let prereleaseTag;
@@ -20,6 +21,8 @@ if (process.argv) {
   if (process.argv[3]) {
     const option = process.argv[3].replace('--', '');
     prereleaseTag = option;
+  } else if (PRERELEASE_OPTIONS.includes(releaseType)) {
+    prereleaseTag = 'beta';
   }
 }
 

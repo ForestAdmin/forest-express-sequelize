@@ -3,16 +3,14 @@ import P from 'bluebird';
 import moment from 'moment';
 import { Schemas } from 'forest-express';
 import Orm, { isVersionLessThan4 } from '../utils/orm';
-import BaseStatGetter from './base-stat-getter';
 import { isMSSQL } from '../utils/database';
+import FiltersParser from './filters-parser';
 
 // NOTICE: These aliases are not camelcased to prevent issues with Sequelize.
 const ALIAS_GROUP_BY = 'forest_alias_groupby';
 const ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
 function PieStatGetter(model, params, options) {
-  BaseStatGetter.call(this, model, params, options);
-
   const needsDateOnlyFormating = isVersionLessThan4(options.sequelize);
 
   const schema = Schemas.schemas[model.name];
@@ -98,9 +96,10 @@ function PieStatGetter(model, params, options) {
     });
   }
 
-  this.perform = () => model
-    .unscoped()
-    .findAll({
+  this.perform = () => {
+    const where = new FiltersParser(schema, params.timezone, options).perform(params.filters);
+
+    return model.unscoped().findAll({
       attributes: [
         [
           options.sequelize.col(groupByField),
@@ -115,13 +114,14 @@ function PieStatGetter(model, params, options) {
         ],
       ],
       include: getIncludes(),
-      where: this.getFilters(),
+      where,
       group: getGroupBy(),
       order: [[options.sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
       raw: true,
     })
-    .then(formatResults)
-    .then(records => ({ value: records }));
+      .then(formatResults)
+      .then(records => ({ value: records }));
+  };
 }
 
 module.exports = PieStatGetter;

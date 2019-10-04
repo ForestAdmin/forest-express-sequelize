@@ -1,5 +1,6 @@
 import _ from 'lodash';
 import { Schemas } from 'forest-express';
+import { getReferenceField } from '../utils/query';
 import Orm from '../utils/orm';
 import Database from '../utils/database';
 
@@ -64,12 +65,13 @@ function QueryBuilder(model, opts, params) {
       if (params.sort.indexOf('.') !== -1) {
         // NOTICE: Sort on the belongsTo displayed field
         const [associationName, fieldName] = params.sort.split('.');
-        const columnName = Orm.getColumnNameForReferenceField(
-          aliasSchema || schema,
+        const column = getReferenceField(
+          Schemas.schemas,
+          (aliasSchema || schema),
           associationName,
           fieldName,
         );
-        return [[opts.sequelize.col(`${associationName}.${columnName}`), order]];
+        return [[opts.sequelize.col(column), order]];
       } else if (aliasName) {
         return [[opts.sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
       }

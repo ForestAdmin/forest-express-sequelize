@@ -4,6 +4,64 @@
 ### Fixed
 - Filters - Fix filters on references having a primary key column name different than the model field name.
 
+## RELEASE 4.0.0-beta.10 - 2019-09-26
+### Changed
+- Technical - Make the stats code more consistent.
+
+### Fixed
+- List Records - Search on table with uuidv1 or v4 does not crash.
+- Value Charts - Fix aggregate on a field with custom column name.
+
+## RELEASE 4.0.0-beta.9 - 2019-09-18
+### Changed
+- Technical - Improve tests descriptions.
+
+### Fixed
+- Filters - Fix filtering on references fields that have an unconventional column name.
+
+## RELEASE 4.0.0-beta.8 - 2019-09-11
+### Fixed
+- Resources Getter - Prevent API crash if the sorting field is a reference field that is not among the displayed columns.
+
+## RELEASE 4.0.0-beta.7 - 2019-08-23
+## RELEASE 4.0.0-beta.6 - 2019-08-23
+### Fixed
+- Charts - Fix charts with previous interval.
+
+## RELEASE 4.0.0-beta.5 - 2019-08-22
+### Changed
+- Technical - Apply ESLint rules.
+
+### Fixed
+- Has Many - Fix an internal error if a search is done on a page different that the first one and the search returns no results.
+
+## RELEASE 4.0.0-beta.4 - 2019-08-12
+### Fixed
+- Filters - Fix filters `was in previous xxx` issue due to moment mutability.
+
+### Changed
+- Technical - Make filters date operator parser generic through forest-express.
+
+## RELEASE 4.0.0-beta.3 - 2019-08-02
+### Fixed
+- Error Handling - Fix error handling crash trial 2.
+
+## RELEASE 4.0.0-beta.2 - 2019-08-02
+### Fixed
+- Error Handling - Fix error handling crash (regression introduced in 4.0.0-beta.0).
+
+## RELEASE 4.0.0-beta.1 - 2019-08-01
+### Changed
+- Technical - Makes the JWT lighter and consistent across lianas.
+
+## RELEASE 4.0.0-beta.0 - 2019-08-01
+### Changed
+- Filters - Add support for complex/generic conditions chaining.
+
+### Fixed
+- Technical - Fix pre-commit hook to avoid renamed file and add new line at the end of the file.
+- Technical - Set default prerelease tag to beta if nothing specified on deploy.
+
 ## RELEASE 3.3.5 - 2019-09-26
 ### Changed
 - Technical - Make the stats code more consistent.
