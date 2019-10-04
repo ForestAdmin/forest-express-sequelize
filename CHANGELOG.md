@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.0 - 2019-10-04
 ### Added
 - Technical - A Release now also automatically publish the release note to Slack.
 
