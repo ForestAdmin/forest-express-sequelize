@@ -1,22 +1,22 @@
 const _ = require('lodash');
 const Operators = require('../utils/operators');
 const orm = require('../utils/orm');
-const ErrorHTTP422 = require('./errors').ErrorHTTP422;
+const { ErrorHTTP422 } = require('./errors');
 
 function HasManyDissociator(model, association, options, params, data) {
-  var OPERATORS = new Operators(options);
-  var isDelete = Boolean(params.delete);
+  const OPERATORS = new Operators(options);
+  const isDelete = Boolean(params.delete);
 
-  this.perform = function () {
-    var associatedIds = _.map(data.data, function (value) { return value.id; });
+  this.perform = () => {
+    const associatedIds = _.map(data.data, value => value.id);
     return orm.findRecord(model, params.recordId)
-      .then(function (record) {
-        var removeAssociation = false;
+      .then((record) => {
+        let removeAssociation = false;
 
         if (isDelete) {
-          _.each(model.associations, function(association, associationName) {
+          _.each(model.associations, (innerAssociation, associationName) => {
             if (associationName === params.associationName) {
-              removeAssociation = (association.associationType === 'belongsToMany');
+              removeAssociation = (innerAssociation.associationType === 'belongsToMany');
             }
           });
         } else {
@@ -24,19 +24,21 @@ function HasManyDissociator(model, association, options, params, data) {
         }
 
         if (removeAssociation) {
-          return record['remove' + _.upperFirst(params.associationName)](associatedIds);
+          return record[`remove${_.upperFirst(params.associationName)}`](associatedIds);
         }
         return null;
       })
-      .then(function () {
+      .then(() => {
         if (isDelete) {
-          var condition = { id: {} };
+          const condition = { id: {} };
           condition.id[OPERATORS.IN] = associatedIds;
 
           return association.destroy({ where: condition });
         }
+
+        return null;
       })
-      .catch(function (error) {
+      .catch((error) => {
         throw new ErrorHTTP422(error.message);
       });
   };
