@@ -6,6 +6,9 @@
 - Technical - Apply eslint rules to `has-many-dissociator`.
 - Technical - Apply eslint rules to `resource-remover`.
 
+### Fixed
+- Has Many - Fix delete from has many when primary key is not `id`.
+
 ## RELEASE 4.0.0 - 2019-10-04
 ### Added
 - Technical - A Release now also automatically publish the release note to Slack.

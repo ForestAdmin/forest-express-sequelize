@@ -30,8 +30,13 @@ function HasManyDissociator(model, association, options, params, data) {
       })
       .then(() => {
         if (isDelete) {
-          const condition = { id: {} };
-          condition.id[OPERATORS.IN] = associatedIds;
+          const primaryKeys = _.keys(association.primaryKeys);
+          const [idField] = primaryKeys;
+          const condition = {
+            [idField]: {
+              [OPERATORS.IN]: associatedIds,
+            },
+          };
 
           return association.destroy({ where: condition });
         }
