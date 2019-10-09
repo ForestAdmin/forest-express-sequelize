@@ -1,17 +1,14 @@
-'use strict';
-var ResourceFinder = require('./resource-finder');
+const ResourceFinder = require('./resource-finder');
 
 function ResourceRemover(model, params) {
-  this.perform = function () {
-    return new ResourceFinder(model, params)
-      .perform()
-      .then(function (record) {
-        if (record) {
-          return record.destroy();
-        }
-        return;
-      });
-  };
+  this.perform = () => new ResourceFinder(model, params)
+    .perform()
+    .then((record) => {
+      if (record) {
+        return record.destroy();
+      }
+      return null;
+    });
 }
 
 module.exports = ResourceRemover;
