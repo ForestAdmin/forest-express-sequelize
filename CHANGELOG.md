@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 4.0.1 - 2019-10-09
 ### Changed
 - Technical - Upgrade to the `forest-express` v4 public dependency.
 - Technical - Apply eslint rules to `has-many-dissociator`.
