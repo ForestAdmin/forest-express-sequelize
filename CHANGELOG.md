@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Continuous Integration - Change `11.14` version of `node_js` to `lts/*` in `.travis.yml`.
 
 ## RELEASE 4.0.2 - 2019-10-10
 ### Fixed
