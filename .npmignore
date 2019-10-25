@@ -1,1 +1,5 @@
 src
+.env
+.env-example
+.github
+.yarn-error.log
