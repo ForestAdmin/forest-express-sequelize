@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Remove useless `.jshintrc` file.
 
 ## RELEASE 4.0.2 - 2019-10-10
 ### Fixed
