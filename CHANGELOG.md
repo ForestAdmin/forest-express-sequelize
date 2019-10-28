@@ -8,6 +8,7 @@
 - NPM Publish - Do not send local environment variables on package publish.
 - NPM Publish - Remove Github templates from the published packages.
 - NPM Publish - Remove yarn errors log file from the published packages.
+- Continuous Integration - Change `11.14` version of `node_js` to `lts/*` in `.travis.yml`.
 
 ## RELEASE 4.0.2 - 2019-10-10
 ### Fixed
