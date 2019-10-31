@@ -9,6 +9,7 @@
 - NPM Publish - Remove Github templates from the published packages.
 - NPM Publish - Remove yarn errors log file from the published packages.
 - Continuous Integration - Change `11.14` version of `node_js` to `lts/*` in `.travis.yml`.
+- Routes - Ensure that admin middlewares are configured for admin API routes only and does not interfere with other project routes.
 
 ## RELEASE 4.0.2 - 2019-10-10
 ### Fixed
