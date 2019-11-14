@@ -1,6 +1,10 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Rename RecordsExporter to ResourceExporter to be consistent.
+- Technical - Apply eslint rules to `resource-updater`.
+- Technical - Apply eslint rules to `resources-exporter`.
 
 ## RELEASE 5.0.0 - 2019-10-31
 ### Changed
