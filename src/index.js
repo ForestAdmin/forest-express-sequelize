@@ -36,6 +36,16 @@ exports.ResourceDeserializer = Interface.ResourceDeserializer;
 exports.Schemas = Interface.Schemas;
 exports.ResourcesRoute = Interface.ResourcesRoute;
 
+exports.PermissionMiddlewareCreator = Interface.PermissionMiddlewareCreator;
+
+exports.RecordsCounter = Interface.RecordsCounter;
+exports.RecordsExporter = Interface.RecordsExporter;
+exports.RecordsGetter = Interface.RecordsGetter;
+exports.RecordGetter = Interface.RecordGetter;
+exports.RecordUpdater = Interface.RecordUpdater;
+exports.RecordCreator = Interface.RecordCreator;
+exports.RecordRemover = Interface.RecordRemover;
+
 exports.init = function init(opts) {
   exports.opts = opts;
 
@@ -105,7 +115,7 @@ exports.init = function init(opts) {
   exports.ResourceCreator = ResourceCreator;
   exports.ResourceUpdater = ResourceUpdater;
   exports.ResourceRemover = ResourceRemover;
-  exports.RecordsExporter = ResourcesExporter;
+  exports.ResourcesExporter = ResourcesExporter;
 
   exports.HasManyGetter = HasManyGetter;
   exports.HasManyAssociator = HasManyAssociator;
