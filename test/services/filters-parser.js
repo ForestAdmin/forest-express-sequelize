@@ -1,9 +1,12 @@
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import chaiAsPromised from 'chai-as-promised';
 import moment from 'moment';
 import Sequelize from 'sequelize';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
 import { NoMatchingOperatorError } from '../../src/services/errors';
+
+chai.use(chaiAsPromised);
 
 describe('Services > FiltersParser', () => {
   const schema = {
@@ -97,46 +100,46 @@ describe('Services > FiltersParser', () => {
   });
 
   describe('formatCondition function', () => {
-    it('should handle basic condition correctly', () => {
-      expect(defaultFiltersParser.formatCondition(defaultCondition))
+    it('should handle basic condition correctly', async () => {
+      expect(await defaultFiltersParser.formatCondition(defaultCondition))
         .to.deep.equal(defaultExpectedCondition);
     });
 
-    it('should handle time/date condition correctly', () => {
-      expect(defaultFiltersParser.formatCondition(defaultDateCondition))
+    it('should handle time/date condition correctly', async () => {
+      expect(await defaultFiltersParser.formatCondition(defaultDateCondition))
         .to.deep.equal(defaultExpectedDateCondition);
     });
 
     it('should throw an error on empty condition', () => {
-      expect(() => defaultFiltersParser.formatCondition()).to.throw(Error);
-      expect(() => defaultFiltersParser.formatCondition({})).to.throw(Error);
+      expect(defaultFiltersParser.formatCondition()).to.be.rejectedWith(Error);
+      expect(defaultFiltersParser.formatCondition({})).to.be.rejectedWith(Error);
     });
   });
 
   describe('formatAggregation function', () => {
-    it('should format correctly with \'and\' as aggregator', () => {
+    it('should format correctly with \'and\' as aggregator', async () => {
       const expectedFormatedAggregation = {
         [OPERATORS.AND]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
 
-      expect(defaultFiltersParser.formatAggregation('and', [
+      expect(await defaultFiltersParser.formatAggregation('and', [
         defaultExpectedCondition,
         defaultExpectedDateCondition,
       ])).to.deep.equal(expectedFormatedAggregation);
     });
 
-    it('should format correctly with \'or\' as aggregator', () => {
+    it('should format correctly with \'or\' as aggregator', async () => {
       const expectedFormatedAggregation = {
         [OPERATORS.OR]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
 
-      expect(defaultFiltersParser.formatAggregation('or', [
+      expect(await defaultFiltersParser.formatAggregation('or', [
         defaultExpectedCondition,
         defaultExpectedDateCondition,
       ])).to.deep.equal(expectedFormatedAggregation);
     });
 
-    it('should format correctly with \'and\' as nested aggregators', () => {
+    it('should format correctly with \'and\' as nested aggregators', async () => {
       const expectedNestedAggregation = {
         [OPERATORS.AND]: [
           defaultExpectedCondition,
@@ -150,7 +153,7 @@ describe('Services > FiltersParser', () => {
         ],
       };
 
-      expect(defaultFiltersParser.formatAggregation('or', [
+      expect(await defaultFiltersParser.formatAggregation('or', [
         defaultExpectedDateCondition,
         expectedNestedAggregation,
       ]))
@@ -158,15 +161,15 @@ describe('Services > FiltersParser', () => {
     });
 
     it('should throw an error on empty condition', () => {
-      expect(() => defaultFiltersParser.formatAggregation()).to.throw(Error);
-      expect(() => defaultFiltersParser.formatAggregation({})).to.throw(Error);
+      expect(defaultFiltersParser.formatAggregation()).to.be.rejectedWith(Error);
+      expect(defaultFiltersParser.formatAggregation({})).to.be.rejectedWith(Error);
     });
   });
 
   describe('perform function', () => {
     describe('with nothing provided', () => {
-      it('should be null', () => {
-        expect(defaultFiltersParser.perform()).to.equal(null);
+      it('should be null', async () => {
+        expect(await defaultFiltersParser.perform()).to.equal(null);
       });
     });
 
@@ -177,8 +180,8 @@ describe('Services > FiltersParser', () => {
       const filters = '{ "field": "car:brandName", "operator": "starts_with", "value": "Ferrari" }';
       const filtersParser = new FiltersParser(schemaWithFields, timezone, sequelizeOptions);
 
-      it('should not be null', () => {
-        expect(filtersParser.perform(filters))
+      it('should not be null', async () => {
+        expect(await filtersParser.perform(filters))
           .to.deep.equal({ '$car.brandName$': { [OPERATORS.LIKE]: 'Ferrari%' } });
       });
     });

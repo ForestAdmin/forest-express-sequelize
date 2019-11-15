@@ -7,15 +7,15 @@ function FiltersParser(modelSchema, timezone, options) {
   this.OPERATORS = new Operators(options);
   this.operatorDateParser = new BaseOperatorDateParser({ operators: this.OPERATORS, timezone });
 
-  this.perform = filtersString =>
+  this.perform = async filtersString =>
     BaseFiltersParser.perform(filtersString, this.formatAggregation, this.formatCondition);
 
-  this.formatAggregation = (aggregator, formatedConditions) => {
+  this.formatAggregation = async (aggregator, formatedConditions) => {
     const aggregatorOperator = this.formatAggregatorOperator(aggregator);
     return { [aggregatorOperator]: formatedConditions };
   };
 
-  this.formatCondition = (condition) => {
+  this.formatCondition = async (condition) => {
     const formatedField = this.formatField(condition.field);
 
     if (this.operatorDateParser.isDateOperator(condition.operator)) {
@@ -170,7 +170,7 @@ function FiltersParser(modelSchema, timezone, options) {
     return currentPreviousInterval;
   };
 
-  this.getAssociations = filtersString => BaseFiltersParser.getAssociations(filtersString);
+  this.getAssociations = async filtersString => BaseFiltersParser.getAssociations(filtersString);
 }
 
 module.exports = FiltersParser;

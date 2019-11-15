@@ -1,31 +1,30 @@
-'use strict';
-var _ = require('lodash');
+const _ = require('lodash');
 
 function CompositeKeysManager(model, schema, record) {
-  var GLUE = '-';
+  const GLUE = '-';
 
-  this.getRecordConditions = function (recordId) {
-    var where = {};
-    var primaryKeyValues = recordId.split(GLUE);
+  this.getRecordConditions = function getRecordConditions(recordId) {
+    const where = {};
+    const primaryKeyValues = recordId.split(GLUE);
 
     // NOTICE: Prevent liana to crash when a composite primary keys is null,
     //         this behaviour should be avoid instead of fixed.
-    primaryKeyValues.forEach(function (key, index) {
+    primaryKeyValues.forEach((key, index) => {
       if (key === 'null') { primaryKeyValues[index] = null; }
     });
 
     if (primaryKeyValues.length === _.keys(model.primaryKeys).length) {
-      _.keys(model.primaryKeys).forEach(function (primaryKey, index) {
+      _.keys(model.primaryKeys).forEach((primaryKey, index) => {
         where[primaryKey] = primaryKeyValues[index];
       });
     }
     return where;
   };
 
-  this.createCompositePrimary = function () {
-    var compositePrimary = '';
+  this.createCompositePrimary = function createCompositePrimary() {
+    let compositePrimary = '';
 
-    _.keys(model.primaryKeys).forEach(function (primaryKey, index) {
+    _.keys(model.primaryKeys).forEach((primaryKey, index) => {
       // NOTICE: Prevent liana to crash when a composite primary keys is null,
       //         this behaviour should be avoid instead of fixed.
       if (record[primaryKey] === null) {

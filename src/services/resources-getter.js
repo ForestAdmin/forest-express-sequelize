@@ -17,12 +17,14 @@ function ResourcesGetter(model, options, params) {
   const OPERATORS = new Operators(options);
   const primaryKey = _.keys(model.primaryKeys)[0];
   const filterParser = new FiltersParser(schema, params.timezone, options);
+  let fieldNamesRequested;
+  let searchBuilder;
 
-  function getFieldNamesRequested() {
+  async function getFieldNamesRequested() {
     if (!params.fields || !params.fields[model.name]) { return null; }
 
     // NOTICE: Populate the necessary associations for filters
-    const associations = params.filters ? filterParser.getAssociations(params.filters) : [];
+    const associations = params.filters ? await filterParser.getAssociations(params.filters) : [];
 
     if (params.sort && params.sort.includes('.')) {
       let associationFromSorting = params.sort.split('.')[0];
@@ -40,31 +42,37 @@ function ResourcesGetter(model, options, params) {
     );
   }
 
-  const fieldNamesRequested = getFieldNamesRequested();
+  function getSearchBuilder() {
+    if (searchBuilder) {
+      return searchBuilder;
+    }
 
-  const searchBuilder = new SearchBuilder(
-    model,
-    options,
-    params,
-    fieldNamesRequested,
-  );
+    searchBuilder = new SearchBuilder(
+      model,
+      options,
+      params,
+      fieldNamesRequested,
+    );
+    return searchBuilder;
+  }
+
   let hasSmartFieldSearch = false;
 
-  function handleFilterParams() {
+  async function handleFilterParams() {
     return filterParser.perform(params.filters);
   }
 
-  function getWhere() {
-    return new P((resolve, reject) => {
+  async function getWhere() {
+    return new P(async (resolve, reject) => {
       const where = {};
       where[OPERATORS.AND] = [];
 
       if (params.search) {
-        where[OPERATORS.AND].push(searchBuilder.perform());
+        where[OPERATORS.AND].push(getSearchBuilder().perform());
       }
 
       if (params.filters) {
-        where[OPERATORS.AND].push(handleFilterParams());
+        where[OPERATORS.AND].push(await handleFilterParams());
       }
 
       if (segmentWhere) {
@@ -99,7 +107,9 @@ function ResourcesGetter(model, options, params) {
   }
 
 
-  function getRecords() {
+  async function getRecords() {
+    fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
+
     const scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
     const include = queryBuilder.getIncludes(model, fieldNamesRequested);
 
@@ -128,10 +138,10 @@ function ResourcesGetter(model, options, params) {
             }
           });
 
-          const fieldsSearched = searchBuilder.getFieldsSearched();
+          const fieldsSearched = getSearchBuilder().getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             if (!params.searchExtended ||
-              !searchBuilder.hasExtendedSearchConditions()) {
+              !getSearchBuilder().hasExtendedSearchConditions()) {
               // NOTICE: No search condition has been set for the current search, no record can be
               //         found.
               return [];
@@ -143,7 +153,9 @@ function ResourcesGetter(model, options, params) {
       });
   }
 
-  function countRecords() {
+  async function countRecords() {
+    fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
+
     const scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
     const include = queryBuilder.getIncludes(model, fieldNamesRequested);
 
@@ -174,10 +186,10 @@ function ResourcesGetter(model, options, params) {
             }
           });
 
-          const fieldsSearched = searchBuilder.getFieldsSearched();
+          const fieldsSearched = getSearchBuilder().getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
             if (!params.searchExtended ||
-              !searchBuilder.hasExtendedSearchConditions()) {
+              !getSearchBuilder().hasExtendedSearchConditions()) {
               // NOTICE: No search condition has been set for the current search, no record can be
               //         found.
               return 0;
@@ -201,7 +213,7 @@ function ResourcesGetter(model, options, params) {
     }
   }
 
-  function getSegmentCondition() {
+  async function getSegmentCondition() {
     getSegment();
     if (_.isFunction(segmentWhere)) {
       return segmentWhere(params)
@@ -212,14 +224,14 @@ function ResourcesGetter(model, options, params) {
     return P.resolve();
   }
 
-  this.perform = () =>
+  this.perform = async () =>
     getSegmentCondition()
       .then(getRecords)
       .then((records) => {
         let fieldsSearched = null;
 
         if (params.search) {
-          fieldsSearched = searchBuilder.getFieldsSearched();
+          fieldsSearched = getSearchBuilder().getFieldsSearched();
         }
 
         if (schema.isCompositePrimary) {
@@ -233,7 +245,7 @@ function ResourcesGetter(model, options, params) {
         return [records, fieldsSearched];
       });
 
-  this.count = () => getSegmentCondition().then(countRecords);
+  this.count = async () => getSegmentCondition().then(countRecords);
 }
 
 module.exports = ResourcesGetter;

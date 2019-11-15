@@ -4,12 +4,14 @@
 ### Changed
 - Technical - Change functions of filter parser to async.
 - Technical - Add eslint rules specific to tests.
+- Technical - Filter parser is now asynchronous.
 - Technical - Upgrade to the `forest-express` v5.1.1.
 
 ### Fixed
 - Technical - Rename RecordsExporter to ResourceExporter to be consistent.
 - Technical - Apply eslint rules to `resource-updater`.
 - Technical - Apply eslint rules to `resources-exporter`.
+- Technical - Apply eslint rules to `src/services`.
 - Smart Relationships - Smart Relashionships returns referenced Smart Fields values.
 - Error Handling - Fix error message when configDir does not exist.
 - Error Handling - Prevent server to crash when Forest Admin API does not respond.
