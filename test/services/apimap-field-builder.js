@@ -1,6 +1,3 @@
-/* global describe, before, it */
-/* jshint camelcase: false */
-/* jshint expr: true */
 const _ = require('lodash');
 const Sequelize = require('sequelize');
 const { expect } = require('chai');
