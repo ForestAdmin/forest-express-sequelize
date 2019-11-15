@@ -1,11 +1,10 @@
-'use strict';
-var LiveQueryChecker = require('./live-query-checker');
+const LiveQueryChecker = require('./live-query-checker');
 
 function QueryStatGetter(params, opts) {
-  var QUERY_OPTIONS_SELECT = { type: opts.sequelize.QueryTypes.SELECT };
+  const QUERY_OPTIONS_SELECT = { type: opts.sequelize.QueryTypes.SELECT };
 
-  this.perform = function () {
-    var rawQuery = params.query.trim();
+  this.perform = function perform() {
+    let rawQuery = params.query.trim();
 
     new LiveQueryChecker().perform(rawQuery);
 
