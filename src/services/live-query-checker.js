@@ -1,10 +1,9 @@
-'use strict';
-var ErrorHTTP422 = require('./errors').ErrorHTTP422;
+const { ErrorHTTP422 } = require('./errors');
 
 function LiveQueryChecker() {
-  var QUERY_SELECT = /^SELECT\s[^]*FROM\s[^]*$/i;
+  const QUERY_SELECT = /^SELECT\s[^]*FROM\s[^]*$/i;
 
-  this.perform = function (query) {
+  this.perform = function perform(query) {
     if (!query) {
       throw new ErrorHTTP422('You cannot execute an empty SQL query.');
     }
@@ -16,9 +15,7 @@ function LiveQueryChecker() {
     if (!QUERY_SELECT.test(query)) {
       throw new ErrorHTTP422('Only SELECT queries are allowed.');
     }
-
-    return;
-  }
+  };
 }
 
 module.exports = LiveQueryChecker;

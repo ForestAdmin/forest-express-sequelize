@@ -8,6 +8,7 @@
 - Technical - Rename RecordsExporter to ResourceExporter to be consistent.
 - Technical - Apply eslint rules to `resource-updater`.
 - Technical - Apply eslint rules to `resources-exporter`.
+- Technical - Apply eslint rules to `src/services`.
 
 ## RELEASE 5.0.0 - 2019-10-31
 ### Changed
