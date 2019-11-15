@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Upgrade to the `forest-express` v5.1.1.
+
 ### Fixed
 - Technical - Rename RecordsExporter to ResourceExporter to be consistent.
 - Technical - Apply eslint rules to `resource-updater`.
