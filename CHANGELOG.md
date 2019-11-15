@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Add eslint rules specific to tests.
+
 ### Fixed
 - Technical - Rename RecordsExporter to ResourceExporter to be consistent.
 - Technical - Apply eslint rules to `resource-updater`.
