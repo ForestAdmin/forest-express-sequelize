@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Technical - Add eslint rules specific to tests.
+- Technical - Filter parser is now asynchronous.
 
 ### Fixed
 - Technical - Rename RecordsExporter to ResourceExporter to be consistent.

@@ -1166,6 +1166,13 @@ caniuse-lite@^1.0.30000792:
   resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000960.tgz#ec48297037e5607f582f246ae7b12bee66a78999"
   integrity sha512-7nK5qs17icQaX6V3/RYrJkOsZyRNnroA4+ZwxaKJzIKy+crIy0Mz5CBlLySd2SNV+4nbUZeqeNfiaEieUBu3aA==
 
+chai-as-promised@7.1.1:
+  version "7.1.1"
+  resolved "https://registry.yarnpkg.com/chai-as-promised/-/chai-as-promised-7.1.1.tgz#08645d825deb8696ee61725dbf590c012eb00ca0"
+  integrity sha512-azL6xMoi+uxu6z4rhWQ1jbdUhOMhis2PvscD/xjLqNMkv3BPPp2JyyuTHOrf9BOosGpNQ11v6BKv/g57RXbiaA==
+  dependencies:
+    check-error "^1.0.2"
+
 chai@2.3.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/chai/-/chai-2.3.0.tgz#8a2f6a34748da801090fd73287b2aa739a4e909a"
@@ -1187,6 +1194,11 @@ chardet@^0.7.0:
   version "0.7.0"
   resolved "https://registry.yarnpkg.com/chardet/-/chardet-0.7.0.tgz#90094849f0937f2eedc2425d0d28a9e5f0cbad9e"
   integrity sha512-mT8iDcrh03qDGRRmoA2hmBJnxpllMR+0/0qlzjqZES6NdiWDcZkCNAk4rPFZ9Q85r27unkiNNg8ZOiwZXBHwcA==
+
+check-error@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/check-error/-/check-error-1.0.2.tgz#574d312edd88bb5dd8912e9286dd6c0aed4aac82"
+  integrity sha1-V00xLt2Iu13YkS6Sht1sCu1KrII=
 
 chokidar@^1.6.1:
   version "1.7.0"
@@ -2155,10 +2167,10 @@ for-own@^0.1.4:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@5.0.0:
-  version "5.0.0"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-5.0.0.tgz#0a409321253647ac935ef64daf3c415ebdccfd17"
-  integrity sha512-qeECykn+THCJpMUyWdovf8EFspnV+LuouSyEgxg0T2Fs7Jq6YKojz5HYTCA2X0m8duEY70q1ukkB77UvILuReg==
+forest-express@5.1.0:
+  version "5.1.0"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-5.1.0.tgz#cf526f79ab5ed6939b034028846ca17fc46f8e2a"
+  integrity sha512-yORDk+pHW8k/vrt6L9dJsIoynU5yatAmso1iVU2orae3BeZtvxHBSZLexBEGYQyOLNo+AQ9qm5E+s6E8AkGfIg==
   dependencies:
     babel-runtime "7.0.0-beta.3"
     base32-encode "1.1.0"
