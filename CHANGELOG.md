@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Technical - Change functions of filter parser to async.
+- Technical - Add eslint rules specific to tests.
 - Technical - Upgrade to the `forest-express` v5.1.1.
 
 ### Fixed
