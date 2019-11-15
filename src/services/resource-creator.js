@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const P = require('bluebird');
-const { ErrorHTTP422 } = require('./errors');
 const Interface = require('forest-express');
+const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 
