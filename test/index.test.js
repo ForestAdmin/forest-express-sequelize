@@ -1,10 +1,6 @@
-/* global describe, before, it */
-/* jshint camelcase: false */
-/* jshint expr: true */
 const _ = require('lodash');
 const Sequelize = require('sequelize');
 const sequelizeFixtures = require('sequelize-fixtures');
-const { expect } = require('chai');
 const Interface = require('forest-express');
 const SchemaAdapter = require('../src/adapters/sequelize');
 
@@ -235,11 +231,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     },
   };
 
-  describe(`Dialect ${sequelize.options.dialect}`, () => {
-    describe('Schema Adapter', () => {
+  describe(`dialect ${sequelize.options.dialect}`, () => {
+    describe('schema adapter', () => {
       describe('on a collection with 13 fields and a few validations', () => {
         let schema;
-        before((done) => {
+        beforeAll((done) => {
           SchemaAdapter(models.user, sequelizeOptions)
             .then((schemaCreated) => {
               schema = schemaCreated;
@@ -248,48 +244,53 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
 
         it('should generate a schema', () => {
-          expect(schema).not.to.be.null; // eslint-disable-line
+          expect.assertions(1);
+          expect(schema).not.toBeNull();
         });
 
         it('should define an idField', () => {
-          expect(schema.idField).equal('id');
-          expect(schema.primaryKeys.length).equal(1);
-          expect(schema.primaryKeys[0]).equal('id');
+          expect.assertions(3);
+          expect(schema.idField).toStrictEqual('id');
+          expect(schema.primaryKeys).toHaveLength(1);
+          expect(schema.primaryKeys[0]).toStrictEqual('id');
         });
 
         it('should not detect a composite primary key', () => {
-          expect(schema.isCompositePrimary).to.be.false;  // eslint-disable-line
+          expect.assertions(1);
+          expect(schema.isCompositePrimary).toStrictEqual(false);
         });
 
         it('should detect 13 fields with a type', () => {
-          expect(schema.fields.length).equal(13);
-          expect(schema.fields[0].type).equal('Number');
-          expect(schema.fields[1].type).equal('String');
-          expect(schema.fields[2].type).equal('Boolean');
-          expect(schema.fields[3].type).equal('String');
-          expect(schema.fields[4].type).equal('String');
-          expect(schema.fields[5].type).equal('String');
-          expect(schema.fields[6].type).equal('String');
-          expect(schema.fields[7].type).equal('Date');
-          expect(schema.fields[8].type).equal('Date');
-          expect(schema.fields[9].type).equal('String');
-          expect(schema.fields[10].type).equal('String');
-          expect(schema.fields[11].type[0]).equal('Number');
-          expect(schema.fields[12].type[0]).equal('Number');
+          expect.assertions(14);
+          expect(schema.fields).toHaveLength(13);
+          expect(schema.fields[0].type).toStrictEqual('Number');
+          expect(schema.fields[1].type).toStrictEqual('String');
+          expect(schema.fields[2].type).toStrictEqual('Boolean');
+          expect(schema.fields[3].type).toStrictEqual('String');
+          expect(schema.fields[4].type).toStrictEqual('String');
+          expect(schema.fields[5].type).toStrictEqual('String');
+          expect(schema.fields[6].type).toStrictEqual('String');
+          expect(schema.fields[7].type).toStrictEqual('Date');
+          expect(schema.fields[8].type).toStrictEqual('Date');
+          expect(schema.fields[9].type).toStrictEqual('String');
+          expect(schema.fields[10].type).toStrictEqual('String');
+          expect(schema.fields[11].type[0]).toStrictEqual('Number');
+          expect(schema.fields[12].type[0]).toStrictEqual('Number');
         });
 
         it('should setup validations', () => {
-          expect(schema.fields[4].validations.length).equal(2);
-          expect(schema.fields[4].validations[0].type).equal('is longer than');
-          expect(schema.fields[4].validations[0].value).equal(0);
-          expect(schema.fields[4].validations[1].type).equal('is shorter than');
-          expect(schema.fields[4].validations[1].value).equal(50);
+          expect.assertions(5);
+          expect(schema.fields[4].validations).toHaveLength(2);
+          expect(schema.fields[4].validations[0].type).toStrictEqual('is longer than');
+          expect(schema.fields[4].validations[0].value).toStrictEqual(0);
+          expect(schema.fields[4].validations[1].type).toStrictEqual('is shorter than');
+          expect(schema.fields[4].validations[1].value).toStrictEqual(50);
         });
       });
 
       describe('on a simple collection with a fields with a bad type', () => {
         let schema;
-        before((done) => {
+        beforeAll((done) => {
           SchemaAdapter(models.hasBadFieldType, sequelizeOptions)
             .then((schemaCreated) => {
               schema = schemaCreated;
@@ -298,21 +299,23 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
 
         it('should generate a schema', () => {
-          expect(schema).not.to.be.null;  // eslint-disable-line
+          expect.assertions(1);
+          expect(schema).not.toBeNull();
         });
 
         it('should detect 4 fields with a type', () => {
-          expect(schema.fields.length).equal(4);
-          expect(schema.fields[0].type).equal('Number');
-          expect(schema.fields[1].type).equal('String');
-          expect(schema.fields[2].type).equal('Date');
-          expect(schema.fields[3].type).equal('Date');
+          expect.assertions(5);
+          expect(schema.fields).toHaveLength(4);
+          expect(schema.fields[0].type).toStrictEqual('Number');
+          expect(schema.fields[1].type).toStrictEqual('String');
+          expect(schema.fields[2].type).toStrictEqual('Date');
+          expect(schema.fields[3].type).toStrictEqual('Date');
         });
       });
     });
 
-    describe('Stats > Pie Stat Getter', () => {
-      before(() =>
+    describe('stats > pie stat getter', () => {
+      beforeAll(() =>
         sequelize.sync({ force: true })
           .then(() =>
             sequelizeFixtures.loadFile(
@@ -321,9 +324,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               { log: () => {} },
             )));
 
-      describe('A simple Pie Chart', () => {
+      describe('a simple pie chart', () => {
         describe('on an empty users table', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             new PieStatGetter(models.user, {
               type: 'Pie',
               collection: 'user',
@@ -335,7 +339,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             }, sequelizeOptions)
               .perform()
               .then((stat) => {
-                expect(stat.value.length).equal(3);
+                expect(stat.value).toHaveLength(3);
                 done();
               })
               .catch(done);
@@ -344,6 +348,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a group by on a belongsTo association using an alias', () => {
           it('should respond correct data', (done) => {
+            expect.assertions(1);
             new PieStatGetter(models.addressWithUserAlias, {
               type: 'Pie',
               collection: 'addressWithUserAlias',
@@ -355,7 +360,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             }, sequelizeOptions)
               .perform()
               .then((stat) => {
-                expect(stat.value.length).equal(0);
+                expect(stat.value).toHaveLength(0);
                 done();
               })
               .catch(done);
@@ -364,9 +369,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('Stats > Line Stat Getter', () => {
-      describe('A simple Line Chart per day on an empty users table', () => {
+    describe('stats > line stat getter', () => {
+      describe('a simple line chart per day on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -378,15 +384,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
-              expect(stat.value.length).equal(1);
+              expect(stat.value).toHaveLength(1);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('A simple Line Chart per week on an empty users table', () => {
+      describe('a simple line chart per week on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -398,15 +405,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
-              expect(stat.value.length).equal(1);
+              expect(stat.value).toHaveLength(1);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('A simple Line Chart per month on an empty users table', () => {
+      describe('a simple line chart per month on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -418,15 +426,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
-              expect(stat.value.length).equal(1);
+              expect(stat.value).toHaveLength(1);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('A simple Line Chart per year on an empty users table', () => {
+      describe('a simple line chart per year on an empty users table', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -438,7 +447,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }, sequelizeOptions)
             .perform()
             .then((stat) => {
-              expect(stat.value.length).equal(1);
+              expect(stat.value).toHaveLength(1);
               done();
             })
             .catch(done);
@@ -446,9 +455,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('Resources > Resources Creator', () => {
-      describe('Create a record on a simple collection', () => {
+    describe('resources > resources creator', () => {
+      describe('create a record on a simple collection', () => {
         it('should create a record', (done) => {
+          expect.assertions(4);
           new ResourceCreator(models.user, {
             id: '1',
             email: 'jack@forestadmin.com',
@@ -460,14 +470,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           })
             .perform()
             .then((result) => {
-              expect(result.id).equal(1);
-              expect(result.firstName).equal('Jack');
-              expect(result.username).equal('Jacouille');
+              expect(result.id).toStrictEqual(1);
+              expect(result.firstName).toStrictEqual('Jack');
+              expect(result.username).toStrictEqual('Jacouille');
 
               return models.user
                 .findOne({ where: { email: 'jack@forestadmin.com' } })
                 .then((user) => {
-                  expect(user).not.to.be.null; // eslint-disable-line
+                  expect(user).not.toBeNull(); // eslint-disable-line
                   done();
                 });
             })
@@ -475,20 +485,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
-      describe('Create a record on a collection with a composite primary key', () => {
+      describe('create a record on a collection with a composite primary key', () => {
         it('should create a record', (done) => {
+          expect.assertions(3);
           new ResourceCreator(models.log, {
             code: 'G@G#F@G@',
             trace: 'Ggg23g242@',
           })
             .perform()
             .then((result) => {
-              expect(result.code).equal('G@G#F@G@');
-              expect(result.trace).equal('Ggg23g242@');
+              expect(result.code).toStrictEqual('G@G#F@G@');
+              expect(result.trace).toStrictEqual('Ggg23g242@');
               return models.log
                 .findOne({ where: { code: 'G@G#F@G@' } })
                 .then((log) => {
-                  expect(log).not.to.be.null; // eslint-disable-line
+                  expect(log).not.toBeNull(); // eslint-disable-line
                   done();
                 });
             })
@@ -497,9 +508,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('Resources > Resources Getter', () => {
-      describe('Request on the resources getter without page size', () => {
+    describe('resources > resources getter', () => {
+      describe('request on the resources getter without page size', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -510,14 +522,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then(() => {
+              expect(true).toStrictEqual(true);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with a page size', () => {
+      describe('request on the resources getter with a page size', () => {
         it('should return the records for the specified page', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -528,28 +542,30 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(4);
+              expect(result[0]).toHaveLength(4);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             timezone: 'Europe/Paris',
           };
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(4);
+              expect(count).toStrictEqual(4);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with a sort on the primary key', () => {
+      describe('request on the resources getter with a sort on the primary key', () => {
         it('should return the records for the specified page', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -561,28 +577,30 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(4);
+              expect(result[0]).toHaveLength(4);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             timezone: 'Europe/Paris',
           };
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(4);
+              expect(count).toStrictEqual(4);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with a search', () => {
+      describe('request on the resources getter with a search', () => {
         it('should return the records for the specified page', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -594,13 +612,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(0);
+              expect(result[0]).toHaveLength(0);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             search: 'hello',
             timezone: 'Europe/Paris',
@@ -608,16 +627,17 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(0);
+              expect(count).toStrictEqual(0);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with a search on a UUID primary key', () => {
+      describe('request on the resources getter with a search on a UUID primary key', () => {
         describe('with a UUID that does not exist', () => {
           it('should return 0 records for the specified page', (done) => {
+            expect.assertions(1);
             const params = {
               fields: {
                 bike: 'id,name',
@@ -629,13 +649,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(0);
+                expect(result[0]).toHaveLength(0);
                 done();
               })
               .catch(done);
           });
 
           it('should count 0 records', (done) => {
+            expect.assertions(1);
             const params = {
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris',
@@ -643,7 +664,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.bike, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(0);
+                expect(count).toStrictEqual(0);
                 done();
               })
               .catch(done);
@@ -652,6 +673,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a UUID that exists', () => {
           it('should return 1 record for the specified page', (done) => {
+            expect.assertions(1);
             const params = {
               fields: {
                 bike: 'id,name',
@@ -663,13 +685,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(1);
+                expect(result[0]).toHaveLength(1);
                 done();
               })
               .catch(done);
           });
 
           it('should count 1 record', (done) => {
+            expect.assertions(1);
             const params = {
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris',
@@ -677,7 +700,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.bike, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(1);
+                expect(count).toStrictEqual(1);
                 done();
               })
               .catch(done);
@@ -685,8 +708,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
-      describe('Request on the resources getter with a search on a collection with searchFields', () => {
+      describe('request on the resources getter with a search on a collection with searchFields', () => {
         it('should return the records for the specified page', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               order: 'id,amount,description,giftComment',
@@ -698,13 +722,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.order, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(1);
+              expect(result[0]).toHaveLength(1);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             search: 'gift',
             timezone: 'Europe/Paris',
@@ -712,14 +737,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.order, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(1);
+              expect(count).toStrictEqual(1);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with filters conditions', () => {
+      describe('request on the resources getter with filters conditions', () => {
         const paramsBaseList = {
           fields: {
             user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -746,6 +771,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is" condition on a number field', () => {
           it('should return the records for the specified page', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
@@ -755,13 +781,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(1);
+                expect(result[0]).toHaveLength(1);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
@@ -771,7 +798,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(1);
+                expect(count).toStrictEqual(1);
                 done();
               })
               .catch(done);
@@ -780,6 +807,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "greater than" condition on a number field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
@@ -789,13 +817,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(2);
+                expect(result[0]).toHaveLength(2);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
@@ -805,7 +834,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(2);
+                expect(count).toStrictEqual(2);
                 done();
               })
               .catch(done);
@@ -814,6 +843,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "less than" condition on a number field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
@@ -823,13 +853,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(4);
+                expect(result[0]).toHaveLength(4);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
@@ -839,7 +870,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(4);
+                expect(count).toStrictEqual(4);
                 done();
               })
               .catch(done);
@@ -848,6 +879,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is not" condition on a number field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
@@ -857,13 +889,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(3);
+                expect(result[0]).toHaveLength(3);
                 done();
               })
               .catch(done);
           });
 
           it('should return the records result', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
@@ -873,7 +906,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(3);
+                expect(count).toStrictEqual(3);
                 done();
               })
               .catch(done);
@@ -882,6 +915,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is null" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -891,13 +925,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(2);
+                expect(result[0]).toHaveLength(2);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -907,7 +942,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(2);
+                expect(count).toStrictEqual(2);
                 done();
               })
               .catch(done);
@@ -916,6 +951,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is true" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -925,13 +961,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(1);
+                expect(result[0]).toHaveLength(1);
                 done();
               })
               .catch(done);
           });
 
           it('should return records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -941,7 +978,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(1);
+                expect(count).toStrictEqual(1);
                 done();
               })
               .catch(done);
@@ -950,6 +987,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is false" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -959,13 +997,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(1);
+                expect(result[0]).toHaveLength(1);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -975,7 +1014,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(1);
+                expect(count).toStrictEqual(1);
                 done();
               })
               .catch(done);
@@ -984,6 +1023,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is not null" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -993,13 +1033,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(2);
+                expect(result[0]).toHaveLength(2);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -1009,7 +1050,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(2);
+                expect(count).toStrictEqual(2);
                 done();
               })
               .catch(done);
@@ -1018,6 +1059,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is not true" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -1027,13 +1069,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(3);
+                expect(result[0]).toHaveLength(3);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -1043,7 +1086,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(3);
+                expect(count).toStrictEqual(3);
                 done();
               })
               .catch(done);
@@ -1052,6 +1095,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is not" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'email',
@@ -1061,13 +1105,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(3);
+                expect(result[0]).toHaveLength(3);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'email',
@@ -1077,7 +1122,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(3);
+                expect(count).toStrictEqual(3);
                 done();
               })
               .catch(done);
@@ -1086,6 +1131,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is not false" condition on a boolean field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -1095,13 +1141,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(3);
+                expect(result[0]).toHaveLength(3);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
@@ -1111,7 +1158,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(3);
+                expect(count).toStrictEqual(3);
                 done();
               })
               .catch(done);
@@ -1119,7 +1166,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
 
         describe('with a "contains" condition on a string field', () => {
-          it('should generate a valid SQL query', (done) => {
+          it('should generate a valid SQL query for list', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'firstName',
@@ -1129,13 +1177,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(1);
+                expect(result[0]).toHaveLength(1);
                 done();
               })
               .catch(done);
           });
 
-          it('should generate a valid SQL query', (done) => {
+          it('should generate a valid SQL query for count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'firstName',
@@ -1145,7 +1194,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(1);
+                expect(count).toStrictEqual(1);
                 done();
               })
               .catch(done);
@@ -1154,6 +1203,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "not contains" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'username',
@@ -1163,13 +1213,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(4);
+                expect(result[0]).toHaveLength(4);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'username',
@@ -1179,7 +1230,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(4);
+                expect(count).toStrictEqual(4);
                 done();
               })
               .catch(done);
@@ -1188,6 +1239,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "starts with" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'email',
@@ -1197,13 +1249,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(1);
+                expect(result[0]).toHaveLength(1);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'email',
@@ -1213,7 +1266,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(1);
+                expect(count).toStrictEqual(1);
                 done();
               })
               .catch(done);
@@ -1221,7 +1274,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
 
         describe('with a "ends with" condition on a string field', () => {
-          it('should generate a valid SQL query', (done) => {
+          it('should generate a valid SQL query for list', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'email',
@@ -1231,13 +1285,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(3);
+                expect(result[0]).toHaveLength(3);
                 done();
               })
               .catch(done);
           });
 
-          it('should generate a valid SQL query', (done) => {
+          it('should generate a valid SQL query for count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'email',
@@ -1247,7 +1302,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(3);
+                expect(count).toStrictEqual(3);
                 done();
               })
               .catch(done);
@@ -1255,27 +1310,27 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
 
         describe('with a "is present" condition on a string field', () => {
-          it('should generate a valid SQL query', (done) => {
+          it('should generate a valid SQL query', async () => {
+            expect.assertions(3);
             const params = _.clone(paramsAddressList);
             params.filters = JSON.stringify({
               field: 'country',
               operator: 'present',
               value: null,
             });
-            new ResourcesGetter(models.address, sequelizeOptions, params)
+            await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then((result) => {
                 _.each(result[0], (instance) => {
-                  expect(instance.dataValues).to.include.keys('country');
+                  expect(instance.dataValues.country).toBeDefined();
                 });
-                done();
-              })
-              .catch(done);
+              });
           });
         });
 
         describe('with a "is blank" condition on a string field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsAddressList);
             params.filters = JSON.stringify({
               field: 'country',
@@ -1285,13 +1340,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(1);
+                expect(result[0]).toHaveLength(1);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsAddressCount);
             params.filters = JSON.stringify({
               field: 'country',
@@ -1301,7 +1357,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.address, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(1);
+                expect(count).toStrictEqual(1);
                 done();
               })
               .catch(done);
@@ -1310,6 +1366,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "before x hours" condition on a date field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'createdAt',
@@ -1319,13 +1376,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(0);
+                expect(result[0]).toHaveLength(0);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'createdAt',
@@ -1335,7 +1393,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(0);
+                expect(count).toStrictEqual(0);
                 done();
               })
               .catch(done);
@@ -1344,6 +1402,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "after x hours" condition on a date field', () => {
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'createdAt',
@@ -1353,13 +1412,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(4);
+                expect(result[0]).toHaveLength(4);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'createdAt',
@@ -1369,7 +1429,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(4);
+                expect(count).toStrictEqual(4);
                 done();
               })
               .catch(done);
@@ -1400,25 +1460,28 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               value: 12,
             }],
           });
+
           it('should generate a valid SQL query', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = filters;
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform()
               .then((result) => {
-                expect(result[0]).to.have.length.of(3);
+                expect(result[0]).toHaveLength(3);
                 done();
               })
               .catch(done);
           });
 
           it('should return the total records count', (done) => {
+            expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = filters;
             new ResourcesGetter(models.user, sequelizeOptions, params)
               .count()
               .then((count) => {
-                expect(count).equal(3);
+                expect(count).toStrictEqual(3);
                 done();
               })
               .catch(done);
@@ -1426,8 +1489,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
-      describe('Request on the resources getter with a filter condition and search', () => {
+      describe('request on the resources getter with a filter condition and search', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -1444,13 +1508,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(0);
+              expect(result[0]).toHaveLength(0);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             filters: JSON.stringify({
               field: 'username',
@@ -1463,15 +1528,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(0);
+              expect(count).toStrictEqual(0);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with an extended search with a UUID input', () => {
+      describe('request on the resources getter with an extended search with a UUID input', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               address: 'line,zipCode,city,country,user',
@@ -1485,13 +1551,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.address, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(4);
+              expect(result[0]).toHaveLength(4);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
             searchExtended: 1,
@@ -1500,15 +1567,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.address, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(4);
+              expect(count).toStrictEqual(4);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with a filter condition, search and sort combined', () => {
+      describe('request on the resources getter with a filter condition, search and sort combined', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -1526,13 +1594,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(0);
+              expect(result[0]).toHaveLength(0);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             filters: JSON.stringify({
               field: 'username',
@@ -1545,15 +1614,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(0);
+              expect(count).toStrictEqual(0);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the resources getter with a Live Query segment', () => {
+      describe('request on the resources getter with a Live Query segment', () => {
         it('should respond with a valid result', (done) => {
+          expect.assertions(1);
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -1566,13 +1636,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform()
             .then((result) => {
-              expect(result).to.have.length.of(2);
+              expect(result).toHaveLength(2);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
@@ -1580,7 +1651,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           new ResourcesGetter(models.user, sequelizeOptions, params)
             .count()
             .then((count) => {
-              expect(count).equal(2);
+              expect(count).toStrictEqual(2);
               done();
             })
             .catch(done);
@@ -1588,9 +1659,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('HasMany > HasMany Getter', () => {
-      describe('Request on the hasMany getter without sort', () => {
+    describe('hasmany > has-many-getter', () => {
+      describe('request on the has-many getter without sort', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1608,13 +1680,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           )
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(4);
+              expect(result[0]).toHaveLength(4);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1628,15 +1701,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           )
             .count()
             .then((count) => {
-              expect(count).equal(4);
+              expect(count).toStrictEqual(4);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the hasMany getter with a sort on an attribute', () => {
+      describe('request on the has-many-getter with a sort on an attribute', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1655,13 +1729,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           )
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(4);
+              expect(result[0]).toHaveLength(4);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1675,15 +1750,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           )
             .count()
             .then((count) => {
-              expect(count).equal(4);
+              expect(count).toStrictEqual(4);
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Request on the hasMany getter with a sort on a belongsTo', () => {
+      describe('request on the has-many-getter with a sort on a belongsTo', () => {
         it('should generate a valid SQL query', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1702,13 +1778,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           )
             .perform()
             .then((result) => {
-              expect(result[0]).to.have.length.of(4);
+              expect(result[0]).toHaveLength(4);
               done();
             })
             .catch(done);
         });
 
         it('should return the total records count', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1722,7 +1799,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           )
             .count()
             .then((count) => {
-              expect(count).equal(4);
+              expect(count).toStrictEqual(4);
               done();
             })
             .catch(done);
@@ -1730,8 +1807,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('Request on the hasMany getter with a search parameter', () => {
+    describe('request on the has-many-getter with a search parameter', () => {
       it('should return the records for the specified page', (done) => {
+        expect.assertions(1);
         const params = {
           recordId: 100,
           associationName: 'addresses',
@@ -1747,13 +1825,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         new HasManyGetter(models.user, models.address, sequelizeOptions, params)
           .perform()
           .then((result) => {
-            expect(result[0]).to.have.length.of(1);
+            expect(result[0]).toHaveLength(1);
             done();
           })
           .catch(done);
       });
 
       it('should return the total records count', (done) => {
+        expect.assertions(1);
         const params = {
           recordId: 100,
           associationName: 'addresses',
@@ -1764,41 +1843,43 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         new HasManyGetter(models.user, models.address, sequelizeOptions, params)
           .count()
           .then((count) => {
-            expect(count).equal(1);
+            expect(count).toStrictEqual(1);
             done();
           })
           .catch(done);
       });
     });
 
-    describe('Resources > Resource Getter', () => {
-      describe('Get a record in a simple collection', () => {
+    describe('resources > resource-getter', () => {
+      describe('get a record in a simple collection', () => {
         it('should retrieve the record', (done) => {
+          expect.assertions(3);
           const params = {
             recordId: 100,
           };
           new ResourceGetter(models.user, params)
             .perform()
             .then((user) => {
-              expect(user).not.to.be.null; // eslint-disable-line
-              expect(user.id).equal(100);
-              expect(user.firstName).equal('Richard');
+              expect(user).not.toBeNull(); // eslint-disable-line
+              expect(user.id).toStrictEqual(100);
+              expect(user.firstName).toStrictEqual('Richard');
               done();
             })
             .catch(done);
         });
       });
 
-      describe('Get a record in a collection with a composite primary key', () => {
+      describe('get a record in a collection with a composite primary key', () => {
         it('should retrieve the record', (done) => {
+          expect.assertions(2);
           const params = {
             recordId: 'G@G#F@G@-Ggg23g242@',
           };
           new ResourceGetter(models.log, params)
             .perform()
             .then((log) => {
-              expect(log).not.to.be.null; // eslint-disable-line
-              expect(log.forestCompositePrimary).equal('G@G#F@G@-Ggg23g242@');
+              expect(log).not.toBeNull(); // eslint-disable-line
+              expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@-Ggg23g242@');
               done();
             })
             .catch(done);
@@ -1806,9 +1887,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('Resources > Resources Remover', () => {
-      describe('Remove a record in a simple collection', () => {
+    describe('resources > resources-remover', () => {
+      describe('remove a record in a simple collection', () => {
         it('should destroy the record', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 1,
           };
@@ -1818,15 +1900,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               models.user
                 .findOne({ where: { email: 'jack@forestadmin.com' } })
                 .then((user) => {
-                  expect(user).to.be.null; // eslint-disable-line
+                  expect(user).toBeNull(); // eslint-disable-line
                   done();
                 }))
             .catch(done);
         });
       });
 
-      describe('Remove a record in a collection with a composite primary key', () => {
+      describe('remove a record in a collection with a composite primary key', () => {
         it('should destroy the record', (done) => {
+          expect.assertions(1);
           const params = {
             recordId: 'G@G#F@G@-Ggg23g242@',
           };
@@ -1836,7 +1919,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               models.log
                 .findOne({ where: { code: 'G@G#F@G@' } })
                 .then((log) => {
-                  expect(log).to.be.null; // eslint-disable-line
+                  expect(log).toBeNull(); // eslint-disable-line
                   done();
                 }))
             .catch(done);
@@ -1844,10 +1927,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('HasMany > HasMany Dissociator', () => {
-      describe('Dissociate', () => {
-        describe('On HasMany relationship', () => {
+    describe('has-many > has-many-dissociator', () => {
+      describe('dissociate', () => {
+        describe('on HasMany relationship', () => {
           it('should delete the relationship of the record', (done) => {
+            expect.assertions(1);
             const params = {
               recordId: '100',
               associationName: 'addresses',
@@ -1869,15 +1953,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 models.address
                   .findOne({ where: { id: '103' } })
                   .then((address) => {
-                    expect(address).to.have.property('userId', null);
+                    expect(address.userId).toBeNull();
                     done();
                   }))
               .catch(done);
           });
         });
 
-        describe('On BelongsToMany relationship', () => {
+        describe('on belongs-to-many relationship', () => {
           it('should delete the relationship of the record', (done) => {
+            expect.assertions(1);
             const params = {
               recordId: '100',
               associationName: 'teams',
@@ -1899,7 +1984,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 models.userTeam
                   .findOne({ where: { userId: '100', teamId: '100' } })
                   .then((userTeam) => {
-                    expect(userTeam).to.be.null; // eslint-disable-line
+                    expect(userTeam).toBeNull();
                     done();
                   }))
               .catch(done);
@@ -1907,9 +1992,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
-      describe('Delete', () => {
-        describe('On HasMany relationship', () => {
+      describe('delete', () => {
+        describe('on has-many relationship', () => {
           it('should delete the relationship and delete the record', (done) => {
+            expect.assertions(1);
             const params = {
               recordId: '100',
               associationName: 'addresses',
@@ -1932,15 +2018,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 models.address
                   .findOne({ where: { id: '103' } })
                   .then((address) => {
-                    expect(address).to.be.null; // eslint-disable-line
+                    expect(address).toBeNull();
                     done();
                   }))
               .catch(done);
           });
         });
 
-        describe('On BelongsToMany relationship', () => {
+        describe('on belongs-to-many relationship', () => {
           it('should delete the relationship and delete the record', (done) => {
+            expect.assertions(1);
             const params = {
               recordId: '100',
               associationName: 'teams',
@@ -1963,7 +2050,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 models.userTeam
                   .findOne({ where: { userId: '100', teamId: '100' } })
                   .then((userTeam) => {
-                    expect(userTeam).to.be.null; // eslint-disable-line
+                    expect(userTeam).toBeNull();
                     done();
                   }))
               .catch(done);

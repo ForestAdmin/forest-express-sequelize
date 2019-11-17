@@ -1,6 +1,5 @@
 const _ = require('lodash');
 const Sequelize = require('sequelize');
-const { expect } = require('chai');
 const ApimapFieldBuilder = require('../../src/services/apimap-field-builder');
 
 const databaseOptions = {
@@ -13,11 +12,11 @@ const sequelize = new Sequelize(
   databaseOptions,
 );
 
-describe('Services > ApimapFieldBuilder', () => {
+describe('services > apimap-field-builder', () => {
   describe('on a UUID column with a UUIDV4 defaultValue', () => {
     let field;
 
-    before(() => {
+    beforeAll(() => {
       const model = sequelize.define('user', {
         uuid: {
           type: Sequelize.DataTypes.UUID,
@@ -37,19 +36,23 @@ describe('Services > ApimapFieldBuilder', () => {
     });
 
     it('should have a name uuid', () => {
-      expect(field.field).equal('uuid');
+      expect.assertions(1);
+      expect(field.field).toStrictEqual('uuid');
     });
 
     it('should have a String type', () => {
-      expect(field.type).equal('String');
+      expect.assertions(1);
+      expect(field.type).toStrictEqual('String');
     });
 
     it('should not be set as required', () => {
-      expect(field.isRequired).to.be.false; // eslint-disable-line
+      expect.assertions(1);
+      expect(field.isRequired).toStrictEqual(false);
     });
 
     it('should not have a default value', () => {
-      expect(field.defaultValue).to.be.undefined; // eslint-disable-line
+      expect.assertions(1);
+      expect(field.defaultValue).toBeUndefined();
     });
   });
 });

@@ -1,8 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Readme - Add the test coverage badge.
+
 ### Changed
 - Technical - Extend lint check on script files.
+- Technical - Use Jest instead of Mocha for the test base.
 
 ### Fixed
 - Technical - Remove remaining traces of the lint command on specific files.

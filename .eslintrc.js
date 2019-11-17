@@ -1,13 +1,21 @@
 module.exports = {
   root: true,
-  'extends': [
+  extends: [
     'airbnb-base',
+    'plugin:jest/all'
   ],
   plugins: [],
   env: {
     node: true,
   },
   rules: {
+    'jest/no-hooks': [
+      'error',
+      {
+        'allow': ['afterAll', 'afterEach', 'beforeAll', 'beforeEach']
+      }
+    ],
+    'jest/no-test-callback': 0,
     'no-console': 0,
     'no-param-reassign': 0,
     'prefer-destructuring': [

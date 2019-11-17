@@ -1,11 +1,10 @@
-/* global describe, it */
-import { expect } from 'chai';
 import { getReferenceField } from '../../src/utils/query';
 
-describe('Utils > Query', () => {
+describe('utils > query', () => {
   describe('#getReferenceField', () => {
     describe('with a reference field with unconventional name', () => {
       it('should return a valid reference field value', () => {
+        expect.assertions(1);
         const modelSchema = {
           fields: [{ field: 'car', reference: 'car.id' }],
         };
@@ -15,7 +14,7 @@ describe('Utils > Query', () => {
             fields: [{ field: 'brandName', columnName: 'brand_name' }],
           },
         };
-        expect(getReferenceField(schemas, modelSchema, 'car', 'brandName')).equal('car.brand_name');
+        expect(getReferenceField(schemas, modelSchema, 'car', 'brandName')).toStrictEqual('car.brand_name');
       });
     });
   });
