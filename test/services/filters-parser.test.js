@@ -44,8 +44,8 @@ describe('services > filters-parser', () => {
     operator: 'previous_week',
   };
   const defaultExpectedDateCondition = getExpectedCondition('createdAt', [
-    { operator: OPERATORS.GTE, value: moment().subtract(7, 'd').format('YYYY-MM-DD') },
-    { operator: OPERATORS.LTE, value: moment().format('YYYY-MM-DD') },
+    { operator: OPERATORS.GTE, value: moment().subtract(7, 'd').startOf('day').toDate() },
+    { operator: OPERATORS.LTE, value: moment().subtract(1, 'd').endOf('day').toDate() },
   ]);
 
   describe('formatOperatorValue function', () => {
