@@ -4,20 +4,19 @@
 
 ## RELEASE 5.1.0 - 2019-11-18
 ### Changed
-- Technical - Add eslint rules specific to tests.
+- Technical - Add ESLint rules specific to tests.
 - Technical - Filter parser is now asynchronous.
-- Technical - Upgrade to the `forest-express` v5.1.1.
+- Technical - Rename RecordsExporter to ResourceExporter to be consistent.
+- Technical - Apply ESLint rules to `resource-updater`.
+- Technical - Apply ESLint rules to `resources-exporter`.
+- Technical - Apply ESLint rules to `src/services`.
 - Technical - Remove continuous integration custom lint command.
 
 ### Fixed
-- Technical - Rename RecordsExporter to ResourceExporter to be consistent.
-- Technical - Apply eslint rules to `resource-updater`.
-- Technical - Apply eslint rules to `resources-exporter`.
-- Technical - Apply eslint rules to `src/services`.
-- Smart Relationships - Smart Relashionships returns referenced Smart Fields values.
-- Error Handling - Fix error message when configDir does not exist.
+- Smart Relationships - Smart Relationships returns referenced Smart Fields values.
+- Error Handling - Fix error message when `configDir` does not exist.
 - Error Handling - Prevent server to crash when Forest Admin API does not respond.
-- Technical - Fix before in 2 tests to avoid error timeout.
+- Technical - Fix `before` hook in 2 tests to avoid timeout errors.
 
 ## RELEASE 5.0.0 - 2019-10-31
 ### Changed
