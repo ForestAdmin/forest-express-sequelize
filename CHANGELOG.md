@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Remove remaining traces of the lint command on specific files.
 
 ## RELEASE 5.2.0 - 2019-11-18
 ### Added

@@ -60,7 +60,7 @@
     "build:watch": "onchange 'src/**/*.js' -i -- yarn build",
     "release": "yarn build && node ./scripts/release.js",
     "test": "./node_modules/mocha/bin/mocha test/** --require babel-register --exit",
-    "lint": "./node_modules/eslint/bin/eslint.js src",
+    "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin src scripts",
     "pre-commit": "node ./.eslint-bin/pre-commit-hook.js"
   },
   "pre-commit": [
