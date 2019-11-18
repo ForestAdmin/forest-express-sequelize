@@ -45,6 +45,8 @@ exports.RecordUpdater = Interface.RecordUpdater;
 exports.RecordCreator = Interface.RecordCreator;
 exports.RecordRemover = Interface.RecordRemover;
 
+exports.PUBLIC_ROUTES = Interface.PUBLIC_ROUTES;
+
 exports.init = function init(opts) {
   exports.opts = opts;
 
