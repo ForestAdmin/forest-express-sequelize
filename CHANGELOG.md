@@ -10,6 +10,7 @@
 - Technical - Filter parser is now asynchronous.
 - Technical - Upgrade to the `forest-express` v5.1.1.
 - Technical - Remove continuous integration custom lint command.
+- Technical - Rename RecordsExporter to ResourcesExporter in export.
 
 ### Fixed
 - Technical - Rename RecordsExporter to ResourceExporter to be consistent.
