@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Routes - Expose the record services and the permissions middleware.
 
 ## RELEASE 5.1.0 - 2019-11-18
 ### Changed
@@ -11,6 +13,7 @@
 - Technical - Apply ESLint rules to `resources-exporter`.
 - Technical - Apply ESLint rules to `src/services`.
 - Technical - Remove continuous integration custom lint command.
+- Technical - Rename RecordsExporter to ResourcesExporter in export.
 
 ### Fixed
 - Smart Relationships - Smart Relationships returns referenced Smart Fields values.
