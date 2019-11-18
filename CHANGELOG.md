@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Extend lint check on script files.
+
 ### Fixed
 - Technical - Remove remaining traces of the lint command on specific files.
 
