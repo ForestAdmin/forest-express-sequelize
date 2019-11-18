@@ -17,7 +17,7 @@ describe('Services > ApimapFieldBuilder', () => {
   describe('on a UUID column with a UUIDV4 defaultValue', () => {
     let field;
 
-    before((done) => {
+    before(() => {
       const model = sequelize.define('user', {
         uuid: {
           type: Sequelize.DataTypes.UUID,
@@ -25,7 +25,7 @@ describe('Services > ApimapFieldBuilder', () => {
         },
       });
 
-      sequelize.sync({ force: true })
+      return sequelize.sync({ force: true })
         .then(() => {
           field = new ApimapFieldBuilder(
             model,
@@ -33,7 +33,6 @@ describe('Services > ApimapFieldBuilder', () => {
             { sequelize: Sequelize },
           )
             .perform();
-          done();
         });
     });
 

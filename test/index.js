@@ -319,8 +319,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               'test/fixtures/db.json',
               models,
               { log: () => {} },
-            ))
-          .catch());
+            )));
 
       describe('A simple Pie Chart', () => {
         describe('on an empty users table', () => {

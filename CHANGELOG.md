@@ -14,6 +14,7 @@
 - Smart Relationships - Smart Relashionships returns referenced Smart Fields values.
 - Error Handling - Fix error message when configDir does not exist.
 - Error Handling - Prevent server to crash when Forest Admin API does not respond.
+- Technical - Fix before in 2 tests to avoid error timeout.
 
 ## RELEASE 5.0.0 - 2019-10-31
 ### Changed
