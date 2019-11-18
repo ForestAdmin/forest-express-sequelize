@@ -9,12 +9,6 @@ module.exports = {
     node: true,
   },
   rules: {
-    'jest/no-hooks': [
-      'error',
-      {
-        'allow': ['afterAll', 'afterEach', 'beforeAll', 'beforeEach']
-      }
-    ],
     'no-console': 0,
     'no-param-reassign': 0,
     'prefer-destructuring': [

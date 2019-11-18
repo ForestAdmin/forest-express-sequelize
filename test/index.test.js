@@ -234,34 +234,33 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
   describe(`dialect ${sequelize.options.dialect}`, () => {
     describe('schema adapter', () => {
       describe('on a collection with 13 fields and a few validations', () => {
-        let schema;
-        beforeAll((done) => {
-          SchemaAdapter(models.user, sequelizeOptions)
-            .then((schemaCreated) => {
-              schema = schemaCreated;
-              done();
-            });
-        });
+        async function initializeSchema() {
+          return SchemaAdapter(models.user, sequelizeOptions);
+        }
 
-        it('should generate a schema', () => {
+        it('should generate a schema', async () => {
           expect.assertions(1);
+          const schema = await initializeSchema();
           expect(schema).not.toBeNull();
         });
 
-        it('should define an idField', () => {
+        it('should define an idField', async () => {
           expect.assertions(3);
+          const schema = await initializeSchema();
           expect(schema.idField).toStrictEqual('id');
           expect(schema.primaryKeys).toHaveLength(1);
           expect(schema.primaryKeys[0]).toStrictEqual('id');
         });
 
-        it('should not detect a composite primary key', () => {
+        it('should not detect a composite primary key', async () => {
           expect.assertions(1);
+          const schema = await initializeSchema();
           expect(schema.isCompositePrimary).toStrictEqual(false);
         });
 
-        it('should detect 13 fields with a type', () => {
+        it('should detect 13 fields with a type', async () => {
           expect.assertions(14);
+          const schema = await initializeSchema();
           expect(schema.fields).toHaveLength(13);
           expect(schema.fields[0].type).toStrictEqual('Number');
           expect(schema.fields[1].type).toStrictEqual('String');
@@ -278,8 +277,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           expect(schema.fields[12].type[0]).toStrictEqual('Number');
         });
 
-        it('should setup validations', () => {
+        it('should setup validations', async () => {
           expect.assertions(5);
+          const schema = await initializeSchema();
           expect(schema.fields[4].validations).toHaveLength(2);
           expect(schema.fields[4].validations[0].type).toStrictEqual('is longer than');
           expect(schema.fields[4].validations[0].value).toStrictEqual(0);
@@ -289,22 +289,19 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
 
       describe('on a simple collection with a fields with a bad type', () => {
-        let schema;
-        beforeAll((done) => {
-          SchemaAdapter(models.hasBadFieldType, sequelizeOptions)
-            .then((schemaCreated) => {
-              schema = schemaCreated;
-              done();
-            });
-        });
+        async function initializeSchema() {
+          return SchemaAdapter(models.hasBadFieldType, sequelizeOptions);
+        }
 
-        it('should generate a schema', () => {
+        it('should generate a schema', async () => {
           expect.assertions(1);
+          const schema = await initializeSchema();
           expect(schema).not.toBeNull();
         });
 
-        it('should detect 4 fields with a type', () => {
+        it('should detect 4 fields with a type', async () => {
           expect.assertions(5);
+          const schema = await initializeSchema();
           expect(schema.fields).toHaveLength(4);
           expect(schema.fields[0].type).toStrictEqual('Number');
           expect(schema.fields[1].type).toStrictEqual('String');
@@ -315,19 +312,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     });
 
     describe('stats > pie stat getter', () => {
-      beforeAll(() =>
-        sequelize.sync({ force: true })
+      async function initializeDatabase() {
+        return sequelize.sync({ force: true })
           .then(() =>
             sequelizeFixtures.loadFile(
               'test/fixtures/db.json',
               models,
               { log: () => {} },
-            )));
+            ));
+      }
 
       describe('a simple pie chart', () => {
         describe('on an empty users table', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            await initializeDatabase();
             const stat = await new PieStatGetter(models.user, {
               type: 'Pie',
               collection: 'user',
@@ -345,6 +344,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a group by on a belongsTo association using an alias', () => {
           it('should respond correct data', async () => {
             expect.assertions(1);
+            await initializeDatabase();
             const stat = await new PieStatGetter(models.addressWithUserAlias, {
               type: 'Pie',
               collection: 'addressWithUserAlias',
