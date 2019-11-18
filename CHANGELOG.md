@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 5.1.0 - 2019-11-18
 ### Changed
 - Technical - Add eslint rules specific to tests.
 - Technical - Filter parser is now asynchronous.
