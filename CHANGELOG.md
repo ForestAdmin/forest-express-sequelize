@@ -5,6 +5,7 @@
 - Technical - Add eslint rules specific to tests.
 - Technical - Filter parser is now asynchronous.
 - Technical - Upgrade to the `forest-express` v5.1.1.
+- Technical - Remove continuous integration custom lint command.
 
 ### Fixed
 - Technical - Rename RecordsExporter to ResourceExporter to be consistent.
