@@ -15,7 +15,6 @@ module.exports = {
         'allow': ['afterAll', 'afterEach', 'beforeAll', 'beforeEach']
       }
     ],
-    'jest/no-test-callback': 0,
     'no-console': 0,
     'no-param-reassign': 0,
     'prefer-destructuring': [
