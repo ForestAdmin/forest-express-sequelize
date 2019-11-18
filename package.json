@@ -29,7 +29,6 @@
     "http-errors": "1.6.1",
     "lodash": "4.17.13",
     "moment": "2.19.4",
-    "moment-timezone": "0.5.14",
     "semver": "5.4.1"
   },
   "devDependencies": {
@@ -45,6 +44,7 @@
     "eslint-plugin-jest": "23.0.4",
     "eslint-plugin-jsx-a11y": "6.0.2",
     "eslint-plugin-react": "7.5.1",
+    "jest": "24.9.0",
     "mysql2": "1.6.5",
     "onchange": "6.0.0",
     "pg": "7.10.0",
