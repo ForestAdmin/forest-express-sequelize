@@ -1,7 +1,8 @@
 module.exports = {
   root: true,
-  'extends': [
+  extends: [
     'airbnb-base',
+    'plugin:jest/all'
   ],
   plugins: [],
   env: {
@@ -31,6 +32,7 @@ module.exports = {
       {
         'devDependencies': [
           '.eslint-bin/*.js',
+          'scripts/*.js',
           'test/**/*.js'
         ]
       }

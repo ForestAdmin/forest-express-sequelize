@@ -1,14 +1,10 @@
-import chai, { expect } from 'chai';
-import chaiAsPromised from 'chai-as-promised';
 import moment from 'moment';
 import Sequelize from 'sequelize';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
 import { NoMatchingOperatorError } from '../../src/services/errors';
 
-chai.use(chaiAsPromised);
-
-describe('Services > FiltersParser', () => {
+describe('services > filters-parser', () => {
   const schema = {
     fields: [],
   };
@@ -48,8 +44,8 @@ describe('Services > FiltersParser', () => {
     operator: 'previous_week',
   };
   const defaultExpectedDateCondition = getExpectedCondition('createdAt', [
-    { operator: OPERATORS.GTE, value: moment().subtract(7, 'd').format('YYYY-MM-DD') },
-    { operator: OPERATORS.LTE, value: moment().format('YYYY-MM-DD') },
+    { operator: OPERATORS.GTE, value: moment().subtract(1, 'week').startOf('isoweek').toDate() },
+    { operator: OPERATORS.LTE, value: moment().subtract(1, 'week').endOf('isoweek').toDate() },
   ]);
 
   describe('formatOperatorValue function', () => {
@@ -57,67 +53,77 @@ describe('Services > FiltersParser', () => {
 
     values.forEach((value) => {
       it(`should return the appropriate value (${typeof value})`, () => {
-        expect(defaultFiltersParser.formatOperatorValue('starts_with', value)).deep.equal({ [OPERATORS.LIKE]: `${value}%` });
-        expect(defaultFiltersParser.formatOperatorValue('ends_with', value)).deep.equal({ [OPERATORS.LIKE]: `%${value}` });
-        expect(defaultFiltersParser.formatOperatorValue('contains', value)).deep.equal({ [OPERATORS.LIKE]: `%${value}%` });
-        expect(defaultFiltersParser.formatOperatorValue('not', value)).deep.equal({ [OPERATORS.NOT]: value });
-        expect(defaultFiltersParser.formatOperatorValue('greater_than', value)).deep.equal({ [OPERATORS.GT]: value });
-        expect(defaultFiltersParser.formatOperatorValue('less_than', value)).deep.equal({ [OPERATORS.LT]: value });
-        expect(defaultFiltersParser.formatOperatorValue('before', value)).deep.equal({ [OPERATORS.LT]: value });
-        expect(defaultFiltersParser.formatOperatorValue('after', value)).deep.equal({ [OPERATORS.GT]: value });
-        expect(defaultFiltersParser.formatOperatorValue('not_contains', value)).deep.equal({ [OPERATORS.NOT_LIKE]: `%${value}%` });
-        expect(defaultFiltersParser.formatOperatorValue('not_equal', value)).deep.equal({ [OPERATORS.NE]: value });
-        expect(defaultFiltersParser.formatOperatorValue('present', value)).deep.equal({ [OPERATORS.NE]: null });
-        expect(defaultFiltersParser.formatOperatorValue('equal', value)).deep.equal({ [OPERATORS.EQ]: value });
-        expect(defaultFiltersParser.formatOperatorValue('blank', value)).deep.equal({ [OPERATORS.EQ]: null });
+        expect.assertions(13);
+        expect(defaultFiltersParser.formatOperatorValue('starts_with', value)).toStrictEqual({ [OPERATORS.LIKE]: `${value}%` });
+        expect(defaultFiltersParser.formatOperatorValue('ends_with', value)).toStrictEqual({ [OPERATORS.LIKE]: `%${value}` });
+        expect(defaultFiltersParser.formatOperatorValue('contains', value)).toStrictEqual({ [OPERATORS.LIKE]: `%${value}%` });
+        expect(defaultFiltersParser.formatOperatorValue('not', value)).toStrictEqual({ [OPERATORS.NOT]: value });
+        expect(defaultFiltersParser.formatOperatorValue('greater_than', value)).toStrictEqual({ [OPERATORS.GT]: value });
+        expect(defaultFiltersParser.formatOperatorValue('less_than', value)).toStrictEqual({ [OPERATORS.LT]: value });
+        expect(defaultFiltersParser.formatOperatorValue('before', value)).toStrictEqual({ [OPERATORS.LT]: value });
+        expect(defaultFiltersParser.formatOperatorValue('after', value)).toStrictEqual({ [OPERATORS.GT]: value });
+        expect(defaultFiltersParser.formatOperatorValue('not_contains', value)).toStrictEqual({ [OPERATORS.NOT_LIKE]: `%${value}%` });
+        expect(defaultFiltersParser.formatOperatorValue('not_equal', value)).toStrictEqual({ [OPERATORS.NE]: value });
+        expect(defaultFiltersParser.formatOperatorValue('present', value)).toStrictEqual({ [OPERATORS.NE]: null });
+        expect(defaultFiltersParser.formatOperatorValue('equal', value)).toStrictEqual({ [OPERATORS.EQ]: value });
+        expect(defaultFiltersParser.formatOperatorValue('blank', value)).toStrictEqual({ [OPERATORS.EQ]: null });
       });
 
       it('should raise an error on unknown operator', () => {
-        expect(defaultFiltersParser.formatOperatorValue.bind('random', value)).to.throw(NoMatchingOperatorError);
+        expect.assertions(1);
+        expect(defaultFiltersParser.formatOperatorValue.bind('random', value)).toThrow(NoMatchingOperatorError);
       });
     });
   });
 
   describe('formatAggregatorOperator function', () => {
     it('should return the appropriate sequelize operator', () => {
-      expect(defaultFiltersParser.formatAggregatorOperator('and')).equal(OPERATORS.AND);
-      expect(defaultFiltersParser.formatAggregatorOperator('or')).equal(OPERATORS.OR);
+      expect.assertions(2);
+      expect(defaultFiltersParser.formatAggregatorOperator('and')).toStrictEqual(OPERATORS.AND);
+      expect(defaultFiltersParser.formatAggregatorOperator('or')).toStrictEqual(OPERATORS.OR);
     });
 
     it('should raise an error on unknown operator', () => {
-      expect(defaultFiltersParser.formatAggregatorOperator.bind('random')).to.throw(NoMatchingOperatorError);
+      expect.assertions(1);
+      expect(defaultFiltersParser.formatAggregatorOperator.bind('random')).toThrow(NoMatchingOperatorError);
     });
   });
 
   describe('formatField function', () => {
     it('should format default field correctly', () => {
-      expect(defaultFiltersParser.formatField('myField')).equal('myField');
+      expect.assertions(1);
+      expect(defaultFiltersParser.formatField('myField')).toStrictEqual('myField');
     });
 
     it('should format nested fields correctly', () => {
-      expect(defaultFiltersParser.formatField('myCollection:myField')).equal('$myCollection.myField$');
+      expect.assertions(1);
+      expect(defaultFiltersParser.formatField('myCollection:myField')).toStrictEqual('$myCollection.myField$');
     });
   });
 
   describe('formatCondition function', () => {
     it('should handle basic condition correctly', async () => {
+      expect.assertions(1);
       expect(await defaultFiltersParser.formatCondition(defaultCondition))
-        .to.deep.equal(defaultExpectedCondition);
+        .toStrictEqual(defaultExpectedCondition);
     });
 
     it('should handle time/date condition correctly', async () => {
+      expect.assertions(1);
       expect(await defaultFiltersParser.formatCondition(defaultDateCondition))
-        .to.deep.equal(defaultExpectedDateCondition);
+        .toStrictEqual(defaultExpectedDateCondition);
     });
 
-    it('should throw an error on empty condition', () => {
-      expect(defaultFiltersParser.formatCondition()).to.be.rejectedWith(Error);
-      expect(defaultFiltersParser.formatCondition({})).to.be.rejectedWith(Error);
+    it('should throw an error on empty condition', async () => {
+      expect.assertions(2);
+      await expect(defaultFiltersParser.formatCondition()).rejects.toThrow(Error);
+      await expect(defaultFiltersParser.formatCondition({})).rejects.toThrow(Error);
     });
   });
 
   describe('formatAggregation function', () => {
     it('should format correctly with \'and\' as aggregator', async () => {
+      expect.assertions(1);
       const expectedFormatedAggregation = {
         [OPERATORS.AND]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
@@ -125,10 +131,11 @@ describe('Services > FiltersParser', () => {
       expect(await defaultFiltersParser.formatAggregation('and', [
         defaultExpectedCondition,
         defaultExpectedDateCondition,
-      ])).to.deep.equal(expectedFormatedAggregation);
+      ])).toStrictEqual(expectedFormatedAggregation);
     });
 
     it('should format correctly with \'or\' as aggregator', async () => {
+      expect.assertions(1);
       const expectedFormatedAggregation = {
         [OPERATORS.OR]: [defaultExpectedCondition, defaultExpectedDateCondition],
       };
@@ -136,10 +143,11 @@ describe('Services > FiltersParser', () => {
       expect(await defaultFiltersParser.formatAggregation('or', [
         defaultExpectedCondition,
         defaultExpectedDateCondition,
-      ])).to.deep.equal(expectedFormatedAggregation);
+      ])).toStrictEqual(expectedFormatedAggregation);
     });
 
     it('should format correctly with \'and\' as nested aggregators', async () => {
+      expect.assertions(1);
       const expectedNestedAggregation = {
         [OPERATORS.AND]: [
           defaultExpectedCondition,
@@ -156,20 +164,21 @@ describe('Services > FiltersParser', () => {
       expect(await defaultFiltersParser.formatAggregation('or', [
         defaultExpectedDateCondition,
         expectedNestedAggregation,
-      ]))
-        .to.deep.equal(expectedFormatedAggregation);
+      ])).toStrictEqual(expectedFormatedAggregation);
     });
 
-    it('should throw an error on empty condition', () => {
-      expect(defaultFiltersParser.formatAggregation()).to.be.rejectedWith(Error);
-      expect(defaultFiltersParser.formatAggregation({})).to.be.rejectedWith(Error);
+    it('should throw an error on empty condition', async () => {
+      expect.assertions(2);
+      await expect(defaultFiltersParser.formatAggregation()).rejects.toThrow(Error);
+      await expect(defaultFiltersParser.formatAggregation({})).rejects.toThrow(Error);
     });
   });
 
   describe('perform function', () => {
     describe('with nothing provided', () => {
       it('should be null', async () => {
-        expect(await defaultFiltersParser.perform()).to.equal(null);
+        expect.assertions(1);
+        expect(await defaultFiltersParser.perform()).toBeNull();
       });
     });
 
@@ -181,8 +190,9 @@ describe('Services > FiltersParser', () => {
       const filtersParser = new FiltersParser(schemaWithFields, timezone, sequelizeOptions);
 
       it('should not be null', async () => {
+        expect.assertions(1);
         expect(await filtersParser.perform(filters))
-          .to.deep.equal({ '$car.brandName$': { [OPERATORS.LIKE]: 'Ferrari%' } });
+          .toStrictEqual({ '$car.brandName$': { [OPERATORS.LIKE]: 'Ferrari%' } });
       });
     });
   });
@@ -190,6 +200,7 @@ describe('Services > FiltersParser', () => {
   describe('getPreviousIntervalCondition function', () => {
     describe('working scenarii', () => {
       describe('with \'and\' aggregator + flat conditions + 1 previous interval', () => {
+        expect.assertions(1);
         const aggregator = JSON.stringify({
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
@@ -197,8 +208,9 @@ describe('Services > FiltersParser', () => {
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should generate the right condition', () => {
+          expect.assertions(1);
           expect(filtersParser.getPreviousIntervalCondition(aggregator))
-            .to.deep.equal(defaultDateCondition);
+            .toStrictEqual(defaultDateCondition);
         });
       });
 
@@ -207,8 +219,9 @@ describe('Services > FiltersParser', () => {
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should generate the right condition', () => {
+          expect.assertions(1);
           expect(filtersParser.getPreviousIntervalCondition(aggregator))
-            .to.deep.equal(defaultDateCondition);
+            .toStrictEqual(defaultDateCondition);
         });
       });
     });
@@ -222,7 +235,8 @@ describe('Services > FiltersParser', () => {
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
-          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+          expect.assertions(1);
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).toBeNull();
         });
       });
 
@@ -234,7 +248,8 @@ describe('Services > FiltersParser', () => {
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
-          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+          expect.assertions(1);
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).toBeNull();
         });
       });
 
@@ -246,7 +261,8 @@ describe('Services > FiltersParser', () => {
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
-          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+          expect.assertions(1);
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).toBeNull();
         });
       });
 
@@ -257,7 +273,10 @@ describe('Services > FiltersParser', () => {
         });
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
-        expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+        it('should not generate conditions', () => {
+          expect.assertions(1);
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).toBeNull();
+        });
       });
 
       describe('with no aggregator + flat conditions + 0 previous interval', () => {
@@ -265,7 +284,8 @@ describe('Services > FiltersParser', () => {
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
-          expect(filtersParser.getPreviousIntervalCondition(aggregator)).to.equal(null);
+          expect.assertions(1);
+          expect(filtersParser.getPreviousIntervalCondition(aggregator)).toBeNull();
         });
       });
     });

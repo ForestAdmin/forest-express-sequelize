@@ -29,7 +29,6 @@
     "http-errors": "1.6.1",
     "lodash": "4.17.13",
     "moment": "2.19.4",
-    "moment-timezone": "0.5.14",
     "semver": "5.4.1"
   },
   "devDependencies": {
@@ -38,15 +37,14 @@
     "babel-plugin-transform-runtime": "7.0.0-beta.3",
     "babel-preset-env": "7.0.0-beta.3",
     "babel-register": "7.0.0-beta.3",
-    "chai": "2.3.0",
-    "chai-as-promised": "7.1.1",
     "dotenv": "6.2.0",
     "eslint": "5.16.0",
     "eslint-config-airbnb": "16.1.0",
     "eslint-plugin-import": "2.8.0",
+    "eslint-plugin-jest": "23.0.4",
     "eslint-plugin-jsx-a11y": "6.0.2",
     "eslint-plugin-react": "7.5.1",
-    "mocha": "6.1.4",
+    "jest": "24.9.0",
     "mysql2": "1.6.5",
     "onchange": "6.0.0",
     "pg": "7.10.0",
@@ -58,10 +56,12 @@
   "scripts": {
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir dist && echo '\n\\033[0;34m[+] \\033[0;32mBuild done\\033[0m'",
     "build:watch": "onchange 'src/**/*.js' -i -- yarn build",
-    "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin src scripts",
+    "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin scripts src test",
     "pre-commit": "node ./.eslint-bin/pre-commit-hook.js",
+    "readme:update-coverage": "yarn test:coverage && node ./scripts/update-coverage.js",
     "release": "yarn build && node ./scripts/release.js",
-    "test": "./node_modules/mocha/bin/mocha test/** --require babel-register --exit"
+    "test": "jest",
+    "test:coverage": "jest --coverage"
   },
   "pre-commit": [
     "pre-commit"
