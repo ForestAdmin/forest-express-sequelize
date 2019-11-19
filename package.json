@@ -58,10 +58,10 @@
   "scripts": {
     "build": "./node_modules/babel-cli/bin/babel.js src --out-dir dist && echo '\n\\033[0;34m[+] \\033[0;32mBuild done\\033[0m'",
     "build:watch": "onchange 'src/**/*.js' -i -- yarn build",
+    "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin src scripts",
+    "pre-commit": "node ./.eslint-bin/pre-commit-hook.js",
     "release": "yarn build && node ./scripts/release.js",
-    "test": "./node_modules/mocha/bin/mocha test/** --require babel-register --exit",
-    "lint": "./node_modules/eslint/bin/eslint.js src",
-    "pre-commit": "node ./.eslint-bin/pre-commit-hook.js"
+    "test": "./node_modules/mocha/bin/mocha test/** --require babel-register --exit"
   },
   "pre-commit": [
     "pre-commit"

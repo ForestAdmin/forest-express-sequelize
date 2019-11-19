@@ -1,6 +1,11 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Extend lint check on script files.
+
+### Fixed
+- Technical - Remove remaining traces of the lint command on specific files.
 
 ## RELEASE 5.2.0 - 2019-11-18
 ### Added
