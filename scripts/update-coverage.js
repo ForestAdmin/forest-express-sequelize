@@ -1,3 +1,3 @@
-const { CoverageManager } = require('@forestadmin/devops'); // eslint-disable-line
+const { CoverageManager } = require('@forestadmin/devops');
 
 new CoverageManager().updateBadge();

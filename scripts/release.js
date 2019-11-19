@@ -1,5 +1,5 @@
-require('dotenv').config(); // eslint-disable-line
-const { ReleaseManager, ReleaseNoteManager } = require('@forestadmin/devops'); // eslint-disable-line
+require('dotenv').config();
+const { ReleaseManager, ReleaseNoteManager } = require('@forestadmin/devops');
 
 const { DEVOPS_SLACK_TOKEN, DEVOPS_SLACK_CHANNEL } = process.env;
 const OPTIONS = { releaseIcon: '🌱', withVersion: true };
