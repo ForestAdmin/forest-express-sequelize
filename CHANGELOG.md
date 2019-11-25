@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 5.2.1 - 2019-11-25
 ### Added
 - Readme - Add the test coverage badge.
 
