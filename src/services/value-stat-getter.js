@@ -40,7 +40,7 @@ function ValueStatGetter(model, params, options) {
     return includes;
   }
 
-  this.perform = () => {
+  this.perform = async () => {
     let countCurrent;
     const aggregateField = getAggregateField();
     const aggregate = getAggregate();
@@ -48,7 +48,7 @@ function ValueStatGetter(model, params, options) {
     let rawPreviousInterval;
     if (params.filters) {
       const conditionsParser = new FiltersParser(schema, params.timezone, options);
-      where = conditionsParser.perform(params.filters);
+      where = await conditionsParser.perform(params.filters);
       rawPreviousInterval = conditionsParser.getPreviousIntervalCondition(params.filters);
     }
 

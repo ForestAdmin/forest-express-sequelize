@@ -210,8 +210,8 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     return isMSSQL(options) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [options.sequelize.literal('1')];
   }
 
-  this.perform = () => {
-    const where = new FiltersParser(schema, params.timezone, options).perform(params.filters);
+  this.perform = async () => {
+    const where = await new FiltersParser(schema, params.timezone, options).perform(params.filters);
 
     return model.unscoped().findAll({
       attributes: [getGroupByDateInterval(), getAggregate()],

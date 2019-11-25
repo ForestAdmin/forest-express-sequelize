@@ -10,6 +10,7 @@
 
 ### Fixed
 - Technical - Remove remaining traces of the lint command on specific files.
+- Charts - Fix potential broken charts results if they are configured with filters.
 
 ## RELEASE 5.2.0 - 2019-11-18
 ### Added

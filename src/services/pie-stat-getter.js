@@ -96,8 +96,8 @@ function PieStatGetter(model, params, options) {
     });
   }
 
-  this.perform = () => {
-    const where = new FiltersParser(schema, params.timezone, options).perform(params.filters);
+  this.perform = async () => {
+    const where = await new FiltersParser(schema, params.timezone, options).perform(params.filters);
 
     return model.unscoped().findAll({
       attributes: [
