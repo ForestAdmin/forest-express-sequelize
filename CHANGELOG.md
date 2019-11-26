@@ -1,6 +1,12 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - `.forestadmin-schema` now keeps track of engine and framework names and versions.
+
+### Fixed
+- Schema - The `.forestadmin-schema.json` file is now written in the project directory, wherever the startup command has been hinted from.
+- Smart Relationships - Prevent server crash in case of "cyclic" Smart BelongsTo declaration.
 
 ## RELEASE 5.2.1 - 2019-11-25
 ### Added
