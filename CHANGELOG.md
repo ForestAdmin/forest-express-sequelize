@@ -7,6 +7,9 @@
 ### Changed
 - Technical - Rename `.env.example` file.
 
+### Fixed
+- Technical - Add vs code workspace to gitignore.
+
 ## RELEASE 5.3.0 - 2019-11-26
 ### Added
 - Technical - `.forestadmin-schema` now keeps track of engine and framework names and versions.
