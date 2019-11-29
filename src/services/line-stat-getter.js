@@ -122,9 +122,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   function getGroupByDateInterval() {
     if (isMySQL(options)) {
       return [getGroupByDateFieldFormatedForMySQL(timeRange), 'date'];
-    } else if (isMSSQL(options)) {
+    }
+    if (isMSSQL(options)) {
       return [getGroupByDateFieldFormatedForMSSQL(timeRange), 'date'];
-    } else if (isSQLite(options)) {
+    }
+    if (isSQLite(options)) {
       return [getGroupByDateFieldFormatedForSQLite(timeRange), 'date'];
     }
     return [
@@ -169,7 +171,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
       }
 
       records = _.sortBy(records, 'label');
-      return _.map(records, record => ({
+      return _.map(records, (record) => ({
         label: moment(record.label, sqlFormat).format(getFormat()),
         values: record.values,
       }));
@@ -221,11 +223,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
       order: getOrder(),
       raw: true,
     })
-      .then(records => P.map(records, record => ({
+      .then((records) => P.map(records, (record) => ({
         label: record.date,
         values: { value: parseInt(record.value, 10) },
       })))
-      .then(records => ({ value: fillEmptyDateInterval(records) }));
+      .then((records) => ({ value: fillEmptyDateInterval(records) }));
   };
 }
 

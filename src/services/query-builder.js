@@ -1,8 +1,9 @@
 import _ from 'lodash';
 import { Schemas } from 'forest-express';
-import { getReferenceField } from '../utils/query';
 import Orm from '../utils/orm';
 import Database from '../utils/database';
+
+const { getReferenceField } = require('../utils/query');
 
 function QueryBuilder(model, opts, params) {
   const schema = Schemas.schemas[model.name];
@@ -28,8 +29,8 @@ function QueryBuilder(model, opts, params) {
   this.getIncludes = (modelForIncludes, fieldNamesRequested) => {
     const includes = [];
     _.values(modelForIncludes.associations).forEach((association) => {
-      if (!fieldNamesRequested ||
-        (fieldNamesRequested.indexOf(association.as) !== -1)) {
+      if (!fieldNamesRequested
+        || (fieldNamesRequested.indexOf(association.as) !== -1)) {
         if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
           includes.push({
             model: association.target.unscoped(),
@@ -72,7 +73,8 @@ function QueryBuilder(model, opts, params) {
           fieldName,
         );
         return [[opts.sequelize.col(column), order]];
-      } else if (aliasName) {
+      }
+      if (aliasName) {
         return [[opts.sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
       }
       return [[params.sort, order]];

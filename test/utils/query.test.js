@@ -1,4 +1,4 @@
-import { getReferenceField } from '../../src/utils/query';
+const { getReferenceField } = require('../../src/utils/query');
 
 describe('utils > query', () => {
   describe('#getReferenceField', () => {

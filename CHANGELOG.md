@@ -8,6 +8,8 @@
 
 ### Changed
 - Technical - Rename `.env.example` file.
+- Technical - Upgrade ESLint rules.
+- Technical - Ensure that all files follow the ESLint rules.
 
 ### Fixed
 - Technical - Add vs code workspace to gitignore.

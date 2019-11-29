@@ -126,10 +126,10 @@ function ApimapFieldBuilder(model, column, options) {
       schema.isRequired = true;
     }
 
-    const canHaveDynamicDefaultValue = ['Date', 'Dateonly'].indexOf(schema.type) !== -1 ||
-      column.type instanceof DataTypes.UUID;
-    const isDefaultValueFunction = (typeof column.defaultValue) === 'function' ||
-      (canHaveDynamicDefaultValue && (typeof column.defaultValue) === 'object');
+    const canHaveDynamicDefaultValue = ['Date', 'Dateonly'].indexOf(schema.type) !== -1
+      || column.type instanceof DataTypes.UUID;
+    const isDefaultValueFunction = (typeof column.defaultValue) === 'function'
+      || (canHaveDynamicDefaultValue && (typeof column.defaultValue) === 'object');
 
     if (!_.isNull(column.defaultValue) && !_.isUndefined(column.defaultValue)) {
       // NOTICE: Prevent sequelize.Sequelize.NOW to be defined as the default value as the client

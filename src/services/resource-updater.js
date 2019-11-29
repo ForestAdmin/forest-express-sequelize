@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const { ErrorHTTP422 } = require('./errors');
 const Interface = require('forest-express');
+const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 const ResourceFinder = require('./resource-finder');
@@ -9,8 +9,7 @@ function ResourceUpdater(model, params, newRecord) {
   const schema = Interface.Schemas.schemas[model.name];
 
   this.perform = () => {
-    const compositeKeysManager =
-      new CompositeKeysManager(model, schema, newRecord);
+    const compositeKeysManager = new CompositeKeysManager(model, schema, newRecord);
 
     return new ResourceFinder(model, params)
       .perform()
@@ -28,8 +27,7 @@ function ResourceUpdater(model, params, newRecord) {
       })
       .then(() => {
         if (schema.isCompositePrimary) {
-          newRecord.forestCompositePrimary =
-            compositeKeysManager.createCompositePrimary();
+          newRecord.forestCompositePrimary = compositeKeysManager.createCompositePrimary();
         }
 
         return new ResourceGetter(model, {

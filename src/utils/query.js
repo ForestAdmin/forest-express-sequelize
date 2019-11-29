@@ -3,7 +3,7 @@ import Orm from './orm';
 exports.getReferenceField = (schemas, modelSchema, associationName, fieldName) => {
   function getDefaultValue() { return `${associationName}.${fieldName}`; }
 
-  const schemaField = modelSchema.fields.find(field => field.field === associationName);
+  const schemaField = modelSchema.fields.find((field) => field.field === associationName);
 
   // NOTICE: No reference field found, no name transformation tried.
   if (!schemaField || !schemaField.reference) { return getDefaultValue(); }

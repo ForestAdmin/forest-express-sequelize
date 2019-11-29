@@ -8,7 +8,7 @@ function HasManyDissociator(model, association, options, params, data) {
   const isDelete = Boolean(params.delete);
 
   this.perform = () => {
-    const associatedIds = _.map(data.data, value => value.id);
+    const associatedIds = _.map(data.data, (value) => value.id);
     return orm.findRecord(model, params.recordId)
       .then((record) => {
         let removeAssociation = false;

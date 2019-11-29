@@ -21,15 +21,15 @@ function PieStatGetter(model, params, options) {
   let field;
 
   if (params.group_by_field.indexOf(':') === -1) {
-    field = _.find(schema.fields, currentField => currentField.field === params.group_by_field);
+    field = _.find(schema.fields, (currentField) => currentField.field === params.group_by_field);
   } else {
     associationSplit = params.group_by_field.split(':');
     associationCollection = model.associations[associationSplit[0]].target.name;
-    associationField = associationSplit[1];
+    [, associationField] = associationSplit;
     associationSchema = Schemas.schemas[associationCollection];
     field = _.find(
       associationSchema.fields,
-      currentField => currentField.field === associationField,
+      (currentField) => currentField.field === associationField,
     );
   }
 
@@ -120,7 +120,7 @@ function PieStatGetter(model, params, options) {
       raw: true,
     })
       .then(formatResults)
-      .then(records => ({ value: records }));
+      .then((records) => ({ value: records }));
   };
 }
 

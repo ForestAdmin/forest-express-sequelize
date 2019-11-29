@@ -26,7 +26,7 @@ const findRecord = (model, recordId, options) => {
 };
 
 const getColumnName = (schema, fieldName) => {
-  const schemaField = schema.fields.find(field => field.field === fieldName);
+  const schemaField = schema.fields.find((field) => field.field === fieldName);
   return (schemaField && schemaField.columnName) ? schemaField.columnName : fieldName;
 };
 

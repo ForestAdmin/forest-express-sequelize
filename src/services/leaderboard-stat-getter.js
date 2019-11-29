@@ -21,8 +21,8 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
-    const fieldName = aggregateField || schemaRelationship.primaryKeys[0] ||
-      schemaRelationship.fields[0].field;
+    const fieldName = aggregateField || schemaRelationship.primaryKeys[0]
+      || schemaRelationship.fields[0].field;
     return `${schemaRelationship.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 

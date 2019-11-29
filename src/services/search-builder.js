@@ -1,6 +1,6 @@
 const _ = require('lodash');
-const Operators = require('../utils/operators');
 const Interface = require('forest-express');
+const Operators = require('../utils/operators');
 const Database = require('../utils/database');
 const { isUUID } = require('../utils/orm');
 
@@ -26,11 +26,11 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
 
   function selectSearchFields() {
     const searchFields = _.clone(schema.searchFields);
-    searchAssociationFields = _.remove(searchFields, field => field.indexOf('.') !== -1);
+    searchAssociationFields = _.remove(searchFields, (field) => field.indexOf('.') !== -1);
 
-    _.remove(fields, field => !_.includes(schema.searchFields, field.field));
+    _.remove(fields, (field) => !_.includes(schema.searchFields, field.field));
 
-    const searchAssociationNames = _.map(searchAssociationFields, association =>
+    const searchAssociationNames = _.map(searchAssociationFields, (association) =>
       association.split('.')[0]);
     associations = _.pick(associations, searchAssociationNames);
 
@@ -38,10 +38,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     //         searchFields.
     const fieldsSimpleNotFound = _.xor(
       searchFields,
-      _.map(fields, field => field.field),
+      _.map(fields, (field) => field.field),
     );
     const fieldsAssociationNotFound = _.xor(
-      _.map(searchAssociationFields, association => association.split('.')[0]),
+      _.map(searchAssociationFields, (association) => association.split('.')[0]),
       _.keys(associations),
     );
 
@@ -99,8 +99,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
             lowerIfNecessary(`%${params.search}%`),
           );
           pushCondition(condition, columnName);
-        } else if (isUUID(DataTypes, primaryKeyType) &&
-          params.search.match(REGEX_UUID)) {
+        } else if (isUUID(DataTypes, primaryKeyType)
+          && params.search.match(REGEX_UUID)) {
           condition[field.field] = params.search;
           pushCondition(condition, field.field);
         }
@@ -119,8 +119,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'String') {
-        if (model.rawAttributes[field.field] &&
-          isUUID(DataTypes, model.rawAttributes[field.field].type)) {
+        if (model.rawAttributes[field.field]
+          && isUUID(DataTypes, model.rawAttributes[field.field].type)) {
           if (params.search.match(REGEX_UUID)) {
             condition[field.field] = params.search;
             pushCondition(condition, field.field);
@@ -141,8 +141,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     // NOTICE: Handle search on displayed belongsTo
     if (parseInt(params.searchExtended, 10)) {
       _.each(associations, (association) => {
-        if (!fieldNamesRequested ||
-          (fieldNamesRequested.indexOf(association.as) !== -1)) {
+        if (!fieldNamesRequested
+          || (fieldNamesRequested.indexOf(association.as) !== -1)) {
           if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
             const modelAssociation = association.target;
             const schemaAssociation = Interface.Schemas.schemas[modelAssociation.name];
@@ -179,8 +179,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                   hasExtendedConditions = true;
                 }
               } else if (field.type === 'String') {
-                if (modelAssociation.rawAttributes[field.field] &&
-                  isUUID(DataTypes, modelAssociation.rawAttributes[field.field].type)) {
+                if (modelAssociation.rawAttributes[field.field]
+                  && isUUID(DataTypes, modelAssociation.rawAttributes[field.field].type)) {
                   if (params.search.match(REGEX_UUID)) {
                     condition = opts.sequelize.where(column, '=', params.search);
                     hasExtendedConditions = true;
