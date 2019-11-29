@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Smart Relationship/Collection - Expose a serializer to simplify the serialization.
+
 ### Changed
 - Technical - Rename `.env.example` file.
 
