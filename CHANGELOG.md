@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Rename `.env.example` file.
 
 ## RELEASE 5.3.0 - 2019-11-26
 ### Added
