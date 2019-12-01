@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Upgrade ESLint rules.
+- Technical - Ensure that all files follow the ESLint rules.
 
 ## RELEASE 5.4.0 - 2019-11-29
 ### Added
@@ -8,8 +11,6 @@
 
 ### Changed
 - Technical - Rename `.env.example` file.
-- Technical - Upgrade ESLint rules.
-- Technical - Ensure that all files follow the ESLint rules.
 
 ### Fixed
 - Technical - Add vs code workspace to gitignore.
