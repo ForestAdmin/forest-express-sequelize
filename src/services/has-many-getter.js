@@ -1,7 +1,7 @@
 const _ = require('lodash');
 const P = require('bluebird');
-const orm = require('../utils/orm');
 const Interface = require('forest-express');
+const orm = require('../utils/orm');
 const QueryBuilder = require('./query-builder');
 const SearchBuilder = require('./search-builder');
 const CompositeKeysManager = require('./composite-keys-manager');
@@ -42,7 +42,7 @@ function HasManyGetter(model, association, opts, params) {
         include,
       }],
     })
-      .then(record => ((record && record[params.associationName]) || []));
+      .then((record) => ((record && record[params.associationName]) || []));
   }
 
   function getCount() {
@@ -66,11 +66,10 @@ function HasManyGetter(model, association, opts, params) {
     };
 
     return findQuery(queryOptions)
-      .then(records => P.map(records, (record) => {
+      .then((records) => P.map(records, (record) => {
         if (schema.isCompositePrimary) {
-          record.forestCompositePrimary =
-            new CompositeKeysManager(association, schema, record)
-              .createCompositePrimary();
+          record.forestCompositePrimary = new CompositeKeysManager(association, schema, record)
+            .createCompositePrimary();
         }
 
         return record;

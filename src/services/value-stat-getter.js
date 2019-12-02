@@ -83,11 +83,11 @@ function ValueStatGetter(model, params, options) {
               include: getIncludes(),
               where,
             })
-            .then(resultCount => resultCount || 0);
+            .then((resultCount) => resultCount || 0);
         }
         return undefined;
       })
-      .then(countPrevious => ({
+      .then((countPrevious) => ({
         value: {
           countCurrent,
           countPrevious,

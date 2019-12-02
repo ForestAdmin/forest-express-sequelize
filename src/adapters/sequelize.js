@@ -80,7 +80,7 @@ module.exports = (model, opts) => {
         idField = 'forestCompositePrimary';
       }
 
-      _.remove(fields, field =>
+      _.remove(fields, (field) =>
         _.includes(fieldNamesToExclude, field.columnName) && !field.primaryKey);
 
       return {

@@ -1,13 +1,14 @@
 import { BaseFiltersParser, BaseOperatorDateParser, Schemas } from 'forest-express';
-import { getReferenceField } from '../utils/query';
 import Operators from '../utils/operators';
 import { NoMatchingOperatorError } from './errors';
+
+const { getReferenceField } = require('../utils/query');
 
 function FiltersParser(modelSchema, timezone, options) {
   this.OPERATORS = new Operators(options);
   this.operatorDateParser = new BaseOperatorDateParser({ operators: this.OPERATORS, timezone });
 
-  this.perform = async filtersString =>
+  this.perform = async (filtersString) =>
     BaseFiltersParser.perform(filtersString, this.formatAggregation, this.formatCondition);
 
   this.formatAggregation = async (aggregator, formatedConditions) => {
@@ -170,7 +171,7 @@ function FiltersParser(modelSchema, timezone, options) {
     return currentPreviousInterval;
   };
 
-  this.getAssociations = async filtersString => BaseFiltersParser.getAssociations(filtersString);
+  this.getAssociations = async (filtersString) => BaseFiltersParser.getAssociations(filtersString);
 }
 
 module.exports = FiltersParser;

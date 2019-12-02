@@ -92,11 +92,11 @@ exports.init = function init(opts) {
       _.each(connection.models, (model) => {
         if (detectAllModels) {
           models[model.name] = model;
-        } else if (!_.isEmpty(opts.includedModels) &&
-          _.includes(opts.includedModels, model.name)) {
+        } else if (!_.isEmpty(opts.includedModels)
+          && _.includes(opts.includedModels, model.name)) {
           models[model.name] = model;
-        } else if (!_.isEmpty(opts.excludedModels) &&
-          !_.includes(opts.excludedModels, model.name)) {
+        } else if (!_.isEmpty(opts.excludedModels)
+          && !_.includes(opts.excludedModels, model.name)) {
           models[model.name] = model;
         }
       });
@@ -147,7 +147,7 @@ exports.init = function init(opts) {
     },
     getCustomerByUserField: (customerModel, customerField, userField) => {
       if (!customerModel) {
-        return new P(resolve => resolve());
+        return new P((resolve) => resolve());
       }
 
       const query = {};
@@ -189,7 +189,7 @@ exports.init = function init(opts) {
     getUser: (userModel, userId) => {
       if (userId) {
         return orm.findRecord(userModel, userId)
-          .then(user => user.toJSON());
+          .then((user) => user.toJSON());
       }
 
       return P.resolve();

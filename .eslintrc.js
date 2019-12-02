@@ -9,24 +9,8 @@ module.exports = {
     node: true,
   },
   rules: {
-    'no-console': 0,
+    'implicit-arrow-linebreak': 0,
     'no-param-reassign': 0,
-    'prefer-destructuring': [
-      'error',
-      {
-        VariableDeclarator: {
-          array: false,
-          object: true,
-        },
-        AssignmentExpression: {
-          array: false,
-          object: false,
-        },
-      },
-      {
-        enforceForRenamedProperties: false,
-      },
-    ],
     'import/no-extraneous-dependencies': [
       'error',
       {

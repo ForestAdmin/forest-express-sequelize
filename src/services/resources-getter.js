@@ -90,7 +90,7 @@ function ResourcesGetter(model, options, params) {
             type: options.sequelize.QueryTypes.SELECT,
           })
           .then((results) => {
-            const recordIds = results.map(result => result[primaryKey] || result.id);
+            const recordIds = results.map((result) => result[primaryKey] || result.id);
             const condition = { [primaryKey]: {} };
             condition[primaryKey][OPERATORS.IN] = recordIds;
             where[OPERATORS.AND].push(condition);
@@ -140,8 +140,8 @@ function ResourcesGetter(model, options, params) {
 
           const fieldsSearched = getSearchBuilder().getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
-            if (!params.searchExtended ||
-              !getSearchBuilder().hasExtendedSearchConditions()) {
+            if (!params.searchExtended
+              || !getSearchBuilder().hasExtendedSearchConditions()) {
               // NOTICE: No search condition has been set for the current search, no record can be
               //         found.
               return [];
@@ -188,8 +188,8 @@ function ResourcesGetter(model, options, params) {
 
           const fieldsSearched = getSearchBuilder().getFieldsSearched();
           if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
-            if (!params.searchExtended ||
-              !getSearchBuilder().hasExtendedSearchConditions()) {
+            if (!params.searchExtended
+              || !getSearchBuilder().hasExtendedSearchConditions()) {
               // NOTICE: No search condition has been set for the current search, no record can be
               //         found.
               return 0;
@@ -205,7 +205,7 @@ function ResourcesGetter(model, options, params) {
     if (schema.segments && params.segment) {
       const segment = _.find(
         schema.segments,
-        schemaSegment => schemaSegment.name === params.segment,
+        (schemaSegment) => schemaSegment.name === params.segment,
       );
 
       segmentScope = segment.scope;
@@ -236,9 +236,8 @@ function ResourcesGetter(model, options, params) {
 
         if (schema.isCompositePrimary) {
           records.forEach((record) => {
-            record.forestCompositePrimary =
-              new CompositeKeysManager(model, schema, record)
-                .createCompositePrimary();
+            record.forestCompositePrimary = new CompositeKeysManager(model, schema, record)
+              .createCompositePrimary();
           });
         }
 
