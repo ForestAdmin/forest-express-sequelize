@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Technical - Add missing yarn.lock.
 
 ## RELEASE 5.4.1 - 2019-12-11
 ### Changed
