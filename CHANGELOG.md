@@ -1,7 +1,7 @@
 # Change Log
 
 ## [Unreleased]
-### Changed
+### Changed
 - Technical - Upgrade ESLint rules.
 - Technical - Ensure that all files follow the ESLint rules.
 
@@ -9,7 +9,7 @@
 ### Added
 - Smart Relationship/Collection - Expose a serializer to simplify the serialization.
 
-### Changed
+### Changed
 - Technical - Rename `.env.example` file.
 
 ### Fixed
