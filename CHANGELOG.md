@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 5.4.1 - 2019-12-11
 ### Changed
 - Technical - Upgrade ESLint rules.
 - Technical - Ensure that all files follow the ESLint rules.
