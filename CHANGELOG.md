@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Added
+- Technical - Add SonarJS linter for complexity issues.
 
 ## RELEASE 5.4.1 - 2019-12-11
 ### Changed
