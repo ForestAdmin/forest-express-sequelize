@@ -4,6 +4,12 @@
 ### Added
 - Technical - Add SonarJS linter for complexity issues.
 
+### Changed
+- Smart Collections - Do not insert Smart Collections unless they contain at least one declared field.
+
+### Fixed
+- Intercom Integration - Better handling of automated messages.
+
 ## RELEASE 5.4.1 - 2019-12-11
 ### Changed
 - Technical - Upgrade ESLint rules.
