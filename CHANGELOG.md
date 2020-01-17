@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Fixed
-- Data summary/RelatedData - Fix sorting by referenced field.
+- Has Many Relationships - Fix sorting on hasMany fields in related data.
 
 ## RELEASE 5.6.0 - 2020-01-14
 ### Added
