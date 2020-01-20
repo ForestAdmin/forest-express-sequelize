@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Added
-- Has Many Relationships - Fix sorting on belongsTo relationship columns in related data.
+- Has Many Relationships - Enable sorting on belongsTo relationship columns in related data.
 
 ## RELEASE 5.6.0 - 2020-01-14
 ### Added
