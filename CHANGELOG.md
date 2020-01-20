@@ -1,7 +1,7 @@
 # Change Log
 
 ## [Unreleased]
-### Fixed
+### Added
 - Has Many Relationships - Fix sorting on belongsTo relationship columns in related data.
 
 ## RELEASE 5.6.0 - 2020-01-14
