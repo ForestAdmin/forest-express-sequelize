@@ -65,7 +65,9 @@ function QueryBuilder(model, opts, params) {
 
       if (params.sort.indexOf('.') !== -1) {
         // NOTICE: Sort on the belongsTo displayed field
-        const [associationName, fieldName] = params.sort.split('.');
+        const sortingParameters = params.sort.split('.');
+        const associationName = aliasName ? `${aliasName}->${sortingParameters[0]}` : sortingParameters[0];
+        const fieldName = sortingParameters[1];
         const column = getReferenceField(
           Schemas.schemas,
           (aliasSchema || schema),
