@@ -4,6 +4,9 @@
 ### Added
 - Has Many Relationships - Enable sorting on belongsTo relationship columns in related data.
 
+### Fixed
+- Technical - Ensure that all databases are initialized before running CI tests.
+
 ## RELEASE 5.6.0 - 2020-01-14
 ### Added
 - Sessions - Distinguish "CORS configuration issue" and "Server down" scenarios in case of liana login error.
