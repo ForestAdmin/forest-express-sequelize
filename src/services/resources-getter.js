@@ -81,7 +81,12 @@ function ResourcesGetter(model, options, params) {
 
       if (params.segmentQuery) {
         const queryToFilterRecords = params.segmentQuery.trim();
-        new LiveQueryChecker().perform(queryToFilterRecords);
+
+        try {
+          new LiveQueryChecker().perform(queryToFilterRecords);
+        } catch (e) {
+          return reject(e);
+        }
 
         // WARNING: Choosing the first connection might generate issues if the model does not
         //          belongs to this database.

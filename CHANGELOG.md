@@ -6,6 +6,7 @@
 
 ### Fixed
 - Technical - Ensure that all databases are initialized before running CI tests.
+- Segment Live Query - Fix issue where an incorrect live query causes the server to crash.
 
 ## RELEASE 5.6.0 - 2020-01-14
 ### Added
