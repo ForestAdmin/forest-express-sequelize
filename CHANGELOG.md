@@ -5,7 +5,7 @@
 - Has Many Relationships - Enable sorting on belongsTo relationship columns in related data.
 
 ### Fixed
-- Technical - Ensure that all databases are initialized before running tests.
+- Technical - Ensure that all databases are initialized before running CI tests.
 
 ## RELEASE 5.6.0 - 2020-01-14
 ### Added
