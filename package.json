@@ -46,7 +46,7 @@
     "jest": "24.9.0",
     "mysql2": "1.6.5",
     "onchange": "6.0.0",
-    "pg": "7.10.0",
+    "pg": "7.17.1",
     "pre-commit": "1.2.2",
     "sequelize": "5.21.3",
     "sequelize-fixtures": "0.10.0",
