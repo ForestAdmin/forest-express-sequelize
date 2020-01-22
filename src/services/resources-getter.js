@@ -63,49 +63,49 @@ function ResourcesGetter(model, options, params) {
   }
 
   async function getWhere() {
-    return new P(async (resolve, reject) => {
-      const where = {};
-      where[OPERATORS.AND] = [];
+    const where = {};
+    where[OPERATORS.AND] = [];
 
-      if (params.search) {
-        where[OPERATORS.AND].push(getSearchBuilder().perform());
-      }
+    if (params.search) {
+      where[OPERATORS.AND].push(getSearchBuilder().perform());
+    }
 
-      if (params.filters) {
-        where[OPERATORS.AND].push(await handleFilterParams());
-      }
+    if (params.filters) {
+      where[OPERATORS.AND].push(await handleFilterParams());
+    }
 
-      if (segmentWhere) {
-        where[OPERATORS.AND].push(segmentWhere);
-      }
+    if (segmentWhere) {
+      where[OPERATORS.AND].push(segmentWhere);
+    }
 
-      if (params.segmentQuery) {
-        const queryToFilterRecords = params.segmentQuery.trim();
-        new LiveQueryChecker().perform(queryToFilterRecords);
+    if (params.segmentQuery) {
+      const queryToFilterRecords = params.segmentQuery.trim();
 
-        // WARNING: Choosing the first connection might generate issues if the model does not
-        //          belongs to this database.
-        return options.connections[0]
+      new LiveQueryChecker().perform(queryToFilterRecords);
+
+      // WARNING: Choosing the first connection might generate issues if the model does not
+      //          belongs to this database.
+      try {
+        const results = await options.connections[0]
           .query(queryToFilterRecords, {
             type: options.sequelize.QueryTypes.SELECT,
-          })
-          .then((results) => {
-            const recordIds = results.map((result) => result[primaryKey] || result.id);
-            const condition = { [primaryKey]: {} };
-            condition[primaryKey][OPERATORS.IN] = recordIds;
-            where[OPERATORS.AND].push(condition);
-
-            return resolve(where);
-          }, (error) => {
-            const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
-            logger.error(errorMessage);
-            reject(new ErrorHTTP422(errorMessage));
           });
-      }
-      return resolve(where);
-    });
-  }
 
+        const recordIds = results.map((result) => result[primaryKey] || result.id);
+        const condition = { [primaryKey]: {} };
+        condition[primaryKey][OPERATORS.IN] = recordIds;
+        where[OPERATORS.AND].push(condition);
+
+        return where;
+      } catch (error) {
+        const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
+        logger.error(errorMessage);
+        throw new ErrorHTTP422(errorMessage);
+      }
+    }
+
+    return where;
+  }
 
   async function getRecords() {
     fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
