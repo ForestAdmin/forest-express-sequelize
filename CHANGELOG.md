@@ -9,6 +9,7 @@
 - Segment Live Query - Fix issue where an incorrect live query causes the server to crash.
 - Login - Make the login error messages brought up to the end client through toasts more accurate.
 - Schema - Schemas having fields with escaped characters are now properly saved as valid JSON.
+- Security - Patch `set-value` dependency vulnerability.
 
 ## RELEASE 5.6.0 - 2020-01-14
 ### Added
