@@ -2826,10 +2826,10 @@ for-own@^0.1.4:
   dependencies:
     for-in "^1.0.1"
 
-forest-express@5.6.0:
-  version "5.6.0"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-5.6.0.tgz#3279d4522ca9448482f46292d05568f3ac70e460"
-  integrity sha512-T6L0tFfy1jLkTXfW/H785LVlaW6rkVHM0YjCrklkIoOnu8cJbXdVuPy00b3q9p/aerrz6/PgGNDjmpG/JSB6pg==
+forest-express@5.6.1:
+  version "5.6.1"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-5.6.1.tgz#64322fadf9ca02cff9e493c03831a2be6ca1c736"
+  integrity sha512-bv/hedS/mGkWNMPWozUgL87eC10R2TsAVfA+dZnWOCZ+JVgCMnKHIO4TRdAa64AQXXk57ofRAqCJBhpByLWn0Q==
   dependencies:
     "@babel/runtime" "7.7.2"
     base32-encode "1.1.1"
