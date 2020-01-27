@@ -31,4 +31,5 @@ module.exports = {
     'sonarjs/no-identical-functions': 0,
     'sonarjs/no-same-line-conditional': 0
   },
+  parser: "babel-eslint",
 };
