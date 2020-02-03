@@ -3,9 +3,12 @@
 ## [Unreleased]
 ### Added
 - Technical - Add optional chaining plugin to babel.
+- Tests - Add MySQL min (5.6) and max (8.0) versions.
+- Database Support - Add support for MySQL 8.
 
 ### Changed
 - Technical - Upgrade to babel 7 stable.
+- Technical - Update `mysql2` dependency to 2 (latest MAJOR version).
 
 ## RELEASE 5.7.0 - 2020-01-22
 ### Added

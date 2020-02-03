@@ -14,7 +14,12 @@ const sequelizePostgres = new Sequelize(
   databaseOptions,
 );
 
-const sequelizeMySQL = new Sequelize(
+const sequelizeMySQLMin = new Sequelize(
+  'mysql://forest:secret@localhost:8998/forest-express-sequelize-test',
+  databaseOptions,
+);
+
+const sequelizeMySQLMax = new Sequelize(
   'mysql://forest:secret@localhost:8999/forest-express-sequelize-test',
   databaseOptions,
 );
@@ -28,7 +33,7 @@ const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
 const HasManyDissociator = require('../src/services/has-many-dissociator');
 
-[sequelizePostgres, sequelizeMySQL].forEach((sequelize) => {
+[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((sequelize) => {
   const models = {};
   const sequelizeOptions = {
     sequelize: Sequelize,
