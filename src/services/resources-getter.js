@@ -56,8 +56,6 @@ function ResourcesGetter(model, options, params) {
     return searchBuilder;
   }
 
-  let hasSmartFieldSearch = false;
-
   async function handleFilterParams() {
     return filterParser.perform(params.filters);
   }
@@ -124,22 +122,8 @@ function ResourcesGetter(model, options, params) {
         };
 
         if (params.search) {
-          _.each(schema.fields, (field) => {
-            if (field.search) {
-              try {
-                field.search(findAllOpts, params.search);
-                hasSmartFieldSearch = true;
-              } catch (error) {
-                logger.error(
-                  `Cannot search properly on Smart Field ${field.field}`,
-                  error,
-                );
-              }
-            }
-          });
-
           const fieldsSearched = getSearchBuilder().getFieldsSearched();
-          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
+          if (fieldsSearched.length === 0 && !getSearchBuilder().hasSearchOnSmartField()) {
             if (!params.searchExtended
               || !getSearchBuilder().hasExtendedSearchConditions()) {
               // NOTICE: No search condition has been set for the current search, no record can be
@@ -172,22 +156,8 @@ function ResourcesGetter(model, options, params) {
         }
 
         if (params.search) {
-          _.each(schema.fields, (field) => {
-            if (field.search) {
-              try {
-                field.search(countOptions, params.search);
-                hasSmartFieldSearch = true;
-              } catch (error) {
-                logger.error(
-                  `Cannot search properly on Smart Field ${field.field}`,
-                  error,
-                );
-              }
-            }
-          });
-
           const fieldsSearched = getSearchBuilder().getFieldsSearched();
-          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
+          if (fieldsSearched.length === 0 && !getSearchBuilder().hasSearchOnSmartField()) {
             if (!params.searchExtended
               || !getSearchBuilder().hasExtendedSearchConditions()) {
               // NOTICE: No search condition has been set for the current search, no record can be

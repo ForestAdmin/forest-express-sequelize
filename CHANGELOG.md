@@ -6,6 +6,7 @@
 
 ### Changed
 - Technical - Upgrade to babel 7 stable.
+- Smart Field Search - Ease the search on smart fields and deprecate old ways to do it.
 
 ## RELEASE 5.7.0 - 2020-01-22
 ### Added
