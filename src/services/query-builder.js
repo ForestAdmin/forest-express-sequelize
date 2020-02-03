@@ -44,45 +44,43 @@ function QueryBuilder(model, opts, params) {
   };
 
   this.getOrder = (aliasName, aliasSchema) => {
-    if (params.sort) {
-      let order = 'ASC';
+    if (!params.sort) { return null; }
 
-      if (params.sort[0] === '-') {
-        params.sort = params.sort.substring(1);
-        order = 'DESC';
-      }
+    let order = 'ASC';
 
-      // NOTICE: Sequelize version previous to 4.4.2 generate a bad MSSQL query
-      //         if users sort the collection on the primary key, so we prevent
-      //         that.
-      const idField = _.keys(model.primaryKeys)[0];
-      if (Database.isMSSQL(opts) && _.includes([idField, `-${idField}`], params.sort)) {
-        const sequelizeVersion = opts.sequelize.version;
-        if (sequelizeVersion !== '4.4.2-forest') {
-          return null;
-        }
-      }
-
-      if (params.sort.indexOf('.') !== -1) {
-        // NOTICE: Sort on the belongsTo displayed field
-        const sortingParameters = params.sort.split('.');
-        const associationName = aliasName ? `${aliasName}->${sortingParameters[0]}` : sortingParameters[0];
-        const fieldName = sortingParameters[1];
-        const column = getReferenceField(
-          Schemas.schemas,
-          (aliasSchema || schema),
-          associationName,
-          fieldName,
-        );
-        return [[opts.sequelize.col(column), order]];
-      }
-      if (aliasName) {
-        return [[opts.sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
-      }
-      return [[params.sort, order]];
+    if (params.sort[0] === '-') {
+      params.sort = params.sort.substring(1);
+      order = 'DESC';
     }
 
-    return null;
+    // NOTICE: Sequelize version previous to 4.4.2 generate a bad MSSQL query
+    //         if users sort the collection on the primary key, so we prevent
+    //         that.
+    const idField = _.keys(model.primaryKeys)[0];
+    if (Database.isMSSQL(opts) && _.includes([idField, `-${idField}`], params.sort)) {
+      const sequelizeVersion = opts.sequelize.version;
+      if (sequelizeVersion !== '4.4.2-forest') {
+        return null;
+      }
+    }
+
+    if (params.sort.indexOf('.') !== -1) {
+      // NOTICE: Sort on the belongsTo displayed field
+      const sortingParameters = params.sort.split('.');
+      const associationName = aliasName ? `${aliasName}->${sortingParameters[0]}` : sortingParameters[0];
+      const fieldName = sortingParameters[1];
+      const column = getReferenceField(
+        Schemas.schemas,
+        (aliasSchema || schema),
+        associationName,
+        fieldName,
+      );
+      return [[opts.sequelize.col(column), order]];
+    }
+    if (aliasName) {
+      return [[opts.sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
+    }
+    return [[params.sort, order]];
   };
 }
 
