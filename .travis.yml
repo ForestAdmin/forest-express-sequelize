@@ -17,4 +17,4 @@ before_install:
 
 script:
   - yarn lint
-  - sleep 10; yarn test --forceExit
+  - sleep 20; yarn test --forceExit
