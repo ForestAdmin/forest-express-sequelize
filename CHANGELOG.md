@@ -7,6 +7,9 @@
 ### Changed
 - Technical - Upgrade to babel 7 stable.
 
+### Fixed
+- Technical - Remove cognitive complexity in pie-stat-getter service.
+
 ## RELEASE 5.7.0 - 2020-01-22
 ### Added
 - Has Many Relationships - Enable sorting on belongsTo relationship columns in related data.

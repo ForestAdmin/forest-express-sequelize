@@ -12,35 +12,42 @@ const ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
 function PieStatGetter(model, params, options) {
   const needsDateOnlyFormating = isVersionLessThan4(options.sequelize);
-
   const schema = Schemas.schemas[model.name];
-  let associationSplit;
-  let associationCollection;
-  let associationField;
-  let associationSchema;
-  let field;
+  const groupByFieldParam = params.group_by_field;
+  const groupByFieldParamIncludesColon = groupByFieldParam.includes(':');
 
-  if (params.group_by_field.indexOf(':') === -1) {
-    field = _.find(schema.fields, (currentField) => currentField.field === params.group_by_field);
-  } else {
-    associationSplit = params.group_by_field.split(':');
-    associationCollection = model.associations[associationSplit[0]].target.name;
-    [, associationField] = associationSplit;
-    associationSchema = Schemas.schemas[associationCollection];
-    field = _.find(
+  function splitGroupByField() {
+    return groupByFieldParam.split(':');
+  }
+
+  function getAssociationSchema() {
+    const associationSplit = splitGroupByField();
+    const associationCollection = model.associations[associationSplit[0]].target.name;
+    return Schemas.schemas[associationCollection];
+  }
+
+  function getField() {
+    if (!groupByFieldParamIncludesColon) {
+      return _.find(schema.fields, (currentField) => currentField.field === groupByFieldParam);
+    }
+    const associationSplit = splitGroupByField();
+    const [, associationField] = associationSplit;
+    const associationSchema = getAssociationSchema();
+    return _.find(
       associationSchema.fields,
       (currentField) => currentField.field === associationField,
     );
   }
 
   function getGroupByField() {
-    if (params.group_by_field.includes(':')) {
-      const [associationName, fieldName] = params.group_by_field.split(':');
-      return `${associationName}.${Orm.getColumnName(associationSchema, fieldName)}`;
+    if (groupByFieldParamIncludesColon) {
+      const [associationName, fieldName] = splitGroupByField();
+      return `${associationName}.${Orm.getColumnName(getAssociationSchema(), fieldName)}`;
     }
-    return `${schema.name}.${Orm.getColumnName(schema, params.group_by_field)}`;
+    return `${schema.name}.${Orm.getColumnName(schema, groupByFieldParam)}`;
   }
 
+  const field = getField();
   const groupByField = getGroupByField();
 
   function getAggregate() {
