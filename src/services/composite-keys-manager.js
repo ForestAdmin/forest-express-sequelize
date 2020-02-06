@@ -3,8 +3,7 @@ const _ = require('lodash');
 function CompositeKeysManager(model, schema, record) {
   const GLUE = '-';
 
-  this.getRecordConditions = function getRecordConditions(recordId) {
-    const where = {};
+  this.getPrimaryKeyValues = function getPrimaryKeyValues(recordId) {
     const primaryKeyValues = recordId.split(GLUE);
 
     // NOTICE: Prevent liana to crash when a composite primary keys is null,
@@ -12,6 +11,22 @@ function CompositeKeysManager(model, schema, record) {
     primaryKeyValues.forEach((key, index) => {
       if (key === 'null') { primaryKeyValues[index] = null; }
     });
+
+    return primaryKeyValues;
+  };
+
+  this.getRecordsConditions = function getRecordsConditions(recordsIds) {
+    return recordsIds.reduce((where, recordId) => {
+      Object.entries(this.getRecordConditions(recordId)).forEach(([key, value]) => {
+        where[key] = [...(where[key] || []), value];
+      });
+      return where;
+    }, {});
+  };
+
+  this.getRecordConditions = function getRecordConditions(recordId) {
+    const where = {};
+    const primaryKeyValues = this.getPrimaryKeyValues(recordId);
 
     if (primaryKeyValues.length === _.keys(model.primaryKeys).length) {
       _.keys(model.primaryKeys).forEach((primaryKey, index) => {
