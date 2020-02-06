@@ -5,6 +5,7 @@
 - Technical - Add optional chaining plugin to babel.
 - Tests - Add MySQL min (5.6) and max (8.0) versions.
 - Database Support - Add support for MySQL 8.
+- Resources Remover - Add resources remover (bulk destroy).
 
 ### Changed
 - Technical - Upgrade to babel 7 stable.
