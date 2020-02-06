@@ -27,7 +27,6 @@ function CompositeKeysManager(model, schema, record) {
   this.getRecordConditions = function getRecordConditions(recordId) {
     const where = {};
     const primaryKeyValues = this.getPrimaryKeyValues(recordId);
-
     if (primaryKeyValues.length === _.keys(model.primaryKeys).length) {
       _.keys(model.primaryKeys).forEach((primaryKey, index) => {
         where[primaryKey] = primaryKeyValues[index];
