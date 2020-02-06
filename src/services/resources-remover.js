@@ -5,7 +5,7 @@ const { InvalidParameterError } = require('./errors');
 function ResourcesRemover(model, ids) {
   this.perform = () => {
     if (!Array.isArray(ids) || !ids.length) {
-      throw new InvalidParameterError('`ids` must be an array.');
+      throw new InvalidParameterError('`ids` must be a non-empty array.');
     }
 
     const schema = Interface.Schemas.schemas[model.name];
