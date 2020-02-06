@@ -1,14 +1,14 @@
 import Interface from 'forest-express';
-import RessourcesRemover from '../../src/services/resources-remover';
+import ResourcesRemover from '../../src/services/resources-remover';
 import { InvalidParameterError } from '../../src/services/errors';
 
 describe('services > resources-remover', () => {
   describe('perform', () => {
     it('should throw error if ids is not an array or empty', () => {
       expect.assertions(3);
-      expect(() => new RessourcesRemover(null, []).perform()).toThrow(InvalidParameterError);
-      expect(() => new RessourcesRemover(null, 'foo').perform()).toThrow(InvalidParameterError);
-      expect(() => new RessourcesRemover(null, {}).perform()).toThrow(InvalidParameterError);
+      expect(() => new ResourcesRemover(null, []).perform()).toThrow(InvalidParameterError);
+      expect(() => new ResourcesRemover(null, 'foo').perform()).toThrow(InvalidParameterError);
+      expect(() => new ResourcesRemover(null, {}).perform()).toThrow(InvalidParameterError);
     });
 
     it('should remove resources with simple keys', async () => {
@@ -21,7 +21,7 @@ describe('services > resources-remover', () => {
         };
       }
       Interface.Schemas = { schemas: { actor: { idField: 'id' } } };
-      await new RessourcesRemover(new Actor(), ['1', '2']).perform();
+      await new ResourcesRemover(new Actor(), ['1', '2']).perform();
     });
 
     it('should remove resources with composite keys', async () => {
@@ -41,7 +41,7 @@ describe('services > resources-remover', () => {
           },
         },
       };
-      await new RessourcesRemover(new ActorFilm(), ['1-2', '3-4']).perform();
+      await new ResourcesRemover(new ActorFilm(), ['1-2', '3-4']).perform();
     });
   });
 });
