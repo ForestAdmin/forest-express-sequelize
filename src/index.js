@@ -118,8 +118,8 @@ exports.init = function init(opts) {
   exports.ResourceCreator = ResourceCreator;
   exports.ResourceUpdater = ResourceUpdater;
   exports.ResourceRemover = ResourceRemover;
-  exports.ResourcesRemover = ResourcesRemover;
   exports.ResourcesExporter = ResourcesExporter;
+  exports.ResourcesRemover = ResourcesRemover;
 
   exports.HasManyGetter = HasManyGetter;
   exports.HasManyAssociator = HasManyAssociator;
