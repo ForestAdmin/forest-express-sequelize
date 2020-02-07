@@ -11,7 +11,7 @@ describe('services > resources-remover', () => {
       expect(() => new ResourcesRemover(null, {}).perform()).toThrow(InvalidParameterError);
     });
 
-    it('should remove resources with simple keys', async () => {
+    it('should remove resources with a single primary key', async () => {
       expect.assertions(1);
       function Actor() {
         this.name = 'actor';
