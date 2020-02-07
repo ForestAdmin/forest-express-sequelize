@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const P = require('bluebird');
 const Interface = require('forest-express');
 const Operators = require('../utils/operators');
 const Database = require('../utils/database');
@@ -61,7 +62,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   this.hasExtendedSearchConditions = () => hasExtendedConditions;
   this.hasSearchOnSmartField = () => hasSmartFieldSearch;
 
-  this.perform = (associationName) => {
+  this.perform = async (associationName) => {
     if (!params.search) { return null; }
 
     if (hasSearchFields) {
@@ -82,7 +83,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       }
     }
 
-    _.each(fields, (field) => {
+    await P.each(fields, async (field) => {
       if (field.integration) { return; } // NOTICE: Ignore integration fields.
       if (field.reference) { return; } // NOTICE: Handle belongsTo search below.
 
@@ -99,7 +100,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 }],
               },
             };
-            condition = field.search(queryForRetrocompatibility, params.search);
+            condition = await Promise.resolve(
+              field.search(queryForRetrocompatibility, params.search),
+            );
             if (condition && condition.where) {
               logger.warn(
                 `You are using a deprecated way of searching on smart field ${field.field}. Please just return the condition you want to use`,

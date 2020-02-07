@@ -22,10 +22,18 @@ function HasManyGetter(model, association, opts, params) {
 
   const fieldNamesRequested = getFieldNamesRequested();
   const searchBuilder = new SearchBuilder(association, opts, params, fieldNamesRequested);
-  const where = searchBuilder.perform(params.associationName);
   const include = queryBuilder.getIncludes(association, fieldNamesRequested);
 
-  function findQuery(queryOptions) {
+  let where;
+
+  async function getWhere() {
+    if (!where) {
+      where = await searchBuilder.perform(params.associationName);
+    }
+    return where;
+  }
+
+  async function findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
 
     return orm.findRecord(model, params.recordId, {
@@ -38,20 +46,20 @@ function HasManyGetter(model, association, opts, params) {
         as: params.associationName,
         scope: false,
         required: false,
-        where,
+        where: getWhere(),
         include,
       }],
     })
       .then((record) => ((record && record[params.associationName]) || []));
   }
 
-  function getCount() {
+  async function getCount() {
     return model.count({
       where: { [primaryKeyModel]: params.recordId },
       include: [{
         model: association,
         as: params.associationName,
-        where,
+        where: getWhere(),
         required: true,
         scope: false,
       }],
