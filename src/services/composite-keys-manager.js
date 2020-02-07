@@ -1,4 +1,5 @@
-const _ = require('lodash');
+import _ from 'lodash';
+import Operators from '../utils/operators';
 
 function CompositeKeysManager(model, schema, record) {
   const GLUE = '-';
@@ -15,13 +16,9 @@ function CompositeKeysManager(model, schema, record) {
     return primaryKeyValues;
   };
 
-  this.getRecordsConditions = function getRecordsConditions(recordsIds) {
-    return recordsIds.reduce((where, recordId) => {
-      Object.entries(this.getRecordConditions(recordId)).forEach(([key, value]) => {
-        where[key] = [...(where[key] || []), value];
-      });
-      return where;
-    }, {});
+  this.getRecordsConditions = function getRecordsConditions(recordsIds, options) {
+    const { OR } = new Operators(options);
+    return { [OR]: recordsIds.map((recordId) => this.getRecordConditions(recordId)) };
   };
 
   this.getRecordConditions = function getRecordConditions(recordId) {

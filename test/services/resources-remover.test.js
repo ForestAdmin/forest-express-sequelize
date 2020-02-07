@@ -1,4 +1,5 @@
 import Interface from 'forest-express';
+import Sequelize, { Op } from 'sequelize';
 import ResourcesRemover from '../../src/services/resources-remover';
 import { InvalidParameterError } from '../../src/services/errors';
 
@@ -30,7 +31,13 @@ describe('services > resources-remover', () => {
         this.name = 'actorFilm';
         this.primaryKeys = { actorId: {}, filmId: {} };
         this.destroy = (condition) => {
-          expect(condition).toStrictEqual({ where: { actorId: ['1', '3'], filmId: ['2', '4'] } });
+          expect(condition).toStrictEqual({
+            where: {
+              [Op.or]: [
+                { actorId: '1', filmId: '2' },
+                { actorId: '3', filmId: '4' }],
+            },
+          });
         };
       }
       Interface.Schemas = {
@@ -41,7 +48,8 @@ describe('services > resources-remover', () => {
           },
         },
       };
-      await new ResourcesRemover(new ActorFilm(), ['1-2', '3-4']).perform();
+      const sequelizeOptions = { sequelize: Sequelize };
+      await new ResourcesRemover(new ActorFilm(), ['1-2', '3-4'], sequelizeOptions).perform();
     });
   });
 });
