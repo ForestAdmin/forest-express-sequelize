@@ -12,6 +12,7 @@ const ResourceCreator = require('./services/resource-creator');
 const ResourceUpdater = require('./services/resource-updater');
 const ResourceRemover = require('./services/resource-remover');
 const ResourcesExporter = require('./services/resources-exporter');
+const ResourcesRemover = require('./services/resources-remover');
 
 const HasManyGetter = require('./services/has-many-getter');
 const HasManyAssociator = require('./services/has-many-associator');
@@ -118,6 +119,7 @@ exports.init = function init(opts) {
   exports.ResourceUpdater = ResourceUpdater;
   exports.ResourceRemover = ResourceRemover;
   exports.ResourcesExporter = ResourcesExporter;
+  exports.ResourcesRemover = ResourcesRemover;
 
   exports.HasManyGetter = HasManyGetter;
   exports.HasManyAssociator = HasManyAssociator;
