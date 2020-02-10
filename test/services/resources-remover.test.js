@@ -35,7 +35,7 @@ describe('services > resources-remover', () => {
             where: {
               [Op.or]: [
                 { actorId: '1', filmId: '2' },
-                { actorId: '3', filmId: '4' }
+                { actorId: '3', filmId: '4' },
               ],
             },
           });
