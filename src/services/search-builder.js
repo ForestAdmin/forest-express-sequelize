@@ -93,7 +93,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       if (field.isVirtual) {
         if (field.search) {
           try {
-            const queryForRetrocompatibility = {
+            const queryForBackwardCompatibility = {
               where: {
                 [OPERATORS.and]: [{
                   [OPERATORS.or]: [],
@@ -101,7 +101,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
               },
             };
             condition = await Promise.resolve(
-              field.search(queryForRetrocompatibility, params.search),
+              field.search(queryForBackwardCompatibility, params.search),
             );
             if (condition && condition.where) {
               logger.warn(

@@ -46,7 +46,7 @@ function HasManyGetter(model, association, opts, params) {
         as: params.associationName,
         scope: false,
         required: false,
-        where: getWhere(),
+        where: await getWhere(),
         include,
       }],
     })
@@ -59,7 +59,7 @@ function HasManyGetter(model, association, opts, params) {
       include: [{
         model: association,
         as: params.associationName,
-        where: getWhere(),
+        where: await getWhere(),
         required: true,
         scope: false,
       }],
