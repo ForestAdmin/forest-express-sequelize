@@ -6,9 +6,12 @@
 - Tests - Add MySQL min (5.6) and max (8.0) versions.
 - Database Support - Add support for MySQL 8.
 - Resource Deletion - Users can now bulk delete records.
+- Initialisation - Make `Liana.init` return a promise resolving when all is up.
+- Smart Actions: add a method to `RecordsGetter` to get all models IDs given a query or an ID list.
 
 ### Changed
 - Technical - Upgrade to babel 7 stable.
+- Technical - Update `forest-express` to version 7.
 
 ### Fixed
 - Technical - Remove cognitive complexity in query-builder service.
