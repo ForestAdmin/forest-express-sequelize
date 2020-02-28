@@ -6,6 +6,7 @@
 - Tests - Add MySQL min (5.6) and max (8.0) versions.
 - Database Support - Add support for MySQL 8.
 - Resource Deletion - Users can now bulk delete records.
+- Technical - Add test and documentation for query-builder sort method.
 
 ### Changed
 - Technical - Upgrade to babel 7 stable.
