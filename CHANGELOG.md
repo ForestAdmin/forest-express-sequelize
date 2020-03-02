@@ -10,6 +10,7 @@
 
 ### Changed
 - Technical - Upgrade to babel 7 stable.
+- Smart Field Search - Ease the search on smart fields by requiring a condition instead of a query, and deprecate old way to do it.
 
 ### Fixed
 - Technical - Remove cognitive complexity in query-builder service.

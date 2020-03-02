@@ -1,9 +1,11 @@
 const _ = require('lodash');
+const P = require('bluebird');
 const Interface = require('forest-express');
 const Operators = require('../utils/operators');
 const Database = require('../utils/database');
 const { isUUID } = require('../utils/orm');
 
+const { logger } = Interface;
 const REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function SearchBuilder(model, opts, params, fieldNamesRequested) {
@@ -16,6 +18,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   const OPERATORS = new Operators(opts);
   const fieldsSearched = [];
   let hasExtendedConditions = false;
+  let hasSmartFieldSearch = false;
 
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
@@ -57,8 +60,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   this.getFieldsSearched = () => fieldsSearched;
 
   this.hasExtendedSearchConditions = () => hasExtendedConditions;
+  this.hasSearchOnSmartField = () => hasSmartFieldSearch;
 
-  this.perform = (associationName) => {
+  this.perform = async (associationName) => {
     if (!params.search) { return null; }
 
     if (hasSearchFields) {
@@ -69,20 +73,54 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     const where = {};
     const or = [];
 
-    function pushCondition(condition, fieldName) {
+    function pushCondition(condition, fieldName, virtual = false) {
       or.push(condition);
-      fieldsSearched.push(fieldName);
+
+      if (virtual) {
+        hasSmartFieldSearch = true;
+      } else {
+        fieldsSearched.push(fieldName);
+      }
     }
 
-    _.each(fields, (field) => {
-      if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
+    await P.each(fields, async (field) => {
       if (field.integration) { return; } // NOTICE: Ignore integration fields.
       if (field.reference) { return; } // NOTICE: Handle belongsTo search below.
 
       let condition = {};
       let columnName;
 
-      if (field.field === schema.idField) {
+      if (field.isVirtual) {
+        if (field.search) {
+          try {
+            const queryForBackwardCompatibility = {
+              where: {
+                [OPERATORS.and]: [{
+                  [OPERATORS.or]: [],
+                }],
+              },
+            };
+            condition = await Promise.resolve(
+              field.search(queryForBackwardCompatibility, params.search),
+            );
+            if (condition && condition.where) {
+              logger.warn(
+                `You are using a deprecated way of searching on smart field ${field.field}. Please just return the condition you want to use`,
+              );
+              [condition] = condition.where[OPERATORS.and][0][OPERATORS.or];
+            }
+
+            if (condition) {
+              pushCondition(condition, field.field, true);
+            }
+          } catch (error) {
+            logger.error(
+              `Cannot search properly on Smart Field ${field.field}`,
+              error,
+            );
+          }
+        }
+      } else if (field.field === schema.idField) {
         const primaryKeyType = model.primaryKeys[schema.idField].type;
 
         if (primaryKeyType instanceof DataTypes.INTEGER) {
