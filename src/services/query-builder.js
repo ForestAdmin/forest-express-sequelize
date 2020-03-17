@@ -43,6 +43,8 @@ function QueryBuilder(model, opts, params) {
     return includes;
   };
 
+  // NOTICE: This function supports params such as `id`, `-id` (DESC) and `collection.id`.
+  //         It does not handle multiple columns sorting.
   this.getOrder = (aliasName, aliasSchema) => {
     if (!params.sort) { return null; }
 
