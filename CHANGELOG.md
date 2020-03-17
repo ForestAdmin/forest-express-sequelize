@@ -2,21 +2,16 @@
 
 ## [Unreleased]
 ### Added
-- Smart Actions - Add a method to `RecordsGetter` to get all models IDs given a query or an ID list.
-
-### Changed
-- Initialisation - Make `Liana.init` return a promise resolving when all is up.
-
-## RELEASE 6.0.0-beta.0 - 2020-02-18
-### Added
 - Technical - Add optional chaining plugin to babel.
 - Tests - Add MySQL min (5.6) and max (8.0) versions.
 - Database Support - Add support for MySQL 8.
 - Resource Deletion - Users can now bulk delete records.
 - Technical - Add test and documentation for query-builder sort method.
+- Smart Actions - Add a method to `RecordsGetter` to get all models IDs given a query or an ID list.
 
 ### Changed
 - Technical - Upgrade to babel 7 stable.
+- Initialisation - Make `Liana.init` return a promise resolving when all is up.
 
 ### Fixed
 - Technical - Remove cognitive complexity in query-builder service.
