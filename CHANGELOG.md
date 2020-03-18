@@ -3,6 +3,8 @@
 ## [Unreleased]
 
 ## RELEASE 6.0.0 - 2020-03-17
+
+## RELEASE 6.0.0-beta.0 - 2020-02-18
 ### Added
 - Technical - Add optional chaining plugin to babel.
 - Tests - Add MySQL min (5.6) and max (8.0) versions.
