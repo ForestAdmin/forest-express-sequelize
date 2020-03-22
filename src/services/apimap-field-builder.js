@@ -139,7 +139,11 @@ function ApimapFieldBuilder(model, column, options) {
       // NOTICE: Do not use the primary keys default values to prevent issues with UUID fields
       //         (defaultValue: DataTypes.UUIDV4).
       } else if (!_.includes(_.keys(model.primaryKeys), column.fieldName)) {
-        schema.defaultValue = column.defaultValue;
+        if (typeof column.defaultValue === 'object' && Object.prototype.hasOwnProperty.call(column.defaultValue, 'val')) {
+          schema.defaultValue = column.defaultValue.val;
+        } else {
+          schema.defaultValue = column.defaultValue;
+        }
       }
     }
 
