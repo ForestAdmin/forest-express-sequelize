@@ -58,4 +58,84 @@ describe('services > apimap-field-builder', () => {
       expect(uuid.defaultValue).toBeUndefined();
     });
   });
+
+  describe('on other default values', () => {
+    it('should handle raw values', async () => {
+      expect.assertions(8);
+
+      const fieldDefinitions = {
+        intValue: {
+          type: Sequelize.DataTypes.INTEGER,
+          defaultValue: 42,
+        },
+        stringValue: {
+          type: Sequelize.DataTypes.STRING,
+          defaultValue: 'default_value',
+        },
+      };
+      const { intValue, stringValue } = await initializeField(fieldDefinitions);
+
+      expect(intValue.field).toStrictEqual('intValue');
+      expect(intValue.type).toStrictEqual('Number');
+      expect(intValue.isRequired).toBeUndefined();
+      expect(intValue.defaultValue).toStrictEqual(42);
+
+      expect(stringValue.field).toStrictEqual('stringValue');
+      expect(stringValue.type).toStrictEqual('String');
+      expect(stringValue.isRequired).toBeUndefined();
+      expect(stringValue.defaultValue).toStrictEqual('default_value');
+    });
+  });
+
+  it('should handle Sequelize Literal values', async () => {
+    expect.assertions(16);
+
+    const fieldDefinitions = {
+      expressionLiteral: {
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
+      },
+      functionLiteral: {
+        type: Sequelize.DataTypes.DATE,
+        defaultValue: Sequelize.literal('now()'),
+      },
+      intLiteral: {
+        type: Sequelize.DataTypes.INTEGER,
+        defaultValue: Sequelize.literal('42'),
+      },
+      stringLiteral: {
+        type: Sequelize.DataTypes.STRING,
+        defaultValue: Sequelize.literal('\'default_value\''),
+      },
+    };
+    const {
+      expressionLiteral,
+      functionLiteral,
+      intLiteral,
+      stringLiteral,
+    } = await initializeField(fieldDefinitions);
+
+    // NOTICE: Expressions are skipped as client does not evaluate them.
+    expect(expressionLiteral.field).toStrictEqual('expressionLiteral');
+    expect(expressionLiteral.type).toStrictEqual('Date');
+    expect(expressionLiteral.isRequired).toStrictEqual(false);
+    expect(expressionLiteral.defaultValue).toBeUndefined();
+
+    // NOTICE: Function calls are skipped as client does not evaluate them.
+    expect(functionLiteral.field).toStrictEqual('functionLiteral');
+    expect(functionLiteral.type).toStrictEqual('Date');
+    expect(functionLiteral.isRequired).toStrictEqual(false);
+    expect(functionLiteral.defaultValue).toBeUndefined();
+
+    // NOTICE: Other simple values are kept as is.
+    expect(intLiteral.field).toStrictEqual('intLiteral');
+    expect(intLiteral.type).toStrictEqual('Number');
+    expect(intLiteral.isRequired).toBeUndefined();
+    expect(intLiteral.defaultValue).toStrictEqual('42');
+
+    expect(stringLiteral.field).toStrictEqual('stringLiteral');
+    expect(stringLiteral.type).toStrictEqual('String');
+    expect(stringLiteral.isRequired).toBeUndefined();
+    expect(stringLiteral.defaultValue).toStrictEqual('\'default_value\'');
+  });
 });
