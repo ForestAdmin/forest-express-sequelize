@@ -139,8 +139,21 @@ function ApimapFieldBuilder(model, column, options) {
       // NOTICE: Do not use the primary keys default values to prevent issues with UUID fields
       //         (defaultValue: DataTypes.UUIDV4).
       } else if (!_.includes(_.keys(model.primaryKeys), column.fieldName)) {
-        if (typeof column.defaultValue === 'object' && Object.prototype.hasOwnProperty.call(column.defaultValue, 'val')) {
-          schema.defaultValue = column.defaultValue.val;
+        // FIXME: `column.defaultValue instanceof Sequelize.Utils.Literal` fails for unknown reason.
+        // NOTICE: Remove Sequelize.Utils.Literal wrapper to display actual value in UI.
+        if (_.isObject(column.defaultValue) && (column.defaultValue.constructor.name === 'Literal')) {
+          // NOTICE: do not export literal default values to UI by default
+          schema.defaultValue = undefined;
+
+          // NOTICE: Keep only simple values, and hide expressions.
+          const defaultValue = column.defaultValue.val;
+          if ((_.isBoolean(defaultValue))
+           || (_.isNumber(defaultValue))
+           || (['true', 'false'].includes(defaultValue.toLowerCase()))
+           || (!_.isNaN(_.toNumber(defaultValue)))
+           || (defaultValue.match(/^".*"$/) || defaultValue.match(/^'.*'$/) || defaultValue.match(/^`.*`$/))) {
+            schema.defaultValue = defaultValue;
+          }
         } else {
           schema.defaultValue = column.defaultValue;
         }
