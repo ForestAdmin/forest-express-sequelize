@@ -106,6 +106,31 @@ function ApimapFieldBuilder(model, column, options) {
     return validations;
   }
 
+
+  // NOTICE: Remove Sequelize.Utils.Literal wrapper to display actual value in UI.
+  //         Keep only simple values, and hide expressions.
+  //         Do not export literal values to UI by default.
+  function unwrapLiteral(literalValue) {
+    let value;
+
+    if (_.isString(literalValue)) {
+      if (['true', 'false'].includes(literalValue.toLowerCase())) {
+        value = Boolean(literalValue);
+      } else if (!_.isNaN(_.toNumber(literalValue))) {
+        value = _.toNumber(literalValue);
+        // NOTICE: Only single quotes are widely considered valid to delimitate string values.
+      } else if (literalValue.match(/^'.*'$/)) {
+        value = literalValue.substring(1, literalValue.length - 1);
+      }
+    } else if (_.isBoolean(literalValue)) {
+      value = Boolean(literalValue);
+    } else if ((_.isNumber(literalValue))) {
+      value = literalValue;
+    }
+
+    return value;
+  }
+
   this.perform = () => {
     const schema = {
       field: column.fieldName,
@@ -140,20 +165,8 @@ function ApimapFieldBuilder(model, column, options) {
       //         (defaultValue: DataTypes.UUIDV4).
       } else if (!_.includes(_.keys(model.primaryKeys), column.fieldName)) {
         // FIXME: `column.defaultValue instanceof Sequelize.Utils.Literal` fails for unknown reason.
-        // NOTICE: Remove Sequelize.Utils.Literal wrapper to display actual value in UI.
         if (_.isObject(column.defaultValue) && (column.defaultValue.constructor.name === 'Literal')) {
-          // NOTICE: do not export literal default values to UI by default
-          schema.defaultValue = undefined;
-
-          // NOTICE: Keep only simple values, and hide expressions.
-          const defaultValue = column.defaultValue.val;
-          if ((_.isBoolean(defaultValue))
-           || (_.isNumber(defaultValue))
-           || (['true', 'false'].includes(defaultValue.toLowerCase()))
-           || (!_.isNaN(_.toNumber(defaultValue)))
-           || (defaultValue.match(/^".*"$/) || defaultValue.match(/^'.*'$/) || defaultValue.match(/^`.*`$/))) {
-            schema.defaultValue = defaultValue;
-          }
+          schema.defaultValue = unwrapLiteral(column.defaultValue.val);
         } else {
           schema.defaultValue = column.defaultValue;
         }
