@@ -44,6 +44,8 @@ module.exports = (model, opts) => {
     return schema;
   }
 
+  // FIXME: In `model.rawAttributes`, TEXT default values loose their inclosing quotes.
+  //        eg: "'quoted string'" => "quoted string"
   const columns = P
     .each(_.values(model.rawAttributes), (column) => {
       try {
