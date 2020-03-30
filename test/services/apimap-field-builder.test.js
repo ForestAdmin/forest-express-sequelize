@@ -118,7 +118,7 @@ describe('services > apimap-field-builder', () => {
     });
 
     it('should handle quoted values', async () => {
-      expect.assertions(20);
+      expect.assertions(24);
 
       const fieldDefinitions = {
         boolStringLiteral: {
@@ -137,7 +137,11 @@ describe('services > apimap-field-builder', () => {
           type: Sequelize.DataTypes.INTEGER,
           defaultValue: Sequelize.literal('42'),
         },
-        stringLiteral: {
+        stringIntLiteral: {
+          type: Sequelize.DataTypes.STRING,
+          defaultValue: Sequelize.literal('042'),
+        },
+        stringStringLiteral: {
           type: Sequelize.DataTypes.STRING,
           defaultValue: Sequelize.literal('\'default_value\''),
         },
@@ -147,7 +151,8 @@ describe('services > apimap-field-builder', () => {
         expressionLiteral,
         functionLiteral,
         intStringLiteral,
-        stringLiteral,
+        stringIntLiteral,
+        stringStringLiteral,
       } = await initializeField(fieldDefinitions);
 
       // NOTICE: Expressions are skipped as client does not evaluate them.
@@ -173,10 +178,15 @@ describe('services > apimap-field-builder', () => {
       expect(intStringLiteral.isRequired).toBeUndefined();
       expect(intStringLiteral.defaultValue).toStrictEqual(42);
 
-      expect(stringLiteral.field).toStrictEqual('stringLiteral');
-      expect(stringLiteral.type).toStrictEqual('String');
-      expect(stringLiteral.isRequired).toBeUndefined();
-      expect(stringLiteral.defaultValue).toStrictEqual('default_value');
+      expect(stringIntLiteral.field).toStrictEqual('stringIntLiteral');
+      expect(stringIntLiteral.type).toStrictEqual('String');
+      expect(stringIntLiteral.isRequired).toBeUndefined();
+      expect(stringIntLiteral.defaultValue).toStrictEqual('042');
+
+      expect(stringStringLiteral.field).toStrictEqual('stringStringLiteral');
+      expect(stringStringLiteral.type).toStrictEqual('String');
+      expect(stringStringLiteral.isRequired).toBeUndefined();
+      expect(stringStringLiteral.defaultValue).toStrictEqual('default_value');
     });
   });
 });

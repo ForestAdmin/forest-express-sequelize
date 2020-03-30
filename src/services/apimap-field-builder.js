@@ -110,14 +110,18 @@ function ApimapFieldBuilder(model, column, options) {
   // NOTICE: Remove Sequelize.Utils.Literal wrapper to display actual value in UI.
   //         Keep only simple values, and hide expressions.
   //         Do not export literal values to UI by default.
-  function unwrapLiteral(literalValue) {
+  function unwrapLiteral(literalValue, columnType) {
     let value;
 
     if (_.isString(literalValue)) {
       if (['true', 'false'].includes(literalValue.toLowerCase())) {
         value = Boolean(literalValue);
       } else if (!_.isNaN(_.toNumber(literalValue))) {
-        value = _.toNumber(literalValue);
+        if (columnType instanceof DataTypes.NUMBER) {
+          value = _.toNumber(literalValue);
+        } else {
+          value = literalValue;
+        }
         // NOTICE: Only single quotes are widely considered valid to delimitate string values.
       } else if (literalValue.match(/^'.*'$/)) {
         value = literalValue.substring(1, literalValue.length - 1);
@@ -166,7 +170,7 @@ function ApimapFieldBuilder(model, column, options) {
       } else if (!_.includes(_.keys(model.primaryKeys), column.fieldName)) {
         // FIXME: `column.defaultValue instanceof Sequelize.Utils.Literal` fails for unknown reason.
         if (_.isObject(column.defaultValue) && (column.defaultValue.constructor.name === 'Literal')) {
-          schema.defaultValue = unwrapLiteral(column.defaultValue.val);
+          schema.defaultValue = unwrapLiteral(column.defaultValue.val, column.type);
         } else {
           schema.defaultValue = column.defaultValue;
         }
