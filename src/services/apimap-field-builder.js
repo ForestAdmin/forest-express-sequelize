@@ -126,9 +126,7 @@ function ApimapFieldBuilder(model, column, options) {
       } else if (literalValue.match(/^'.*'$/)) {
         value = literalValue.substring(1, literalValue.length - 1);
       }
-    } else if (_.isBoolean(literalValue)) {
-      value = Boolean(literalValue);
-    } else if ((_.isNumber(literalValue))) {
+    } else if (_.isBoolean(literalValue) || _.isNumber(literalValue)) {
       value = literalValue;
     }
 
