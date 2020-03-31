@@ -60,18 +60,61 @@ describe('services > apimap-field-builder', () => {
   });
 
   describe('on other default values', () => {
-    it('should handle raw values', async () => {
-      expect.assertions(16);
+    it('should handle array values', async () => {
+      expect.assertions(4);
 
       const fieldDefinitions = {
         arrayValue: {
           type: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.INTEGER),
           defaultValue: [0, 21, 42],
         },
+      };
+      const { arrayValue } = await initializeField(fieldDefinitions);
+
+      expect(arrayValue.field).toStrictEqual('arrayValue');
+      expect(arrayValue.type).toStrictEqual(['Number']);
+      expect(arrayValue.isRequired).toBeUndefined();
+      expect(arrayValue.defaultValue).toStrictEqual([0, 21, 42]);
+    });
+
+    it('should handle boolean values', async () => {
+      expect.assertions(4);
+
+      const fieldDefinitions = {
+        boolValue: {
+          type: Sequelize.DataTypes.BOOLEAN,
+          defaultValue: true,
+        },
+      };
+      const { boolValue } = await initializeField(fieldDefinitions);
+
+      expect(boolValue.field).toStrictEqual('boolValue');
+      expect(boolValue.type).toStrictEqual('Boolean');
+      expect(boolValue.isRequired).toBeUndefined();
+      expect(boolValue.defaultValue).toStrictEqual(true);
+    });
+
+    it('should handle integer values', async () => {
+      expect.assertions(4);
+
+      const fieldDefinitions = {
         intValue: {
           type: Sequelize.DataTypes.INTEGER,
           defaultValue: 42,
         },
+      };
+      const { intValue } = await initializeField(fieldDefinitions);
+
+      expect(intValue.field).toStrictEqual('intValue');
+      expect(intValue.type).toStrictEqual('Number');
+      expect(intValue.isRequired).toBeUndefined();
+      expect(intValue.defaultValue).toStrictEqual(42);
+    });
+
+    it('should handle json values', async () => {
+      expect.assertions(4);
+
+      const fieldDefinitions = {
         jsonValue: {
           type: Sequelize.DataTypes.JSONB,
           defaultValue: {
@@ -79,27 +122,8 @@ describe('services > apimap-field-builder', () => {
             lorem: 'ipsum',
           },
         },
-        stringValue: {
-          type: Sequelize.DataTypes.STRING,
-          defaultValue: 'default_value',
-        },
       };
-      const {
-        arrayValue,
-        intValue,
-        jsonValue,
-        stringValue,
-      } = await initializeField(fieldDefinitions);
-
-      expect(arrayValue.field).toStrictEqual('arrayValue');
-      expect(arrayValue.type).toStrictEqual(['Number']);
-      expect(arrayValue.isRequired).toBeUndefined();
-      expect(arrayValue.defaultValue).toStrictEqual([0, 21, 42]);
-
-      expect(intValue.field).toStrictEqual('intValue');
-      expect(intValue.type).toStrictEqual('Number');
-      expect(intValue.isRequired).toBeUndefined();
-      expect(intValue.defaultValue).toStrictEqual(42);
+      const { jsonValue } = await initializeField(fieldDefinitions);
 
       expect(jsonValue.field).toStrictEqual('jsonValue');
       expect(jsonValue.type).toStrictEqual('Json');
@@ -108,6 +132,18 @@ describe('services > apimap-field-builder', () => {
         value: 42,
         lorem: 'ipsum',
       });
+    });
+
+    it('should handle string values', async () => {
+      expect.assertions(4);
+
+      const fieldDefinitions = {
+        stringValue: {
+          type: Sequelize.DataTypes.STRING,
+          defaultValue: 'default_value',
+        },
+      };
+      const { stringValue } = await initializeField(fieldDefinitions);
 
       expect(stringValue.field).toStrictEqual('stringValue');
       expect(stringValue.type).toStrictEqual('String');
@@ -117,28 +153,33 @@ describe('services > apimap-field-builder', () => {
   });
 
   describe('on Sequelize.Utils.Literal values', () => {
-    it('should handle simple values', async () => {
-      expect.assertions(8);
+    it('should handle boolean values', async () => {
+      expect.assertions(4);
 
       const fieldDefinitions = {
         boolLiteral: {
           type: Sequelize.DataTypes.BOOLEAN,
           defaultValue: Sequelize.literal(true),
         },
-        intLiteral: {
-          type: Sequelize.DataTypes.INTEGER,
-          defaultValue: Sequelize.literal(42),
-        },
       };
-      const {
-        boolLiteral,
-        intLiteral,
-      } = await initializeField(fieldDefinitions);
+      const { boolLiteral } = await initializeField(fieldDefinitions);
 
       expect(boolLiteral.field).toStrictEqual('boolLiteral');
       expect(boolLiteral.type).toStrictEqual('Boolean');
       expect(boolLiteral.isRequired).toBeUndefined();
       expect(boolLiteral.defaultValue).toStrictEqual(true);
+    });
+
+    it('should handle integer values', async () => {
+      expect.assertions(4);
+
+      const fieldDefinitions = {
+        intLiteral: {
+          type: Sequelize.DataTypes.INTEGER,
+          defaultValue: Sequelize.literal(42),
+        },
+      };
+      const { intLiteral } = await initializeField(fieldDefinitions);
 
       expect(intLiteral.field).toStrictEqual('intLiteral');
       expect(intLiteral.type).toStrictEqual('Number');
@@ -146,7 +187,7 @@ describe('services > apimap-field-builder', () => {
       expect(intLiteral.defaultValue).toStrictEqual(42);
     });
 
-    it('should handle quoted values', async () => {
+    it('should handle string values', async () => {
       expect.assertions(24);
 
       const fieldDefinitions = {
