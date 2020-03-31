@@ -61,24 +61,53 @@ describe('services > apimap-field-builder', () => {
 
   describe('on other default values', () => {
     it('should handle raw values', async () => {
-      expect.assertions(8);
+      expect.assertions(16);
 
       const fieldDefinitions = {
+        arrayValue: {
+          type: Sequelize.DataTypes.ARRAY(Sequelize.DataTypes.INTEGER),
+          defaultValue: [0, 21, 42],
+        },
         intValue: {
           type: Sequelize.DataTypes.INTEGER,
           defaultValue: 42,
+        },
+        jsonValue: {
+          type: Sequelize.DataTypes.JSONB,
+          defaultValue: {
+            value: 42,
+            lorem: 'ipsum',
+          },
         },
         stringValue: {
           type: Sequelize.DataTypes.STRING,
           defaultValue: 'default_value',
         },
       };
-      const { intValue, stringValue } = await initializeField(fieldDefinitions);
+      const {
+        arrayValue,
+        intValue,
+        jsonValue,
+        stringValue,
+      } = await initializeField(fieldDefinitions);
+
+      expect(arrayValue.field).toStrictEqual('arrayValue');
+      expect(arrayValue.type).toStrictEqual(['Number']);
+      expect(arrayValue.isRequired).toBeUndefined();
+      expect(arrayValue.defaultValue).toStrictEqual([0, 21, 42]);
 
       expect(intValue.field).toStrictEqual('intValue');
       expect(intValue.type).toStrictEqual('Number');
       expect(intValue.isRequired).toBeUndefined();
       expect(intValue.defaultValue).toStrictEqual(42);
+
+      expect(jsonValue.field).toStrictEqual('jsonValue');
+      expect(jsonValue.type).toStrictEqual('Json');
+      expect(jsonValue.isRequired).toBeUndefined();
+      expect(jsonValue.defaultValue).toStrictEqual({
+        value: 42,
+        lorem: 'ipsum',
+      });
 
       expect(stringValue.field).toStrictEqual('stringValue');
       expect(stringValue.type).toStrictEqual('String');
