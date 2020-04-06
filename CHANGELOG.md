@@ -2,7 +2,7 @@
 
 ## [Unreleased]
 ### Changed
-- Dependency - Upgrade the `forest-express` dependency for intercom integration conversations retreival.
+- Dependency - Upgrade the `forest-express` dependency for intercom integration conversations retrieval.
 
 ### Fixed
 - Security - Fix potential vulnerability upgrading `acorn` dependency.
