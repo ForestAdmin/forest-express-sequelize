@@ -1,12 +1,10 @@
 # Change Log
 
 ## [Unreleased]
-### Changed
-- Dependency - Upgrade the `forest-express` dependency for intercom integration conversations retrieval.
-
 ### Fixed
 - Security - Fix potential vulnerability upgrading `acorn` dependency.
 - Technical - Unwrap default values in APIMap field builder.
+- Integrations - Fix intercom conversations display with API v2.
 
 ## RELEASE 6.0.0 - 2020-03-17
 
