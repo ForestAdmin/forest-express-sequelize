@@ -3,7 +3,7 @@
 ## [Unreleased]
 
 ## RELEASE 6.0.3 - 2020-04-14
-### Changed
+### Changed
 - Technical - Introduce conventional commits.
 - Technical - Adapt release manager to conventional commits.
 
