@@ -15,7 +15,7 @@ function ResourceUpdater(model, params, newRecord) {
       .perform()
       .then((record) => {
         if (record) {
-          _.each(newRecord, (value, attribute) => {
+          _.forIn(newRecord, (value, attribute) => {
             record[attribute] = value;
           });
 
