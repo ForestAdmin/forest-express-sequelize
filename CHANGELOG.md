@@ -1,7 +1,7 @@
 # Change Log
 
 ## [Unreleased]
-### Fixed
+### Added
 - Integrations - Allow user to choose custom mapping values for intercom integration.
 
 ## RELEASE 6.0.1 - 2020-04-06
