@@ -4554,7 +4554,7 @@ jest@26.0.1:
   resolved "https://registry.yarnpkg.com/js-tokens/-/js-tokens-4.0.0.tgz#19203fb59991df98e3a287050d4647cdeaf32499"
   integrity sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==
 
-js-yaml@^3.13.0, js-yaml@^3.13.1:
+js-yaml@^3.13.1:
   version "3.13.1"
   resolved "https://registry.yarnpkg.com/js-yaml/-/js-yaml-3.13.1.tgz#aff151b30bfdfa8e49e05da22e7415e9dfa37847"
   integrity sha512-YfbcO7jXDdyj0DGxYVSlSeQNHbD7XPWvrVWeVUujrQEoZzWJIRrCPoyk6kL6IAjAG2IolMK4T0hNUe0HOUs5Jw==
@@ -6361,14 +6361,14 @@ seq-queue@^0.0.5:
   resolved "https://registry.yarnpkg.com/seq-queue/-/seq-queue-0.0.5.tgz#d56812e1c017a6e4e7c3e3a37a1da6d78dd3c93e"
   integrity sha1-1WgS4cAXpuTnw+Ojeh2m143TyT4=
 
-sequelize-fixtures@0.10.0:
-  version "0.10.0"
-  resolved "https://registry.yarnpkg.com/sequelize-fixtures/-/sequelize-fixtures-0.10.0.tgz#14ae772c2bec87f540aa04526213d846e3d0ae09"
-  integrity sha512-brSXWaZlwHk0FHG2V13JMoArr0oQvzoFrFFXCRWE1vI2v9OV05Tud9vl3SHtfXzIZYaLmw2PWK7z2FFkr+v9eQ==
+sequelize-fixtures@1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/sequelize-fixtures/-/sequelize-fixtures-1.1.1.tgz#287cdbdc73c27ab1ba5e3b41849dd71be800bdd1"
+  integrity sha512-/uLE5osIpMgGtPRB1G7qV1xn6TxXZahVkqeP8Q6b4uSDwhLJDLiSxopAwPso7oYVgS7nMQIvDBzM7eZyWeInPw==
   dependencies:
     bluebird "^2.4.2"
     glob "~7.0.5"
-    js-yaml "^3.13.0"
+    js-yaml "^3.13.1"
     object-assign "^4.0.1"
 
 sequelize-pool@^2.3.0:
