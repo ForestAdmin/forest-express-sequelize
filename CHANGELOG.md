@@ -4,6 +4,9 @@
 ### Changed
 - Technical - Introduce conventional commits.
 
+### Fixed
+- Records Update - Collections having a "length" field can now have their record updated.
+
 ## RELEASE 6.0.2 - 2020-04-14
 ### Added
 - Integrations - Allow user to choose custom mapping values for intercom integration.
