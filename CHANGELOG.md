@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Make the CI lint the commit messages.
 
 ## RELEASE 6.0.3 - 2020-04-14
 ### Changed
