@@ -3,6 +3,7 @@
 ## [Unreleased]
 ### Changed
 - Technical - Introduce conventional commits.
+- Technical - Adapt release manager to conventional commits.
 
 ### Fixed
 - Records Update - Collections having a "length" field can now have their record updated.
