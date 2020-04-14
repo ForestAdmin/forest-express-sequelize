@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const Interface = require('forest-express');
 const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
@@ -15,9 +14,7 @@ function ResourceUpdater(model, params, newRecord) {
       .perform()
       .then((record) => {
         if (record) {
-          _.each(newRecord, (value, attribute) => {
-            record[attribute] = value;
-          });
+          Object.assign(record, newRecord);
 
           return record.validate()
             .catch((error) => { throw new ErrorHTTP422(error.message); })
