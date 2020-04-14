@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Introduce conventional commits.
 
 ## RELEASE 6.0.2 - 2020-04-14
 ### Added
