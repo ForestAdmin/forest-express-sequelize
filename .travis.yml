@@ -16,5 +16,6 @@ before_install:
   - docker ps
 
 script:
+  - commitlint-travis
   - yarn lint
   - sleep 20; yarn test --forceExit
