@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 6.1.0 - 2020-04-17
 ### Changed
 - Technical - Make the CI lint the commit messages.
 - Smart Action - Allow users to protect their smart action APIs against unauthorized usage.
