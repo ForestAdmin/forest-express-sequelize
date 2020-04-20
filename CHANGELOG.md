@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Fixed
+- Composite Key - Composite keys using UUID are now properly parsed.
 
 ## RELEASE 6.1.0 - 2020-04-17
 ### Changed
