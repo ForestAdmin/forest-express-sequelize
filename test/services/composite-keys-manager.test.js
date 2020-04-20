@@ -19,6 +19,11 @@ describe('services > composite-keys-manager', () => {
       const primaryKeyValues = compositeKeyManager.getPrimaryKeyValues('1-null');
       expect(primaryKeyValues).toStrictEqual(['1', null]);
     });
+    it('should return a list of UUID for composite key composed with UUID', () => {
+      expect.assertions(1);
+      const primaryKeyValues = new CompositeKeyManager({ primaryKeys: ['a', 'b'] }).getPrimaryKeyValues('004ad17a-8304-11ea-9ba9-0242ac110002-131e2a9a-8304-11ea-9ba9-0242ac110002');
+      expect(primaryKeyValues).toStrictEqual(['004ad17a-8304-11ea-9ba9-0242ac110002', '131e2a9a-8304-11ea-9ba9-0242ac110002']);
+    });
   });
 
   describe('getRecordConditions', () => {

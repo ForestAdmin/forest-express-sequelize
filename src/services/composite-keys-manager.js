@@ -1,12 +1,21 @@
 import _ from 'lodash';
 import Operators from '../utils/operators';
 
+const REGEX_UUID = /[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}/g;
+
 function CompositeKeysManager(model, schema, record) {
   const GLUE = '-';
 
   this.getPrimaryKeyValues = function getPrimaryKeyValues(recordId) {
-    const primaryKeyValues = recordId.split(GLUE);
+    let primaryKeyValues = recordId.split(GLUE);
 
+    // NOTICE: In the specific case of a composite primary key using UUID,
+    //         this key would contains the GLUE character in its definition,
+    //         Instead of just splitting, all the keys can be retrieved
+    //         be directly searching UUID
+    if (model && primaryKeyValues.length !== _.keys(model.primaryKeys).length) {
+      primaryKeyValues = recordId.match(REGEX_UUID);
+    }
     // NOTICE: Prevent liana to crash when a composite primary keys is null,
     //         this behaviour should be avoid instead of fixed.
     primaryKeyValues.forEach((key, index) => {
