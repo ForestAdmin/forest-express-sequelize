@@ -8,14 +8,17 @@ function CompositeKeysManager(model, schema, record) {
 
   this.getPrimaryKeyValues = function getPrimaryKeyValues(recordId) {
     let primaryKeyValues = recordId.split(GLUE);
+    const modelPrimaryKeys = model && model.primaryKeys ? _.keys(model.primaryKeys) : [];
+    const primaryKeyValuesMatchingUUID = recordId.match(REGEX_UUID) || [];
 
-    // NOTICE: In the specific case of a composite primary key using UUID,
-    //         this key would contains the GLUE character in its definition,
-    //         Instead of just splitting, all the keys can be retrieved
-    //         be directly searching UUID
-    if (model && primaryKeyValues.length !== _.keys(model.primaryKeys).length) {
-      primaryKeyValues = recordId.match(REGEX_UUID);
+    // NOTICE: When composite key use UUID, `.split(GLUE)` will not match the
+    //         expected number of primary keys. In that specific case, a UUID
+    //         regex should be enough to retrieve the composite keys.
+    if (modelPrimaryKeys.length !== primaryKeyValues.length
+      && modelPrimaryKeys.length === primaryKeyValuesMatchingUUID.length) {
+      primaryKeyValues = primaryKeyValuesMatchingUUID;
     }
+
     // NOTICE: Prevent liana to crash when a composite primary keys is null,
     //         this behaviour should be avoid instead of fixed.
     primaryKeyValues.forEach((key, index) => {

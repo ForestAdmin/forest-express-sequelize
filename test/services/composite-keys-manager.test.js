@@ -3,7 +3,8 @@ import CompositeKeyManager from '../../src/services/composite-keys-manager';
 
 describe('services > composite-keys-manager', () => {
   describe('getPrimaryKeyValues', () => {
-    const compositeKeyManager = new CompositeKeyManager();
+    const model = { primaryKeys: { actorId: {}, filmId: {} } };
+    const compositeKeyManager = new CompositeKeyManager(model);
     it('should return one value for non composite key', () => {
       expect.assertions(1);
       const primaryKeyValues = compositeKeyManager.getPrimaryKeyValues('1');
@@ -21,7 +22,7 @@ describe('services > composite-keys-manager', () => {
     });
     it('should return a list of UUID for composite key composed with UUID', () => {
       expect.assertions(1);
-      const primaryKeyValues = new CompositeKeyManager({ primaryKeys: ['a', 'b'] }).getPrimaryKeyValues('004ad17a-8304-11ea-9ba9-0242ac110002-131e2a9a-8304-11ea-9ba9-0242ac110002');
+      const primaryKeyValues = compositeKeyManager.getPrimaryKeyValues('004ad17a-8304-11ea-9ba9-0242ac110002-131e2a9a-8304-11ea-9ba9-0242ac110002');
       expect(primaryKeyValues).toStrictEqual(['004ad17a-8304-11ea-9ba9-0242ac110002', '131e2a9a-8304-11ea-9ba9-0242ac110002']);
     });
   });
