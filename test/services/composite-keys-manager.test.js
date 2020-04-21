@@ -11,12 +11,12 @@ describe('services > composite-keys-manager', () => {
     });
     it('should return two values for composite key string with two values', () => {
       expect.assertions(1);
-      const primaryKeyValues = compositeKeyManager.getPrimaryKeyValues('1-2');
+      const primaryKeyValues = compositeKeyManager.getPrimaryKeyValues('1|2');
       expect(primaryKeyValues).toStrictEqual(['1', '2']);
     });
     it('should return null if `null` string is present', () => {
       expect.assertions(1);
-      const primaryKeyValues = compositeKeyManager.getPrimaryKeyValues('1-null');
+      const primaryKeyValues = compositeKeyManager.getPrimaryKeyValues('1|null');
       expect(primaryKeyValues).toStrictEqual(['1', null]);
     });
   });
@@ -33,7 +33,7 @@ describe('services > composite-keys-manager', () => {
       expect.assertions(1);
       const model = { primaryKeys: { actorId: {}, filmId: {} } };
       const compositeKeyManager = new CompositeKeyManager(model);
-      const conditions = compositeKeyManager.getRecordConditions('1-2');
+      const conditions = compositeKeyManager.getRecordConditions('1|2');
       expect(conditions).toStrictEqual({ actorId: '1', filmId: '2' });
     });
   });
@@ -51,7 +51,7 @@ describe('services > composite-keys-manager', () => {
       expect.assertions(1);
       const model = { primaryKeys: { actorId: {}, filmId: {} } };
       const compositeKeyManager = new CompositeKeyManager(model);
-      const conditions = compositeKeyManager.getRecordsConditions(['1-2', '3-4'], sequelizeOptions);
+      const conditions = compositeKeyManager.getRecordsConditions(['1|2', '3|4'], sequelizeOptions);
       expect(conditions).toStrictEqual({ [Op.or]: [{ actorId: '1', filmId: '2' }, { actorId: '3', filmId: '4' }] });
     });
   });
@@ -72,7 +72,7 @@ describe('services > composite-keys-manager', () => {
       const record = { actorId: '1', filmId: '2' };
       const compositeKeyManager = new CompositeKeyManager(model, null, record);
       const compositePrimary = compositeKeyManager.createCompositePrimary();
-      expect(compositePrimary).toStrictEqual('1-2');
+      expect(compositePrimary).toStrictEqual('1|2');
     });
   });
 });

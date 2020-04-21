@@ -50,7 +50,7 @@ describe('services > resources-remover', () => {
         },
       };
       const sequelizeOptions = { sequelize: Sequelize };
-      await new ResourcesRemover(new ActorFilm(), ['1-2', '3-4'], sequelizeOptions).perform();
+      await new ResourcesRemover(new ActorFilm(), ['1|2', '3|4'], sequelizeOptions).perform();
     });
   });
 });

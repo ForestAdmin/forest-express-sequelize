@@ -2,7 +2,7 @@ import _ from 'lodash';
 import Operators from '../utils/operators';
 
 function CompositeKeysManager(model, schema, record) {
-  const GLUE = '-';
+  const GLUE = '|';
 
   this.getPrimaryKeyValues = function getPrimaryKeyValues(recordId) {
     const primaryKeyValues = recordId.split(GLUE);
