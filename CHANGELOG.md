@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+
+## RELEASE 6.1.1 - 2020-04-27
 ### Fixed
 - Composite Key - Fix composite key generation to handle UUID.
 
