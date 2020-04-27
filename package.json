@@ -52,7 +52,7 @@
     "husky": "4.2.5",
     "jest": "24.9.0",
     "mysql2": "2.1.0",
-    "onchange": "6.0.0",
+    "onchange": "7.0.0",
     "pg": "7.10.0",
     "sequelize": "5.21.3",
     "sequelize-fixtures": "0.10.0",
