@@ -1541,11 +1541,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should retrieve the record', async () => {
           expect.assertions(2);
           const params = {
-            recordId: 'G@G#F@G@-Ggg23g242@',
+            recordId: 'G@G#F@G@|Ggg23g242@',
           };
           const log = await new ResourceGetter(models.log, params).perform();
           expect(log).not.toBeNull();
-          expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@-Ggg23g242@');
+          expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@|Ggg23g242@');
         });
       });
     });
@@ -1567,7 +1567,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should destroy the record', async () => {
           expect.assertions(1);
           const params = {
-            recordId: 'G@G#F@G@-Ggg23g242@',
+            recordId: 'G@G#F@G@|Ggg23g242@',
           };
           await new ResourceRemover(models.log, params).perform();
           const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
