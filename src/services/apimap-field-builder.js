@@ -151,7 +151,6 @@ function ApimapFieldBuilder(model, column, options) {
 
     // IT WORKS.
     if ((Array.isArray(schema.type) && schema.type[0] === 'Enum')) {
-      console.log(column.type, JSON.stringify(column));
       schema.enums = column.type.type.values;
     }
 

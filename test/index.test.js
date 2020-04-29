@@ -3,27 +3,7 @@ const Sequelize = require('sequelize');
 const sequelizeFixtures = require('sequelize-fixtures');
 const Interface = require('forest-express');
 const SchemaAdapter = require('../src/adapters/sequelize');
-
-const databaseOptions = {
-  logging: false,
-  pool: { maxConnections: 10, minConnections: 1 },
-};
-
-const sequelizePostgres = new Sequelize(
-  'postgres://forest:secret@localhost:5436/forest-express-sequelize-test',
-  databaseOptions,
-);
-
-const sequelizeMySQLMin = new Sequelize(
-  'mysql://forest:secret@localhost:8998/forest-express-sequelize-test',
-  databaseOptions,
-);
-
-const sequelizeMySQLMax = new Sequelize(
-  'mysql://forest:secret@localhost:8999/forest-express-sequelize-test',
-  databaseOptions,
-);
-
+const { sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax } = require('./databases');
 const PieStatGetter = require('../src/services/pie-stat-getter');
 const LineStatGetter = require('../src/services/line-stat-getter');
 const ResourcesGetter = require('../src/services/resources-getter');
@@ -323,7 +303,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sequelizeFixtures.loadFile(
               'test/fixtures/db.json',
               models,
-              { log: () => {} },
+              { log: () => { } },
             ));
       }
 
