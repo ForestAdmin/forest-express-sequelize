@@ -1,6 +1,9 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Technical - Patch CI configuration warnings.
+
 ### Fixed
 - Schema - Fix array of enums detection.
 
