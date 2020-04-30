@@ -150,7 +150,7 @@ function ApimapFieldBuilder(model, column, options) {
     }
 
     // NOTICE: Create enums from sub-type (for ['Enum'] type).
-    if ((Array.isArray(schema.type) && schema.type[0] === 'Enum')) {
+    if (Array.isArray(schema.type) && schema.type[0] === 'Enum') {
       schema.enums = column.type.type.values;
     }
 
