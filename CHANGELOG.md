@@ -4,6 +4,9 @@
 ### Changed
 - Technical - Patch CI configuration warnings.
 
+### Fixed
+- Schema - Fix array of enums detection.
+
 ## RELEASE 6.1.1 - 2020-04-27
 ### Fixed
 - Composite Key - Fix composite key generation to handle UUID.
