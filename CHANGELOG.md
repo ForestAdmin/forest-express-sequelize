@@ -3,6 +3,8 @@
 ## [Unreleased]
 ### Changed
 - Readme - Update the community badge.
+- Readme - Fix interface screenshots display.
+- Readme - Update and re-position the "How it works" section.
 
 ## RELEASE 6.1.2 - 2020-05-06
 ### Changed
