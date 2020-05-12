@@ -55,7 +55,7 @@
     "onchange": "6.0.0",
     "pg": "7.10.0",
     "sequelize": "5.21.3",
-    "sequelize-fixtures": "0.10.0",
+    "sequelize-fixtures": "1.1.1",
     "simple-git": "1.65.0"
   },
   "scripts": {

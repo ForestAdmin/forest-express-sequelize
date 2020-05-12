@@ -5,6 +5,7 @@
 - Readme - Update the community badge.
 - Readme - Fix interface screenshots display.
 - Readme - Update and re-position the "How it works" section.
+- Tests - Upgrade `sequelize-fixtures` dependency from 0.10.0 to 1.1.1
 
 ### Fixed
 - Security - Patch newly detected vulnerabilities.
