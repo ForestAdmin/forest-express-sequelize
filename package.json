@@ -42,6 +42,8 @@
     "@commitlint/config-conventional": "8.3.4",
     "@commitlint/travis-cli": "8.3.5",
     "@forestadmin/devops": "2.0.1",
+    "@semantic-release/changelog": "5.0.1",
+    "@semantic-release/git": "9.0.0",
     "babel-eslint": "10.0.3",
     "dotenv": "6.2.0",
     "eslint": "6.8.0",
@@ -54,6 +56,8 @@
     "mysql2": "2.1.0",
     "onchange": "6.0.0",
     "pg": "7.10.0",
+    "semantic-release": "17.0.7",
+    "semantic-release-slack-bot": "1.6.2",
     "sequelize": "5.21.3",
     "sequelize-fixtures": "1.1.1",
     "simple-git": "1.65.0"
