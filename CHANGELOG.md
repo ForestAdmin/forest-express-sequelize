@@ -1,6 +1,8 @@
 # Change Log
 
 ## [Unreleased]
+### Changed
+- Readme - Update the community badge.
 
 ## RELEASE 6.1.2 - 2020-05-06
 ### Changed
