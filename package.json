@@ -67,7 +67,6 @@
     "build:watch": "onchange 'src/**/*.js' -i -- yarn build",
     "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin scripts src test",
     "readme:update-coverage": "yarn test:coverage && node ./scripts/update-coverage.js",
-    "release": "yarn build && node ./scripts/release.js",
     "test": "jest",
     "test:coverage": "jest --coverage"
   }
