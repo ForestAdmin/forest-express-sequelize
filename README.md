@@ -42,10 +42,6 @@ and dynamically generates the Admin API hosted on your servers. The Forest Admin
 interface is a web application that handles communication between the admin
 user and your application data through the Admin API.
 
-
-## Documentation
-[https://docs.forestadmin.com/documentation/](https://docs.forestadmin.com/documentation/)
-
 ## Features
 
 ### CRUD
@@ -134,7 +130,6 @@ with an extensive activity log system.
 <img src="https://www.forestadmin.com/public/img/illustrations-dev/screens/ForestWebsite20-Activity.jpg" alt="Activity logs">
 
 ## Community
-
 
 👇 Join our Developers community for support and more
 
