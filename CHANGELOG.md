@@ -1,3 +1,10 @@
+## [6.1.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.1.3...v6.1.4) (2020-05-13)
+
+
+### Bug Fixes
+
+* **package:** publish on NPM with all the necessary code ([#430](https://github.com/ForestAdmin/forest-express-sequelize/issues/430)) ([8ad637a](https://github.com/ForestAdmin/forest-express-sequelize/commit/8ad637aafc67873494d52e2aeca149485ec0ded1))
+
 ## RELEASE 6.1.3 - 2020-05-12
 ### Changed
 - Readme - Update the community badge.
