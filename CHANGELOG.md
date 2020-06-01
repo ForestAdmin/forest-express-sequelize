@@ -1,3 +1,10 @@
+## [6.1.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.1.4...v6.1.5) (2020-06-01)
+
+
+### Bug Fixes
+
+* **dependencies:** update babel to fix compilation error introduced by node lts 12.17.0 [#440](https://github.com/ForestAdmin/forest-express-sequelize/issues/440) ([9ec8501](https://github.com/ForestAdmin/forest-express-sequelize/commit/9ec8501fb220cf188152e8e5622b457e252e4adb))
+
 ## [6.1.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.1.3...v6.1.4) (2020-05-13)
 
 
