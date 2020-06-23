@@ -1,3 +1,10 @@
+## [6.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.2.0...v6.2.1) (2020-06-23)
+
+
+### Bug Fixes
+
+* **services:** create and expose records remover ([#452](https://github.com/ForestAdmin/forest-express-sequelize/issues/452)) ([bde6657](https://github.com/ForestAdmin/forest-express-sequelize/commit/bde6657a6153f2739352c1f079ba40f3036d7bee))
+
 # [6.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.1.5...v6.2.0) (2020-06-02)
 
 
