@@ -164,18 +164,15 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
               const column = opts.sequelize.col(`${association.as}.${columnName}`);
 
               if (field.field === schemaAssociation.idField) {
+                let value = params.search;
+
+                // NOTICE: cast to Number to see if positive number
                 if (field.type === 'Number') {
-                  const value = parseInt(params.search, 10) || 0;
-                  if (value) {
-                    condition = opts.sequelize.where(
-                      column,
-                      ' = ',
-                      parseInt(params.search, 10) || 0,
-                    );
-                    hasExtendedConditions = true;
-                  }
-                } else if (params.search.match(REGEX_UUID)) {
-                  condition = opts.sequelize.where(column, ' = ', params.search);
+                  value = Number(value);
+                }
+
+                if (value) {
+                  condition = opts.sequelize.where(column, ' = ', value);
                   hasExtendedConditions = true;
                 }
               } else if (field.type === 'String') {
