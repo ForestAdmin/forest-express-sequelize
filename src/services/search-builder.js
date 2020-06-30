@@ -190,13 +190,13 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                   condition = getStringExtendedCondition(
                     modelAssociation.rawAttributes[field.field], value, column,
                   );
-                  hasExtendedConditions = condition !== {};
+                  hasExtendedConditions = !_.isEmpty(condition);
                 }
               } else if (field.type === 'String') {
                 condition = getStringExtendedCondition(
                   modelAssociation.rawAttributes[field.field], params.search, column,
                 );
-                hasExtendedConditions = condition !== {};
+                hasExtendedConditions = !_.isEmpty(condition);
               }
               or.push(condition);
             });
