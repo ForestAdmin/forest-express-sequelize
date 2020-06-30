@@ -54,6 +54,20 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     }
   }
 
+  function getStringExtendedCondition(attributes, value, column) {
+    let condition = {};
+
+    if (attributes && isUUID(DataTypes, attributes.type)) {
+      if (value.match(REGEX_UUID)) {
+        condition = opts.sequelize.where(column, '=', value);
+      }
+    } else {
+      condition = opts.sequelize.where(lowerIfNecessary(column), ' LIKE ', lowerIfNecessary(`%${value}%`));
+    }
+
+    return condition;
+  }
+
   this.getFieldsSearched = () => fieldsSearched;
 
   this.hasExtendedSearchConditions = () => hasExtendedConditions;
@@ -166,29 +180,23 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
               if (field.field === schemaAssociation.idField) {
                 let value = params.search;
 
-                // NOTICE: cast to Number to see if positive number
                 if (field.type === 'Number') {
                   value = Number(value);
-                }
-
-                if (value) {
-                  condition = opts.sequelize.where(column, ' = ', value);
-                  hasExtendedConditions = true;
-                }
-              } else if (field.type === 'String') {
-                if (modelAssociation.rawAttributes[field.field]
-                  && isUUID(DataTypes, modelAssociation.rawAttributes[field.field].type)) {
-                  if (params.search.match(REGEX_UUID)) {
-                    condition = opts.sequelize.where(column, '=', params.search);
+                  if (value) {
+                    condition = opts.sequelize.where(column, ' = ', value);
                     hasExtendedConditions = true;
                   }
-                } else {
-                  condition = opts.sequelize.where(
-                    lowerIfNecessary(column), ' LIKE ',
-                    lowerIfNecessary(`%${params.search}%`),
+                } else if (field.type === 'String') {
+                  condition = getStringExtendedCondition(
+                    modelAssociation.rawAttributes[field.field], value, column,
                   );
-                  hasExtendedConditions = true;
+                  hasExtendedConditions = condition !== {};
                 }
+              } else if (field.type === 'String') {
+                condition = getStringExtendedCondition(
+                  modelAssociation.rawAttributes[field.field], params.search, column,
+                );
+                hasExtendedConditions = condition !== {};
               }
               or.push(condition);
             });
