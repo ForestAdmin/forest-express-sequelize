@@ -1062,7 +1062,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "is present" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
-            expect.assertions(3);
+            expect.assertions(4);
             const params = _.clone(paramsAddressList);
             params.filters = JSON.stringify({
               field: 'country',
@@ -1090,7 +1090,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             });
             const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform();
-            expect(result[0]).toHaveLength(1);
+            expect(result[0]).toHaveLength(2);
           });
 
           it('should return the total records count', async () => {
@@ -1103,7 +1103,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             });
             const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .count();
-            expect(count).toStrictEqual(1);
+            expect(count).toStrictEqual(2);
           });
         });
 

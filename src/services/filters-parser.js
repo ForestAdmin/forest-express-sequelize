@@ -115,7 +115,13 @@ function FiltersParser(modelSchema, timezone, options) {
       case 'not_equal':
         return { [this.OPERATORS.NE]: value };
       case 'blank':
-        return { [this.OPERATORS.EQ]: null };
+        return {
+          [this.OPERATORS.OR]: [{
+            [this.OPERATORS.EQ]: null,
+          }, {
+            [this.OPERATORS.EQ]: '',
+          }],
+        };
       case 'equal':
         return { [this.OPERATORS.EQ]: value };
       default:

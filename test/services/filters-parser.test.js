@@ -66,7 +66,13 @@ describe('services > filters-parser', () => {
         expect(defaultFiltersParser.formatOperatorValue('not_equal', value)).toStrictEqual({ [OPERATORS.NE]: value });
         expect(defaultFiltersParser.formatOperatorValue('present', value)).toStrictEqual({ [OPERATORS.NE]: null });
         expect(defaultFiltersParser.formatOperatorValue('equal', value)).toStrictEqual({ [OPERATORS.EQ]: value });
-        expect(defaultFiltersParser.formatOperatorValue('blank', value)).toStrictEqual({ [OPERATORS.EQ]: null });
+        expect(defaultFiltersParser.formatOperatorValue('blank', value)).toStrictEqual({
+          [OPERATORS.OR]: [{
+            [OPERATORS.EQ]: null,
+          }, {
+            [OPERATORS.EQ]: '',
+          }],
+        });
       });
 
       it('should raise an error on unknown operator', () => {

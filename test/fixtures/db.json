@@ -54,6 +54,14 @@
     }
   },
   {
+    "model": "address",
+    "data": {
+      "id": 104,
+      "city": "London",
+      "country": ""
+    }
+  },
+  {
     "model": "user",
     "data": {
       "id": 102,
