@@ -2,7 +2,7 @@ import { BaseFiltersParser, BaseOperatorDateParser, Schemas } from 'forest-expre
 import Operators from '../utils/operators';
 import { NoMatchingOperatorError } from './errors';
 
-const { getReferenceField } = require('../utils/query');
+const { getReferenceSchema, getReferenceField } = require('../utils/query');
 
 function FiltersParser(modelSchema, timezone, options) {
   this.OPERATORS = new Operators(options);
@@ -26,7 +26,10 @@ function FiltersParser(modelSchema, timezone, options) {
       };
     }
 
-    return { [formatedField]: this.formatOperatorValue(condition.operator, condition.value) };
+    const isTextField = this.isTextField(condition.field);
+    return {
+      [formatedField]: this.formatOperatorValue(condition.operator, condition.value, isTextField),
+    };
   };
 
   this.formatAggregatorOperator = (aggregatorOperator) => {
@@ -92,7 +95,7 @@ function FiltersParser(modelSchema, timezone, options) {
     }
   };
 
-  this.formatOperatorValue = (operator, value) => {
+  this.formatOperatorValue = (operator, value, isTextField = false) => {
     switch (operator) {
       case 'not':
         return { [this.OPERATORS.NOT]: value };
@@ -115,13 +118,13 @@ function FiltersParser(modelSchema, timezone, options) {
       case 'not_equal':
         return { [this.OPERATORS.NE]: value };
       case 'blank':
-        return {
+        return isTextField ? {
           [this.OPERATORS.OR]: [{
             [this.OPERATORS.EQ]: null,
           }, {
             [this.OPERATORS.EQ]: '',
           }],
-        };
+        } : { [this.OPERATORS.EQ]: null };
       case 'equal':
         return { [this.OPERATORS.EQ]: value };
       default:
@@ -135,6 +138,25 @@ function FiltersParser(modelSchema, timezone, options) {
       return `$${getReferenceField(Schemas.schemas, modelSchema, associationName, fieldName)}$`;
     }
     return field;
+  };
+
+  this.isTextField = (field) => {
+    if (field.includes(':')) {
+      const [associationName, fieldName] = field.split(':');
+      const associationSchema = getReferenceSchema(
+        Schemas.schemas, modelSchema, associationName, fieldName,
+      );
+      if (associationSchema) {
+        return this.getFieldTypeFromSchema(associationSchema, field) === 'String';
+      }
+      return false;
+    }
+    return this.getFieldTypeFromSchema(modelSchema, field) === 'String';
+  };
+
+  this.getFieldTypeFromSchema = (schema, fieldName) => {
+    const fieldFound = schema.fields.find((field) => field.field === fieldName);
+    return fieldFound && fieldFound.type;
   };
 
   // NOTICE: Look for a previous interval condition matching the following:

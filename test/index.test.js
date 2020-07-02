@@ -59,6 +59,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     city: { type: Sequelize.STRING },
     country: { type: Sequelize.STRING },
     userId: { type: Sequelize.INTEGER },
+    archivedAt: { type: Sequelize.DATE },
   });
 
   models.addressWithUserAlias = sequelize.define('addressWithUserAlias', {
@@ -1098,6 +1099,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const params = _.clone(paramsAddressCount);
             params.filters = JSON.stringify({
               field: 'country',
+              operator: 'blank',
+              value: null,
+            });
+            const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
+              .count();
+            expect(count).toStrictEqual(2);
+          });
+        });
+
+        describe('with a "is blank" condition on a date field', () => {
+          it('should generate a valid SQL query', async () => {
+            expect.assertions(1);
+            const params = _.clone(paramsAddressList);
+            params.filters = JSON.stringify({
+              field: 'archivedAt',
+              operator: 'blank',
+              value: null,
+            });
+            const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(2);
+          });
+
+          it('should return the total records count', async () => {
+            expect.assertions(1);
+            const params = _.clone(paramsAddressCount);
+            params.filters = JSON.stringify({
+              field: 'archivedAt',
               operator: 'blank',
               value: null,
             });
