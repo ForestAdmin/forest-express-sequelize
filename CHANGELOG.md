@@ -1,3 +1,10 @@
+# [6.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.2.1...v6.3.0) (2020-07-02)
+
+
+### Features
+
+* **filter:** is blank now also filter empty strings ([#458](https://github.com/ForestAdmin/forest-express-sequelize/issues/458)) ([d563942](https://github.com/ForestAdmin/forest-express-sequelize/commit/d563942781a0b7d644224b4b5483c7f4d39cc5ea))
+
 ## [6.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.2.0...v6.2.1) (2020-06-23)
 
 
