@@ -1,3 +1,10 @@
+## [6.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.0...v6.3.1) (2020-07-06)
+
+
+### Bug Fixes
+
+* **search:** return expected data on extended search on relations having string primary key ([#455](https://github.com/ForestAdmin/forest-express-sequelize/issues/455)) ([1fa13e8](https://github.com/ForestAdmin/forest-express-sequelize/commit/1fa13e8bd8cd5e3ba8adb8597d0308b8922af3ac))
+
 # [6.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.2.1...v6.3.0) (2020-07-02)
 
 
