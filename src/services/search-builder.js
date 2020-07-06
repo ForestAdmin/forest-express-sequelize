@@ -54,6 +54,18 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     }
   }
 
+  function getStringExtendedCondition(attributes, value, column) {
+    if (attributes && isUUID(DataTypes, attributes.type)) {
+      if (!value.match(REGEX_UUID)) {
+        return null;
+      }
+
+      return opts.sequelize.where(column, '=', value);
+    }
+
+    return opts.sequelize.where(lowerIfNecessary(column), ' LIKE ', lowerIfNecessary(`%${value}%`));
+  }
+
   this.getFieldsSearched = () => fieldsSearched;
 
   this.hasExtendedSearchConditions = () => hasExtendedConditions;
@@ -159,7 +171,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 return;
               }
 
-              let condition = {};
+              let condition = null;
               const columnName = field.columnName || field.field;
               const column = opts.sequelize.col(`${association.as}.${columnName}`);
 
@@ -167,33 +179,25 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
                 if (field.type === 'Number') {
                   const value = parseInt(params.search, 10) || 0;
                   if (value) {
-                    condition = opts.sequelize.where(
-                      column,
-                      ' = ',
-                      parseInt(params.search, 10) || 0,
-                    );
+                    condition = opts.sequelize.where(column, ' = ', value);
                     hasExtendedConditions = true;
                   }
-                } else if (params.search.match(REGEX_UUID)) {
-                  condition = opts.sequelize.where(column, ' = ', params.search);
-                  hasExtendedConditions = true;
+                } else if (field.type === 'String') {
+                  condition = getStringExtendedCondition(
+                    modelAssociation.rawAttributes[field.field], params.search, column,
+                  );
+                  hasExtendedConditions = !!condition;
                 }
               } else if (field.type === 'String') {
-                if (modelAssociation.rawAttributes[field.field]
-                  && isUUID(DataTypes, modelAssociation.rawAttributes[field.field].type)) {
-                  if (params.search.match(REGEX_UUID)) {
-                    condition = opts.sequelize.where(column, '=', params.search);
-                    hasExtendedConditions = true;
-                  }
-                } else {
-                  condition = opts.sequelize.where(
-                    lowerIfNecessary(column), ' LIKE ',
-                    lowerIfNecessary(`%${params.search}%`),
-                  );
-                  hasExtendedConditions = true;
-                }
+                condition = getStringExtendedCondition(
+                  modelAssociation.rawAttributes[field.field], params.search, column,
+                );
+                hasExtendedConditions = !!condition;
               }
-              or.push(condition);
+
+              if (condition) {
+                or.push(condition);
+              }
             });
           }
         }
