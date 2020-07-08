@@ -54,7 +54,7 @@
     "jest": "26.0.1",
     "mysql2": "2.1.0",
     "onchange": "6.0.0",
-    "pg": "7.10.0",
+    "pg": "8.2.2",
     "semantic-release": "17.0.7",
     "semantic-release-slack-bot": "1.6.2",
     "sequelize": "5.21.3",
