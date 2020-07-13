@@ -1,3 +1,10 @@
+## [6.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.1...v6.3.2) (2020-07-13)
+
+
+### Bug Fixes
+
+* **vulnerabilities:** bump 2 dependencies of dependencies ([#465](https://github.com/ForestAdmin/forest-express-sequelize/issues/465)) ([7bb23c0](https://github.com/ForestAdmin/forest-express-sequelize/commit/7bb23c00700dcfa85a1209b6c1bcc6488cab96fa))
+
 ## [6.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.0...v6.3.1) (2020-07-06)
 
 
