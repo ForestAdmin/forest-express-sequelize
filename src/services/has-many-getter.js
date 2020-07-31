@@ -33,6 +33,11 @@ function HasManyGetter(model, association, opts, params) {
       subQuery: false,
       offset: queryOptions.offset,
       limit: queryOptions.limit,
+      // NOTICE: by default, all fields from the parent model
+      //         are retrieved, which can cause performance issues,
+      //         whereas we are only requesting the child model here
+      //         and we don't need the parent's attributes
+      attributes: [],
       include: [{
         model: association,
         as: params.associationName,
