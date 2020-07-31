@@ -35,6 +35,9 @@ function QueryBuilder(model, opts, params) {
           includes.push({
             model: association.target.unscoped(),
             as: association.associationAccessor,
+            // NOTICE: For performance reasons, we only request the keys
+            //         as they're the only needed fields for the interface
+            attributes: [association.sourceKey, association.targetKey].filter(Boolean),
           });
         }
       }
