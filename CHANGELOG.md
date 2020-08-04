@@ -1,3 +1,10 @@
+## [6.3.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.2...v6.3.3) (2020-08-04)
+
+
+### Bug Fixes
+
+* **vulnerability:** patch a potential vulnerability updating forest-express to version 7.4.1 ([#481](https://github.com/ForestAdmin/forest-express-sequelize/issues/481)) ([d697f5e](https://github.com/ForestAdmin/forest-express-sequelize/commit/d697f5ed53cdae0f021020161add01690d8469cb))
+
 ## [6.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.1...v6.3.2) (2020-07-13)
 
 
