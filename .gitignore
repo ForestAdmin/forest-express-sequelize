@@ -31,3 +31,4 @@ dist
 
 # VS Code
 *.code-workspace
+.vscode
