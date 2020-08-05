@@ -1,3 +1,10 @@
+## [6.3.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.3...v6.3.4) (2020-08-05)
+
+
+### Performance Improvements
+
+* :zap: improve performance of queries on HasMany relationships ([#474](https://github.com/ForestAdmin/forest-express-sequelize/issues/474)) ([6e9c419](https://github.com/ForestAdmin/forest-express-sequelize/commit/6e9c4190849e1e52fc473038cc57c3480723b163))
+
 ## [6.3.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.2...v6.3.3) (2020-08-04)
 
 
