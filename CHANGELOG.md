@@ -1,3 +1,10 @@
+## [6.3.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.4...v6.3.5) (2020-08-05)
+
+
+### Bug Fixes
+
+* **related data:** fix related data display regression introduced in v6.3.3 ([#484](https://github.com/ForestAdmin/forest-express-sequelize/issues/484)) ([a585338](https://github.com/ForestAdmin/forest-express-sequelize/commit/a5853380952a6020308fae3a5d375096c6cfe8c7))
+
 ## [6.3.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.3...v6.3.4) (2020-08-05)
 
 
