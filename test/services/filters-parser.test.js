@@ -207,7 +207,6 @@ describe('services > filters-parser', () => {
   describe('getPreviousIntervalCondition function', () => {
     describe('working scenarii', () => {
       describe('with \'and\' aggregator + flat conditions + 1 previous interval', () => {
-        expect.assertions(1);
         const aggregator = JSON.stringify({
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
