@@ -1286,6 +1286,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           };
           const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
             .perform();
+
           expect(result[0]).toHaveLength(4);
         });
 
@@ -1408,13 +1409,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           expect(count).toStrictEqual(4);
         });
 
-        it('should only return the ids of the other relationships', async () => {
+        it('should only return the ids of the other relationships when fields are specified', async () => {
           expect.assertions(2);
           const params = {
             recordId: 100,
             associationName: 'addresses',
             fields: {
-              address: 'line,zipCode,city,country,user',
+              address: 'line,zipCode,city,country',
+              user: 'id',
             },
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',

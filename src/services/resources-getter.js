@@ -1,4 +1,4 @@
-import _ from 'lodash';
+import _, { flatten } from 'lodash';
 import P from 'bluebird';
 import { Schemas, logger } from 'forest-express';
 import Operators from '../utils/operators';
@@ -34,11 +34,22 @@ function ResourcesGetter(model, options, params) {
       associations.push(associationFromSorting);
     }
 
+    const associationFields = flatten(Object.keys(model.associations)
+      .filter((associationName) => params.fields[associationName])
+      .map((associationName) => {
+        const fields = params.fields[associationName].split(',');
+        return fields.map((fieldName) => `${associationName}.${fieldName}`);
+      }));
+
+    const modelFields = params.fields[model.name].split(',')
+      .filter((fieldName) => !params.fields[fieldName]);
+
     // NOTICE: Force the primaryKey retrieval to store the records properly in the client.
     return _.union(
       [primaryKey],
-      params.fields[model.name].split(','),
+      modelFields,
       associations,
+      associationFields,
     );
   }
 
