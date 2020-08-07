@@ -18,14 +18,15 @@ function HasManyGetter(model, association, opts, params) {
     //         the client.
     const primaryKeyArray = [_.keys(association.primaryKeys)[0]];
 
-    const associationFields = _.flatten(Object.keys(association.associations)
+    const associationFields = Object.keys(association.associations)
       // NOTICE: Remove fields for which attributes are explicitely set
       //         in the requested fields
       .filter((associationName) => params.fields[associationName])
       .map((associationName) => {
         const fields = params.fields[associationName].split(',');
         return fields.map((fieldName) => `${associationName}.${fieldName}`);
-      }));
+      })
+      .flat();
 
     const modelFields = params.fields[association.name].split(',')
       .filter((fieldName) => !params.fields[fieldName]);

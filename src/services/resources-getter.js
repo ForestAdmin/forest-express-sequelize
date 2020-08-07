@@ -1,4 +1,4 @@
-import _, { flatten } from 'lodash';
+import _ from 'lodash';
 import P from 'bluebird';
 import { Schemas, logger } from 'forest-express';
 import Operators from '../utils/operators';
@@ -34,12 +34,13 @@ function ResourcesGetter(model, options, params) {
       associations.push(associationFromSorting);
     }
 
-    const associationFields = flatten(Object.keys(model.associations)
+    const associationFields = Object.keys(model.associations)
       .filter((associationName) => params.fields[associationName])
       .map((associationName) => {
         const fields = params.fields[associationName].split(',');
         return fields.map((fieldName) => `${associationName}.${fieldName}`);
-      }));
+      })
+      .flat();
 
     const modelFields = params.fields[model.name].split(',')
       .filter((fieldName) => !params.fields[fieldName]);

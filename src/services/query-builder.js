@@ -29,7 +29,7 @@ function QueryBuilder(model, opts, params) {
   this.getIncludes = (modelForIncludes, fieldNamesRequested) => {
     const includes = [];
 
-    _.values(modelForIncludes.associations)
+    Object.values(modelForIncludes.associations)
       .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
       .forEach((association) => {
         const explicitAttributes = (fieldNamesRequested || [])

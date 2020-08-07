@@ -154,7 +154,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     if (parseInt(params.searchExtended, 10)) {
       _.each(associations, (association) => {
         if (!fieldNamesRequested
-          || (fieldNamesRequested.includes(association.as))
+          || fieldNamesRequested.includes(association.as)
           || fieldNamesRequested.find((fieldName) => fieldName.startsWith(`${association.as}.`))) {
           if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
             const modelAssociation = association.target;
