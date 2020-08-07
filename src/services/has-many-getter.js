@@ -5,6 +5,7 @@ const orm = require('../utils/orm');
 const QueryBuilder = require('./query-builder');
 const SearchBuilder = require('./search-builder');
 const CompositeKeysManager = require('./composite-keys-manager');
+const extractRequestedFields = require('./requested-fields-extractor');
 
 function HasManyGetter(model, association, opts, params) {
   const queryBuilder = new QueryBuilder(model, opts, params);
@@ -12,30 +13,7 @@ function HasManyGetter(model, association, opts, params) {
   const primaryKeyModel = _.keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
-    if (!params.fields || !params.fields[association.name]) { return null; }
-
-    // NOTICE: Force the primaryKey retrieval to store the records properly in
-    //         the client.
-    const primaryKeyArray = [_.keys(association.primaryKeys)[0]];
-
-    const associationFields = Object.keys(association.associations)
-      // NOTICE: Remove fields for which attributes are explicitely set
-      //         in the requested fields
-      .filter((associationName) => params.fields[associationName])
-      .map((associationName) => {
-        const fields = params.fields[associationName].split(',');
-        return fields.map((fieldName) => `${associationName}.${fieldName}`);
-      })
-      .flat();
-
-    const modelFields = params.fields[association.name].split(',')
-      .filter((fieldName) => !params.fields[fieldName]);
-
-    return _.union(
-      primaryKeyArray,
-      modelFields,
-      associationFields,
-    );
+    return extractRequestedFields(params.fields, association);
   }
 
   const fieldNamesRequested = getFieldNamesRequested();
