@@ -1,7 +1,6 @@
 const _ = require('lodash');
 const P = require('bluebird');
 const Interface = require('forest-express');
-const { flatten } = require('lodash');
 const orm = require('../utils/orm');
 const QueryBuilder = require('./query-builder');
 const SearchBuilder = require('./search-builder');
@@ -19,7 +18,7 @@ function HasManyGetter(model, association, opts, params) {
     //         the client.
     const primaryKeyArray = [_.keys(association.primaryKeys)[0]];
 
-    const associationFields = flatten(Object.keys(association.associations)
+    const associationFields = _.flatten(Object.keys(association.associations)
       // NOTICE: Remove fields for which attributes are explicitely set
       //         in the requested fields
       .filter((associationName) => params.fields[associationName])
