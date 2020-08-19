@@ -764,6 +764,33 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           });
         });
 
+        describe('with a "in" condition on a number field', () => {
+          it('should generate a valid SQL query', async () => {
+            expect.assertions(1);
+            const params = _.clone(paramsBaseList);
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'in',
+              value: [100],
+            });
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(1);
+          });
+
+          it('should return the records result', async () => {
+            expect.assertions(1);
+            const params = _.clone(paramsBaseCount);
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'in',
+              value: [100],
+            });
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(1);
+          });
+        });
+
         describe('with a "is null" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
