@@ -65,6 +65,8 @@ function FiltersParser(modelSchema, timezone, options) {
       case 'blank':
       case 'equal':
         return this.OPERATORS.EQ;
+      case 'in':
+        return this.OPERATORS.IN;
       default:
         throw new NoMatchingOperatorError();
     }
@@ -79,6 +81,7 @@ function FiltersParser(modelSchema, timezone, options) {
       case 'equal':
       case 'before':
       case 'after':
+      case 'in':
         return value;
       case 'contains':
       case 'not_contains':
@@ -117,6 +120,8 @@ function FiltersParser(modelSchema, timezone, options) {
         return { [this.OPERATORS.NE]: null };
       case 'not_equal':
         return { [this.OPERATORS.NE]: value };
+      case 'in':
+        return { [this.OPERATORS.IN]: value };
       case 'blank':
         return isTextField ? {
           [this.OPERATORS.OR]: [{
