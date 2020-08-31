@@ -28,17 +28,34 @@ function QueryBuilder(model, opts, params) {
 
   this.getIncludes = (modelForIncludes, fieldNamesRequested) => {
     const includes = [];
-    _.values(modelForIncludes.associations).forEach((association) => {
-      if (!fieldNamesRequested
-        || (fieldNamesRequested.indexOf(association.as) !== -1)) {
-        if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
+
+    Object.values(modelForIncludes.associations)
+      .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
+      .forEach((association) => {
+        const explicitAttributes = (fieldNamesRequested || [])
+          .filter((name) => name.startsWith(`${association.as}.`))
+          .map((name) => name.replace(`${association.as}.`, ''));
+
+        if (!fieldNamesRequested
+        || fieldNamesRequested.includes(association.as)
+        || explicitAttributes.length) {
+          // NOTICE: For performance reasons, we only request the keys
+          //         as they're the only needed fields for the interface
+          const attributes = explicitAttributes.length
+            ? [
+              association.sourceKey,
+              association.targetKey,
+              ...explicitAttributes,
+            ].filter(Boolean)
+            : undefined;
+
           includes.push({
             model: association.target.unscoped(),
             as: association.associationAccessor,
+            attributes,
           });
         }
-      }
-    });
+      });
 
     return includes;
   };
