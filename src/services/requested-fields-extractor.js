@@ -28,7 +28,7 @@ function extractRequestedFields(fields, modelOrAssociation) {
     ...primaryKeyArray,
     ...modelFields,
     ...allAssociationFields,
-  ]).values());
+  ]));
 }
 
 
