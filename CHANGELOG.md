@@ -1,3 +1,10 @@
+## [6.3.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.5...v6.3.6) (2020-08-10)
+
+
+### Bug Fixes
+
+* prevent scopes validation crashes for conditions with boolean or number values ([#487](https://github.com/ForestAdmin/forest-express-sequelize/issues/487)) ([389f590](https://github.com/ForestAdmin/forest-express-sequelize/commit/389f590a89b59342afa2bce33cbe97e2f110a99f))
+
 ## [6.3.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.4...v6.3.5) (2020-08-05)
 
 
