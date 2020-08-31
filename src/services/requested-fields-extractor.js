@@ -12,7 +12,7 @@ function extractRequestedFields(fields, modelOrAssociation) {
   const primaryKeyArray = [Object.keys(modelOrAssociation.primaryKeys)[0]];
 
   const allAssociationFields = Object.keys(modelOrAssociation.associations)
-    // NOTICE: Remove fields for which attributes are explicitely set
+    // NOTICE: Remove fields for which attributes are not explicitely set
     //         in the requested fields
     .filter((associationName) => fields[associationName])
     .map((associationName) => {
