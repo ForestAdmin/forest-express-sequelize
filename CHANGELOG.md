@@ -1,3 +1,10 @@
+## [6.3.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.6...v6.3.7) (2020-08-31)
+
+
+### Performance Improvements
+
+* :zap: only return ids of related records, not all fields ([#477](https://github.com/ForestAdmin/forest-express-sequelize/issues/477)) ([435c061](https://github.com/ForestAdmin/forest-express-sequelize/commit/435c061904ec534d4a3201730eb48c5e384be2b1))
+
 ## [6.3.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.5...v6.3.6) (2020-08-10)
 
 
