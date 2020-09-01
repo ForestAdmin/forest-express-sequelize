@@ -1,3 +1,10 @@
+## [6.3.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.7...v6.3.8) (2020-09-01)
+
+
+### Bug Fixes
+
+* :bug: fix a regression introduced by changes in the build ([#496](https://github.com/ForestAdmin/forest-express-sequelize/issues/496)) ([89d94fe](https://github.com/ForestAdmin/forest-express-sequelize/commit/89d94fe77efe3861750924f542b93b6a25810e58))
+
 ## [6.3.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.6...v6.3.7) (2020-08-31)
 
 
