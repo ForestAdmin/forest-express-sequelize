@@ -59,6 +59,22 @@ describe('services > apimap-field-builder', () => {
     });
   });
 
+  describe('on a UUID column without a defaultValue', () => {
+    const fieldDefinitions = {
+      uuid: {
+        type: Sequelize.DataTypes.UUID,
+        primaryKey: true,
+      },
+    };
+
+    it('should be set as required', async () => {
+      expect.assertions(1);
+      const { uuid } = await initializeField(fieldDefinitions);
+      expect(uuid.isRequired).toStrictEqual(true);
+    });
+  });
+
+
   describe('on other default values', () => {
     it('should handle array values', async () => {
       expect.assertions(4);
