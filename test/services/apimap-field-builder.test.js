@@ -74,7 +74,6 @@ describe('services > apimap-field-builder', () => {
     });
   });
 
-
   describe('on other default values', () => {
     it('should handle array values', async () => {
       expect.assertions(4);
