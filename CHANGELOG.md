@@ -1,3 +1,10 @@
+## [6.3.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.8...v6.3.9) (2020-09-04)
+
+
+### Bug Fixes
+
+* :bug: set primary keys as required if not generated ([#501](https://github.com/ForestAdmin/forest-express-sequelize/issues/501)) ([f977b37](https://github.com/ForestAdmin/forest-express-sequelize/commit/f977b3765c27202f9674cda5656dfc28be619ed3))
+
 ## [6.3.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.7...v6.3.8) (2020-09-01)
 
 
