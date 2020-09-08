@@ -75,6 +75,7 @@ function getField(schema, name) {
             field: 'username',
             type: 'String',
             columnName: 'username',
+            isPrimaryKey: false,
           });
         });
 
@@ -87,6 +88,7 @@ function getField(schema, name) {
             type: 'Enum',
             columnName: 'role',
             enums: ['admin', 'user'],
+            isPrimaryKey: false,
           });
         });
 
@@ -99,6 +101,7 @@ function getField(schema, name) {
             type: ['Enum'],
             columnName: 'permissions',
             enums: ['documents:write', 'documents:read'],
+            isPrimaryKey: false,
           });
         });
 
@@ -110,11 +113,13 @@ function getField(schema, name) {
             field: 'createdAt',
             type: 'Date',
             columnName: 'createdAt',
+            isPrimaryKey: false,
           });
           expect(getField(schema, 'updatedAt')).toStrictEqual({
             field: 'updatedAt',
             type: 'Date',
             columnName: 'updatedAt',
+            isPrimaryKey: false,
           });
         });
       });
