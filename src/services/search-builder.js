@@ -147,6 +147,12 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           );
           pushCondition(condition, columnName);
         }
+      } else if (field.type === 'Number') {
+        const value = Number(params.search);
+        if (value) {
+          condition[field.field] = value;
+          pushCondition(condition, field.field);
+        }
       }
     });
 
