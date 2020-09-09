@@ -143,7 +143,9 @@ function ApimapFieldBuilder(model, column, options) {
       columnName: column.field,
     };
 
-    schema.isPrimaryKey = Boolean(column.primaryKey);
+    if (column.primaryKey === true) {
+      schema.isPrimaryKey = true;
+    }
 
     if (schema.type === 'Enum') {
       schema.enums = column.values;
