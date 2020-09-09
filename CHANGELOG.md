@@ -1,3 +1,10 @@
+## [6.3.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.10...v6.3.11) (2020-09-09)
+
+
+### Bug Fixes
+
+* allow search on fields number ([#506](https://github.com/ForestAdmin/forest-express-sequelize/issues/506)) ([80fbf7c](https://github.com/ForestAdmin/forest-express-sequelize/commit/80fbf7ce887f3919f4b923a382d3d727d5d610c5))
+
 ## [6.3.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.9...v6.3.10) (2020-09-08)
 
 

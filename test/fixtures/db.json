@@ -8,7 +8,8 @@
       "lastName": "Hendricks",
       "username": "RichaHendr",
       "password": "2gh2p9g832hp",
-      "uuid": "1a11dc05-4e04-4d8f-958b-0a9f23a141a3"
+      "uuid": "1a11dc05-4e04-4d8f-958b-0a9f23a141a3",
+      "age": 10
     }
   },
   {
@@ -73,7 +74,8 @@
       "lastName": "Bachman",
       "username": "Unicorn",
       "password": "jinYang",
-      "emailValid": true
+      "emailValid": true,
+      "age": 0
     }
   },
   {
@@ -85,7 +87,8 @@
       "lastName": "Chugtai",
       "username": "PiperTchat",
       "password": "jinYang",
-      "emailValid": false
+      "emailValid": false,
+      "age": 10
     }
   },
   {
