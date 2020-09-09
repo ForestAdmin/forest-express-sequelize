@@ -149,7 +149,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         }
       } else if (field.type === 'Number') {
         const value = Number(params.search);
-        if (value) {
+        if (!Number.isNaN(value)) {
           condition[field.field] = value;
           pushCondition(condition, field.field);
         }

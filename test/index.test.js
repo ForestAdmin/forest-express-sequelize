@@ -556,7 +556,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         describe('with a "number" search', () => {
           it('should return the records for the specified page', async () => {
-            expect.assertions(1);
+            expect.assertions(2);
             const params = {
               fields: {
                 user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
@@ -565,19 +565,28 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '10',
               timezone: 'Europe/Paris',
             };
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+            let result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
             expect(result[0]).toHaveLength(2);
+
+            params.search = '0';
+            result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(1);
           });
 
           it('should return the total records count', async () => {
-            expect.assertions(1);
+            expect.assertions(2);
             const params = {
               search: '10',
               timezone: 'Europe/Paris',
             };
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            let count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
             expect(count).toStrictEqual(2);
+
+            params.search = '0';
+            count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(1);
           });
         });
       });
