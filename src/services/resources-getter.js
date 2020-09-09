@@ -35,7 +35,7 @@ function ResourcesGetter(model, options, params) {
       associations.push(associationFromSorting);
     }
 
-    const requestedFields = extractRequestedFields(params.fields, model);
+    const requestedFields = extractRequestedFields(params.fields, model, Schemas.schemas);
 
     return _.union(
       associations,

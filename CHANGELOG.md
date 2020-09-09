@@ -1,3 +1,10 @@
+## [6.3.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.9...v6.3.10) (2020-09-08)
+
+
+### Bug Fixes
+
+* :bug: fix retrieved fields from the database when a smart field is used as a reference field ([#505](https://github.com/ForestAdmin/forest-express-sequelize/issues/505)) ([14286fb](https://github.com/ForestAdmin/forest-express-sequelize/commit/14286fb9e82bc0fce3a3c04fedf0844fb2836ff8))
+
 ## [6.3.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.8...v6.3.9) (2020-09-04)
 
 

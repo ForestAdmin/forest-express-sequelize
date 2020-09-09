@@ -122,6 +122,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           { field: 'resetPasswordToken', type: 'String' },
           { field: 'addresses', type: ['Number'] },
           { field: 'uuid', type: 'String' },
+          { field: 'fullName', isVirtual: true, type: 'String' },
         ],
       },
       bike: {
@@ -1367,6 +1368,54 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           expect(count).toStrictEqual(2);
         });
       });
+
+      describe('request on the resources getter with a smart field', () => {
+        it('should only retrieve requested fields when only DB fields are used', async () => {
+          expect.assertions(5);
+          const params = {
+            fields: {
+              address: 'user',
+              user: 'firstName',
+            },
+            page: { number: '1' },
+            timezone: 'Europe/Paris',
+          };
+          const result = await new ResourcesGetter(
+            models.address,
+            sequelizeOptions,
+            params,
+          ).perform();
+
+          expect(result[0]).not.toHaveLength(0);
+          expect(result[0][0]).toHaveProperty('user');
+          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+          expect(result[0][0].user.dataValues).toHaveProperty('id');
+          expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
+        });
+
+        it('should retrieve all fields when a smart field is requested', async () => {
+          expect.assertions(5);
+          const params = {
+            fields: {
+              address: 'user',
+              user: 'fullName',
+            },
+            page: { number: '1' },
+            timezone: 'Europe/Paris',
+          };
+          const result = await new ResourcesGetter(
+            models.address,
+            sequelizeOptions,
+            params,
+          ).perform();
+
+          expect(result[0]).not.toHaveLength(0);
+          expect(result[0][0]).toHaveProperty('user');
+          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+          expect(result[0][0].user.dataValues).toHaveProperty('id');
+          expect(result[0][0].user.dataValues).toHaveProperty('lastName');
+        });
+      });
     });
 
     describe('hasmany > has-many-getter', () => {
@@ -1514,6 +1563,62 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           )
             .count();
           expect(count).toStrictEqual(4);
+        });
+      });
+
+      describe('request on the has-many-getter with a smart field for an association', () => {
+        it('should get all fields for addresses when a smart field is requested', async () => {
+          expect.assertions(4);
+          const params = {
+            recordId: 100,
+            associationName: 'addresses',
+            fields: {
+              address: 'street',
+              user: 'fullName',
+            },
+            page: { number: '1', size: '20' },
+            timezone: 'Europe/Paris',
+          };
+          const result = await new HasManyGetter(
+            models.user,
+            models.address,
+            sequelizeOptions,
+            params,
+          )
+            .perform();
+
+          expect(result[0]).not.toHaveLength(0);
+          expect(result[0][0].user.dataValues).toHaveProperty('id');
+          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+          expect(result[0][0].user.dataValues).toHaveProperty('lastName');
+        });
+
+        it('should get only requested fields on the related users', async () => {
+          expect.assertions(5);
+          const params = {
+            recordId: 100,
+            associationName: 'addresses',
+            fields: {
+              address: 'street',
+              user: 'firstName',
+            },
+            page: { number: '1', size: '20' },
+            timezone: 'Europe/Paris',
+          };
+
+          const result = await new HasManyGetter(
+            models.user,
+            models.address,
+            sequelizeOptions,
+            params,
+          )
+            .perform();
+
+          expect(result[0]).not.toHaveLength(0);
+          expect(result[0][0]).toHaveProperty('user');
+          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+          expect(result[0][0].user.dataValues).toHaveProperty('id');
+          expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
         });
       });
     });

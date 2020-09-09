@@ -13,7 +13,7 @@ function HasManyGetter(model, association, opts, params) {
   const primaryKeyModel = _.keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
-    return extractRequestedFields(params.fields, association);
+    return extractRequestedFields(params.fields, association, Interface.Schemas.schemas);
   }
 
   const fieldNamesRequested = getFieldNamesRequested();

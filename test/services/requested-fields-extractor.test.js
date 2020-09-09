@@ -53,49 +53,117 @@ describe('services > requested-fields-extractor', () => {
 
     const fields = {
       user: 'name',
-      address: 'street',
+      homeAddress: 'street',
     };
 
     const model = {
       name: 'user',
       primaryKeys: { id: null, uid: null },
       associations: {
-        address: {
-          name: 'address',
+        homeAddress: {
+          name: 'homeAddress',
+          target: {
+            name: 'addresses',
+          },
         },
       },
     };
 
-    const result = extractRequestedFields(fields, model);
+    const schemas = {
+      addresses: {
+        fields: [{
+          field: 'street',
+          isVirtual: false,
+        }],
+      },
+    };
 
-    expect(result).toStrictEqual(['id', 'name', 'address.street']);
+    const result = extractRequestedFields(fields, model, schemas);
+
+    expect(result).toStrictEqual(['id', 'name', 'homeAddress.street']);
   });
 
   it('should remove associations from fields if there are explicit fields requested', () => {
     expect.assertions(1);
 
     const fields = {
-      user: 'name,address,account',
-      address: 'street',
+      user: 'name,homeAddress,account',
+      homeAddress: 'street',
     };
 
     const model = {
       name: 'user',
       primaryKeys: { id: null, uid: null },
       associations: {
-        address: {
-          name: 'address',
+        homeAddress: {
+          name: 'homeAddress',
+          target: {
+            name: 'addresses',
+          },
         },
       },
     };
 
-    const result = extractRequestedFields(fields, model);
+    const schemas = {
+      addresses: {
+        fields: [
+          {
+            field: 'street',
+            isVirtual: false,
+          },
+        ],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
 
     expect(result).toStrictEqual([
       'id',
       'name',
       'account',
-      'address.street',
+      'homeAddress.street',
+    ]);
+  });
+
+  it('should include all fields from an association for which a smart field is requested', () => {
+    expect.assertions(1);
+
+    const fields = {
+      user: 'name,homeAddress,account',
+      homeAddress: 'street',
+    };
+
+    const model = {
+      name: 'user',
+      primaryKeys: { id: null, uid: null },
+      associations: {
+        homeAddress: {
+          name: 'homeAddress',
+          target: {
+            name: 'addresses',
+          },
+        },
+      },
+    };
+
+    const schemas = {
+      addresses: {
+        fields: [
+          {
+            field: 'street',
+            isVirtual: true,
+          },
+        ],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
+
+    expect(result).toStrictEqual([
+      'id',
+      'name',
+      'account',
+      'homeAddress',
     ]);
   });
 });
