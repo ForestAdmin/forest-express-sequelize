@@ -40,6 +40,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     updatedAt: { type: Sequelize.DATE },
     resetPasswordToken: { type: Sequelize.STRING },
     uuid: { type: Sequelize.UUID },
+    age: { type: Sequelize.INTEGER },
   });
 
   models.bike = sequelize.define('bike', {
@@ -123,6 +124,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           { field: 'addresses', type: ['Number'] },
           { field: 'uuid', type: 'String' },
           { field: 'fullName', isVirtual: true, type: 'String' },
+          { field: 'age', type: 'Number' },
         ],
       },
       bike: {
@@ -245,10 +247,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           expect(schema.isCompositePrimary).toStrictEqual(false);
         });
 
-        it('should detect 13 fields with a type', async () => {
-          expect.assertions(14);
+        it('should detect 14 fields with a type', async () => {
+          expect.assertions(15);
           const schema = await initializeSchema();
-          expect(schema.fields).toHaveLength(13);
+          expect(schema.fields).toHaveLength(14);
           expect(schema.fields[0].type).toStrictEqual('Number');
           expect(schema.fields[1].type).toStrictEqual('String');
           expect(schema.fields[2].type).toStrictEqual('Boolean');
@@ -260,8 +262,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           expect(schema.fields[8].type).toStrictEqual('Date');
           expect(schema.fields[9].type).toStrictEqual('String');
           expect(schema.fields[10].type).toStrictEqual('String');
-          expect(schema.fields[11].type[0]).toStrictEqual('Number');
+          expect(schema.fields[11].type).toStrictEqual('Number');
           expect(schema.fields[12].type[0]).toStrictEqual('Number');
+          expect(schema.fields[13].type[0]).toStrictEqual('Number');
         });
 
         it('should setup validations', async () => {
@@ -523,29 +526,68 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
-      describe('request on the resources getter with a search', () => {
-        it('should return the records for the specified page', async () => {
-          expect.assertions(1);
-          const params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-            },
-            page: { number: '1', size: '30' },
-            search: 'hello',
-            timezone: 'Europe/Paris',
-          };
-          const result = await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
-          expect(result[0]).toHaveLength(0);
+      describe('request on the resources getter', () => {
+        describe('with a "string" search', () => {
+          it('should return the records for the specified page', async () => {
+            expect.assertions(1);
+            const params = {
+              fields: {
+                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
+              },
+              page: { number: '1', size: '30' },
+              search: 'hello',
+              timezone: 'Europe/Paris',
+            };
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(0);
+          });
+
+          it('should return the total records count', async () => {
+            expect.assertions(1);
+            const params = {
+              search: 'hello',
+              timezone: 'Europe/Paris',
+            };
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(0);
+          });
         });
 
-        it('should return the total records count', async () => {
-          expect.assertions(1);
-          const params = {
-            search: 'hello',
-            timezone: 'Europe/Paris',
-          };
-          const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(0);
+        describe('with a "number" search', () => {
+          it('should return the records for the specified page', async () => {
+            expect.assertions(2);
+            const params = {
+              fields: {
+                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
+              },
+              page: { number: '1', size: '30' },
+              search: '10',
+              timezone: 'Europe/Paris',
+            };
+            let result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(2);
+
+            params.search = '0';
+            result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(1);
+          });
+
+          it('should return the total records count', async () => {
+            expect.assertions(2);
+            const params = {
+              search: '10',
+              timezone: 'Europe/Paris',
+            };
+            let count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(2);
+
+            params.search = '0';
+            count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(1);
+          });
         });
       });
 
