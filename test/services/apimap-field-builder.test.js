@@ -67,6 +67,12 @@ describe('services > apimap-field-builder', () => {
       },
     };
 
+    it('should be set as primary key', async () => {
+      expect.assertions(1);
+      const { uuid } = await initializeField(fieldDefinitions);
+      expect(uuid.isPrimaryKey).toStrictEqual(true);
+    });
+
     it('should be set as required', async () => {
       expect.assertions(1);
       const { uuid } = await initializeField(fieldDefinitions);

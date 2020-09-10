@@ -144,8 +144,9 @@ function ApimapFieldBuilder(model, column, options) {
     };
 
     if (column.primaryKey === true) {
-      schema.primaryKey = true;
+      schema.isPrimaryKey = true;
     }
+
     if (schema.type === 'Enum') {
       schema.enums = column.values;
     }
