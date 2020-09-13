@@ -1,3 +1,38 @@
+## [6.3.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.10...v6.3.11) (2020-09-09)
+
+
+### Bug Fixes
+
+* allow search on fields number ([#506](https://github.com/ForestAdmin/forest-express-sequelize/issues/506)) ([80fbf7c](https://github.com/ForestAdmin/forest-express-sequelize/commit/80fbf7ce887f3919f4b923a382d3d727d5d610c5))
+
+## [6.3.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.9...v6.3.10) (2020-09-08)
+
+
+### Bug Fixes
+
+* :bug: fix retrieved fields from the database when a smart field is used as a reference field ([#505](https://github.com/ForestAdmin/forest-express-sequelize/issues/505)) ([14286fb](https://github.com/ForestAdmin/forest-express-sequelize/commit/14286fb9e82bc0fce3a3c04fedf0844fb2836ff8))
+
+## [6.3.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.8...v6.3.9) (2020-09-04)
+
+
+### Bug Fixes
+
+* :bug: set primary keys as required if not generated ([#501](https://github.com/ForestAdmin/forest-express-sequelize/issues/501)) ([f977b37](https://github.com/ForestAdmin/forest-express-sequelize/commit/f977b3765c27202f9674cda5656dfc28be619ed3))
+
+## [6.3.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.7...v6.3.8) (2020-09-01)
+
+
+### Bug Fixes
+
+* :bug: fix a regression introduced by changes in the build ([#496](https://github.com/ForestAdmin/forest-express-sequelize/issues/496)) ([89d94fe](https://github.com/ForestAdmin/forest-express-sequelize/commit/89d94fe77efe3861750924f542b93b6a25810e58))
+
+## [6.3.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.6...v6.3.7) (2020-08-31)
+
+
+### Performance Improvements
+
+* :zap: only return ids of related records, not all fields ([#477](https://github.com/ForestAdmin/forest-express-sequelize/issues/477)) ([435c061](https://github.com/ForestAdmin/forest-express-sequelize/commit/435c061904ec534d4a3201730eb48c5e384be2b1))
+
 ## [6.3.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.5...v6.3.6) (2020-08-10)
 
 

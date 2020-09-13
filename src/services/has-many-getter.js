@@ -5,6 +5,7 @@ const orm = require('../utils/orm');
 const QueryBuilder = require('./query-builder');
 const SearchBuilder = require('./search-builder');
 const CompositeKeysManager = require('./composite-keys-manager');
+const extractRequestedFields = require('./requested-fields-extractor');
 
 function HasManyGetter(model, association, opts, params) {
   const queryBuilder = new QueryBuilder(model, opts, params);
@@ -12,12 +13,7 @@ function HasManyGetter(model, association, opts, params) {
   const primaryKeyModel = _.keys(model.primaryKeys)[0];
 
   function getFieldNamesRequested() {
-    if (!params.fields || !params.fields[association.name]) { return null; }
-    // NOTICE: Force the primaryKey retrieval to store the records properly in
-    //         the client.
-    const primaryKeyArray = [_.keys(association.primaryKeys)[0]];
-
-    return _.union(primaryKeyArray, params.fields[association.name].split(','));
+    return extractRequestedFields(params.fields, association, Interface.Schemas.schemas);
   }
 
   const fieldNamesRequested = getFieldNamesRequested();

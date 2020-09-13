@@ -1,7 +1,19 @@
 {
-  "presets": ["@babel/env"],
+  "presets": [
+    [
+      "@babel/preset-env",
+      {
+        "targets": {
+          "node": "8"
+        },
+        "useBuiltIns": "usage",
+        "corejs": 3
+      }
+    ]
+  ],
   "plugins": [
     "@babel/plugin-proposal-optional-chaining",
     "@babel/plugin-transform-runtime",
+    "@babel/plugin-transform-arrow-functions",
   ]
 }

@@ -8,6 +8,7 @@ import SearchBuilder from './search-builder';
 import LiveQueryChecker from './live-query-checker';
 import { ErrorHTTP422 } from './errors';
 import FiltersParser from './filters-parser';
+import extractRequestedFields from './requested-fields-extractor';
 
 function ResourcesGetter(model, options, params) {
   const schema = Schemas.schemas[model.name];
@@ -34,11 +35,11 @@ function ResourcesGetter(model, options, params) {
       associations.push(associationFromSorting);
     }
 
-    // NOTICE: Force the primaryKey retrieval to store the records properly in the client.
+    const requestedFields = extractRequestedFields(params.fields, model, Schemas.schemas);
+
     return _.union(
-      [primaryKey],
-      params.fields[model.name].split(','),
       associations,
+      requestedFields,
     );
   }
 

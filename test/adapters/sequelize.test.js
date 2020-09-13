@@ -63,7 +63,7 @@ function getField(schema, name) {
             field: 'id',
             type: 'Number',
             columnName: 'id',
-            primaryKey: true,
+            isPrimaryKey: true,
           });
         });
 

@@ -147,6 +147,12 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           );
           pushCondition(condition, columnName);
         }
+      } else if (field.type === 'Number') {
+        const value = Number(params.search);
+        if (!Number.isNaN(value)) {
+          condition[field.field] = value;
+          pushCondition(condition, field.field);
+        }
       }
     });
 
@@ -154,7 +160,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     if (parseInt(params.searchExtended, 10)) {
       _.each(associations, (association) => {
         if (!fieldNamesRequested
-          || (fieldNamesRequested.indexOf(association.as) !== -1)) {
+          || fieldNamesRequested.includes(association.as)
+          || fieldNamesRequested.find((fieldName) => fieldName.startsWith(`${association.as}.`))) {
           if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
             const modelAssociation = association.target;
             const schemaAssociation = Interface.Schemas.schemas[modelAssociation.name];
