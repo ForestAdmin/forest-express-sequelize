@@ -1,3 +1,10 @@
+## [6.3.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.11...v6.3.12) (2020-10-01)
+
+
+### Bug Fixes
+
+* **leaderboard chart:** fix query on many to many relationship ([#510](https://github.com/ForestAdmin/forest-express-sequelize/issues/510)) ([0e90750](https://github.com/ForestAdmin/forest-express-sequelize/commit/0e90750e7c16aca803019d8be5516853a4d43168))
+
 ## [6.3.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.10...v6.3.11) (2020-09-09)
 
 
