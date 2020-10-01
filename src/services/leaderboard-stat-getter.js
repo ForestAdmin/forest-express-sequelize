@@ -10,48 +10,55 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
   const schema = Schemas.schemas[model.name];
   const schemaRelationship = Schemas.schemas[modelRelationship.name];
   let associationAs = schema.name;
+  const associationFound = _.find(
+    modelRelationship.associations,
+    (association) => association.target.name === model.name,
+  );
 
-  _.each(modelRelationship.associations, (association) => {
-    if (association.target.name === model.name && association.as) {
-      associationAs = association.as;
-    }
-  });
+  if (associationFound && associationFound.as) {
+    associationAs = associationFound.as;
+  }
 
   const groupBy = `${associationAs}.${labelField}`;
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
-    const fieldName = aggregateField || schemaRelationship.primaryKeys[0]
+    const fieldName = aggregateField
+      || schemaRelationship.primaryKeys[0]
       || schemaRelationship.fields[0].field;
-    return `${schemaRelationship.name}.${Orm.getColumnName(schema, fieldName)}`;
+    return `"${modelRelationship.tableName}"."${Orm.getColumnName(schema, fieldName)}"`;
   }
 
-  this.perform = () => modelRelationship
-    .unscoped()
-    .findAll({
-      attributes: [
-        [options.sequelize.fn(aggregate, options.sequelize.col(getAggregateField())), 'value'],
-      ],
-      include: [{
-        model,
-        attributes: [labelField],
-        as: associationAs,
-        required: true,
-      }],
-      group: groupBy,
-      order: [[options.sequelize.literal('value'), 'DESC']],
-      limit,
-      raw: true,
-    })
-    .then((records) => {
-      records = records.map((data) => {
-        data.key = data[groupBy];
-        delete data[groupBy];
-        return data;
-      });
+  let joinQuery;
+  if (associationFound.associationType === 'BelongsToMany') {
+    const joinTableName = associationFound.through.model.tableName;
+    joinQuery = `INNER JOIN "${joinTableName}"
+        ON "${modelRelationship.tableName}"."${associationFound.sourceKeyField}" = "${joinTableName}"."${associationFound.foreignKey}"
+      INNER JOIN "${model.tableName}" AS "${associationAs}"
+        ON "${associationAs}"."${associationFound.targetKeyField}" = "${joinTableName}"."${associationFound.otherKey}"
+    `;
+  } else {
+    const foreignKeyField = associationFound.source
+      .rawAttributes[associationFound.foreignKey].field;
+    joinQuery = `INNER JOIN "${model.tableName}" AS "${associationAs}"
+        ON "${associationAs}"."${associationFound.targetKeyField}" = "${modelRelationship.tableName}"."${foreignKeyField}"
+    `;
+  }
 
-      return { value: records };
-    });
+  const query = `
+    SELECT ${aggregate}(${getAggregateField()}) as "value", ${groupBy} as "key"
+    FROM "${modelRelationship.tableName}"
+    ${joinQuery}
+    GROUP BY ${groupBy}
+    ORDER BY "value" DESC
+    LIMIT ${limit}
+  `;
+
+
+  this.perform = () => options.connections[0].query(query, {
+    type: model.sequelize.QueryTypes.SELECT,
+  })
+    .then((records) => ({ value: records }));
 }
 
 module.exports = LeaderboardStatGetter;
