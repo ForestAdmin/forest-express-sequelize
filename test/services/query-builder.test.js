@@ -26,4 +26,67 @@ describe('services > query-builder', () => {
       expect(order).toStrictEqual([['id', 'DESC']]);
     });
   });
+
+  describe('getIncludes', () => {
+    describe('with a hasOne relationship', () => {
+      function setup() {
+        const target = {
+          tableAttributes: {
+            id: { field: 'uid' },
+            name: { field: 'name' },
+          },
+          unscoped: () => ({ name: 'user' }),
+        };
+
+        const association = {
+          associationType: 'HasOne',
+          as: 'user',
+          associationAccessor: 'userAccessor',
+          target,
+          targetKey: 'uid',
+          sourceKey: 'id',
+        };
+
+        const model = {
+          name: 'address',
+          associations: [association],
+        };
+
+        const sequelizeOptions = { sequelize: Sequelize };
+        Interface.Schemas = { schemas: { actor: { idField: 'id' } } };
+
+        const queryBuilder = new QueryBuilder(model, sequelizeOptions, {});
+
+        return {
+          association, model, target, queryBuilder,
+        };
+      }
+
+      it('should exclude field names that do not exist on the table', async () => {
+        expect.assertions(1);
+        const { model, queryBuilder } = setup();
+
+        const includes = queryBuilder.getIncludes(model, ['user.uid', 'user.name', 'user.id', 'user.badField']);
+
+        expect(includes).toStrictEqual([{
+          as: 'userAccessor',
+          attributes: ['uid', 'name'],
+          model: { name: 'user' },
+        }]);
+      });
+
+      it('should always include the target key even if not specified', () => {
+        expect.assertions(1);
+        const { model, queryBuilder } = setup();
+
+        const includes = queryBuilder.getIncludes(model, ['user.name', 'user.id', 'user.badField']);
+
+        expect(includes).toStrictEqual([{
+          as: 'userAccessor',
+          attributes: ['uid', 'name'],
+          model: { name: 'user' },
+        }]);
+      });
+    });
+  });
 });

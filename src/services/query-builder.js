@@ -32,21 +32,26 @@ function QueryBuilder(model, opts, params) {
     Object.values(modelForIncludes.associations)
       .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
       .forEach((association) => {
+        const targetFields = Object.values(association.target.tableAttributes)
+          .map((attribute) => attribute.field);
+
         const explicitAttributes = (fieldNamesRequested || [])
           .filter((name) => name.startsWith(`${association.as}.`))
-          .map((name) => name.replace(`${association.as}.`, ''));
+          .map((name) => name.replace(`${association.as}.`, ''))
+          .filter((fieldName) => targetFields.includes(fieldName));
 
         if (!fieldNamesRequested
         || fieldNamesRequested.includes(association.as)
         || explicitAttributes.length) {
           // NOTICE: For performance reasons, we only request the keys
           //         as they're the only needed fields for the interface
+          const uniqueExplicitAttributes = Array.from(new Set([
+            association.targetKey,
+            ...explicitAttributes,
+          ].filter(Boolean)));
+
           const attributes = explicitAttributes.length
-            ? [
-              association.sourceKey,
-              association.targetKey,
-              ...explicitAttributes,
-            ].filter(Boolean)
+            ? uniqueExplicitAttributes
             : undefined;
 
           includes.push({
