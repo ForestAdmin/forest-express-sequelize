@@ -1,7 +1,7 @@
 # Forest Admin in Nodejs (Express.js & Sequelize)
 [![npm package](https://badge.fury.io/js/forest-express-sequelize.svg)](https://badge.fury.io/js/forest-express-sequelize)
 [![CI status](https://travis-ci.org/ForestAdmin/forest-express-sequelize.svg?branch=devel)](https://travis-ci.org/ForestAdmin/forest-express-sequelize)
-![Coverage](https://img.shields.io/badge/coverage-80%25%0A-critical)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/42d6d0fce013a6b96ae2/test_coverage)](https://codeclimate.com/github/ForestAdmin/forest-express-sequelize/test_coverage)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
 Forest Admin provides an off-the-shelf administration panel based on a highly-extensible API plugged into your application.
