@@ -1,3 +1,10 @@
+## [6.3.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.12...v6.3.13) (2020-10-05)
+
+
+### Bug Fixes
+
+* fix an error when accessing tables with a hasOne relationship ([#512](https://github.com/ForestAdmin/forest-express-sequelize/issues/512)) ([bb2f51e](https://github.com/ForestAdmin/forest-express-sequelize/commit/bb2f51e8ed5db6b4fb4c2b57a6939882de789c03))
+
 ## [6.3.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.11...v6.3.12) (2020-10-01)
 
 
