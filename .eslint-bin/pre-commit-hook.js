@@ -3,6 +3,12 @@ const simpleGit = require('simple-git')(`${__dirname}/..`);
 
 let listFilesModified = [];
 
+function excludeNonCommitedFiles(file) {
+  return file.index !== 'D' // NOTICE: Deleted files
+    && file.index !== ' ' // NOTICE: Files not staged for commit
+    && file.index !== '?'; // NOTICE: Untracked files
+}
+
 function getFilesModified(callback) {
   simpleGit.status((error, status) => {
     if (error) {
@@ -12,7 +18,17 @@ function getFilesModified(callback) {
     }
 
     listFilesModified = status.files
-      .map((file) => file.path)
+      .filter(excludeNonCommitedFiles)
+      .map((file) => {
+        if (file.index === 'R') {
+          // NOTICE: file path equals "old/path.js -> new/path.js" for renames
+          const matches = file.path.match(/^(?:.* -> )?(.*)$/);
+
+          return matches[1];
+        }
+
+        return file.path;
+      })
       .filter((file) => file.endsWith('.js'));
 
     callback();
