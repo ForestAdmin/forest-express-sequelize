@@ -83,7 +83,7 @@ module.exports = (model, opts) => {
       }
 
       _.remove(fields, (field) =>
-        _.includes(fieldNamesToExclude, field.columnName) && !field.primaryKey);
+        _.includes(fieldNamesToExclude, field.columnName) && !field.isPrimaryKey);
 
       return {
         name: model.name,
