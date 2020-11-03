@@ -1,5 +1,5 @@
 postgres :
-  image : postgres:9.4.5
+  image : postgres:9.4.26-alpine
   container_name : forest_express_sequelize_postgres
   ports :
     - "5436:5432"
