@@ -221,6 +221,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
   };
 
   describe(`dialect ${sequelize.options.dialect}`, () => {
+    afterAll(() => {
+      sequelize.close();
+    });
+
     describe('schema adapter', () => {
       describe('on a collection with 13 fields and a few validations', () => {
         async function initializeSchema() {

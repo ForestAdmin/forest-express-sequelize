@@ -22,6 +22,7 @@ module.exports = {
         ]
       }
     ],
+    'jest/no-hooks': 0,
     'no-param-reassign': 0,
     'sonarjs/cognitive-complexity': 1,
     'sonarjs/no-collapsible-if': 0,

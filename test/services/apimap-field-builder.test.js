@@ -26,6 +26,10 @@ async function initializeField(fieldDefinitions, modelName = 'testModel') {
 }
 
 describe('services > apimap-field-builder', () => {
+  afterAll(() => {
+    sequelize.close();
+  });
+
   describe('on a UUID column with a UUIDV4 defaultValue', () => {
     const fieldDefinitions = {
       uuid: {
