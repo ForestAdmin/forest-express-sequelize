@@ -33,7 +33,7 @@ function QueryBuilder(model, opts, params) {
       .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
       .forEach((association) => {
         const targetFields = Object.values(association.target.tableAttributes)
-          .map((attribute) => attribute.field);
+          .map((attribute) => attribute.fieldName);
 
         const explicitAttributes = (fieldNamesRequested || [])
           .filter((name) => name.startsWith(`${association.as}.`))
