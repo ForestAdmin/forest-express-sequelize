@@ -13,222 +13,226 @@ const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
 const HasManyDissociator = require('../src/services/has-many-dissociator');
 
-[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((sequelize) => {
-  const models = {};
-  const sequelizeOptions = {
-    sequelize: Sequelize,
-    connections: [sequelize],
-  };
+[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((connectionManager) => {
+  function initializeSequelize() {
+    const sequelize = connectionManager.createConnection();
+    const models = {};
+    const sequelizeOptions = {
+      sequelize: Sequelize,
+      connections: [sequelize],
+    };
 
-  models.user = sequelize.define('user', {
-    email: {
-      type: Sequelize.STRING,
-      unique: true,
-      validate: { isEmail: true },
-    },
-    emailValid: { type: Sequelize.BOOLEAN },
-    firstName: { type: Sequelize.STRING },
-    lastName: {
-      type: Sequelize.STRING,
-      validate: {
-        len: [0, 50],
+    models.user = sequelize.define('user', {
+      email: {
+        type: Sequelize.STRING,
+        unique: true,
+        validate: { isEmail: true },
       },
-    },
-    username: { type: Sequelize.STRING },
-    password: { type: Sequelize.STRING },
-    createdAt: { type: Sequelize.DATE },
-    updatedAt: { type: Sequelize.DATE },
-    resetPasswordToken: { type: Sequelize.STRING },
-    uuid: { type: Sequelize.UUID },
-    age: { type: Sequelize.INTEGER },
-  });
-
-  models.bike = sequelize.define('bike', {
-    id: {
-      type: Sequelize.UUID,
-      primaryKey: true,
-      defaultValue: Sequelize.UUIDV4,
-    },
-    createdAt: { type: Sequelize.DATE },
-    updatedAt: { type: Sequelize.DATE },
-    name: { type: Sequelize.STRING, allowNull: false },
-  });
-
-  models.address = sequelize.define('address', {
-    line: { type: Sequelize.STRING },
-    zipCode: { type: Sequelize.STRING },
-    city: { type: Sequelize.STRING },
-    country: { type: Sequelize.STRING },
-    userId: { type: Sequelize.INTEGER },
-    archivedAt: { type: Sequelize.DATE },
-  });
-
-  models.addressWithUserAlias = sequelize.define('addressWithUserAlias', {
-    line: { type: Sequelize.STRING },
-    zipCode: { type: Sequelize.STRING },
-    city: { type: Sequelize.STRING },
-    country: { type: Sequelize.STRING },
-    userId: { type: Sequelize.INTEGER },
-  });
-
-  models.team = sequelize.define('team', {
-    name: { type: Sequelize.STRING },
-  });
-
-  models.userTeam = sequelize.define('userTeam', {
-    userId: { type: Sequelize.INTEGER },
-    teamId: { type: Sequelize.INTEGER },
-  });
-
-  models.log = sequelize.define('log', {
-    code: { type: Sequelize.STRING, primaryKey: true },
-    trace: { type: Sequelize.STRING, primaryKey: true },
-    stack: { type: Sequelize.STRING },
-  });
-
-  models.order = sequelize.define('order', {
-    amount: { type: Sequelize.INTEGER },
-    comment: { type: Sequelize.STRING },
-    giftMessage: { type: Sequelize.STRING },
-  });
-
-  models.hasBadFieldType = sequelize.define('hasBadFieldType', {
-    fieldGood: { type: Sequelize.STRING },
-    fieldBad: { type: Sequelize.REAL }, // NOTICE: not supported yet.
-  });
-
-  models.address.belongsTo(models.user);
-  models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
-  models.user.hasMany(models.address);
-  models.team.belongsToMany(models.user, { through: 'userTeam' });
-  models.user.belongsToMany(models.team, { through: 'userTeam' });
-
-  Interface.Schemas = {
-    schemas: {
-      user: {
-        name: 'user',
-        idField: 'id',
-        primaryKeys: ['id'],
-        isCompositePrimary: false,
-        fields: [
-          { field: 'id', type: 'Number' },
-          { field: 'email', type: 'String' },
-          { field: 'emailValid', type: 'Boolean' },
-          { field: 'firstName', type: 'String' },
-          { field: 'lastName', type: 'String' },
-          { field: 'username', type: 'String' },
-          { field: 'password', type: 'String' },
-          { field: 'createdAt', type: 'Date' },
-          { field: 'updatedAt', type: 'Date' },
-          { field: 'resetPasswordToken', type: 'String' },
-          { field: 'addresses', type: ['Number'] },
-          { field: 'uuid', type: 'String' },
-          { field: 'fullName', isVirtual: true, type: 'String' },
-          { field: 'age', type: 'Number' },
-        ],
+      emailValid: { type: Sequelize.BOOLEAN },
+      firstName: { type: Sequelize.STRING },
+      lastName: {
+        type: Sequelize.STRING,
+        validate: {
+          len: [0, 50],
+        },
       },
-      bike: {
-        name: 'bike',
-        idField: 'id',
-        primaryKeys: ['id'],
-        isCompositePrimary: false,
-        fields: [
-          { field: 'id', type: 'String' },
-          { field: 'name', type: 'String' },
-          { field: 'createdAt', type: 'Date' },
-          { field: 'updatedAt', type: 'Date' },
-        ],
-      },
-      address: {
-        name: 'address',
-        idField: 'id',
-        primaryKeys: ['id'],
-        isCompositePrimary: false,
-        fields: [
-          { field: 'id', type: 'Number' },
-          { field: 'line', type: 'String' },
-          { field: 'zipCode', type: 'String' },
-          { field: 'city', type: 'String' },
-          { field: 'country', type: 'String' },
-          { field: 'user', type: 'Number', reference: 'user.id' },
-          { field: 'createdAt', type: 'Date' },
-          { field: 'updatedAt', type: 'Date' },
-        ],
-      },
-      addressWithUserAlias: {
-        name: 'addressWithUserAlias',
-        idField: 'id',
-        primaryKeys: ['id'],
-        isCompositePrimary: false,
-        fields: [
-          { field: 'id', type: 'Number' },
-          { field: 'line', type: 'String' },
-          { field: 'zipCode', type: 'String' },
-          { field: 'city', type: 'String' },
-          { field: 'country', type: 'String' },
-          { field: 'user', type: 'Number', reference: 'userAlias.id' },
-          { field: 'createdAt', type: 'Date' },
-          { field: 'updatedAt', type: 'Date' },
-        ],
-      },
-      log: {
-        name: 'log',
-        idField: 'forestCompositePrimary',
-        primaryKeys: ['code', 'trace'],
-        isCompositePrimary: true,
-        fields: [
-          { field: 'code', type: 'String' },
-          { field: 'trace', type: 'String' },
-          { field: 'stack', type: 'String' },
-          { field: 'createdAt', type: 'Date' },
-          { field: 'updatedAt', type: 'Date' },
-        ],
-      },
-      order: {
-        name: 'order',
-        idField: 'id',
-        primaryKeys: ['id'],
-        isCompositePrimary: false,
-        searchFields: ['amount', 'comment'],
-        fields: [
-          { field: 'id', type: 'Number' },
-          { field: 'amount', type: 'Number' },
-          { field: 'comment', type: 'String' },
-          { field: 'giftMessage', type: 'String' },
-        ],
-      },
-      team: {
-        name: 'team',
-        idField: 'id',
-        primaryKeys: ['id'],
-        isCompositePrimary: false,
-        fields: [
-          { field: 'id', type: 'Number' },
-          { field: 'name', type: 'String' },
-        ],
-      },
-      userTeam: {
-        name: 'userTeam',
-        idField: 'forestCompositePrimary',
-        primaryKeys: ['userId', 'teamId'],
-        isCompositePrimary: true,
-        fields: [
-          { field: 'user', type: 'Number', reference: 'user.id' },
-          { field: 'team', type: 'Number', reference: 'team.id' },
-        ],
-      },
-    },
-  };
-
-  describe(`dialect ${sequelize.options.dialect}`, () => {
-    afterAll(() => {
-      sequelize.close();
+      username: { type: Sequelize.STRING },
+      password: { type: Sequelize.STRING },
+      createdAt: { type: Sequelize.DATE },
+      updatedAt: { type: Sequelize.DATE },
+      resetPasswordToken: { type: Sequelize.STRING },
+      uuid: { type: Sequelize.UUID },
+      age: { type: Sequelize.INTEGER },
     });
 
+    models.bike = sequelize.define('bike', {
+      id: {
+        type: Sequelize.UUID,
+        primaryKey: true,
+        defaultValue: Sequelize.UUIDV4,
+      },
+      createdAt: { type: Sequelize.DATE },
+      updatedAt: { type: Sequelize.DATE },
+      name: { type: Sequelize.STRING, allowNull: false },
+    });
+
+    models.address = sequelize.define('address', {
+      line: { type: Sequelize.STRING },
+      zipCode: { type: Sequelize.STRING },
+      city: { type: Sequelize.STRING },
+      country: { type: Sequelize.STRING },
+      userId: { type: Sequelize.INTEGER },
+      archivedAt: { type: Sequelize.DATE },
+    });
+
+    models.addressWithUserAlias = sequelize.define('addressWithUserAlias', {
+      line: { type: Sequelize.STRING },
+      zipCode: { type: Sequelize.STRING },
+      city: { type: Sequelize.STRING },
+      country: { type: Sequelize.STRING },
+      userId: { type: Sequelize.INTEGER },
+    });
+
+    models.team = sequelize.define('team', {
+      name: { type: Sequelize.STRING },
+    });
+
+    models.userTeam = sequelize.define('userTeam', {
+      userId: { type: Sequelize.INTEGER },
+      teamId: { type: Sequelize.INTEGER },
+    });
+
+    models.log = sequelize.define('log', {
+      code: { type: Sequelize.STRING, primaryKey: true },
+      trace: { type: Sequelize.STRING, primaryKey: true },
+      stack: { type: Sequelize.STRING },
+    });
+
+    models.order = sequelize.define('order', {
+      amount: { type: Sequelize.INTEGER },
+      comment: { type: Sequelize.STRING },
+      giftMessage: { type: Sequelize.STRING },
+    });
+
+    models.hasBadFieldType = sequelize.define('hasBadFieldType', {
+      fieldGood: { type: Sequelize.STRING },
+      fieldBad: { type: Sequelize.REAL }, // NOTICE: not supported yet.
+    });
+
+    models.address.belongsTo(models.user);
+    models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
+    models.user.hasMany(models.address);
+    models.team.belongsToMany(models.user, { through: 'userTeam' });
+    models.user.belongsToMany(models.team, { through: 'userTeam' });
+
+    Interface.Schemas = {
+      schemas: {
+        user: {
+          name: 'user',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'email', type: 'String' },
+            { field: 'emailValid', type: 'Boolean' },
+            { field: 'firstName', type: 'String' },
+            { field: 'lastName', type: 'String' },
+            { field: 'username', type: 'String' },
+            { field: 'password', type: 'String' },
+            { field: 'createdAt', type: 'Date' },
+            { field: 'updatedAt', type: 'Date' },
+            { field: 'resetPasswordToken', type: 'String' },
+            { field: 'addresses', type: ['Number'] },
+            { field: 'uuid', type: 'String' },
+            { field: 'fullName', isVirtual: true, type: 'String' },
+            { field: 'age', type: 'Number' },
+          ],
+        },
+        bike: {
+          name: 'bike',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'String' },
+            { field: 'name', type: 'String' },
+            { field: 'createdAt', type: 'Date' },
+            { field: 'updatedAt', type: 'Date' },
+          ],
+        },
+        address: {
+          name: 'address',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'line', type: 'String' },
+            { field: 'zipCode', type: 'String' },
+            { field: 'city', type: 'String' },
+            { field: 'country', type: 'String' },
+            { field: 'user', type: 'Number', reference: 'user.id' },
+            { field: 'createdAt', type: 'Date' },
+            { field: 'updatedAt', type: 'Date' },
+          ],
+        },
+        addressWithUserAlias: {
+          name: 'addressWithUserAlias',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'line', type: 'String' },
+            { field: 'zipCode', type: 'String' },
+            { field: 'city', type: 'String' },
+            { field: 'country', type: 'String' },
+            { field: 'user', type: 'Number', reference: 'userAlias.id' },
+            { field: 'createdAt', type: 'Date' },
+            { field: 'updatedAt', type: 'Date' },
+          ],
+        },
+        log: {
+          name: 'log',
+          idField: 'forestCompositePrimary',
+          primaryKeys: ['code', 'trace'],
+          isCompositePrimary: true,
+          fields: [
+            { field: 'code', type: 'String' },
+            { field: 'trace', type: 'String' },
+            { field: 'stack', type: 'String' },
+            { field: 'createdAt', type: 'Date' },
+            { field: 'updatedAt', type: 'Date' },
+          ],
+        },
+        order: {
+          name: 'order',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          searchFields: ['amount', 'comment'],
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'amount', type: 'Number' },
+            { field: 'comment', type: 'String' },
+            { field: 'giftMessage', type: 'String' },
+          ],
+        },
+        team: {
+          name: 'team',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'String' },
+          ],
+        },
+        userTeam: {
+          name: 'userTeam',
+          idField: 'forestCompositePrimary',
+          primaryKeys: ['userId', 'teamId'],
+          isCompositePrimary: true,
+          fields: [
+            { field: 'user', type: 'Number', reference: 'user.id' },
+            { field: 'team', type: 'Number', reference: 'team.id' },
+          ],
+        },
+      },
+    };
+
+    return { sequelize, models, sequelizeOptions };
+  }
+
+  describe(`dialect ${connectionManager.getDialect()}`, () => {
     describe('schema adapter', () => {
       describe('on a collection with 13 fields and a few validations', () => {
         async function initializeSchema() {
-          return SchemaAdapter(models.user, sequelizeOptions);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const schema = SchemaAdapter(models.user, sequelizeOptions);
+          connectionManager.closeConnection();
+          return schema;
         }
 
         it('should generate a schema', async () => {
@@ -284,7 +288,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
       describe('on a simple collection with a fields with a bad type', () => {
         async function initializeSchema() {
-          return SchemaAdapter(models.hasBadFieldType, sequelizeOptions);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const schema = SchemaAdapter(models.hasBadFieldType, sequelizeOptions);
+          connectionManager.closeConnection();
+          return schema;
         }
 
         it('should generate a schema', async () => {
@@ -307,20 +314,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
     describe('stats > pie stat getter', () => {
       async function initializeDatabase() {
+        const { sequelize, models, sequelizeOptions } = initializeSequelize();
         return sequelize.sync({ force: true })
           .then(() =>
             sequelizeFixtures.loadFile(
               'test/fixtures/db.json',
               models,
               { log: () => { } },
-            ));
+            ))
+          .then(() => ({ models, sequelizeOptions }));
       }
 
       describe('a simple pie chart', () => {
         describe('on an empty users table', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            await initializeDatabase();
+            const { models, sequelizeOptions } = await initializeDatabase();
             const stat = await new PieStatGetter(models.user, {
               type: 'Pie',
               collection: 'user',
@@ -331,6 +340,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               filters: null,
             }, sequelizeOptions)
               .perform();
+            connectionManager.closeConnection();
             expect(stat.value).toHaveLength(3);
           });
         });
@@ -338,7 +348,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a group by on a belongsTo association using an alias', () => {
           it('should respond correct data', async () => {
             expect.assertions(1);
-            await initializeDatabase();
+            const { models, sequelizeOptions } = await initializeDatabase();
             const stat = await new PieStatGetter(models.addressWithUserAlias, {
               type: 'Pie',
               collection: 'addressWithUserAlias',
@@ -349,6 +359,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               filters: null,
             }, sequelizeOptions)
               .perform();
+            connectionManager.closeConnection();
             expect(stat.value).toHaveLength(0);
           });
         });
@@ -359,6 +370,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per day on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const stat = await new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -369,6 +381,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             filters: null,
           }, sequelizeOptions)
             .perform();
+          connectionManager.closeConnection();
           expect(stat.value).toHaveLength(1);
         });
       });
@@ -376,6 +389,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per week on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const stat = await new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -386,6 +400,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             filters: null,
           }, sequelizeOptions)
             .perform();
+          connectionManager.closeConnection();
           expect(stat.value).toHaveLength(1);
         });
       });
@@ -393,6 +408,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per month on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const stat = await new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -403,6 +419,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             filters: null,
           }, sequelizeOptions)
             .perform();
+          connectionManager.closeConnection();
           expect(stat.value).toHaveLength(1);
         });
       });
@@ -410,6 +427,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per year on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const stat = await new LineStatGetter(models.user, {
             type: 'Line',
             collection: 'user',
@@ -420,6 +438,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             filters: null,
           }, sequelizeOptions)
             .perform();
+          connectionManager.closeConnection();
           expect(stat.value).toHaveLength(1);
         });
       });
@@ -429,6 +448,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('create a record on a simple collection', () => {
         it('should create a record', async () => {
           expect.assertions(4);
+          const { models } = initializeSequelize();
           const result = await new ResourceCreator(models.user, {
             id: '1',
             email: 'jack@forestadmin.com',
@@ -444,6 +464,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           expect(result.username).toStrictEqual('Jacouille');
 
           const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
+          connectionManager.closeConnection();
           expect(user).not.toBeNull();
         });
       });
@@ -451,6 +472,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('create a record on a collection with a composite primary key', () => {
         it('should create a record', async () => {
           expect.assertions(3);
+          const { models } = initializeSequelize();
           const result = await new ResourceCreator(models.log, {
             code: 'G@G#F@G@',
             trace: 'Ggg23g242@',
@@ -460,6 +482,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           expect(result.trace).toStrictEqual('Ggg23g242@');
 
           const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
+          connectionManager.closeConnection();
           expect(log).not.toBeNull();
         });
       });
@@ -476,7 +499,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
+          connectionManager.closeConnection();
           expect(true).toStrictEqual(true);
         });
       });
@@ -491,7 +516,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
         });
 
@@ -500,7 +527,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
         });
       });
@@ -516,7 +545,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
         });
 
@@ -525,7 +556,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
         });
       });
@@ -542,8 +575,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: 'hello',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(0);
           });
 
@@ -553,7 +588,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: 'hello',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(0);
           });
         });
@@ -569,6 +606,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '10',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             let result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
             expect(result[0]).toHaveLength(2);
@@ -576,6 +614,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params.search = '0';
             result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
           });
 
@@ -585,11 +624,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '10',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             let count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
             expect(count).toStrictEqual(2);
 
             params.search = '0';
             count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
           });
         });
@@ -607,8 +648,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(0);
           });
 
@@ -618,7 +661,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.bike, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(0);
           });
         });
@@ -634,8 +679,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
           });
 
@@ -645,7 +692,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris',
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.bike, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
           });
         });
@@ -662,8 +711,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'gift',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.order, sequelizeOptions, params)
             .perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(1);
         });
 
@@ -673,7 +724,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'gift',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.order, sequelizeOptions, params).count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(1);
         });
       });
@@ -712,8 +765,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: 100,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
           });
 
@@ -725,7 +780,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: 100,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
           });
         });
@@ -739,8 +796,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'greater_than',
               value: 101,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
           });
 
@@ -752,7 +811,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'greater_than',
               value: 101,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
           });
         });
@@ -766,8 +827,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'less_than',
               value: 104,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(4);
           });
 
@@ -779,7 +842,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'less_than',
               value: 104,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(4);
           });
         });
@@ -793,8 +858,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 100,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
           });
 
@@ -806,7 +873,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 100,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
           });
         });
@@ -820,8 +889,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
           });
 
@@ -833,7 +904,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
           });
         });
@@ -847,8 +920,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: true,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
           });
 
@@ -860,7 +935,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: true,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
           });
         });
@@ -874,8 +951,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: false,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
           });
 
@@ -887,7 +966,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: false,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
           });
         });
@@ -901,8 +982,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
           });
 
@@ -914,7 +997,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
           });
         });
@@ -928,8 +1013,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: true,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
           });
 
@@ -941,7 +1028,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: true,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
           });
         });
@@ -955,8 +1044,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 'richard@piedpiper.com',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
           });
 
@@ -968,7 +1059,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 'richard@piedpiper.com',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
           });
         });
@@ -982,8 +1075,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: false,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
           });
 
@@ -995,7 +1090,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: false,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
           });
         });
@@ -1009,8 +1106,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'contains',
               value: 'Richa',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
           });
 
@@ -1022,7 +1121,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'contains',
               value: 'Richa',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
           });
         });
@@ -1036,8 +1137,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_contains',
               value: 'hello',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(4);
           });
 
@@ -1049,7 +1152,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_contains',
               value: 'hello',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(4);
           });
         });
@@ -1063,8 +1168,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'starts_with',
               value: 'dinesh@',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
           });
 
@@ -1076,7 +1183,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'starts_with',
               value: 'dinesh@',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
           });
         });
@@ -1090,8 +1199,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'ends_with',
               value: '@piedpiper.com',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
           });
 
@@ -1103,7 +1214,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'ends_with',
               value: '@piedpiper.com',
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
           });
         });
@@ -1117,6 +1230,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'present',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1124,6 +1238,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                   expect(instance.dataValues.country).toBeDefined();
                 });
               });
+            connectionManager.closeConnection();
           });
         });
 
@@ -1136,8 +1251,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
           });
 
@@ -1149,8 +1266,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
           });
         });
@@ -1164,8 +1283,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
           });
 
@@ -1177,8 +1298,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
           });
         });
@@ -1192,8 +1315,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'before_x_hours_ago',
               value: 2,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(0);
           });
 
@@ -1205,7 +1330,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'before_x_hours_ago',
               value: 2,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(0);
           });
         });
@@ -1219,8 +1346,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'after_x_hours_ago',
               value: 2,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(4);
           });
 
@@ -1232,7 +1361,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'after_x_hours_ago',
               value: 2,
             });
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(4);
           });
         });
@@ -1266,8 +1397,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             expect.assertions(1);
             const params = _.clone(paramsBaseList);
             params.filters = filters;
+            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
+            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
           });
 
@@ -1275,7 +1408,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             expect.assertions(1);
             const params = _.clone(paramsBaseCount);
             params.filters = filters;
+            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
           });
         });
@@ -1297,8 +1432,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(0);
         });
 
@@ -1313,7 +1450,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(0);
         });
       });
@@ -1331,9 +1470,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             searchExtended: 1,
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
             .perform();
-
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
         });
 
@@ -1344,7 +1484,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             searchExtended: 1,
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.address, sequelizeOptions, params).count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
         });
       });
@@ -1366,8 +1508,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(0);
         });
 
@@ -1382,7 +1526,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(0);
         });
       });
@@ -1399,8 +1545,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform();
+          connectionManager.closeConnection();
           expect(result).toHaveLength(2);
         });
 
@@ -1410,7 +1558,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(2);
         });
       });
@@ -1426,11 +1576,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(
             models.address,
             sequelizeOptions,
             params,
           ).perform();
+
+          connectionManager.closeConnection();
 
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0]).toHaveProperty('user');
@@ -1449,11 +1602,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(
             models.address,
             sequelizeOptions,
             params,
           ).perform();
+
+          connectionManager.closeConnection();
 
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0]).toHaveProperty('user');
@@ -1477,6 +1633,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1484,6 +1641,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
         });
 
@@ -1494,6 +1652,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new HasManyGetter(
             models.user,
             models.address,
@@ -1501,6 +1660,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
         });
 
@@ -1516,6 +1676,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1523,6 +1684,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
+          connectionManager.closeConnection();
           expect(result[0]).not.toHaveLength(0);
           const firstEntry = result[0][0];
 
@@ -1543,6 +1705,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sort: 'city',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1550,6 +1713,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
         });
 
@@ -1560,6 +1724,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new HasManyGetter(
             models.user,
             models.address,
@@ -1567,6 +1732,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
         });
       });
@@ -1584,6 +1750,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sort: '-user.id',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1591,6 +1758,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
+          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
         });
 
@@ -1601,6 +1769,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new HasManyGetter(
             models.user,
             models.address,
@@ -1608,6 +1777,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .count();
+          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
         });
       });
@@ -1625,6 +1795,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1632,7 +1803,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-
+          connectionManager.closeConnection();
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0].user.dataValues).toHaveProperty('id');
           expect(result[0][0].user.dataValues).toHaveProperty('firstName');
@@ -1651,7 +1822,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-
+          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1659,7 +1830,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-
+          connectionManager.closeConnection();
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0]).toHaveProperty('user');
           expect(result[0][0].user.dataValues).toHaveProperty('firstName');
@@ -1683,7 +1854,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           sort: '-user.id',
           timezone: 'Europe/Paris',
         };
-
+        const { models, sequelizeOptions } = initializeSequelize();
         const result = await new HasManyGetter(
           models.user,
           models.address,
@@ -1691,6 +1862,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           params,
         )
           .perform();
+        connectionManager.closeConnection();
         expect(result[0]).toHaveLength(1);
       });
 
@@ -1702,9 +1874,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           search: 'SF',
           timezone: 'Europe/Paris',
         };
-
+        const { models, sequelizeOptions } = initializeSequelize();
         const count = await new HasManyGetter(models.user, models.address, sequelizeOptions, params)
           .count();
+        connectionManager.closeConnection();
         expect(count).toStrictEqual(1);
       });
     });
@@ -1716,7 +1889,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 100,
           };
+          const { models } = initializeSequelize();
           const user = await new ResourceGetter(models.user, params).perform();
+          connectionManager.closeConnection();
           expect(user).not.toBeNull();
           expect(user.id).toStrictEqual(100);
           expect(user.firstName).toStrictEqual('Richard');
@@ -1729,7 +1904,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 'G@G#F@G@|Ggg23g242@',
           };
+          const { models } = initializeSequelize();
           const log = await new ResourceGetter(models.log, params).perform();
+          connectionManager.closeConnection();
           expect(log).not.toBeNull();
           expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@|Ggg23g242@');
         });
@@ -1743,8 +1920,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 1,
           };
+          const { models } = initializeSequelize();
           await new ResourceRemover(models.user, params).perform();
           const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
+          connectionManager.closeConnection();
           expect(user).toBeNull();
         });
       });
@@ -1755,8 +1934,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 'G@G#F@G@|Ggg23g242@',
           };
+          const { models } = initializeSequelize();
           await new ResourceRemover(models.log, params).perform();
           const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
+          connectionManager.closeConnection();
           expect(log).toBeNull();
         });
       });
@@ -1776,6 +1957,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '103', type: 'address' },
               ],
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.address,
@@ -1786,6 +1968,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform();
 
             const address = await models.address.findOne({ where: { id: '103' } });
+            connectionManager.closeConnection();
             expect(address.userId).toBeNull();
           });
         });
@@ -1802,6 +1985,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '100', type: 'team' },
               ],
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.team,
@@ -1813,6 +1997,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             const userTeam = await models.userTeam
               .findOne({ where: { userId: '100', teamId: '100' } });
+            connectionManager.closeConnection();
             expect(userTeam).toBeNull();
           });
         });
@@ -1832,6 +2017,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '103', type: 'address' },
               ],
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.address,
@@ -1842,6 +2028,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform();
 
             const address = await models.address.findOne({ where: { id: '103' } });
+            connectionManager.closeConnection();
             expect(address).toBeNull();
           });
         });
@@ -1859,6 +2046,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '100', type: 'team' },
               ],
             };
+            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.team,
@@ -1870,6 +2058,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             const userTeam = await models.userTeam
               .findOne({ where: { userId: '100', teamId: '100' } });
+            connectionManager.closeConnection();
             expect(userTeam).toBeNull();
           });
         });

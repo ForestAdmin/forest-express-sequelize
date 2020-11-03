@@ -6,7 +6,8 @@ function getField(schema, name) {
   return schema.fields.find((field) => field.field === name);
 }
 
-[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((sequelize) => {
+[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((connectionManager) => {
+  const sequelize = connectionManager.createConnection();
   const models = {};
   const sequelizeOptions = {
     sequelize: Sequelize,
