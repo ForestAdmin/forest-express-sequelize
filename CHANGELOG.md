@@ -1,3 +1,10 @@
+## [6.3.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.13...v6.3.14) (2020-11-03)
+
+
+### Bug Fixes
+
+* request the right fields for belongsTo relationships with casing difference between DB and JS ([#530](https://github.com/ForestAdmin/forest-express-sequelize/issues/530)) ([84de297](https://github.com/ForestAdmin/forest-express-sequelize/commit/84de297a9c0278a86f768ec456940a50fd6647ab))
+
 ## [6.3.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.12...v6.3.13) (2020-10-05)
 
 
