@@ -22,6 +22,7 @@ jobs:
       name: Tests
       # NOTICE: Handles code coverage reporting to Code Climate
       before_install:
+        - docker-compose pull --quiet
         - docker-compose up -d
         - curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
         - chmod +x ./cc-test-reporter
