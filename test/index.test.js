@@ -303,6 +303,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
     describe('stats > pie stat getter', () => {
       async function initializeDatabase() {
+        // Tests the connection
+        await sequelize.authenticate();
         return sequelize.sync({ force: true })
           .then(() =>
             sequelizeFixtures.loadFile(
