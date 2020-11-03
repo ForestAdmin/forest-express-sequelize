@@ -308,7 +308,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sequelizeFixtures.loadFile(
               'test/fixtures/db.json',
               models,
-              { log: () => { } },
+              { log: (message) => console.log(message) },
             ));
       }
 
