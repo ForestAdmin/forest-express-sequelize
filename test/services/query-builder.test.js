@@ -32,8 +32,8 @@ describe('services > query-builder', () => {
       function setup() {
         const target = {
           tableAttributes: {
-            id: { field: 'uid' },
-            name: { field: 'name' },
+            id: { field: 'Uid', fieldName: 'uid' },
+            name: { field: 'Name', fieldName: 'name' },
           },
           unscoped: () => ({ name: 'user' }),
         };
