@@ -227,23 +227,23 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
   describe(`dialect ${connectionManager.getDialect()}`, () => {
     describe('schema adapter', () => {
-      describe('on a collection with 13 fields and a few validations', () => {
-        async function initializeSchema() {
-          const { models, sequelizeOptions } = initializeSequelize();
-          const schema = SchemaAdapter(models.user, sequelizeOptions);
-          connectionManager.closeConnection();
-          return schema;
-        }
+      async function initializeSchema(modelName) {
+        const { models, sequelizeOptions } = initializeSequelize();
+        const schema = SchemaAdapter(models[modelName], sequelizeOptions);
+        connectionManager.closeConnection();
+        return schema;
+      }
 
+      describe('on a collection with 13 fields and a few validations', () => {
         it('should generate a schema', async () => {
           expect.assertions(1);
-          const schema = await initializeSchema();
+          const schema = await initializeSchema('user');
           expect(schema).not.toBeNull();
         });
 
         it('should define an idField', async () => {
           expect.assertions(3);
-          const schema = await initializeSchema();
+          const schema = await initializeSchema('user');
           expect(schema.idField).toStrictEqual('id');
           expect(schema.primaryKeys).toHaveLength(1);
           expect(schema.primaryKeys[0]).toStrictEqual('id');
@@ -251,13 +251,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         it('should not detect a composite primary key', async () => {
           expect.assertions(1);
-          const schema = await initializeSchema();
+          const schema = await initializeSchema('user');
           expect(schema.isCompositePrimary).toStrictEqual(false);
         });
 
         it('should detect 14 fields with a type', async () => {
           expect.assertions(15);
-          const schema = await initializeSchema();
+          const schema = await initializeSchema('user');
           expect(schema.fields).toHaveLength(14);
           expect(schema.fields[0].type).toStrictEqual('Number');
           expect(schema.fields[1].type).toStrictEqual('String');
@@ -277,7 +277,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
         it('should setup validations', async () => {
           expect.assertions(5);
-          const schema = await initializeSchema();
+          const schema = await initializeSchema('user');
           expect(schema.fields[4].validations).toHaveLength(2);
           expect(schema.fields[4].validations[0].type).toStrictEqual('is longer than');
           expect(schema.fields[4].validations[0].value).toStrictEqual(0);
@@ -287,22 +287,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
 
       describe('on a simple collection with a fields with a bad type', () => {
-        async function initializeSchema() {
-          const { models, sequelizeOptions } = initializeSequelize();
-          const schema = SchemaAdapter(models.hasBadFieldType, sequelizeOptions);
-          connectionManager.closeConnection();
-          return schema;
-        }
-
         it('should generate a schema', async () => {
           expect.assertions(1);
-          const schema = await initializeSchema();
+          const schema = await initializeSchema('hasBadFieldType');
           expect(schema).not.toBeNull();
         });
 
         it('should detect 4 fields with a type', async () => {
           expect.assertions(5);
-          const schema = await initializeSchema();
+          const schema = await initializeSchema('hasBadFieldType');
           expect(schema.fields).toHaveLength(4);
           expect(schema.fields[0].type).toStrictEqual('Number');
           expect(schema.fields[1].type).toStrictEqual('String');
@@ -492,6 +485,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter without page size', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -499,16 +493,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
-          connectionManager.closeConnection();
           expect(true).toStrictEqual(true);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the resources getter with a page size', () => {
         it('should return the records for the specified page', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -516,27 +510,27 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the resources getter with a sort on the primary key', () => {
         it('should return the records for the specified page', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -545,21 +539,20 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
+          connectionManager.closeConnection();
         });
       });
 
@@ -567,6 +560,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "string" search', () => {
           it('should return the records for the specified page', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               fields: {
                 user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -575,29 +569,29 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: 'hello',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(0);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               search: 'hello',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(0);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "number" search', () => {
           it('should return the records for the specified page', async () => {
             expect.assertions(2);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               fields: {
                 user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
@@ -606,7 +600,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '10',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             let result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
             expect(result[0]).toHaveLength(2);
@@ -614,24 +607,24 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params.search = '0';
             result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(2);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               search: '10',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             let count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
             expect(count).toStrictEqual(2);
 
             params.search = '0';
             count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
+            connectionManager.closeConnection();
           });
         });
       });
@@ -640,6 +633,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a UUID that does not exist', () => {
           it('should return 0 records for the specified page', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               fields: {
                 bike: 'id,name',
@@ -648,29 +642,29 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(0);
+            connectionManager.closeConnection();
           });
 
           it('should count 0 records', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.bike, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(0);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a UUID that exists', () => {
           it('should return 1 record for the specified page', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               fields: {
                 bike: 'id,name',
@@ -679,23 +673,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
+            connectionManager.closeConnection();
           });
 
           it('should count 1 record', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris',
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.bike, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
+            connectionManager.closeConnection();
           });
         });
       });
@@ -703,6 +696,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a search on a collection with searchFields', () => {
         it('should return the records for the specified page', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               order: 'id,amount,description,giftComment',
@@ -711,23 +705,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'gift',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.order, sequelizeOptions, params)
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(1);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             search: 'gift',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.order, sequelizeOptions, params).count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(1);
+          connectionManager.closeConnection();
         });
       });
 
@@ -759,478 +752,478 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is" condition on a number field', () => {
           it('should return the records for the specified page', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'equal',
               value: 100,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'equal',
               value: 100,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "greater than" condition on a number field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'greater_than',
               value: 101,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'greater_than',
               value: 101,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "less than" condition on a number field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'less_than',
               value: 104,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(4);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'less_than',
               value: 104,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(4);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is not" condition on a number field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'not_equal',
               value: 100,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
+            connectionManager.closeConnection();
           });
 
           it('should return the records result', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'id',
               operator: 'not_equal',
               value: 100,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is null" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'equal',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'equal',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is true" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'equal',
               value: true,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
+            connectionManager.closeConnection();
           });
 
           it('should return records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'equal',
               value: true,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is false" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'equal',
               value: false,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'equal',
               value: false,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is not null" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'not_equal',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'not_equal',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is not true" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'not',
               value: true,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'not',
               value: true,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is not" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'email',
               operator: 'not_equal',
               value: 'richard@piedpiper.com',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'email',
               operator: 'not_equal',
               value: 'richard@piedpiper.com',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is not false" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'not',
               value: false,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'emailValid',
               operator: 'not',
               value: false,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "contains" condition on a string field', () => {
           it('should generate a valid SQL query for list', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'firstName',
               operator: 'contains',
               value: 'Richa',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
+            connectionManager.closeConnection();
           });
 
           it('should generate a valid SQL query for count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'firstName',
               operator: 'contains',
               value: 'Richa',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "not contains" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'username',
               operator: 'not_contains',
               value: 'hello',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(4);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'username',
               operator: 'not_contains',
               value: 'hello',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(4);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "starts with" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'email',
               operator: 'starts_with',
               value: 'dinesh@',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(1);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'email',
               operator: 'starts_with',
               value: 'dinesh@',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(1);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "ends with" condition on a string field', () => {
           it('should generate a valid SQL query for list', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'email',
               operator: 'ends_with',
               value: '@piedpiper.com',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
+            connectionManager.closeConnection();
           });
 
           it('should generate a valid SQL query for count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'email',
               operator: 'ends_with',
               value: '@piedpiper.com',
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is present" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(4);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsAddressList);
             params.filters = JSON.stringify({
               field: 'country',
               operator: 'present',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform()
               .then((result) => {
@@ -1245,126 +1238,126 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is blank" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsAddressList);
             params.filters = JSON.stringify({
               field: 'country',
               operator: 'blank',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsAddressCount);
             params.filters = JSON.stringify({
               field: 'country',
               operator: 'blank',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "is blank" condition on a date field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsAddressList);
             params.filters = JSON.stringify({
               field: 'archivedAt',
               operator: 'blank',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(2);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsAddressCount);
             params.filters = JSON.stringify({
               field: 'archivedAt',
               operator: 'blank',
               value: null,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
               .count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(2);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "before x hours" condition on a date field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'createdAt',
               operator: 'before_x_hours_ago',
               value: 2,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(0);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'createdAt',
               operator: 'before_x_hours_ago',
               value: 2,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(0);
+            connectionManager.closeConnection();
           });
         });
 
         describe('with a "after x hours" condition on a date field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = JSON.stringify({
               field: 'createdAt',
               operator: 'after_x_hours_ago',
               value: 2,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(4);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = JSON.stringify({
               field: 'createdAt',
               operator: 'after_x_hours_ago',
               value: 2,
             });
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(4);
+            connectionManager.closeConnection();
           });
         });
 
@@ -1395,23 +1388,23 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = filters;
-            const { models, sequelizeOptions } = initializeSequelize();
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            connectionManager.closeConnection();
             expect(result[0]).toHaveLength(3);
+            connectionManager.closeConnection();
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = filters;
-            const { models, sequelizeOptions } = initializeSequelize();
             const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            connectionManager.closeConnection();
             expect(count).toStrictEqual(3);
+            connectionManager.closeConnection();
           });
         });
       });
@@ -1419,6 +1412,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a filter condition and search', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -1432,15 +1426,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(0);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             filters: JSON.stringify({
               field: 'username',
@@ -1450,16 +1444,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(0);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the resources getter with an extended search with a UUID input', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               address: 'line,zipCode,city,country,user',
@@ -1470,30 +1464,30 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             searchExtended: 1,
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
             searchExtended: 1,
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.address, sequelizeOptions, params).count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the resources getter with a filter condition, search and sort combined', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -1508,15 +1502,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(0);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             filters: JSON.stringify({
               field: 'username',
@@ -1526,16 +1520,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(0);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the resources getter with a Live Query segment', () => {
         it('should respond with a valid result', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
@@ -1545,29 +1539,29 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
             .perform();
-          connectionManager.closeConnection();
           expect(result).toHaveLength(2);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(2);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the resources getter with a smart field', () => {
         it('should only retrieve requested fields when only DB fields are used', async () => {
           expect.assertions(5);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               address: 'user',
@@ -1576,24 +1570,23 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(
             models.address,
             sequelizeOptions,
             params,
           ).perform();
 
-          connectionManager.closeConnection();
-
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0]).toHaveProperty('user');
           expect(result[0][0].user.dataValues).toHaveProperty('firstName');
           expect(result[0][0].user.dataValues).toHaveProperty('id');
           expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
+          connectionManager.closeConnection();
         });
 
         it('should retrieve all fields when a smart field is requested', async () => {
           expect.assertions(5);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             fields: {
               address: 'user',
@@ -1602,20 +1595,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new ResourcesGetter(
             models.address,
             sequelizeOptions,
             params,
           ).perform();
 
-          connectionManager.closeConnection();
-
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0]).toHaveProperty('user');
           expect(result[0][0].user.dataValues).toHaveProperty('firstName');
           expect(result[0][0].user.dataValues).toHaveProperty('id');
           expect(result[0][0].user.dataValues).toHaveProperty('lastName');
+          connectionManager.closeConnection();
         });
       });
     });
@@ -1624,6 +1615,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the has-many getter without sort', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1633,7 +1625,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1641,18 +1632,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new HasManyGetter(
             models.user,
             models.address,
@@ -1660,12 +1651,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
+          connectionManager.closeConnection();
         });
 
         it('should only return the ids of the other relationships when fields are specified', async () => {
           expect.assertions(2);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1676,7 +1668,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1684,17 +1675,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).not.toHaveLength(0);
           const firstEntry = result[0][0];
 
           expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['id']);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the has-many-getter with a sort on an attribute', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1705,7 +1697,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sort: 'city',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1713,18 +1704,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new HasManyGetter(
             models.user,
             models.address,
@@ -1732,14 +1723,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the has-many-getter with a sort on a belongsTo', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1750,7 +1742,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sort: '-user.id',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1758,18 +1749,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).toHaveLength(4);
+          connectionManager.closeConnection();
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const count = await new HasManyGetter(
             models.user,
             models.address,
@@ -1777,14 +1768,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .count();
-          connectionManager.closeConnection();
           expect(count).toStrictEqual(4);
+          connectionManager.closeConnection();
         });
       });
 
       describe('request on the has-many-getter with a smart field for an association', () => {
         it('should get all fields for addresses when a smart field is requested', async () => {
           expect.assertions(4);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1795,7 +1787,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1803,15 +1794,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0].user.dataValues).toHaveProperty('id');
           expect(result[0][0].user.dataValues).toHaveProperty('firstName');
           expect(result[0][0].user.dataValues).toHaveProperty('lastName');
+          connectionManager.closeConnection();
         });
 
         it('should get only requested fields on the related users', async () => {
           expect.assertions(5);
+          const { models, sequelizeOptions } = initializeSequelize();
           const params = {
             recordId: 100,
             associationName: 'addresses',
@@ -1822,7 +1814,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const { models, sequelizeOptions } = initializeSequelize();
           const result = await new HasManyGetter(
             models.user,
             models.address,
@@ -1830,12 +1821,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             params,
           )
             .perform();
-          connectionManager.closeConnection();
           expect(result[0]).not.toHaveLength(0);
           expect(result[0][0]).toHaveProperty('user');
           expect(result[0][0].user.dataValues).toHaveProperty('firstName');
           expect(result[0][0].user.dataValues).toHaveProperty('id');
           expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
+          connectionManager.closeConnection();
         });
       });
     });
@@ -1843,6 +1834,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     describe('request on the has-many-getter with a search parameter', () => {
       it('should return the records for the specified page', async () => {
         expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
         const params = {
           recordId: 100,
           associationName: 'addresses',
@@ -1854,7 +1846,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           sort: '-user.id',
           timezone: 'Europe/Paris',
         };
-        const { models, sequelizeOptions } = initializeSequelize();
         const result = await new HasManyGetter(
           models.user,
           models.address,
@@ -1862,23 +1853,23 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           params,
         )
           .perform();
-        connectionManager.closeConnection();
         expect(result[0]).toHaveLength(1);
+        connectionManager.closeConnection();
       });
 
       it('should return the total records count', async () => {
         expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
         const params = {
           recordId: 100,
           associationName: 'addresses',
           search: 'SF',
           timezone: 'Europe/Paris',
         };
-        const { models, sequelizeOptions } = initializeSequelize();
         const count = await new HasManyGetter(models.user, models.address, sequelizeOptions, params)
           .count();
-        connectionManager.closeConnection();
         expect(count).toStrictEqual(1);
+        connectionManager.closeConnection();
       });
     });
 
@@ -1886,29 +1877,29 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('get a record in a simple collection', () => {
         it('should retrieve the record', async () => {
           expect.assertions(3);
+          const { models } = initializeSequelize();
           const params = {
             recordId: 100,
           };
-          const { models } = initializeSequelize();
           const user = await new ResourceGetter(models.user, params).perform();
-          connectionManager.closeConnection();
           expect(user).not.toBeNull();
           expect(user.id).toStrictEqual(100);
           expect(user.firstName).toStrictEqual('Richard');
+          connectionManager.closeConnection();
         });
       });
 
       describe('get a record in a collection with a composite primary key', () => {
         it('should retrieve the record', async () => {
           expect.assertions(2);
+          const { models } = initializeSequelize();
           const params = {
             recordId: 'G@G#F@G@|Ggg23g242@',
           };
-          const { models } = initializeSequelize();
           const log = await new ResourceGetter(models.log, params).perform();
-          connectionManager.closeConnection();
           expect(log).not.toBeNull();
           expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@|Ggg23g242@');
+          connectionManager.closeConnection();
         });
       });
     });
@@ -1917,28 +1908,28 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('remove a record in a simple collection', () => {
         it('should destroy the record', async () => {
           expect.assertions(1);
+          const { models } = initializeSequelize();
           const params = {
             recordId: 1,
           };
-          const { models } = initializeSequelize();
           await new ResourceRemover(models.user, params).perform();
           const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
-          connectionManager.closeConnection();
           expect(user).toBeNull();
+          connectionManager.closeConnection();
         });
       });
 
       describe('remove a record in a collection with a composite primary key', () => {
         it('should destroy the record', async () => {
           expect.assertions(1);
+          const { models } = initializeSequelize();
           const params = {
             recordId: 'G@G#F@G@|Ggg23g242@',
           };
-          const { models } = initializeSequelize();
           await new ResourceRemover(models.log, params).perform();
           const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
-          connectionManager.closeConnection();
           expect(log).toBeNull();
+          connectionManager.closeConnection();
         });
       });
     });
@@ -1948,6 +1939,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('on HasMany relationship', () => {
           it('should delete the relationship of the record', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'addresses',
@@ -1957,7 +1949,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '103', type: 'address' },
               ],
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.address,
@@ -1968,14 +1959,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform();
 
             const address = await models.address.findOne({ where: { id: '103' } });
-            connectionManager.closeConnection();
             expect(address.userId).toBeNull();
+            connectionManager.closeConnection();
           });
         });
 
         describe('on belongs-to-many relationship', () => {
           it('should delete the relationship of the record', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'teams',
@@ -1985,7 +1977,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '100', type: 'team' },
               ],
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.team,
@@ -1997,8 +1988,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             const userTeam = await models.userTeam
               .findOne({ where: { userId: '100', teamId: '100' } });
-            connectionManager.closeConnection();
             expect(userTeam).toBeNull();
+            connectionManager.closeConnection();
           });
         });
       });
@@ -2007,6 +1998,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('on has-many relationship', () => {
           it('should delete the relationship and delete the record', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'addresses',
@@ -2017,7 +2009,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '103', type: 'address' },
               ],
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.address,
@@ -2028,14 +2019,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               .perform();
 
             const address = await models.address.findOne({ where: { id: '103' } });
-            connectionManager.closeConnection();
             expect(address).toBeNull();
+            connectionManager.closeConnection();
           });
         });
 
         describe('on belongs-to-many relationship', () => {
           it('should delete the relationship and delete the record', async () => {
             expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'teams',
@@ -2046,7 +2038,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '100', type: 'team' },
               ],
             };
-            const { models, sequelizeOptions } = initializeSequelize();
             await new HasManyDissociator(
               models.user,
               models.team,
@@ -2058,8 +2049,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             const userTeam = await models.userTeam
               .findOne({ where: { userId: '100', teamId: '100' } });
-            connectionManager.closeConnection();
             expect(userTeam).toBeNull();
+            connectionManager.closeConnection();
           });
         });
       });

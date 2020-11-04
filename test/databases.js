@@ -11,7 +11,11 @@ class ConnectionManager {
   }
 
   getDialect() {
-    return /(\w*):\/\//.exec(this.connectionString)[1];
+    return this.connection && this.connection.options && this.connection.options.dialect;
+  }
+
+  getPort() {
+    return this.connection && this.connection.options && this.connection.options.port;
   }
 
   createConnection() {

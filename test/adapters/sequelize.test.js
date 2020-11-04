@@ -25,7 +25,7 @@ function getField(schema, name) {
     },
   });
 
-  describe(`with dialect ${sequelize.options.dialect} (port: ${sequelize.options.port})`, () => {
+  describe(`with dialect ${connectionManager.getDialect()} (port: ${connectionManager.getPort()})`, () => {
     describe('with model `users`', () => {
       it('should set name correctly', async () => {
         expect.assertions(1);
