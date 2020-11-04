@@ -308,14 +308,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     describe('stats > pie stat getter', () => {
       async function initializeDatabase() {
         const { sequelize, models, sequelizeOptions } = initializeSequelize();
-        return sequelize.sync({ force: true })
-          .then(() =>
-            sequelizeFixtures.loadFile(
-              'test/fixtures/db.json',
-              models,
-              { log: () => { } },
-            ))
-          .then(() => ({ models, sequelizeOptions }));
+        await sequelize.sync({ force: true });
+        await sequelizeFixtures.loadFile(
+          'test/fixtures/db.json',
+          models,
+          { log: () => { } },
+        );
+        return { models, sequelizeOptions };
       }
 
       describe('a simple pie chart', () => {
