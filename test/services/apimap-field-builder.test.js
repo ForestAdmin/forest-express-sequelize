@@ -12,17 +12,15 @@ const sequelize = new Sequelize(
   databaseOptions,
 );
 
-async function initializeField(fieldDefinitions, modelName = 'testModel') {
+function initializeField(fieldDefinitions, modelName = 'testModel') {
   const model = sequelize.define(modelName, fieldDefinitions);
 
-  return sequelize.sync({ force: true })
-    .then(() => _.mapValues(model.rawAttributes, (attribute) =>
-      new ApimapFieldBuilder(
-        model,
-        attribute,
-        { sequelize: Sequelize },
-      )
-        .perform()));
+  return _.mapValues(model.rawAttributes, (attribute) =>
+    new ApimapFieldBuilder(
+      model,
+      attribute,
+      { sequelize: Sequelize },
+    ).perform());
 }
 
 describe('services > apimap-field-builder', () => {
@@ -34,27 +32,27 @@ describe('services > apimap-field-builder', () => {
       },
     };
 
-    it('should have a name uuid', async () => {
+    it('should have a name uuid', () => {
       expect.assertions(1);
-      const { uuid } = await initializeField(fieldDefinitions);
+      const { uuid } = initializeField(fieldDefinitions);
       expect(uuid.field).toStrictEqual('uuid');
     });
 
-    it('should have a String type', async () => {
+    it('should have a String type', () => {
       expect.assertions(1);
-      const { uuid } = await initializeField(fieldDefinitions);
+      const { uuid } = initializeField(fieldDefinitions);
       expect(uuid.type).toStrictEqual('String');
     });
 
-    it('should not be set as required', async () => {
+    it('should not be set as required', () => {
       expect.assertions(1);
-      const { uuid } = await initializeField(fieldDefinitions);
+      const { uuid } = initializeField(fieldDefinitions);
       expect(uuid.isRequired).toStrictEqual(false);
     });
 
-    it('should not have a default value', async () => {
+    it('should not have a default value', () => {
       expect.assertions(1);
-      const { uuid } = await initializeField(fieldDefinitions);
+      const { uuid } = initializeField(fieldDefinitions);
       expect(uuid.defaultValue).toBeUndefined();
     });
   });
@@ -67,21 +65,21 @@ describe('services > apimap-field-builder', () => {
       },
     };
 
-    it('should be set as primary key', async () => {
+    it('should be set as primary key', () => {
       expect.assertions(1);
-      const { uuid } = await initializeField(fieldDefinitions);
+      const { uuid } = initializeField(fieldDefinitions);
       expect(uuid.isPrimaryKey).toStrictEqual(true);
     });
 
-    it('should be set as required', async () => {
+    it('should be set as required', () => {
       expect.assertions(1);
-      const { uuid } = await initializeField(fieldDefinitions);
+      const { uuid } = initializeField(fieldDefinitions);
       expect(uuid.isRequired).toStrictEqual(true);
     });
   });
 
   describe('on other default values', () => {
-    it('should handle array values', async () => {
+    it('should handle array values', () => {
       expect.assertions(4);
 
       const fieldDefinitions = {
@@ -90,7 +88,7 @@ describe('services > apimap-field-builder', () => {
           defaultValue: [0, 21, 42],
         },
       };
-      const { arrayValue } = await initializeField(fieldDefinitions);
+      const { arrayValue } = initializeField(fieldDefinitions);
 
       expect(arrayValue.field).toStrictEqual('arrayValue');
       expect(arrayValue.type).toStrictEqual(['Number']);
@@ -98,7 +96,7 @@ describe('services > apimap-field-builder', () => {
       expect(arrayValue.defaultValue).toStrictEqual([0, 21, 42]);
     });
 
-    it('should handle boolean values', async () => {
+    it('should handle boolean values', () => {
       expect.assertions(4);
 
       const fieldDefinitions = {
@@ -107,7 +105,7 @@ describe('services > apimap-field-builder', () => {
           defaultValue: true,
         },
       };
-      const { boolValue } = await initializeField(fieldDefinitions);
+      const { boolValue } = initializeField(fieldDefinitions);
 
       expect(boolValue.field).toStrictEqual('boolValue');
       expect(boolValue.type).toStrictEqual('Boolean');
@@ -115,7 +113,7 @@ describe('services > apimap-field-builder', () => {
       expect(boolValue.defaultValue).toStrictEqual(true);
     });
 
-    it('should handle integer values', async () => {
+    it('should handle integer values', () => {
       expect.assertions(4);
 
       const fieldDefinitions = {
@@ -124,7 +122,7 @@ describe('services > apimap-field-builder', () => {
           defaultValue: 42,
         },
       };
-      const { intValue } = await initializeField(fieldDefinitions);
+      const { intValue } = initializeField(fieldDefinitions);
 
       expect(intValue.field).toStrictEqual('intValue');
       expect(intValue.type).toStrictEqual('Number');
@@ -132,7 +130,7 @@ describe('services > apimap-field-builder', () => {
       expect(intValue.defaultValue).toStrictEqual(42);
     });
 
-    it('should handle json values', async () => {
+    it('should handle json values', () => {
       expect.assertions(4);
 
       const fieldDefinitions = {
@@ -144,7 +142,7 @@ describe('services > apimap-field-builder', () => {
           },
         },
       };
-      const { jsonValue } = await initializeField(fieldDefinitions);
+      const { jsonValue } = initializeField(fieldDefinitions);
 
       expect(jsonValue.field).toStrictEqual('jsonValue');
       expect(jsonValue.type).toStrictEqual('Json');
@@ -155,7 +153,7 @@ describe('services > apimap-field-builder', () => {
       });
     });
 
-    it('should handle string values', async () => {
+    it('should handle string values', () => {
       expect.assertions(4);
 
       const fieldDefinitions = {
@@ -164,7 +162,7 @@ describe('services > apimap-field-builder', () => {
           defaultValue: 'default_value',
         },
       };
-      const { stringValue } = await initializeField(fieldDefinitions);
+      const { stringValue } = initializeField(fieldDefinitions);
 
       expect(stringValue.field).toStrictEqual('stringValue');
       expect(stringValue.type).toStrictEqual('String');
@@ -174,7 +172,7 @@ describe('services > apimap-field-builder', () => {
   });
 
   describe('on Sequelize.Utils.Literal values', () => {
-    it('should handle boolean values', async () => {
+    it('should handle boolean values', () => {
       expect.assertions(4);
 
       const fieldDefinitions = {
@@ -183,7 +181,7 @@ describe('services > apimap-field-builder', () => {
           defaultValue: Sequelize.literal(true),
         },
       };
-      const { boolLiteral } = await initializeField(fieldDefinitions);
+      const { boolLiteral } = initializeField(fieldDefinitions);
 
       expect(boolLiteral.field).toStrictEqual('boolLiteral');
       expect(boolLiteral.type).toStrictEqual('Boolean');
@@ -191,7 +189,7 @@ describe('services > apimap-field-builder', () => {
       expect(boolLiteral.defaultValue).toStrictEqual(true);
     });
 
-    it('should handle integer values', async () => {
+    it('should handle integer values', () => {
       expect.assertions(4);
 
       const fieldDefinitions = {
@@ -200,7 +198,7 @@ describe('services > apimap-field-builder', () => {
           defaultValue: Sequelize.literal(42),
         },
       };
-      const { intLiteral } = await initializeField(fieldDefinitions);
+      const { intLiteral } = initializeField(fieldDefinitions);
 
       expect(intLiteral.field).toStrictEqual('intLiteral');
       expect(intLiteral.type).toStrictEqual('Number');
@@ -208,7 +206,7 @@ describe('services > apimap-field-builder', () => {
       expect(intLiteral.defaultValue).toStrictEqual(42);
     });
 
-    it('should handle string values', async () => {
+    it('should handle string values', () => {
       expect.assertions(24);
 
       const fieldDefinitions = {
@@ -244,7 +242,7 @@ describe('services > apimap-field-builder', () => {
         intStringLiteral,
         stringIntLiteral,
         stringStringLiteral,
-      } = await initializeField(fieldDefinitions);
+      } = initializeField(fieldDefinitions);
 
       // NOTICE: Expressions are skipped as client does not evaluate them.
       expect(expressionLiteral.field).toStrictEqual('expressionLiteral');

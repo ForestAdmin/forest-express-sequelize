@@ -6,7 +6,8 @@ function getField(schema, name) {
   return schema.fields.find((field) => field.field === name);
 }
 
-[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((sequelize) => {
+[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((connectionManager) => {
+  const sequelize = connectionManager.createConnection();
   const models = {};
   const sequelizeOptions = {
     sequelize: Sequelize,
@@ -24,7 +25,7 @@ function getField(schema, name) {
     },
   });
 
-  describe(`with dialect ${sequelize.options.dialect} (port: ${sequelize.options.port})`, () => {
+  describe(`with dialect ${connectionManager.getDialect()} (port: ${connectionManager.getPort()})`, () => {
     describe('with model `users`', () => {
       it('should set name correctly', async () => {
         expect.assertions(1);

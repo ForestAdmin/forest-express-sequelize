@@ -1,27 +1,40 @@
 const Sequelize = require('sequelize');
 
-const databaseOptions = {
-  logging: false,
-  pool: { maxConnections: 10, minConnections: 1 },
-};
+class ConnectionManager {
+  constructor(connectionString) {
+    this.connectionString = connectionString;
+    this.databaseOptions = {
+      logging: false,
+      pool: { maxConnections: 10, minConnections: 1 },
+    };
+    this.connection = null;
+  }
 
-const sequelizePostgres = new Sequelize(
-  'postgres://forest:secret@localhost:5436/forest-express-sequelize-test',
-  databaseOptions,
-);
+  getDialect() {
+    return this.connection && this.connection.options && this.connection.options.dialect;
+  }
 
-const sequelizeMySQLMin = new Sequelize(
-  'mysql://forest:secret@localhost:8998/forest-express-sequelize-test',
-  databaseOptions,
-);
+  getPort() {
+    return this.connection && this.connection.options && this.connection.options.port;
+  }
 
-const sequelizeMySQLMax = new Sequelize(
-  'mysql://forest:secret@localhost:8999/forest-express-sequelize-test',
-  databaseOptions,
-);
+  createConnection() {
+    if (!this.connection) {
+      this.connection = new Sequelize(this.connectionString, this.databaseOptions);
+    }
+    return this.connection;
+  }
+
+  closeConnection() {
+    if (this.connection) {
+      this.connection.close();
+      this.connection = null;
+    }
+  }
+}
 
 module.exports = {
-  sequelizePostgres,
-  sequelizeMySQLMin,
-  sequelizeMySQLMax,
+  sequelizePostgres: new ConnectionManager('postgres://forest:secret@localhost:5436/forest-express-sequelize-test'),
+  sequelizeMySQLMin: new ConnectionManager('mysql://forest:secret@localhost:8998/forest-express-sequelize-test'),
+  sequelizeMySQLMax: new ConnectionManager('mysql://forest:secret@localhost:8999/forest-express-sequelize-test'),
 };
