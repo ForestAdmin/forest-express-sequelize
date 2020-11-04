@@ -322,18 +322,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
             const { models, sequelizeOptions } = await initializeDatabase();
-            const stat = await new PieStatGetter(models.user, {
-              type: 'Pie',
-              collection: 'user',
-              timezone: 'Europe/Paris',
-              group_by_field: 'firstName',
-              aggregate: 'Count',
-              time_range: null,
-              filters: null,
-            }, sequelizeOptions)
-              .perform();
-            connectionManager.closeConnection();
-            expect(stat.value).toHaveLength(3);
+            try {
+              const stat = await new PieStatGetter(models.user, {
+                type: 'Pie',
+                collection: 'user',
+                timezone: 'Europe/Paris',
+                group_by_field: 'firstName',
+                aggregate: 'Count',
+                time_range: null,
+                filters: null,
+              }, sequelizeOptions)
+                .perform();
+              expect(stat.value).toHaveLength(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -341,18 +344,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should respond correct data', async () => {
             expect.assertions(1);
             const { models, sequelizeOptions } = await initializeDatabase();
-            const stat = await new PieStatGetter(models.addressWithUserAlias, {
-              type: 'Pie',
-              collection: 'addressWithUserAlias',
-              timezone: 'Europe/Paris',
-              group_by_field: 'userAlias:id',
-              aggregate: 'Count',
-              time_range: null,
-              filters: null,
-            }, sequelizeOptions)
-              .perform();
-            connectionManager.closeConnection();
-            expect(stat.value).toHaveLength(0);
+            try {
+              const stat = await new PieStatGetter(models.addressWithUserAlias, {
+                type: 'Pie',
+                collection: 'addressWithUserAlias',
+                timezone: 'Europe/Paris',
+                group_by_field: 'userAlias:id',
+                aggregate: 'Count',
+                time_range: null,
+                filters: null,
+              }, sequelizeOptions)
+                .perform();
+              expect(stat.value).toHaveLength(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
       });
@@ -363,18 +369,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
           const { models, sequelizeOptions } = initializeSequelize();
-          const stat = await new LineStatGetter(models.user, {
-            type: 'Line',
-            collection: 'user',
-            timezone: 'Europe/Paris',
-            group_by_date_field: 'createdAt',
-            aggregate: 'Count',
-            time_range: 'Day',
-            filters: null,
-          }, sequelizeOptions)
-            .perform();
-          connectionManager.closeConnection();
-          expect(stat.value).toHaveLength(1);
+          try {
+            const stat = await new LineStatGetter(models.user, {
+              type: 'Line',
+              collection: 'user',
+              timezone: 'Europe/Paris',
+              group_by_date_field: 'createdAt',
+              aggregate: 'Count',
+              time_range: 'Day',
+              filters: null,
+            }, sequelizeOptions)
+              .perform();
+            expect(stat.value).toHaveLength(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -382,18 +391,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
           const { models, sequelizeOptions } = initializeSequelize();
-          const stat = await new LineStatGetter(models.user, {
-            type: 'Line',
-            collection: 'user',
-            timezone: 'Europe/Paris',
-            group_by_date_field: 'createdAt',
-            aggregate: 'Count',
-            time_range: 'Week',
-            filters: null,
-          }, sequelizeOptions)
-            .perform();
-          connectionManager.closeConnection();
-          expect(stat.value).toHaveLength(1);
+          try {
+            const stat = await new LineStatGetter(models.user, {
+              type: 'Line',
+              collection: 'user',
+              timezone: 'Europe/Paris',
+              group_by_date_field: 'createdAt',
+              aggregate: 'Count',
+              time_range: 'Week',
+              filters: null,
+            }, sequelizeOptions)
+              .perform();
+            expect(stat.value).toHaveLength(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -401,18 +413,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
           const { models, sequelizeOptions } = initializeSequelize();
-          const stat = await new LineStatGetter(models.user, {
-            type: 'Line',
-            collection: 'user',
-            timezone: 'Europe/Paris',
-            group_by_date_field: 'createdAt',
-            aggregate: 'Count',
-            time_range: 'Month',
-            filters: null,
-          }, sequelizeOptions)
-            .perform();
-          connectionManager.closeConnection();
-          expect(stat.value).toHaveLength(1);
+          try {
+            const stat = await new LineStatGetter(models.user, {
+              type: 'Line',
+              collection: 'user',
+              timezone: 'Europe/Paris',
+              group_by_date_field: 'createdAt',
+              aggregate: 'Count',
+              time_range: 'Month',
+              filters: null,
+            }, sequelizeOptions)
+              .perform();
+            expect(stat.value).toHaveLength(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -420,18 +435,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
           const { models, sequelizeOptions } = initializeSequelize();
-          const stat = await new LineStatGetter(models.user, {
-            type: 'Line',
-            collection: 'user',
-            timezone: 'Europe/Paris',
-            group_by_date_field: 'createdAt',
-            aggregate: 'Count',
-            time_range: 'Year',
-            filters: null,
-          }, sequelizeOptions)
-            .perform();
-          connectionManager.closeConnection();
-          expect(stat.value).toHaveLength(1);
+          try {
+            const stat = await new LineStatGetter(models.user, {
+              type: 'Line',
+              collection: 'user',
+              timezone: 'Europe/Paris',
+              group_by_date_field: 'createdAt',
+              aggregate: 'Count',
+              time_range: 'Year',
+              filters: null,
+            }, sequelizeOptions)
+              .perform();
+            expect(stat.value).toHaveLength(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
     });
@@ -441,23 +459,26 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should create a record', async () => {
           expect.assertions(4);
           const { models } = initializeSequelize();
-          const result = await new ResourceCreator(models.user, {
-            id: '1',
-            email: 'jack@forestadmin.com',
-            firstName: 'Jack',
-            lastName: 'Lumberjack',
-            username: 'Jacouille',
-            password: 'bonpoissonnet',
-            teams: [],
-          })
-            .perform();
-          expect(result.id).toStrictEqual(1);
-          expect(result.firstName).toStrictEqual('Jack');
-          expect(result.username).toStrictEqual('Jacouille');
+          try {
+            const result = await new ResourceCreator(models.user, {
+              id: '1',
+              email: 'jack@forestadmin.com',
+              firstName: 'Jack',
+              lastName: 'Lumberjack',
+              username: 'Jacouille',
+              password: 'bonpoissonnet',
+              teams: [],
+            })
+              .perform();
+            expect(result.id).toStrictEqual(1);
+            expect(result.firstName).toStrictEqual('Jack');
+            expect(result.username).toStrictEqual('Jacouille');
 
-          const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
-          connectionManager.closeConnection();
-          expect(user).not.toBeNull();
+            const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
+            expect(user).not.toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -465,17 +486,20 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should create a record', async () => {
           expect.assertions(3);
           const { models } = initializeSequelize();
-          const result = await new ResourceCreator(models.log, {
-            code: 'G@G#F@G@',
-            trace: 'Ggg23g242@',
-          })
-            .perform();
-          expect(result.code).toStrictEqual('G@G#F@G@');
-          expect(result.trace).toStrictEqual('Ggg23g242@');
+          try {
+            const result = await new ResourceCreator(models.log, {
+              code: 'G@G#F@G@',
+              trace: 'Ggg23g242@',
+            })
+              .perform();
+            expect(result.code).toStrictEqual('G@G#F@G@');
+            expect(result.trace).toStrictEqual('Ggg23g242@');
 
-          const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
-          connectionManager.closeConnection();
-          expect(log).not.toBeNull();
+            const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
+            expect(log).not.toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
     });
@@ -485,16 +509,19 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
           const { models, sequelizeOptions } = initializeSequelize();
-          const params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-            },
-            page: { number: '1' },
-            timezone: 'Europe/Paris',
-          };
-          await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
-          expect(true).toStrictEqual(true);
-          connectionManager.closeConnection();
+          try {
+            const params = {
+              fields: {
+                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
+              },
+              page: { number: '1' },
+              timezone: 'Europe/Paris',
+            };
+            await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
+            expect(true).toStrictEqual(true);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -509,9 +536,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
-          expect(result[0]).toHaveLength(4);
-          connectionManager.closeConnection();
+          try {
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -520,9 +551,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             timezone: 'Europe/Paris',
           };
-          const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(4);
-          connectionManager.closeConnection();
+          try {
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -538,9 +572,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '30' },
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
-          expect(result[0]).toHaveLength(4);
-          connectionManager.closeConnection();
+          try {
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -549,9 +587,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             timezone: 'Europe/Paris',
           };
-          const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(4);
-          connectionManager.closeConnection();
+          try {
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -568,10 +609,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: 'hello',
               timezone: 'Europe/Paris',
             };
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(0);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -581,9 +625,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: 'hello',
               timezone: 'Europe/Paris',
             };
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(0);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -599,15 +647,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '10',
               timezone: 'Europe/Paris',
             };
-            let result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(2);
+            try {
+              let result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(2);
 
-            params.search = '0';
-            result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(1);
-            connectionManager.closeConnection();
+              params.search = '0';
+              result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -617,13 +668,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '10',
               timezone: 'Europe/Paris',
             };
-            let count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(2);
+            try {
+              let count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+              expect(count).toStrictEqual(2);
 
-            params.search = '0';
-            count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(1);
-            connectionManager.closeConnection();
+              params.search = '0';
+              count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
       });
@@ -641,10 +695,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris',
             };
-            const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(0);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should count 0 records', async () => {
@@ -654,9 +711,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
               timezone: 'Europe/Paris',
             };
-            const count = await new ResourcesGetter(models.bike, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(0);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.bike, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -672,10 +733,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris',
             };
-            const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(1);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should count 1 record', async () => {
@@ -685,9 +749,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
               timezone: 'Europe/Paris',
             };
-            const count = await new ResourcesGetter(models.bike, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(1);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.bike, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
       });
@@ -704,10 +772,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'gift',
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(models.order, sequelizeOptions, params)
-            .perform();
-          expect(result[0]).toHaveLength(1);
-          connectionManager.closeConnection();
+          try {
+            const result = await new ResourcesGetter(models.order, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -717,9 +788,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'gift',
             timezone: 'Europe/Paris',
           };
-          const count = await new ResourcesGetter(models.order, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(1);
-          connectionManager.closeConnection();
+          try {
+            const count = await new ResourcesGetter(models.order, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -758,10 +832,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: 100,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(1);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -773,9 +850,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: 100,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(1);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -789,10 +870,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'greater_than',
               value: 101,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(2);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -804,9 +888,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'greater_than',
               value: 101,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(2);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -820,10 +908,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'less_than',
               value: 104,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(4);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(4);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -835,9 +926,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'less_than',
               value: 104,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(4);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(4);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -851,10 +946,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 100,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(3);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the records result', async () => {
@@ -866,9 +964,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 100,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(3);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -882,10 +984,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: null,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(2);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -897,9 +1002,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: null,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(2);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -913,10 +1022,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: true,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(1);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return records count', async () => {
@@ -928,9 +1040,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: true,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(1);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -944,10 +1060,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: false,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(1);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -959,9 +1078,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'equal',
               value: false,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(1);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -975,10 +1098,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: null,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(2);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -990,9 +1116,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: null,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(2);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1006,10 +1136,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: true,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(3);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1021,9 +1154,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: true,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(3);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1037,10 +1174,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 'richard@piedpiper.com',
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(3);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1052,9 +1192,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_equal',
               value: 'richard@piedpiper.com',
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(3);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1068,10 +1212,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: false,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(3);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1083,9 +1230,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not',
               value: false,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(3);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1099,10 +1250,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'contains',
               value: 'Richa',
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(1);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should generate a valid SQL query for count', async () => {
@@ -1114,9 +1268,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'contains',
               value: 'Richa',
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(1);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1130,10 +1288,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_contains',
               value: 'hello',
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(4);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(4);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1145,9 +1306,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'not_contains',
               value: 'hello',
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(4);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(4);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1161,10 +1326,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'starts_with',
               value: 'dinesh@',
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(1);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1176,9 +1344,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'starts_with',
               value: 'dinesh@',
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(1);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1192,10 +1364,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'ends_with',
               value: '@piedpiper.com',
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(3);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should generate a valid SQL query for count', async () => {
@@ -1207,9 +1382,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'ends_with',
               value: '@piedpiper.com',
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(3);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1223,14 +1402,17 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'present',
               value: null,
             });
-            await new ResourcesGetter(models.address, sequelizeOptions, params)
-              .perform()
-              .then((result) => {
-                _.each(result[0], (instance) => {
-                  expect(instance.dataValues.country).toBeDefined();
+            try {
+              await new ResourcesGetter(models.address, sequelizeOptions, params)
+                .perform()
+                .then((result) => {
+                  _.each(result[0], (instance) => {
+                    expect(instance.dataValues.country).toBeDefined();
+                  });
                 });
-              });
-            connectionManager.closeConnection();
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1244,10 +1426,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
-            const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(2);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1259,10 +1444,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
-            const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
-              .count();
-            expect(count).toStrictEqual(2);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1276,10 +1464,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
-            const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(2);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1291,10 +1482,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'blank',
               value: null,
             });
-            const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
-              .count();
-            expect(count).toStrictEqual(2);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(2);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1308,10 +1502,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'before_x_hours_ago',
               value: 2,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(0);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1323,9 +1520,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'before_x_hours_ago',
               value: 2,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(0);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1339,10 +1540,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'after_x_hours_ago',
               value: 2,
             });
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(4);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(4);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1354,9 +1558,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               operator: 'after_x_hours_ago',
               value: 2,
             });
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(4);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(4);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1390,10 +1598,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseList);
             params.filters = filters;
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
-            expect(result[0]).toHaveLength(3);
-            connectionManager.closeConnection();
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
 
           it('should return the total records count', async () => {
@@ -1401,9 +1612,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const { models, sequelizeOptions } = initializeSequelize();
             const params = _.clone(paramsBaseCount);
             params.filters = filters;
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-            expect(count).toStrictEqual(3);
-            connectionManager.closeConnection();
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(3);
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
       });
@@ -1425,10 +1640,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform();
-          expect(result[0]).toHaveLength(0);
-          connectionManager.closeConnection();
+          try {
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(0);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -1443,9 +1661,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(0);
-          connectionManager.closeConnection();
+          try {
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(0);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1463,10 +1684,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             searchExtended: 1,
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
-            .perform();
-          expect(result[0]).toHaveLength(4);
-          connectionManager.closeConnection();
+          try {
+            const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -1477,9 +1701,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             searchExtended: 1,
             timezone: 'Europe/Paris',
           };
-          const count = await new ResourcesGetter(models.address, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(4);
-          connectionManager.closeConnection();
+          try {
+            const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
+              .count();
+            expect(count).toStrictEqual(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1501,10 +1729,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform();
-          expect(result[0]).toHaveLength(0);
-          connectionManager.closeConnection();
+          try {
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(0);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -1519,9 +1750,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             search: 'world',
             timezone: 'Europe/Paris',
           };
-          const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(0);
-          connectionManager.closeConnection();
+          try {
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(0);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1538,10 +1772,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-            .perform();
-          expect(result).toHaveLength(2);
-          connectionManager.closeConnection();
+          try {
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            expect(result).toHaveLength(2);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -1551,9 +1788,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
           };
-          const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
-          expect(count).toStrictEqual(2);
-          connectionManager.closeConnection();
+          try {
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            expect(count).toStrictEqual(2);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1569,18 +1809,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(
-            models.address,
-            sequelizeOptions,
-            params,
-          ).perform();
+          try {
+            const result = await new ResourcesGetter(
+              models.address,
+              sequelizeOptions,
+              params,
+            ).perform();
 
-          expect(result[0]).not.toHaveLength(0);
-          expect(result[0][0]).toHaveProperty('user');
-          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
-          expect(result[0][0].user.dataValues).toHaveProperty('id');
-          expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
-          connectionManager.closeConnection();
+            expect(result[0]).not.toHaveLength(0);
+            expect(result[0][0]).toHaveProperty('user');
+            expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+            expect(result[0][0].user.dataValues).toHaveProperty('id');
+            expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should retrieve all fields when a smart field is requested', async () => {
@@ -1594,18 +1837,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1' },
             timezone: 'Europe/Paris',
           };
-          const result = await new ResourcesGetter(
-            models.address,
-            sequelizeOptions,
-            params,
-          ).perform();
+          try {
+            const result = await new ResourcesGetter(
+              models.address,
+              sequelizeOptions,
+              params,
+            ).perform();
 
-          expect(result[0]).not.toHaveLength(0);
-          expect(result[0][0]).toHaveProperty('user');
-          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
-          expect(result[0][0].user.dataValues).toHaveProperty('id');
-          expect(result[0][0].user.dataValues).toHaveProperty('lastName');
-          connectionManager.closeConnection();
+            expect(result[0]).not.toHaveLength(0);
+            expect(result[0][0]).toHaveProperty('user');
+            expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+            expect(result[0][0].user.dataValues).toHaveProperty('id');
+            expect(result[0][0].user.dataValues).toHaveProperty('lastName');
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
     });
@@ -1624,15 +1870,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const result = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .perform();
-          expect(result[0]).toHaveLength(4);
-          connectionManager.closeConnection();
+          try {
+            const result = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(result[0]).toHaveLength(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -1643,15 +1892,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
-          const count = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .count();
-          expect(count).toStrictEqual(4);
-          connectionManager.closeConnection();
+          try {
+            const count = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .count();
+            expect(count).toStrictEqual(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should only return the ids of the other relationships when fields are specified', async () => {
@@ -1667,18 +1919,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const result = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .perform();
-          expect(result[0]).not.toHaveLength(0);
-          const firstEntry = result[0][0];
+          try {
+            const result = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(result[0]).not.toHaveLength(0);
+            const firstEntry = result[0][0];
 
-          expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['id']);
-          connectionManager.closeConnection();
+            expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['id']);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1696,15 +1951,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sort: 'city',
             timezone: 'Europe/Paris',
           };
-          const result = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .perform();
-          expect(result[0]).toHaveLength(4);
-          connectionManager.closeConnection();
+          try {
+            const result = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(result[0]).toHaveLength(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -1715,15 +1973,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
-          const count = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .count();
-          expect(count).toStrictEqual(4);
-          connectionManager.closeConnection();
+          try {
+            const count = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .count();
+            expect(count).toStrictEqual(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1741,15 +2002,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             sort: '-user.id',
             timezone: 'Europe/Paris',
           };
-          const result = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .perform();
-          expect(result[0]).toHaveLength(4);
-          connectionManager.closeConnection();
+          try {
+            const result = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(result[0]).toHaveLength(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should return the total records count', async () => {
@@ -1760,15 +2024,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             associationName: 'addresses',
             timezone: 'Europe/Paris',
           };
-          const count = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .count();
-          expect(count).toStrictEqual(4);
-          connectionManager.closeConnection();
+          try {
+            const count = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .count();
+            expect(count).toStrictEqual(4);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1786,18 +2053,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const result = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .perform();
-          expect(result[0]).not.toHaveLength(0);
-          expect(result[0][0].user.dataValues).toHaveProperty('id');
-          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
-          expect(result[0][0].user.dataValues).toHaveProperty('lastName');
-          connectionManager.closeConnection();
+          try {
+            const result = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(result[0]).not.toHaveLength(0);
+            expect(result[0][0].user.dataValues).toHaveProperty('id');
+            expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+            expect(result[0][0].user.dataValues).toHaveProperty('lastName');
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
 
         it('should get only requested fields on the related users', async () => {
@@ -1813,19 +2083,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             page: { number: '1', size: '20' },
             timezone: 'Europe/Paris',
           };
-          const result = await new HasManyGetter(
-            models.user,
-            models.address,
-            sequelizeOptions,
-            params,
-          )
-            .perform();
-          expect(result[0]).not.toHaveLength(0);
-          expect(result[0][0]).toHaveProperty('user');
-          expect(result[0][0].user.dataValues).toHaveProperty('firstName');
-          expect(result[0][0].user.dataValues).toHaveProperty('id');
-          expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
-          connectionManager.closeConnection();
+          try {
+            const result = await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(result[0]).not.toHaveLength(0);
+            expect(result[0][0]).toHaveProperty('user');
+            expect(result[0][0].user.dataValues).toHaveProperty('firstName');
+            expect(result[0][0].user.dataValues).toHaveProperty('id');
+            expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
     });
@@ -1845,15 +2118,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           sort: '-user.id',
           timezone: 'Europe/Paris',
         };
-        const result = await new HasManyGetter(
-          models.user,
-          models.address,
-          sequelizeOptions,
-          params,
-        )
-          .perform();
-        expect(result[0]).toHaveLength(1);
-        connectionManager.closeConnection();
+        try {
+          const result = await new HasManyGetter(
+            models.user,
+            models.address,
+            sequelizeOptions,
+            params,
+          )
+            .perform();
+          expect(result[0]).toHaveLength(1);
+        } finally {
+          connectionManager.closeConnection();
+        }
       });
 
       it('should return the total records count', async () => {
@@ -1865,10 +2141,17 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           search: 'SF',
           timezone: 'Europe/Paris',
         };
-        const count = await new HasManyGetter(models.user, models.address, sequelizeOptions, params)
-          .count();
-        expect(count).toStrictEqual(1);
-        connectionManager.closeConnection();
+        try {
+          const count = await new HasManyGetter(
+            models.user,
+            models.address,
+            sequelizeOptions,
+            params,
+          ).count();
+          expect(count).toStrictEqual(1);
+        } finally {
+          connectionManager.closeConnection();
+        }
       });
     });
 
@@ -1880,11 +2163,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 100,
           };
-          const user = await new ResourceGetter(models.user, params).perform();
-          expect(user).not.toBeNull();
-          expect(user.id).toStrictEqual(100);
-          expect(user.firstName).toStrictEqual('Richard');
-          connectionManager.closeConnection();
+          try {
+            const user = await new ResourceGetter(models.user, params).perform();
+            expect(user).not.toBeNull();
+            expect(user.id).toStrictEqual(100);
+            expect(user.firstName).toStrictEqual('Richard');
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1895,10 +2181,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 'G@G#F@G@|Ggg23g242@',
           };
-          const log = await new ResourceGetter(models.log, params).perform();
-          expect(log).not.toBeNull();
-          expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@|Ggg23g242@');
-          connectionManager.closeConnection();
+          try {
+            const log = await new ResourceGetter(models.log, params).perform();
+            expect(log).not.toBeNull();
+            expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@|Ggg23g242@');
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
     });
@@ -1911,10 +2200,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 1,
           };
-          await new ResourceRemover(models.user, params).perform();
-          const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
-          expect(user).toBeNull();
-          connectionManager.closeConnection();
+          try {
+            await new ResourceRemover(models.user, params).perform();
+            const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
+            expect(user).toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 
@@ -1925,10 +2217,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           const params = {
             recordId: 'G@G#F@G@|Ggg23g242@',
           };
-          await new ResourceRemover(models.log, params).perform();
-          const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
-          expect(log).toBeNull();
-          connectionManager.closeConnection();
+          try {
+            await new ResourceRemover(models.log, params).perform();
+            const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
+            expect(log).toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
     });
@@ -1948,18 +2243,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '103', type: 'address' },
               ],
             };
-            await new HasManyDissociator(
-              models.user,
-              models.address,
-              sequelizeOptions,
-              params,
-              data,
-            )
-              .perform();
+            try {
+              await new HasManyDissociator(
+                models.user,
+                models.address,
+                sequelizeOptions,
+                params,
+                data,
+              )
+                .perform();
 
-            const address = await models.address.findOne({ where: { id: '103' } });
-            expect(address.userId).toBeNull();
-            connectionManager.closeConnection();
+              const address = await models.address.findOne({ where: { id: '103' } });
+              expect(address.userId).toBeNull();
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -1976,19 +2274,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '100', type: 'team' },
               ],
             };
-            await new HasManyDissociator(
-              models.user,
-              models.team,
-              sequelizeOptions,
-              params,
-              data,
-            )
-              .perform();
+            try {
+              await new HasManyDissociator(
+                models.user,
+                models.team,
+                sequelizeOptions,
+                params,
+                data,
+              )
+                .perform();
 
-            const userTeam = await models.userTeam
-              .findOne({ where: { userId: '100', teamId: '100' } });
-            expect(userTeam).toBeNull();
-            connectionManager.closeConnection();
+              const userTeam = await models.userTeam
+                .findOne({ where: { userId: '100', teamId: '100' } });
+              expect(userTeam).toBeNull();
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
       });
@@ -2008,18 +2309,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '103', type: 'address' },
               ],
             };
-            await new HasManyDissociator(
-              models.user,
-              models.address,
-              sequelizeOptions,
-              params,
-              data,
-            )
-              .perform();
+            try {
+              await new HasManyDissociator(
+                models.user,
+                models.address,
+                sequelizeOptions,
+                params,
+                data,
+              )
+                .perform();
 
-            const address = await models.address.findOne({ where: { id: '103' } });
-            expect(address).toBeNull();
-            connectionManager.closeConnection();
+              const address = await models.address.findOne({ where: { id: '103' } });
+              expect(address).toBeNull();
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
 
@@ -2037,19 +2341,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 { id: '100', type: 'team' },
               ],
             };
-            await new HasManyDissociator(
-              models.user,
-              models.team,
-              sequelizeOptions,
-              params,
-              data,
-            )
-              .perform();
+            try {
+              await new HasManyDissociator(
+                models.user,
+                models.team,
+                sequelizeOptions,
+                params,
+                data,
+              )
+                .perform();
 
-            const userTeam = await models.userTeam
-              .findOne({ where: { userId: '100', teamId: '100' } });
-            expect(userTeam).toBeNull();
-            connectionManager.closeConnection();
+              const userTeam = await models.userTeam
+                .findOne({ where: { userId: '100', teamId: '100' } });
+              expect(userTeam).toBeNull();
+            } finally {
+              connectionManager.closeConnection();
+            }
           });
         });
       });
