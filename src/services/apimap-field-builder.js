@@ -2,7 +2,7 @@ const _ = require('lodash');
 const ApimapFieldTypeDetector = require('./apimap-field-type-detector');
 
 function ApimapFieldBuilder(model, column, options) {
-  const DataTypes = options.sequelize;
+  const DataTypes = options.Sequelize;
 
   function isRequired() {
     // eslint-disable-next-line

@@ -19,7 +19,7 @@ function initializeField(fieldDefinitions, modelName = 'testModel') {
     new ApimapFieldBuilder(
       model,
       attribute,
-      { sequelize: Sequelize },
+      { Sequelize },
     ).perform());
 }
 

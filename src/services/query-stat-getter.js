@@ -1,7 +1,7 @@
 const LiveQueryChecker = require('./live-query-checker');
 
 function QueryStatGetter(params, opts) {
-  const QUERY_OPTIONS_SELECT = { type: opts.sequelize.QueryTypes.SELECT };
+  const QUERY_OPTIONS_SELECT = { type: opts.Sequelize.QueryTypes.SELECT };
 
   this.perform = function perform() {
     let rawQuery = params.query.trim();

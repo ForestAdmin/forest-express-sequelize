@@ -39,7 +39,7 @@ describe('services > composite-keys-manager', () => {
   });
 
   describe('getRecordsConditions', () => {
-    const sequelizeOptions = { sequelize: Sequelize };
+    const sequelizeOptions = { Sequelize };
     it('should return a where condition with one key for non composite key', () => {
       expect.assertions(1);
       const model = { primaryKeys: { actorId: {} } };
