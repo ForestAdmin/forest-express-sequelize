@@ -1,3 +1,10 @@
+## [6.3.15](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.14...v6.3.15) (2020-11-13)
+
+
+### Bug Fixes
+
+* don't compute smart fields when not requested on associated records ([#540](https://github.com/ForestAdmin/forest-express-sequelize/issues/540)) ([5c95163](https://github.com/ForestAdmin/forest-express-sequelize/commit/5c95163ddd5b94e1c74c623c9c66769116eab71b))
+
 ## [6.3.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.13...v6.3.14) (2020-11-03)
 
 
