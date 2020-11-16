@@ -52,15 +52,7 @@ exports.PUBLIC_ROUTES = Interface.PUBLIC_ROUTES;
 exports.init = function init(opts) {
   exports.opts = opts;
 
-  const { Sequelize, sequelize: connections, ...models } = opts.toBeDefined;
-  // In case of multi DB the definition of connections should be
-  // connnections = { dbName1 : sequelizeConnection1, dbName2: sequelizeConnection2 }
-  // In case of single DB the definition of connections should be
-  // connections = Sequelize object
-  opts.useMultipleDatabase = !(connections instanceof Sequelize);
-  opts.connections = opts.useMultipleDatabase ? Object.values(connections) : [connections];
-  opts.models = models;
-  opts.Sequelize = Sequelize;
+  opts.useMultipleDatabase = Object.keys(opts.connections).length > 1;
 
   exports.getLianaName = function getLianaName() {
     return 'forest-express-sequelize';
@@ -83,7 +75,7 @@ exports.init = function init(opts) {
   exports.getDatabaseType = function getDatabaseType() {
     if (opts.useMultipleDatabase) return 'multiple';
 
-    return opts.connections[0].options.dialect;
+    return Object.values(opts.connections)[0].options.dialect;
   };
 
   exports.SchemaAdapter = SchemaAdapter;
