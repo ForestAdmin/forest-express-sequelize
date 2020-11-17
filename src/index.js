@@ -52,6 +52,7 @@ exports.PUBLIC_ROUTES = Interface.PUBLIC_ROUTES;
 exports.init = function init(opts) {
   exports.opts = opts;
 
+  opts.Sequelize = opts.objectMapping;
   opts.useMultipleDatabase = Object.keys(opts.connections).length > 1;
 
   exports.getLianaName = function getLianaName() {
