@@ -1,3 +1,10 @@
+# [6.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.15...v6.4.0) (2020-11-17)
+
+
+### Features
+
+* **smart actions:** add hooks in schema file ([#542](https://github.com/ForestAdmin/forest-express-sequelize/issues/542)) ([f1cd375](https://github.com/ForestAdmin/forest-express-sequelize/commit/f1cd37585c90c5fe10be48ad6bb65ce8b0626387))
+
 ## [6.3.15](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.14...v6.3.15) (2020-11-13)
 
 
