@@ -53,7 +53,7 @@ exports.init = function init(opts) {
   exports.opts = opts;
 
   opts.Sequelize = opts.objectMapping;
-  opts.useMultipleDatabase = Object.keys(opts.connections).length > 1;
+  opts.useMultipleDatabases = Object.keys(opts.connections).length > 1;
 
   exports.getLianaName = function getLianaName() {
     return 'forest-express-sequelize';
@@ -74,7 +74,7 @@ exports.init = function init(opts) {
   };
 
   exports.getDatabaseType = function getDatabaseType() {
-    if (opts.useMultipleDatabase) return 'multiple';
+    if (opts.useMultipleDatabases) return 'multiple';
 
     return Object.values(opts.connections)[0].options.dialect;
   };
