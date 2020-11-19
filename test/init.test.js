@@ -1,5 +1,9 @@
 jest.mock('forest-express', () => ({
   init: jest.fn(),
+  logger: {
+    error: jest.fn(),
+    warn: jest.fn(),
+  },
 }));
 const forestExpressMock = require('forest-express');
 
@@ -19,13 +23,12 @@ describe('forest-express-sequelize > init', () => {
     spy.mockImplementation(implementation);
   };
 
-  const initForestExpressSequelize = (options) => {
+  const initForestExpressSequelize = (options) =>
     forestExpressSequelize.init({
       objectMapping: {},
       connections: {},
       ...options,
     });
-  };
 
   describe('when the given configuration is correct', () => {
     it('should call forest-express init function', () => {
@@ -94,17 +97,6 @@ describe('forest-express-sequelize > init', () => {
       });
 
       describe('should contains a function getOrmVersion', () => {
-        it('should return null if no objectMapping was provided', () => {
-          expect.assertions(2);
-
-          createForestExpressInitSpy((exports) => {
-            expect(exports.getOrmVersion).toStrictEqual(expect.any(Function));
-            expect(exports.getOrmVersion()).toBeNull();
-          });
-
-          initForestExpressSequelize({ objectMapping: null });
-        });
-
         it('should return objectMapping version', () => {
           expect.assertions(2);
 
@@ -224,6 +216,44 @@ describe('forest-express-sequelize > init', () => {
         });
 
         initForestExpressSequelize();
+      });
+    });
+  });
+
+  describe('when the given configuration is incorrect', () => {
+    describe('when objectMapping option is missing', () => {
+      it('should log an error', async () => {
+        expect.assertions(1);
+        jest.resetAllMocks();
+
+        const spy = jest.spyOn(forestExpressMock.logger, 'error');
+        initForestExpressSequelize({ objectMapping: null });
+        expect(spy).toHaveBeenCalledWith('The objectMapping option appears to be missing. Please make sure it is set correctly.');
+      });
+
+      it('should not throw an error', () => {
+        expect.assertions(1);
+
+        expect(() => initForestExpressSequelize({ objectMapping: null })).not.toThrow();
+      });
+
+      it('should return a promised function', async () => {
+        expect.assertions(2);
+
+        const result = initForestExpressSequelize({ objectMapping: null });
+        expect(result).toBeInstanceOf(Promise);
+        expect(await result).toBeInstanceOf(Function);
+      });
+    });
+
+    describe('when sequelize option is provided', () => {
+      it('should log a warning', async () => {
+        expect.assertions(1);
+        jest.resetAllMocks();
+
+        const spy = jest.spyOn(forestExpressMock.logger, 'warn');
+        initForestExpressSequelize({ sequelize: {} });
+        expect(spy).toHaveBeenCalledWith('sequelize option is not supported anymore. Please remove this option.');
       });
     });
   });
