@@ -58,7 +58,7 @@ exports.init = function init(opts) {
   }
 
   if (opts.sequelize) {
-    Interface.logger.warn('sequelize option is not supported anymore. Please remove this option.');
+    Interface.logger.warn('The sequelize option is not supported anymore. Please remove this option.');
   }
 
   opts.Sequelize = opts.objectMapping;
