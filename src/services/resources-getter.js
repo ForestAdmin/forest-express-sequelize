@@ -89,7 +89,7 @@ function ResourcesGetter(model, options, params) {
       try {
         const results = await options.connections[0]
           .query(queryToFilterRecords, {
-            type: options.sequelize.QueryTypes.SELECT,
+            type: options.Sequelize.QueryTypes.SELECT,
           });
 
         const recordIds = results.map((result) => result[primaryKey] || result.id);

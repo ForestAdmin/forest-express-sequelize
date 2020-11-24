@@ -49,7 +49,7 @@ describe('services > resources-remover', () => {
           },
         },
       };
-      const sequelizeOptions = { sequelize: Sequelize };
+      const sequelizeOptions = { Sequelize };
       await new ResourcesRemover(new ActorFilm(), ['1|2', '3|4'], sequelizeOptions).perform();
     });
   });

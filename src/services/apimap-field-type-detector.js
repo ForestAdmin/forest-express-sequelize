@@ -1,5 +1,5 @@
 function ApimapFieldTypeDetector(column, options) {
-  const DataTypes = options.sequelize;
+  const DataTypes = options.Sequelize;
 
   this.perform = () => {
     if (column.type instanceof DataTypes.STRING
