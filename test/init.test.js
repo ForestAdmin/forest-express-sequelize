@@ -253,7 +253,7 @@ describe('forest-express-sequelize > init', () => {
 
         const spy = jest.spyOn(forestExpressMock.logger, 'warn');
         initForestExpressSequelize({ sequelize: {} });
-        expect(spy).toHaveBeenCalledWith('sequelize option is not supported anymore. Please remove this option.');
+        expect(spy).toHaveBeenCalledWith('The sequelize option is not supported anymore. Please remove this option.');
       });
     });
   });
