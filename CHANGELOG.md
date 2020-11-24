@@ -1,3 +1,19 @@
+# [7.0.0-beta.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.0...v7.0.0-beta.1) (2020-11-24)
+
+
+### Features
+
+* init function now uses connections & objectMapping instead of sequelize as parameter ([#539](https://github.com/ForestAdmin/forest-express-sequelize/issues/539)) ([74262ac](https://github.com/ForestAdmin/forest-express-sequelize/commit/74262acfc7d77ce1e0aa1b2f44d3e69b7fce470a))
+
+
+### BREAKING CHANGES
+
+* sequelize options is not supported anymore by Liana.init()
+connections and objectMapping is now required on Liana.init().
+Update forest-express dependency to 8.0.0-beta.1 (See https://github.com/ForestAdmin/forest-express/tree/v8.0.0-beta.1)
+
+Co-authored-by: jeffladiray <ladirayjeff@gmail.com>
+
 # [6.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.15...v6.4.0) (2020-11-17)
 
 
