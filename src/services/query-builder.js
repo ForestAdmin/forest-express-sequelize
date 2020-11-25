@@ -31,48 +31,12 @@ function getTargetFieldName(key, association) {
 }
 
 /**
- * @param {import('sequelize').BelongsTo&import('sequelize').BelongsToOptions} association
- * @returns {string[]}
- */
-function getMandatoryFieldsForBelongsTo(association) {
-  return [
-    getTargetFieldName(association.targetKey, association),
-  ].filter(Boolean);
-}
-
-/**
- * @param {import('sequelize').HasOne & import('sequelize').HasOneOptions} association
- * @returns {string[]}
- */
-function getMandatoryFieldsForHasOne(association) {
-  return [
-    getTargetFieldName(association.sourceKey, association),
-  ].filter(Boolean);
-}
-
-/**
  * @param {import('sequelize').HasOne|import('sequelize').BelongsTo} association
  * @returns {string[]}
  */
 function getMandatoryFields(association) {
-  const primaryKeys = association.target.primaryKeyAttributes
+  return association.target.primaryKeyAttributes
     .map((attribute) => getTargetFieldName(attribute, association));
-
-  if (association.associationType === BELONGS_TO) {
-    return uniqueValues([
-      ...primaryKeys,
-      ...getMandatoryFieldsForBelongsTo(association),
-    ]);
-  }
-
-  if (association.associationType === HAS_ONE) {
-    return uniqueValues([
-      ...primaryKeys,
-      ...getMandatoryFieldsForHasOne(association),
-    ]);
-  }
-
-  return [];
 }
 
 function QueryBuilder(model, opts, params) {
