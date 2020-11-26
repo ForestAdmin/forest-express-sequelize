@@ -1,3 +1,10 @@
+## [6.4.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.0...v6.4.1) (2020-11-26)
+
+
+### Bug Fixes
+
+* always return primary keys of associated records ([#550](https://github.com/ForestAdmin/forest-express-sequelize/issues/550)) ([57bd84b](https://github.com/ForestAdmin/forest-express-sequelize/commit/57bd84bc992bbe5fd703b2e36c02bb431885535d))
+
 # [6.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.3.15...v6.4.0) (2020-11-17)
 
 
