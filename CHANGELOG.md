@@ -1,3 +1,10 @@
+## [6.4.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.1...v6.4.2) (2020-11-26)
+
+
+### Bug Fixes
+
+* export error handler middleware ([#552](https://github.com/ForestAdmin/forest-express-sequelize/issues/552)) ([a87591b](https://github.com/ForestAdmin/forest-express-sequelize/commit/a87591b8d5cffc5041fedcb654be2fadfb6dd78f))
+
 ## [6.4.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.0...v6.4.1) (2020-11-26)
 
 
