@@ -31,6 +31,7 @@ const REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
 
 exports.collection = Interface.collection;
 exports.ensureAuthenticated = Interface.ensureAuthenticated;
+exports.errorHandler = () => Interface.errorHandler({ logger: Interface.logger });
 exports.StatSerializer = Interface.StatSerializer;
 exports.ResourceSerializer = Interface.ResourceSerializer;
 exports.ResourceDeserializer = Interface.ResourceDeserializer;
