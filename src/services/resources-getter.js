@@ -87,7 +87,7 @@ function ResourcesGetter(model, options, params) {
       // WARNING: Choosing the first connection might generate issues if the model does not
       //          belongs to this database.
       try {
-        const results = await options.connections[0]
+        const results = await Object.values(options.connections)[0]
           .query(queryToFilterRecords, {
             type: options.Sequelize.QueryTypes.SELECT,
           });

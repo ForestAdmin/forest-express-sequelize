@@ -19,7 +19,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     const models = {};
     const sequelizeOptions = {
       Sequelize,
-      connections: [sequelize],
+      connections: { sequelize },
     };
 
     models.user = sequelize.define('user', {

@@ -55,7 +55,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
   `;
 
 
-  this.perform = () => options.connections[0].query(query, {
+  this.perform = () => Object.values(options.connections)[0].query(query, {
     type: options.Sequelize.QueryTypes.SELECT,
   })
     .then((records) => ({ value: records }));
