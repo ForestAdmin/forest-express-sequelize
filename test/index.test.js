@@ -9,6 +9,13 @@ describe('index', () => {
       expect(forestExpressSequelize.collection).toBeInstanceOf(Function);
     });
 
+    it('should export an errorHandler middleware', () => {
+      expect.assertions(2);
+
+      expect(forestExpressSequelize.errorHandler).toBeDefined();
+      expect(forestExpressSequelize.errorHandler).toBeInstanceOf(Function);
+    });
+
     it('should export an ensureAuthenticated middleware', () => {
       expect.assertions(2);
 
