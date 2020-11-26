@@ -20,7 +20,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
     //         performance optimization.
-    if (Database.isMSSQL(opts)) { return entry; }
+    if (Database.isMSSQL(model.sequelize)) { return entry; }
     return opts.Sequelize.fn('lower', entry);
   }
 

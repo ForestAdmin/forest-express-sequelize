@@ -1767,7 +1767,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
             },
-            page: { number: '2', size: '50' },
+            page: { number: '1', size: '50' },
             sort: '-id',
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
@@ -1775,7 +1775,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           try {
             const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
               .perform();
-            expect(result).toHaveLength(2);
+            expect(result[0]).toHaveLength(2);
           } finally {
             connectionManager.closeConnection();
           }

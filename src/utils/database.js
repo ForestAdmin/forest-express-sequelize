@@ -1,10 +1,9 @@
-function getConnectionDialect(options) {
-  const connection = Object.values(options.connections)[0];
+function getConnectionDialect(connection) {
   return connection.options.dialect;
 }
 
-exports.isMySQL = (options) => ['mysql', 'mariadb'].includes(getConnectionDialect(options));
+exports.isMySQL = (connection) => ['mysql', 'mariadb'].includes(getConnectionDialect(connection));
 
-exports.isMSSQL = (options) => getConnectionDialect(options) === 'mssql';
+exports.isMSSQL = (connection) => getConnectionDialect(connection) === 'mssql';
 
-exports.isSQLite = (options) => getConnectionDialect(options) === 'sqlite';
+exports.isSQLite = (connection) => getConnectionDialect(connection) === 'sqlite';
