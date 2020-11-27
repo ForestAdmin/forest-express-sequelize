@@ -1,3 +1,10 @@
+# [6.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.2...v6.5.0) (2020-11-27)
+
+
+### Features
+
+* **smart actions:** endpoint that handle forms' load hooks ([0902ef4](https://github.com/ForestAdmin/forest-express-sequelize/commit/0902ef458abf41efb25f0dc024549702a50645fe))
+
 ## [6.4.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.1...v6.4.2) (2020-11-26)
 
 
