@@ -54,8 +54,8 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
     LIMIT ${limit}
   `;
 
-
-  this.perform = () => options.connections[0].query(query, {
+  const connection = model.sequelize;
+  this.perform = () => connection.query(query, {
     type: options.Sequelize.QueryTypes.SELECT,
   })
     .then((records) => ({ value: records }));

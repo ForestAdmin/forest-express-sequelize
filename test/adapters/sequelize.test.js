@@ -11,7 +11,7 @@ function getField(schema, name) {
   const models = {};
   const sequelizeOptions = {
     Sequelize,
-    connections: [sequelize],
+    connections: { sequelize },
   };
 
   models.user = sequelize.define('user', {

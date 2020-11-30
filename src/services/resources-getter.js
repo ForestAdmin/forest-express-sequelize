@@ -87,10 +87,10 @@ function ResourcesGetter(model, options, params) {
       // WARNING: Choosing the first connection might generate issues if the model does not
       //          belongs to this database.
       try {
-        const results = await options.connections[0]
-          .query(queryToFilterRecords, {
-            type: options.Sequelize.QueryTypes.SELECT,
-          });
+        const connection = model.sequelize;
+        const results = await connection.query(queryToFilterRecords, {
+          type: options.Sequelize.QueryTypes.SELECT,
+        });
 
         const recordIds = results.map((result) => result[primaryKey] || result.id);
         const condition = { [primaryKey]: {} };

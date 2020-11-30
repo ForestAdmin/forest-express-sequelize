@@ -71,7 +71,7 @@ function PieStatGetter(model, params, options) {
   }
 
   function getGroupBy() {
-    return isMSSQL(options) ? [options.Sequelize.col(groupByField)] : [ALIAS_GROUP_BY];
+    return isMSSQL(model.sequelize) ? [options.Sequelize.col(groupByField)] : [ALIAS_GROUP_BY];
   }
 
   function formatResults(records) {
