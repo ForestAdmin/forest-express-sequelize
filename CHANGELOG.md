@@ -1,3 +1,10 @@
+# [7.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.1...v7.0.0-beta.2) (2020-11-30)
+
+
+### Bug Fixes
+
+* fix incorrect usage of the new connections parameter ([#557](https://github.com/ForestAdmin/forest-express-sequelize/issues/557)) ([2840e41](https://github.com/ForestAdmin/forest-express-sequelize/commit/2840e418bb782a83b861dda217d45b3d70175253))
+
 # [7.0.0-beta.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.0...v7.0.0-beta.1) (2020-11-24)
 
 
