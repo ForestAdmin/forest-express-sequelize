@@ -1,7 +1,41 @@
 import { Schemas } from 'forest-express';
 import Orm from '../utils/orm';
 
+const HAS_ONE = 'HasOne';
+const BELONGS_TO = 'BelongsTo';
+
 const { getReferenceField } = require('../utils/query');
+
+/**
+ * @param {string[]} values
+ * @returns {string[]}
+ */
+function uniqueValues(values) {
+  return Array.from(new Set(values));
+}
+
+/**
+ * @param {string} key
+ * @param {import('sequelize').Association} association
+ * @returns {string}
+ */
+function getTargetFieldName(key, association) {
+  // Defensive programming
+  if (key && association.target.tableAttributes[key]) {
+    return association.target.tableAttributes[key].fieldName;
+  }
+
+  return undefined;
+}
+
+/**
+ * @param {import('sequelize').HasOne|import('sequelize').BelongsTo} association
+ * @returns {string[]}
+ */
+function getMandatoryFields(association) {
+  return association.target.primaryKeyAttributes
+    .map((attribute) => getTargetFieldName(attribute, association));
+}
 
 function QueryBuilder(model, opts, params) {
   const schema = Schemas.schemas[model.name];
@@ -28,7 +62,7 @@ function QueryBuilder(model, opts, params) {
     const includes = [];
 
     Object.values(modelForIncludes.associations)
-      .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
+      .filter((association) => [HAS_ONE, BELONGS_TO].includes(association.associationType))
       .forEach((association) => {
         const targetFields = Object.values(association.target.tableAttributes)
           .map((attribute) => attribute.fieldName);
@@ -43,10 +77,10 @@ function QueryBuilder(model, opts, params) {
         || explicitAttributes.length) {
           // NOTICE: For performance reasons, we only request the keys
           //         as they're the only needed fields for the interface
-          const uniqueExplicitAttributes = Array.from(new Set([
-            association.targetKey,
+          const uniqueExplicitAttributes = uniqueValues([
+            ...getMandatoryFields(association),
             ...explicitAttributes,
-          ].filter(Boolean)));
+          ].filter(Boolean));
 
           const attributes = explicitAttributes.length
             ? uniqueExplicitAttributes
