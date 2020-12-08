@@ -1,55 +1,73 @@
 /* eslint-disable import/first */
 jest.mock('forest-express');
-jest.mock('../../src/utils/orm');
 import Sequelize from 'sequelize';
 import ForestExpress from 'forest-express';
-import Orm from '../../src/utils/orm';
 
-const sequelize = new Sequelize({ dialect: 'postgres' });
+function generateModels() {
+  const sequelize = new Sequelize({ dialect: 'postgres' });
 
-const address = sequelize.define('address', {
-  id: {
-    type: Sequelize.DataTypes.INTEGER,
-    primaryKey: true,
-  },
-  user_id: Sequelize.DataTypes.STRING,
-});
+  const address = sequelize.define('address', {
+    id: {
+      type: Sequelize.DataTypes.INTEGER,
+      primaryKey: true,
+    },
+    user_id: Sequelize.DataTypes.STRING,
+  });
 
-const user = sequelize.define('user', {
-  id: {
-    type: Sequelize.DataTypes.INTEGER,
-    primaryKey: true,
-  },
-  username: Sequelize.DataTypes.STRING,
-});
+  const user = sequelize.define('user', {
+    id: {
+      type: Sequelize.DataTypes.INTEGER,
+      primaryKey: true,
+    },
+    username: Sequelize.DataTypes.STRING,
+  });
 
-address.belongsTo(user, {
-  foreignKey: {
-    name: 'userIdKey',
-    field: 'user_id',
-  },
-  as: 'user',
-});
+  address.belongsTo(user, {
+    foreignKey: {
+      name: 'userIdKey',
+      field: 'user_id',
+    },
+    as: 'user',
+  });
 
-user.hasMany(address, {
-  foreignKey: {
-    name: 'userIdKey',
-    field: 'user_id',
-  },
-  as: 'addresses',
-});
+  user.hasMany(address, {
+    foreignKey: {
+      name: 'userIdKey',
+      field: 'user_id',
+    },
+    as: 'addresses',
+  });
 
-address.primaryKeys = Object.keys(address.primaryKeys);
+  return { address, user };
+}
 
-ForestExpress.Schemas = { schemas: { user, address } };
+// This funtion fake the adapter work to create a fake schema
+function buildForestExpressSchema(models) {
+  const schemas = Object.values(models).reduce((schema, model) => {
+    schema[model.name] = {
+      name: model.name,
+      primaryKeys: Object.keys(model.primaryKeys),
+      fields: [],
+    };
+    return schema;
+  }, {});
 
-jest.spyOn(Orm, 'getColumnName').mockReturnValue('id');
+  ForestExpress.Schemas = { schemas };
+}
 
-import LeaderBoardStatGetter from '../../src/services/leaderboard-stat-getter';
+function importLeaderBoardStatGetter() {
+  // eslint-disable-next-line global-require
+  return require('../../src/services/leaderboard-stat-getter');
+}
 
 describe('services > leaderboard-stat-getter', () => {
-  it('should build the right query', async () => {
+  it('identifier should be double quoted', async () => {
     expect.assertions(1);
+    const models = generateModels();
+    buildForestExpressSchema(models);
+
+    const LeaderBoardStatGetter = importLeaderBoardStatGetter();
+
     const params = {
       aggregate: 'Count',
       collection: 'user',
@@ -65,8 +83,8 @@ describe('services > leaderboard-stat-getter', () => {
     };
 
     const leaderBoardStatGetter = new LeaderBoardStatGetter(
-      user,
-      address,
+      models.user,
+      models.address,
       params,
       { connections: [connection] },
     );
@@ -74,15 +92,6 @@ describe('services > leaderboard-stat-getter', () => {
     await leaderBoardStatGetter.perform();
 
     const buildedQuery = connection.query.mock.calls[0][0];
-    expect(buildedQuery).toStrictEqual(`
-    SELECT COUNT("addresses"."id") as "value", "user"."username" as "key"
-    FROM "addresses"
-    INNER JOIN "users" AS "user"
-        ON "user"."id" = "addresses"."user_id"
-    
-    GROUP BY "user"."username"
-    ORDER BY "value" DESC
-    LIMIT 5
-  `);
+    expect(buildedQuery).toContain('"user"."username"');
   });
 });
