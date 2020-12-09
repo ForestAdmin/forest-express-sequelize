@@ -19,7 +19,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
     associationAs = associationFound.as;
   }
 
-  const groupBy = `${associationAs}.${labelField}`;
+  const groupBy = `"${associationAs}"."${labelField}"`;
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
