@@ -1,3 +1,10 @@
+## [6.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.5.0...v6.5.1) (2020-12-09)
+
+
+### Bug Fixes
+
+* **leaderboard:** fix an error when use "user" table ([#565](https://github.com/ForestAdmin/forest-express-sequelize/issues/565)) ([0cbbc32](https://github.com/ForestAdmin/forest-express-sequelize/commit/0cbbc326b0f8ff686ed1e6b37dc719005e06866a))
+
 # [6.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.4.2...v6.5.0) (2020-11-27)
 
 
