@@ -41,7 +41,7 @@ function generateModels() {
   return { address, user };
 }
 
-// This funtion fake the adapter work to create a fake schema
+// This function fakes the adapter logic to create a fake schema
 function buildForestExpressSchema(models) {
   const schemas = Object.values(models).reduce((schema, model) => {
     schema[model.name] = {
@@ -63,6 +63,7 @@ function importLeaderBoardStatGetter() {
 describe('services > leaderboard-stat-getter', () => {
   it('identifier should be double quoted', async () => {
     expect.assertions(1);
+
     const models = generateModels();
     buildForestExpressSchema(models);
 
