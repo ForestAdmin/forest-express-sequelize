@@ -91,6 +91,22 @@ describe('services > apimap-field-builder', () => {
       const { allowNullString } = initializeField(fieldDefinitions);
       expect(allowNullString.isRequired).toBeUndefined();
     });
+
+    describe('and this column is also a primary key', () => {
+      const primaryKeyFieldDefinitions = {
+        primaryKeyThatAllowNull: {
+          type: Sequelize.DataTypes.STRING,
+          allowNull: false,
+          isPrimary: true,
+        },
+      };
+
+      it('should be set as required', () => {
+        expect.assertions(1);
+        const { primaryKeyThatAllowNull } = initializeField(primaryKeyFieldDefinitions);
+        expect(primaryKeyThatAllowNull.isRequired).toStrictEqual(true);
+      });
+    });
   });
 
   describe('on a column with allowNull set to false', () => {
@@ -119,21 +135,6 @@ describe('services > apimap-field-builder', () => {
       expect.assertions(1);
       const { someString } = initializeField(fieldDefinitions);
       expect(someString.isRequired).toBeUndefined();
-    });
-  });
-
-  describe('on a column that does not allowNull values & is a primary key', () => {
-    const fieldDefinitions = {
-      primaryKeyThatAllowNull: {
-        type: Sequelize.DataTypes.STRING,
-        allowNull: false,
-        isPrimary: true,
-      },
-    };
-    it('should not be set as required', () => {
-      expect.assertions(1);
-      const { primaryKeyThatAllowNull } = initializeField(fieldDefinitions);
-      expect(primaryKeyThatAllowNull.isRequired).toStrictEqual(true);
     });
   });
 
