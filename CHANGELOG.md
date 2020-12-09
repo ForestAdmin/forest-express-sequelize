@@ -1,3 +1,10 @@
+# [6.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.5.1...v6.6.0) (2020-12-09)
+
+
+### Features
+
+* **smart actions:** introduce smart action forms hooks ([#569](https://github.com/ForestAdmin/forest-express-sequelize/issues/569)) ([cd13029](https://github.com/ForestAdmin/forest-express-sequelize/commit/cd13029551e6b6cbee0ecaed4c51d0bf44794e0a))
+
 ## [6.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.5.0...v6.5.1) (2020-12-09)
 
 
