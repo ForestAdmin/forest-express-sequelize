@@ -1,3 +1,10 @@
+## [6.6.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.0...v6.6.1) (2020-12-11)
+
+
+### Bug Fixes
+
+* array display with smart field ([#575](https://github.com/ForestAdmin/forest-express-sequelize/issues/575)) ([e0698d3](https://github.com/ForestAdmin/forest-express-sequelize/commit/e0698d30f9ae1a792a51b61bb74a8a29753d1317))
+
 # [6.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.5.1...v6.6.0) (2020-12-09)
 
 
