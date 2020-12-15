@@ -1,3 +1,10 @@
+## [6.6.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.1...v6.6.2) (2020-12-15)
+
+
+### Bug Fixes
+
+* fix related data list display ([#578](https://github.com/ForestAdmin/forest-express-sequelize/issues/578)) ([370dba7](https://github.com/ForestAdmin/forest-express-sequelize/commit/370dba7c0c60a64dad6688a54e62cc508e44b9b5))
+
 ## [6.6.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.0...v6.6.1) (2020-12-11)
 
 
