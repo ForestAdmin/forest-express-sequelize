@@ -1,3 +1,10 @@
+## [6.6.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.2...v6.6.3) (2020-12-21)
+
+
+### Bug Fixes
+
+* display correct reference field when it is a smartfield ([#584](https://github.com/ForestAdmin/forest-express-sequelize/issues/584)) ([50aef31](https://github.com/ForestAdmin/forest-express-sequelize/commit/50aef319977555c31f853d4436fcfa6694f85b26))
+
 ## [6.6.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.1...v6.6.2) (2020-12-15)
 
 
