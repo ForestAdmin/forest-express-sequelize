@@ -1,3 +1,4 @@
+import sinon from 'sinon';
 import moment from 'moment';
 import Sequelize from 'sequelize';
 import FiltersParser from '../../src/services/filters-parser';
@@ -47,6 +48,45 @@ describe('services > filters-parser', () => {
     { operator: OPERATORS.GTE, value: moment().subtract(1, 'week').startOf('isoweek').toDate() },
     { operator: OPERATORS.LTE, value: moment().subtract(1, 'week').endOf('isoweek').toDate() },
   ]);
+
+  describe('isSmartField', () => {
+    describe('on a unknown field', () => {
+      it('should return false', () => {
+        expect.assertions(1);
+        const schemaToTest = { fields: [] };
+
+        expect(defaultFiltersParser.isSmartField(schemaToTest, 'unknown')).toBeFalse();
+      });
+    });
+
+    describe('on a non smart field', () => {
+      it('should return false', () => {
+        expect.assertions(1);
+        const schemaToTest = {
+          fields: [{
+            field: 'name',
+            isVirtual: false,
+          }],
+        };
+
+        expect(defaultFiltersParser.isSmartField(schemaToTest, 'name')).toBeFalse();
+      });
+    });
+
+    describe('on a smart field', () => {
+      it('should return true', () => {
+        expect.assertions(1);
+        const schemaToTest = {
+          fields: [{
+            field: 'name',
+            isVirtual: true,
+          }],
+        };
+
+        expect(defaultFiltersParser.isSmartField(schemaToTest, 'name')).toBeTrue();
+      });
+    });
+  });
 
   describe('formatOperatorValue function', () => {
     const values = [5, 'toto', null];
@@ -125,6 +165,75 @@ describe('services > filters-parser', () => {
       expect.assertions(2);
       await expect(defaultFiltersParser.formatCondition()).rejects.toThrow(Error);
       await expect(defaultFiltersParser.formatCondition({})).rejects.toThrow(Error);
+    });
+
+    describe('on a smart field', () => {
+      describe('with filter method not defined', () => {
+        it('should throw an error', async () => {
+          expect.assertions(1);
+
+          schema.fields = [{
+            field: 'smart name',
+            type: 'String',
+            isVirtual: true,
+            get() {},
+          }];
+
+          await expect(defaultFiltersParser.formatCondition({
+            field: 'smart name',
+            operator: 'present',
+          })).rejects.toThrow('"filter" method missing on smart field "smart name"');
+        });
+      });
+
+      describe('with filter method defined', () => {
+        describe('when filter method return null or undefined', () => {
+          it('should throw an error', async () => {
+            expect.assertions(1);
+
+            schema.fields = [{
+              field: 'smart name',
+              type: 'String',
+              isVirtual: true,
+              get() {},
+              filter() {},
+            }];
+
+            await expect(defaultFiltersParser.formatCondition({
+              field: 'smart name',
+              operator: 'present',
+            })).rejects.toThrow('"filter" method on smart field "smart name" must return a condition');
+          });
+        });
+
+        describe('when filter method return a condition', () => {
+          it('should return the condition', async () => {
+            expect.assertions(3);
+
+            const where = { id: 1 };
+            schema.fields = [{
+              field: 'smart name',
+              type: 'String',
+              isVirtual: true,
+              get() {},
+              filter: sinon.fake.returns(where),
+            }];
+
+            const condition = {
+              field: 'smart name',
+              operator: 'present',
+            };
+            expect(await defaultFiltersParser.formatCondition(condition)).toStrictEqual(where);
+            expect(schema.fields[0].filter.calledOnce).toBeTrue();
+            expect(schema.fields[0].filter.calledWith({
+              where: {
+                [OPERATORS.NE]: null,
+              },
+              condition,
+            })).toBeTrue();
+          });
+        });
+      });
     });
   });
 
