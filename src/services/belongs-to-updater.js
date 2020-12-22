@@ -8,8 +8,14 @@ const associationRecord = require('../utils/association-record');
 const getTargetKey = async (pk, association) => {
   let targetKey = pk;
 
-  if (association.associationType === 'HasOne') {
-    targetKey = await associationRecord.get(association.target, pk);
+  if (association.associationType === 'HasOne' || association.targetKey !== 'id') {
+    const record = await associationRecord.get(association.target, pk);
+    if (association.associationType === 'HasOne') {
+      targetKey = record;
+    } else if (association.targetKey !== 'id') { // should we add _id, uuid?
+      // NOTICE: special use case with foreign key non pointing to a primary key
+      targetKey = record[association.targetKey];
+    }
   }
 
   return targetKey;
