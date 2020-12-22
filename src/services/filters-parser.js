@@ -21,18 +21,14 @@ function FiltersParser(modelSchema, timezone, options) {
     if (this.isSmartField(modelSchema, condition.field)) {
       const fieldFound = modelSchema.fields.find((field) => field.field === condition.field);
 
-      if (!fieldFound.filter) {
-        throw new Error(`"filter" method missing on smart field "${fieldFound.field}"`);
-      }
+      if (!fieldFound.filter) throw new Error(`"filter" method missing on smart field "${fieldFound.field}"`);
 
       const formattedCondition = fieldFound
         .filter({
           where: this.formatOperatorValue(condition.operator, condition.value, isTextField),
           condition,
         });
-      if (!formattedCondition) {
-        throw new Error(`"filter" method on smart field "${fieldFound.field}" must return a condition`);
-      }
+      if (!formattedCondition) throw new Error(`"filter" method on smart field "${fieldFound.field}" must return a condition`);
       return formattedCondition;
     }
 
@@ -40,8 +36,7 @@ function FiltersParser(modelSchema, timezone, options) {
 
     if (this.operatorDateParser.isDateOperator(condition.operator)) {
       return {
-        [formatedField]: this.operatorDateParser
-          .getDateFilter(condition.operator, condition.value),
+        [formatedField]: this.operatorDateParser.getDateFilter(condition.operator, condition.value),
       };
     }
 
