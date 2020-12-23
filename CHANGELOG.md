@@ -1,3 +1,38 @@
+## [6.6.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.2...v6.6.3) (2020-12-21)
+
+
+### Bug Fixes
+
+* display correct reference field when it is a smartfield ([#584](https://github.com/ForestAdmin/forest-express-sequelize/issues/584)) ([50aef31](https://github.com/ForestAdmin/forest-express-sequelize/commit/50aef319977555c31f853d4436fcfa6694f85b26))
+
+## [6.6.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.1...v6.6.2) (2020-12-15)
+
+
+### Bug Fixes
+
+* fix related data list display ([#578](https://github.com/ForestAdmin/forest-express-sequelize/issues/578)) ([370dba7](https://github.com/ForestAdmin/forest-express-sequelize/commit/370dba7c0c60a64dad6688a54e62cc508e44b9b5))
+
+## [6.6.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.0...v6.6.1) (2020-12-11)
+
+
+### Bug Fixes
+
+* array display with smart field ([#575](https://github.com/ForestAdmin/forest-express-sequelize/issues/575)) ([e0698d3](https://github.com/ForestAdmin/forest-express-sequelize/commit/e0698d30f9ae1a792a51b61bb74a8a29753d1317))
+
+# [6.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.5.1...v6.6.0) (2020-12-09)
+
+
+### Features
+
+* **smart actions:** endpoint that handle forms' load hooks ([0902ef4](https://github.com/ForestAdmin/forest-express-sequelize/commit/0902ef458abf41efb25f0dc024549702a50645fe))
+
+## [6.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.5.0...v6.5.1) (2020-12-09)
+
+
+### Bug Fixes
+
+* **leaderboard:** fix an error when use "user" table ([#565](https://github.com/ForestAdmin/forest-express-sequelize/issues/565)) ([0cbbc32](https://github.com/ForestAdmin/forest-express-sequelize/commit/0cbbc326b0f8ff686ed1e6b37dc719005e06866a))
+
 # [7.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.2...v7.0.0-beta.3) (2020-12-02)
 
 
@@ -5,11 +40,6 @@
 
 * always return primary keys of associated records ([#550](https://github.com/ForestAdmin/forest-express-sequelize/issues/550)) ([57bd84b](https://github.com/ForestAdmin/forest-express-sequelize/commit/57bd84bc992bbe5fd703b2e36c02bb431885535d))
 * export error handler middleware ([#552](https://github.com/ForestAdmin/forest-express-sequelize/issues/552)) ([a87591b](https://github.com/ForestAdmin/forest-express-sequelize/commit/a87591b8d5cffc5041fedcb654be2fadfb6dd78f))
-
-
-### Features
-
-* **smart actions:** endpoint that handle forms' load hooks ([0902ef4](https://github.com/ForestAdmin/forest-express-sequelize/commit/0902ef458abf41efb25f0dc024549702a50645fe))
 
 # [7.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.1...v7.0.0-beta.2) (2020-11-30)
 
