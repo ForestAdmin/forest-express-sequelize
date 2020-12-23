@@ -79,20 +79,18 @@ describe('services > leaderboard-stat-getter', () => {
       type: 'Leaderboard',
     };
 
-    const connection = {
-      query: jest.fn(() => Promise.resolve()),
-    };
+    const querySpy = jest.spyOn(models.user.sequelize, 'query').mockResolvedValue();
 
     const leaderBoardStatGetter = new LeaderBoardStatGetter(
       models.user,
       models.address,
       params,
-      { connections: [connection] },
+      { Sequelize },
     );
 
     await leaderBoardStatGetter.perform();
 
-    const buildedQuery = connection.query.mock.calls[0][0];
-    expect(buildedQuery).toContain('"user"."username"');
+    const builtQuery = querySpy.mock.calls[0][0];
+    expect(builtQuery).toContain('"user"."username"');
   });
 });
