@@ -11,24 +11,24 @@ function FiltersParser(modelSchema, timezone, options) {
   this.perform = async (filtersString) =>
     BaseFiltersParser.perform(filtersString, this.formatAggregation, this.formatCondition);
 
-  this.formatAggregation = async (aggregator, formatedConditions) => {
+  this.formatAggregation = async (aggregator, formattedConditions) => {
     const aggregatorOperator = this.formatAggregatorOperator(aggregator);
-    return { [aggregatorOperator]: formatedConditions };
+    return { [aggregatorOperator]: formattedConditions };
   };
 
   this.formatCondition = async (condition) => {
-    const formatedField = this.formatField(condition.field);
+    const formattedField = this.formatField(condition.field);
 
     if (this.operatorDateParser.isDateOperator(condition.operator)) {
       return {
-        [formatedField]: this.operatorDateParser
+        [formattedField]: this.operatorDateParser
           .getDateFilter(condition.operator, condition.value),
       };
     }
 
     const isTextField = this.isTextField(condition.field);
     return {
-      [formatedField]: this.formatOperatorValue(condition.operator, condition.value, isTextField),
+      [formattedField]: this.formatOperatorValue(condition.operator, condition.value, isTextField),
     };
   };
 
