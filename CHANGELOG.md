@@ -1,11 +1,3 @@
-# [7.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.2...v7.0.0-beta.3) (2020-12-02)
-
-
-### Bug Fixes
-
-* always return primary keys of associated records ([#550](https://github.com/ForestAdmin/forest-express-sequelize/issues/550)) ([57bd84b](https://github.com/ForestAdmin/forest-express-sequelize/commit/57bd84bc992bbe5fd703b2e36c02bb431885535d))
-* export error handler middleware ([#552](https://github.com/ForestAdmin/forest-express-sequelize/issues/552)) ([a87591b](https://github.com/ForestAdmin/forest-express-sequelize/commit/a87591b8d5cffc5041fedcb654be2fadfb6dd78f))
-
 ## [6.6.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.2...v6.6.3) (2020-12-21)
 
 
@@ -33,6 +25,14 @@
 ### Features
 
 * **smart actions:** endpoint that handle forms' load hooks ([0902ef4](https://github.com/ForestAdmin/forest-express-sequelize/commit/0902ef458abf41efb25f0dc024549702a50645fe))
+
+# [7.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.2...v7.0.0-beta.3) (2020-12-02)
+
+
+### Bug Fixes
+
+* always return primary keys of associated records ([#550](https://github.com/ForestAdmin/forest-express-sequelize/issues/550)) ([57bd84b](https://github.com/ForestAdmin/forest-express-sequelize/commit/57bd84bc992bbe5fd703b2e36c02bb431885535d))
+* export error handler middleware ([#552](https://github.com/ForestAdmin/forest-express-sequelize/issues/552)) ([a87591b](https://github.com/ForestAdmin/forest-express-sequelize/commit/a87591b8d5cffc5041fedcb654be2fadfb6dd78f))
 
 # [7.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.1...v7.0.0-beta.2) (2020-11-30)
 
