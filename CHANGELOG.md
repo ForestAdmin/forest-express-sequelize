@@ -1,3 +1,10 @@
+# [7.0.0-beta.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.5...v7.0.0-beta.6) (2021-01-06)
+
+
+### Bug Fixes
+
+* connect to liana through safari ([#590](https://github.com/ForestAdmin/forest-express-sequelize/issues/590)) ([6a0fcb3](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a0fcb346c71f561e80b7d691f38774eaa8c24b9))
+
 # [7.0.0-beta.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.4...v7.0.0-beta.5) (2020-12-30)
 
 # [7.0.0-beta.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.3...v7.0.0-beta.4) (2020-12-23)
