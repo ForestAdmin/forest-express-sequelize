@@ -1,3 +1,10 @@
+# [7.0.0-beta.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.6...v7.0.0-beta.7) (2021-01-06)
+
+
+### Bug Fixes
+
+* user being disconnected after 33min instead of 14 days ([#591](https://github.com/ForestAdmin/forest-express-sequelize/issues/591)) ([2e2dc81](https://github.com/ForestAdmin/forest-express-sequelize/commit/2e2dc811f497acb0d771497c55b75349480e46a5))
+
 # [7.0.0-beta.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.5...v7.0.0-beta.6) (2021-01-06)
 
 
