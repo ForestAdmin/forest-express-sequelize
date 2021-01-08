@@ -1,3 +1,10 @@
+# [7.0.0-beta.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.7...v7.0.0-beta.8) (2021-01-08)
+
+
+### Bug Fixes
+
+* **authentication:** error when authenticating with an invalid token in cookies ([#593](https://github.com/ForestAdmin/forest-express-sequelize/issues/593)) ([405feb4](https://github.com/ForestAdmin/forest-express-sequelize/commit/405feb439e34746b385203eb995aec92e955eeab))
+
 # [7.0.0-beta.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.6...v7.0.0-beta.7) (2021-01-06)
 
 
