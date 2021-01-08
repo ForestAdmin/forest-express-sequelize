@@ -120,6 +120,12 @@ describe('services > filters-parser', () => {
         expect(defaultFiltersParser.formatOperatorValue.bind('random', value)).toThrow(NoMatchingOperatorError);
       });
     });
+
+    it('should return the appropriate value (array)', () => {
+      expect.assertions(1);
+
+      expect(defaultFiltersParser.formatOperatorValue('includes_all', [1, 2])).toStrictEqual({ [OPERATORS.CONTAINS]: [1, 2] });
+    });
   });
 
   describe('formatAggregatorOperator function', () => {

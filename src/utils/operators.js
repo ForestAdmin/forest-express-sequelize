@@ -6,6 +6,7 @@ function Operators(options) {
   if (options && options.Sequelize && options.Sequelize.Op) {
     const { Op } = options.Sequelize;
     this.AND = Op.and;
+    this.CONTAINS = Op.contains;
     this.EQ = Op.eq;
     this.GT = Op.gt;
     this.GTE = Op.gte;
@@ -19,6 +20,7 @@ function Operators(options) {
     this.OR = Op.or;
   } else {
     this.AND = '$and';
+    this.CONTAINS = '$contains';
     this.EQ = '$eq';
     this.GT = '$gt';
     this.GTE = '$gte';
