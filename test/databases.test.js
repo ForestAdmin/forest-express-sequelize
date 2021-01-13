@@ -753,6 +753,57 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             connectionManager.closeConnection();
           }
         });
+
+      });
+      describe('update a record on a collection with a foreign key non pointing to a primary key', () => {
+        it('should update a record', async () => {
+          expect.assertions(2);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.owner, {
+              id: 3,
+              name: 'foo3',
+              ownerId: 5,
+            }).perform();
+            const resultProject = await new BelongsToUpdater(models.project, null, null, {
+              recordId: '1',
+              associationName: 'owner',
+              }, {
+              data: {
+                  id: '3',
+                      type: 'owner',
+                },
+              }).perform();
+
+            expect(resultProject.id).toStrictEqual(1);
+            expect(resultProject.ownerIdKey).toStrictEqual(5);
+          } finally {
+              connectionManager.closeConnection();
+            }
+        });
+
+        it('should not update a record', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.owner, {
+              id: 4,
+              name: 'foo4',
+              ownerId: 6,
+            }).perform();
+            await expect(new BelongsToUpdater(models.project, null, null, {
+              recordId: '1',
+              associationName: 'owner',
+            }, {
+              data: {
+                id: '6',
+                type: 'owner',
+              },
+            }).perform()).rejects.toThrow(Error('related owner with pk 6 does not exist.'));
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
       });
     });
 
