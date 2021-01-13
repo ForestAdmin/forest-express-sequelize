@@ -114,6 +114,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       fieldBad: { type: Sequelize.REAL }, // NOTICE: not supported yet.
     });
 
+    models.owner = sequelize.define('owner', {
+      name: { type: Sequelize.STRING },
+      ownerId: { type: Sequelize.INTEGER, allowNull: false, unique: true },
+    });
+
+    models.project = sequelize.define('project', {
+      name: { type: Sequelize.STRING },
+    });
+
     models.address.belongsTo(models.user);
     models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
     models.user.hasMany(models.address);
@@ -123,6 +132,20 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     models.member.hasOne(models.membership);
     models.member.hasMany(models.friend);
     models.friend.belongsTo(models.member);
+    models.project.belongsTo(models.owner, {
+      foreignKey: {
+        name: 'ownerIdKey',
+        field: 'owner_id',
+      },
+      targetKey: 'ownerId',
+    });
+    models.owner.hasMany(models.project, {
+      foreignKey: {
+        name: 'ownerIdKey',
+        field: 'owner_id',
+      },
+      sourceKey: 'ownerId',
+    });
 
     Interface.Schemas = {
       schemas: {
@@ -268,6 +291,28 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             { field: 'id', type: 'Number' },
             { field: 'name', type: 'String' },
             { field: 'member', type: 'Number', reference: 'member.id' },
+          ],
+        },
+        owner: {
+          name: 'owner',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'STRING' },
+            { field: 'ownerId', type: 'Number' },
+          ],
+        },
+        project: {
+          name: 'project',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'STRING' },
+            { field: 'ownerId', type: 'Number', reference: 'owner.ownerId' },
           ],
         },
       },
@@ -527,6 +572,57 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
             expect(user).not.toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
+      describe('create a record on a collection with a foreign key non pointing to a primary key', () => {
+        it('should create a record', async () => {
+          expect.assertions(8);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.owner, {
+              id: 1,
+              name: 'foo',
+              ownerId: 3,
+            }).perform();
+            const resultProject = await new ResourceCreator(models.project, {
+              id: 1,
+              name: 'bar',
+              owner: 1,
+            }).perform();
+
+            expect(resultProject.id).toStrictEqual(1);
+            expect(resultProject.name).toStrictEqual('bar');
+            expect(resultProject.ownerIdKey).toStrictEqual(3);
+            expect(resultProject.owner.id).toStrictEqual(1);
+            expect(resultProject.owner.ownerId).toStrictEqual(3);
+
+            const project = await models.project.findOne({ where: { name: 'bar' }, include: { model: models.owner, as: 'owner' } });
+            expect(resultProject.owner.id).toStrictEqual(1);
+            expect(resultProject.owner.ownerId).toStrictEqual(3);
+            expect(project).not.toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should not create a record', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.owner, {
+              id: 2,
+              name: 'foo',
+              ownerId: 4,
+            }).perform();
+            await expect(new ResourceCreator(models.project, {
+              id: 1,
+              name: 'bar',
+              owner: 4,
+            }).perform()).rejects.toThrow(Error('related owner with pk 4 does not exist.'));
           } finally {
             connectionManager.closeConnection();
           }
