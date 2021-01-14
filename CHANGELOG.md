@@ -1,3 +1,11 @@
+# [6.7.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.3...v6.7.0) (2021-01-14)
+
+
+### Features
+
+* **filter:** add possibility to filter on smart field ([eaead56](https://github.com/ForestAdmin/forest-express-sequelize/commit/eaead56004a67edd4d266dc1583c43146ca393c3))
+* **filter:** add possibility to filter on smart field ([#583](https://github.com/ForestAdmin/forest-express-sequelize/issues/583)) ([dbf136a](https://github.com/ForestAdmin/forest-express-sequelize/commit/dbf136a2f8b1fd7b3694769792e9e15b4a93a6e4))
+
 ## [6.6.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.2...v6.6.3) (2020-12-21)
 
 
