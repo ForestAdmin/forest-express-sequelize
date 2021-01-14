@@ -121,6 +121,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
     models.project = sequelize.define('project', {
       name: { type: Sequelize.STRING },
+      ownerId: { type: Sequelize.INTEGER },
     });
 
     models.address.belongsTo(models.user);
@@ -580,7 +581,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
       describe('create a record on a collection with a foreign key non pointing to a primary key', () => {
         it('should create a record', async () => {
-          expect.assertions(8);
+          expect.assertions(6);
           const { models } = initializeSequelize();
           try {
             await new ResourceCreator(models.owner, {
@@ -588,22 +589,20 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               name: 'foo',
               ownerId: 3,
             }).perform();
-            const resultProject = await new ResourceCreator(models.project, {
+            const result = await new ResourceCreator(models.project, {
               id: 1,
               name: 'bar',
               owner: 1,
             }).perform();
 
-            expect(resultProject.id).toStrictEqual(1);
-            expect(resultProject.name).toStrictEqual('bar');
-            expect(resultProject.ownerIdKey).toStrictEqual(3);
-            expect(resultProject.owner.id).toStrictEqual(1);
-            expect(resultProject.owner.ownerId).toStrictEqual(3);
+            expect(result.id).toStrictEqual(1);
+            expect(result.name).toStrictEqual('bar');
+            expect(result.ownerIdKey).toStrictEqual(3);
 
             const project = await models.project.findOne({ where: { name: 'bar' }, include: { model: models.owner, as: 'owner' } });
-            expect(resultProject.owner.id).toStrictEqual(1);
-            expect(resultProject.owner.ownerId).toStrictEqual(3);
             expect(project).not.toBeNull();
+            expect(project.owner.id).toStrictEqual(1);
+            expect(project.owner.ownerId).toStrictEqual(3);
           } finally {
             connectionManager.closeConnection();
           }
@@ -765,7 +764,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               name: 'foo3',
               ownerId: 5,
             }).perform();
-            const resultProject = await new BelongsToUpdater(models.project, null, null, {
+            const result = await new BelongsToUpdater(models.project, null, null, {
               recordId: '1',
               associationName: 'owner',
               }, {
@@ -775,8 +774,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
                 },
               }).perform();
 
-            expect(resultProject.id).toStrictEqual(1);
-            expect(resultProject.ownerIdKey).toStrictEqual(5);
+            expect(result.id).toStrictEqual(1);
+            expect(result.ownerIdKey).toStrictEqual(5);
           } finally {
               connectionManager.closeConnection();
             }
