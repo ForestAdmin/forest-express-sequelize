@@ -1,4 +1,3 @@
-import sinon from 'sinon';
 import moment from 'moment';
 import Sequelize from 'sequelize';
 import FiltersParser from '../../src/services/filters-parser';
@@ -208,7 +207,7 @@ describe('services > filters-parser', () => {
 
         describe('when filter method return a condition', () => {
           it('should return the condition', async () => {
-            expect.assertions(3);
+            expect.assertions(4);
 
             const where = { id: 1 };
             schema.fields = [{
@@ -216,7 +215,7 @@ describe('services > filters-parser', () => {
               type: 'String',
               isVirtual: true,
               get() {},
-              filter: sinon.fake.returns(where),
+              filter: jest.fn(() => where),
             }];
 
             const condition = {
@@ -224,13 +223,14 @@ describe('services > filters-parser', () => {
               operator: 'present',
             };
             expect(await defaultFiltersParser.formatCondition(condition)).toStrictEqual(where);
-            expect(schema.fields[0].filter.calledOnce).toBeTrue();
-            expect(schema.fields[0].filter.calledWith({
+            expect(schema.fields[0].filter.mock.calls).toHaveLength(1);
+            expect(schema.fields[0].filter.mock.calls[0]).toHaveLength(1);
+            expect(schema.fields[0].filter.mock.calls[0][0]).toStrictEqual({
               where: {
                 [OPERATORS.NE]: null,
               },
               condition,
-            })).toBeTrue();
+            });
           });
         });
       });

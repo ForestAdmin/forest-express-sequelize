@@ -62,8 +62,7 @@
     "semantic-release-slack-bot": "1.6.2",
     "sequelize": "5.21.3",
     "sequelize-fixtures": "1.1.1",
-    "simple-git": "1.65.0",
-    "sinon": "9.2.2"
+    "simple-git": "1.65.0"
   },
   "scripts": {
     "build": "babel src --out-dir dist && echo '\n\\033[0;34m[+] \\033[0;32mBuild done\\033[0m'",
