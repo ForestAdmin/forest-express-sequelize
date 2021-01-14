@@ -1,40 +1,47 @@
 const _ = require('lodash');
 const orm = require('../utils/orm');
+const associationRecord = require('../utils/association-record');
 
-function BelongsToUpdater(model, assoc, opts, params, data) {
-  this.perform = function perform() {
-    return orm.findRecord(model, params.recordId)
-      .then((record) => {
-        // WORKAROUND: Make the hasOne associations update work while waiting
-        //             for the Sequelize 4 release with the fix of the following
-        //             issue: https://github.com/sequelize/sequelize/issues/6069
-        // TODO: Once Sequelize 4 is mainstream, use the following code instead:
-        //       return record['set' + _.upperFirst(params.associationName)](
-        //         data.data ? data.data.id : null);
-        let isHasOne = false;
-        let modelAssociation;
+// WORKAROUND: Make the hasOne associations update work while waiting
+//             for the Sequelize 4 release with the fix of the following
+//             issue: https://github.com/sequelize/sequelize/issues/6069
+const getTargetKey = async (pk, association) => {
+  let targetKey = pk;
 
-        _.each(model.associations, (association) => {
-          if (association.associationAccessor === params.associationName) {
-            isHasOne = association.associationType === 'HasOne';
-            modelAssociation = association.target;
-          }
-        });
+  if (association.associationType === 'HasOne') {
+    targetKey = await associationRecord.get(association.target, pk);
+  }
 
-        const setterName = `set${_.upperFirst(params.associationName)}`;
+  return targetKey;
+};
 
-        // NOTICE: Enable model hooks to change fields values during an association update.
-        const options = { fields: null };
+class BelongsToUpdater {
+  constructor(model, assoc, opts, params, data) {
+    this.model = model;
+    this.assoc = assoc;
+    this.opts = opts;
+    this.params = params;
+    this.data = data;
+  }
 
-        if (isHasOne && data.data) {
-          return orm.findRecord(modelAssociation, data.data.id)
-            .then((recordAssociated) => {
-              record[setterName](recordAssociated, options);
-            });
-        }
-        return record[setterName](data.data ? data.data.id : null, options);
-      });
-  };
+  async perform() {
+    const { associationName, recordId } = this.params;
+    const record = await orm.findRecord(this.model, recordId);
+    const association = Object.values(this.model.associations)
+      .find((a) => a.associationAccessor === associationName);
+
+    if (association && this.data.data) {
+      const pk = this.data.data.id;
+      const targetKey = await getTargetKey(pk, association);
+
+      // NOTICE: Enable model hooks to change fields values during an association update.
+      const options = { fields: null };
+      const setterName = `set${_.upperFirst(associationName)}`;
+      return record[setterName](targetKey, options);
+    }
+
+    return null;
+  }
 }
 
 module.exports = BelongsToUpdater;
