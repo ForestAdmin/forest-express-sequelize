@@ -67,7 +67,6 @@ class ResourceCreator {
 
     // handleAssociationsBeforeSave
     await this._handleSave(recordCreated, this._makePromisesBeforeSave);
-
     // saveInstance (validate then save)
     try {
       await recordCreated.validate();
