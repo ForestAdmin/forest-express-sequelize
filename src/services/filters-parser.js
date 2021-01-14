@@ -17,16 +17,29 @@ function FiltersParser(modelSchema, timezone, options) {
   };
 
   this.formatCondition = async (condition) => {
+    const isTextField = this.isTextField(condition.field);
+    if (this.isSmartField(modelSchema, condition.field)) {
+      const fieldFound = modelSchema.fields.find((field) => field.field === condition.field);
+
+      if (!fieldFound.filter) throw new Error(`"filter" method missing on smart field "${fieldFound.field}"`);
+
+      const formattedCondition = fieldFound
+        .filter({
+          where: this.formatOperatorValue(condition.operator, condition.value, isTextField),
+          condition,
+        });
+      if (!formattedCondition) throw new Error(`"filter" method on smart field "${fieldFound.field}" must return a condition`);
+      return formattedCondition;
+    }
+
     const formatedField = this.formatField(condition.field);
 
     if (this.operatorDateParser.isDateOperator(condition.operator)) {
       return {
-        [formatedField]: this.operatorDateParser
-          .getDateFilter(condition.operator, condition.value),
+        [formatedField]: this.operatorDateParser.getDateFilter(condition.operator, condition.value),
       };
     }
 
-    const isTextField = this.isTextField(condition.field);
     return {
       [formatedField]: this.formatOperatorValue(condition.operator, condition.value, isTextField),
     };
@@ -152,6 +165,11 @@ function FiltersParser(modelSchema, timezone, options) {
       return false;
     }
     return this.getFieldTypeFromSchema(modelSchema, field) === 'String';
+  };
+
+  this.isSmartField = (schema, fieldName) => {
+    const fieldFound = schema.fields.find((field) => field.field === fieldName);
+    return !!fieldFound && !!fieldFound.isVirtual;
   };
 
   this.getFieldTypeFromSchema = (schema, fieldName) => {
