@@ -9,6 +9,7 @@ const LineStatGetter = require('../src/services/line-stat-getter');
 const ResourcesGetter = require('../src/services/resources-getter');
 const ResourceGetter = require('../src/services/resource-getter');
 const ResourceCreator = require('../src/services/resource-creator');
+const BelongsToUpdater = require('../src/services/belongs-to-updater');
 const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
 const HasManyDissociator = require('../src/services/has-many-dissociator');
@@ -43,6 +44,20 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       resetPasswordToken: { type: Sequelize.STRING },
       uuid: { type: Sequelize.UUID },
       age: { type: Sequelize.INTEGER },
+    });
+
+    models.member = sequelize.define('member', {
+      name: { type: Sequelize.STRING },
+    });
+
+    models.membership = sequelize.define('membership', {
+      type: { type: Sequelize.STRING },
+      userId: { type: Sequelize.INTEGER },
+    });
+
+    models.friend = sequelize.define('friend', {
+      name: { type: Sequelize.STRING },
+      userId: { type: Sequelize.INTEGER },
     });
 
     models.bike = sequelize.define('bike', {
@@ -104,6 +119,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     models.user.hasMany(models.address);
     models.team.belongsToMany(models.user, { through: 'userTeam' });
     models.user.belongsToMany(models.team, { through: 'userTeam' });
+    models.membership.belongsTo(models.member);
+    models.member.hasOne(models.membership);
+    models.member.hasMany(models.friend);
+    models.friend.belongsTo(models.member);
 
     Interface.Schemas = {
       schemas: {
@@ -217,6 +236,38 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           fields: [
             { field: 'user', type: 'Number', reference: 'user.id' },
             { field: 'team', type: 'Number', reference: 'team.id' },
+          ],
+        },
+        member: {
+          name: 'member',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'String' },
+          ],
+        },
+        membership: {
+          name: 'membership',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'type', type: 'String' },
+            { field: 'memebr', type: 'Number', reference: 'member.id' },
+          ],
+        },
+        friend: {
+          name: 'friend',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'String' },
+            { field: 'member', type: 'Number', reference: 'member.id' },
           ],
         },
       },
@@ -497,6 +548,111 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
             expect(log).not.toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+    });
+
+    describe('resources > resources updater', () => {
+      describe('update a record on a collection', () => {
+        it('should update a record', async () => {
+          expect.assertions(2);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.member, {
+              id: 1,
+              name: 'foo',
+            }).perform();
+            await new ResourceCreator(models.member, {
+              id: 2,
+              name: 'bar',
+            }).perform();
+            await new ResourceCreator(models.friend, {
+              id: 1,
+              name: 'foo',
+              userId: 1,
+            }).perform();
+            const result = await new BelongsToUpdater(models.friend, null, null, {
+              recordId: '1',
+              associationName: 'member',
+            }, {
+              data: {
+                id: '2',
+                type: 'member',
+              },
+            }).perform();
+
+            expect(result.id).toStrictEqual(1);
+            expect(result.memberId).toStrictEqual('2');
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should update a record with hasOne association', async () => {
+          expect.assertions(2);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.membership, {
+              id: 1,
+              type: 'basic',
+              userId: 1,
+            }).perform();
+            await new ResourceCreator(models.membership, {
+              id: 2,
+              type: 'premium',
+              userId: 2,
+            }).perform();
+            await new BelongsToUpdater(models.member, null, null, {
+              recordId: '1',
+              associationName: 'membership',
+            }, {
+              data: {
+                id: '2',
+                type: 'membership',
+              },
+            }).perform();
+
+            const member = await models.member.findOne({
+              where: { id: 1 },
+              include: { model: models.membership },
+            });
+            expect(member).not.toBeNull();
+            expect(member.membership.id).toStrictEqual(2);
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should not update a record', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            await expect(new BelongsToUpdater(models.member, null, null, {
+              recordId: '1',
+              associationName: 'membership',
+            }, {
+              data: {
+                id: '999',
+                type: 'membership',
+              },
+            }).perform()).rejects.toThrow(Error('related membership with pk 999 does not exist.'));
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should not update a record if no data', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            const result = await new BelongsToUpdater(models.member, null, null, {
+              recordId: '1',
+              associationName: 'membership',
+            }, {}).perform();
+            expect(result).toBeNull();
           } finally {
             connectionManager.closeConnection();
           }
