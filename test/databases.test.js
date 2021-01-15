@@ -52,12 +52,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
     models.membership = sequelize.define('membership', {
       type: { type: Sequelize.STRING },
-      userId: { type: Sequelize.INTEGER },
+      memberId: { type: Sequelize.INTEGER },
     });
 
     models.friend = sequelize.define('friend', {
       name: { type: Sequelize.STRING },
-      userId: { type: Sequelize.INTEGER },
+      memberId: { type: Sequelize.INTEGER },
     });
 
     models.bike = sequelize.define('bike', {
@@ -256,7 +256,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           fields: [
             { field: 'id', type: 'Number' },
             { field: 'type', type: 'String' },
-            { field: 'memebr', type: 'Number', reference: 'member.id' },
+            { field: 'member', type: 'Number', reference: 'member.id' },
           ],
         },
         friend: {
@@ -572,7 +572,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             await new ResourceCreator(models.friend, {
               id: 1,
               name: 'foo',
-              userId: 1,
+              memberId: 1,
             }).perform();
             const result = await new BelongsToUpdater(models.friend, null, null, {
               recordId: '1',
@@ -598,12 +598,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             await new ResourceCreator(models.membership, {
               id: 1,
               type: 'basic',
-              userId: 1,
+              memberId: 1,
             }).perform();
             await new ResourceCreator(models.membership, {
               id: 2,
               type: 'premium',
-              userId: 2,
+              memberId: 2,
             }).perform();
             await new BelongsToUpdater(models.member, null, null, {
               recordId: '1',
