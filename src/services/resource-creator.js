@@ -37,7 +37,7 @@ class ResourceCreator {
     this.schema = Interface.Schemas.schemas[model.name];
   }
 
-  async getPromises(record, callback) {
+  getPromises(record, callback) {
     const { associations } = this.model;
 
     if (associations) {
@@ -51,7 +51,7 @@ class ResourceCreator {
   async perform() {
     const recordCreated = this.model.build(this.params);
 
-    const promisesBeforeSave = await this.getPromises(recordCreated, getPromisesBeforeSave);
+    const promisesBeforeSave = this.getPromises(recordCreated, getPromisesBeforeSave);
     await P.all(promisesBeforeSave);
 
     try {
@@ -63,7 +63,7 @@ class ResourceCreator {
 
     // NOTICE: Many to many associations have to be set after the record creation in order to
     //         have an id.
-    const promisesAfterSave = await this.getPromises(record, getPromisesAfterSave);
+    const promisesAfterSave = this.getPromises(record, getPromisesAfterSave);
     await P.all(promisesAfterSave);
 
     if (this.schema.isCompositePrimary) {
