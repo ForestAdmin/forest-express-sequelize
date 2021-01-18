@@ -5,29 +5,14 @@ const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 
-const getSetter = (associationType, name) => {
-  let setter;
+const getSetterName = (associationType, name) => {
+  let setterName;
   if (associationType === 'HasOne') {
-    setter = `set${_.upperFirst(name)}`;
+    setterName = `set${_.upperFirst(name)}`;
   } else if (['BelongsToMany', 'HasMany'].includes(associationType)) {
-    setter = `add${_.upperFirst(name)}`;
+    setterName = `add${_.upperFirst(name)}`;
   }
-  return setter;
-};
-
-const getPromisesBeforeSave = (record, params) => (promises, [name, association]) => {
-  if (association.associationType === 'BelongsTo') {
-    promises.push(record[`set${_.upperFirst(name)}`](params[name], { save: false }));
-  }
-  return promises;
-};
-
-const getPromisesAfterSave = (record, params) => (promises, [name, association]) => {
-  const setter = getSetter(association.associationType, name);
-  if (setter) {
-    promises.push(record[setter](params[name]));
-  }
-  return promises;
+  return setterName;
 };
 
 class ResourceCreator {
@@ -37,20 +22,45 @@ class ResourceCreator {
     this.schema = Interface.Schemas.schemas[model.name];
   }
 
+  getPromisesBeforeSave(record) {
+    return (promises, [name, association]) => {
+      if (association.associationType === 'BelongsTo') {
+        const setterName = `set${_.upperFirst(name)}`;
+        const promise = record[setterName](this.params[name], { save: false });
+        promises.push(promise);
+      }
+      return promises;
+    };
+  }
+
+  getPromisesAfterSave(record) {
+    return (promises, [name, association]) => {
+      const setterName = getSetterName(association.associationType, name);
+      if (setterName) {
+        const promise = record[setterName](this.params[name]);
+        promises.push(promise);
+      }
+      return promises;
+    };
+  }
+
   async handleSave(record, callback) {
     const { associations } = this.model;
     if (associations) {
-      const promisesBeforeSave = Object.entries(associations)
-        .reduce(callback(record, this.params), []);
+      callback = callback.bind(this);
+      const promisesBeforeSave = Object.entries(associations).reduce(callback(record), []);
       await P.all(promisesBeforeSave);
     }
   }
 
   async perform() {
+    // buildInstance
     const recordCreated = this.model.build(this.params);
 
-    await this.handleSave(recordCreated, getPromisesBeforeSave);
+    // handleAssociationsBeforeSave
+    await this.handleSave(recordCreated, this.getPromisesBeforeSave);
 
+    // saveInstance (validate then save)
     try {
       await recordCreated.validate();
     } catch (error) {
@@ -58,14 +68,18 @@ class ResourceCreator {
     }
     const record = await recordCreated.save();
 
+    // handleAssociationsAfterSave
     // NOTICE: Many to many associations have to be set after the record creation in order to
     //         have an id.
-    await this.handleSave(record, getPromisesAfterSave);
+    await this.handleSave(record, this.getPromisesAfterSave);
 
+    // appendCompositePrimary
     if (this.schema.isCompositePrimary) {
       record.forestCompositePrimary = new CompositeKeysManager(this.model, this.schema, record)
         .createCompositePrimary();
     }
+
+    // return makeResourceGetter()
     return new ResourceGetter(this.model, {
       recordId: record[this.schema.idField],
     }).perform();
