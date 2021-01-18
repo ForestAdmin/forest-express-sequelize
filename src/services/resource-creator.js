@@ -15,6 +15,21 @@ const getSetter = (associationType, name) => {
   return setter;
 };
 
+const getPromisesBeforeSave = (record, name) => (promises, [associationName, association]) => {
+  if (association.associationType === 'BelongsTo') {
+    promises.push(record[`set${_.upperFirst(associationName)}`](name, { save: false }));
+  }
+  return promises;
+};
+
+const getPromisesAfterSave = (record, name) => (promises, [associationName, association]) => {
+  const setter = getSetter(association.associationType, associationName);
+  if (setter) {
+    promises.push(record[setter](name));
+  }
+  return promises;
+};
+
 class ResourceCreator {
   constructor(model, params) {
     this.model = model;
@@ -22,55 +37,21 @@ class ResourceCreator {
     this.schema = Interface.Schemas.schemas[model.name];
   }
 
-  async getPromisesBeforeSave(recordCreated) {
+  async getPromises(record, callback) {
     const { associations } = this.model;
-    const promises = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [name, association] of Object.entries(associations)) {
-      if (association.associationType === 'BelongsTo') {
-        promises.push(recordCreated[`set${_.upperFirst(name)}`](this.params[name],
-          { save: false }));
-      }
-    }
-
-    return promises;
-  }
-
-  async getPromisesAfterSave(record) {
-    const { associations } = this.model;
-    const promises = [];
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const [name, association] of Object.entries(associations)) {
-      const setter = getSetter(association.associationType, name);
-      if (setter) {
-        promises.push(record[setter](this.params[name]));
-      }
-    }
-
-    return promises;
-  }
-
-  async getPromises(record, type) {
-    const { associations } = this.model;
-    let promises = [];
 
     if (associations) {
-      if (type === 'before') {
-        promises = await this.getPromisesBeforeSave(record);
-      } else if (type === 'after') {
-        promises = await this.getPromisesAfterSave(record);
-      }
+      const { name } = this.params;
+      return Object.entries(associations).reduce(callback(record, name), []);
     }
 
-    return promises;
+    return [];
   }
 
   async perform() {
     const recordCreated = this.model.build(this.params);
 
-    const promisesBeforeSave = await this.getPromises(recordCreated, 'before');
+    const promisesBeforeSave = await this.getPromises(recordCreated, getPromisesBeforeSave);
     await P.all(promisesBeforeSave);
 
     try {
@@ -82,7 +63,7 @@ class ResourceCreator {
 
     // NOTICE: Many to many associations have to be set after the record creation in order to
     //         have an id.
-    const promisesAfterSave = await this.getPromises(record, 'after');
+    const promisesAfterSave = await this.getPromises(record, getPromisesAfterSave);
     await P.all(promisesAfterSave);
 
     if (this.schema.isCompositePrimary) {
