@@ -1,3 +1,10 @@
+## [6.7.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.0...v6.7.1) (2021-01-18)
+
+
+### Bug Fixes
+
+* **forestadmin-schema:** regenerate forestadmin schema only when files are valid ([#597](https://github.com/ForestAdmin/forest-express-sequelize/issues/597)) ([a24abbd](https://github.com/ForestAdmin/forest-express-sequelize/commit/a24abbdfd91c24aff87fc649e9889e5d88cef61d))
+
 # [6.7.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.6.3...v6.7.0) (2021-01-14)
 
 
