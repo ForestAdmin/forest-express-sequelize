@@ -15,17 +15,17 @@ const getSetter = (associationType, name) => {
   return setter;
 };
 
-const getPromisesBeforeSave = (record, name) => (promises, [associationName, association]) => {
+const getPromisesBeforeSave = (record, params) => (promises, [name, association]) => {
   if (association.associationType === 'BelongsTo') {
-    promises.push(record[`set${_.upperFirst(associationName)}`](name, { save: false }));
+    promises.push(record[`set${_.upperFirst(name)}`](params[name], { save: false }));
   }
   return promises;
 };
 
-const getPromisesAfterSave = (record, name) => (promises, [associationName, association]) => {
-  const setter = getSetter(association.associationType, associationName);
+const getPromisesAfterSave = (record, params) => (promises, [name, association]) => {
+  const setter = getSetter(association.associationType, name);
   if (setter) {
-    promises.push(record[setter](name));
+    promises.push(record[setter](params[name]));
   }
   return promises;
 };
@@ -37,22 +37,19 @@ class ResourceCreator {
     this.schema = Interface.Schemas.schemas[model.name];
   }
 
-  getPromises(record, callback) {
+  async handleSave(record, callback) {
     const { associations } = this.model;
-
     if (associations) {
-      const { name } = this.params;
-      return Object.entries(associations).reduce(callback(record, name), []);
+      const promisesBeforeSave = Object.entries(associations)
+        .reduce(callback(record, this.params), []);
+      await P.all(promisesBeforeSave);
     }
-
-    return [];
   }
 
   async perform() {
     const recordCreated = this.model.build(this.params);
 
-    const promisesBeforeSave = this.getPromises(recordCreated, getPromisesBeforeSave);
-    await P.all(promisesBeforeSave);
+    await this.handleSave(recordCreated, getPromisesBeforeSave);
 
     try {
       await recordCreated.validate();
@@ -63,8 +60,7 @@ class ResourceCreator {
 
     // NOTICE: Many to many associations have to be set after the record creation in order to
     //         have an id.
-    const promisesAfterSave = this.getPromises(record, getPromisesAfterSave);
-    await P.all(promisesAfterSave);
+    await this.handleSave(record, getPromisesAfterSave);
 
     if (this.schema.isCompositePrimary) {
       record.forestCompositePrimary = new CompositeKeysManager(this.model, this.schema, record)
