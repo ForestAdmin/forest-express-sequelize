@@ -82,8 +82,17 @@ module.exports = (model, opts) => {
         idField = 'forestCompositePrimary';
       }
 
+      Object.entries(model.associations).forEach(([, association]) => {
+        const pkIsFk = Object.values(association.source.rawAttributes).filter((attr) =>
+          attr.field === association.source.primaryKeyField).length > 1;
+        if (pkIsFk) {
+          const fk = fields.find((field) => field.reference === `${association.associationAccessor}.${association.foreignKey}`);
+          fk.fkIsPk = true;
+        }
+      });
+
       _.remove(fields, (field) =>
-        _.includes(fieldNamesToExclude, field.columnName) && !field.primaryKey);
+        _.includes(fieldNamesToExclude, field.columnName));
 
       return {
         name: model.name,
