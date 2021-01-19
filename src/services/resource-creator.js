@@ -5,16 +5,6 @@ const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 
-const getSetterName = (associationType, name) => {
-  let setterName;
-  if (associationType === 'HasOne') {
-    setterName = `set${_.upperFirst(name)}`;
-  } else if (['BelongsToMany', 'HasMany'].includes(associationType)) {
-    setterName = `add${_.upperFirst(name)}`;
-  }
-  return setterName;
-};
-
 class ResourceCreator {
   constructor(model, params) {
     this.model = model;
@@ -35,7 +25,12 @@ class ResourceCreator {
 
   getPromisesAfterSave(record) {
     return (promises, [name, association]) => {
-      const setterName = getSetterName(association.associationType, name);
+      let setterName;
+      if (association.associationType === 'HasOne') {
+        setterName = `set${_.upperFirst(name)}`;
+      } else if (['BelongsToMany', 'HasMany'].includes(association.associationType)) {
+        setterName = `add${_.upperFirst(name)}`;
+      }
       if (setterName) {
         const promise = record[setterName](this.params[name]);
         promises.push(promise);
