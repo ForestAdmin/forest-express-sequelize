@@ -12,7 +12,7 @@ class ResourceCreator {
     this.schema = Interface.Schemas.schemas[model.name];
   }
 
-  getPromisesBeforeSave(record) {
+  _makePromisesBeforeSave(record) {
     return (promises, [name, association]) => {
       if (association.associationType === 'BelongsTo') {
         const setterName = `set${_.upperFirst(name)}`;
@@ -23,7 +23,7 @@ class ResourceCreator {
     };
   }
 
-  getPromisesAfterSave(record) {
+  _makePromisesAfterSave(record) {
     return (promises, [name, association]) => {
       let setterName;
       if (association.associationType === 'HasOne') {
@@ -39,7 +39,7 @@ class ResourceCreator {
     };
   }
 
-  async handleSave(record, callback) {
+  async _handleSave(record, callback) {
     const { associations } = this.model;
     if (associations) {
       callback = callback.bind(this);
@@ -53,7 +53,7 @@ class ResourceCreator {
     const recordCreated = this.model.build(this.params);
 
     // handleAssociationsBeforeSave
-    await this.handleSave(recordCreated, this.getPromisesBeforeSave);
+    await this._handleSave(recordCreated, this._makePromisesBeforeSave);
 
     // saveInstance (validate then save)
     try {
@@ -66,7 +66,7 @@ class ResourceCreator {
     // handleAssociationsAfterSave
     // NOTICE: Many to many associations have to be set after the record creation in order to
     //         have an id.
-    await this.handleSave(record, this.getPromisesAfterSave);
+    await this._handleSave(record, this._makePromisesAfterSave);
 
     // appendCompositePrimary
     if (this.schema.isCompositePrimary) {
