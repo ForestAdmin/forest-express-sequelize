@@ -13,7 +13,7 @@ class ResourceCreator {
     this.schema = Interface.Schemas.schemas[model.name];
   }
 
-  _getTargetKey = async (name, association) => {
+  async _getTargetKey(name, association) {
     const pk = this.params[name];
 
     let targetKey = pk;
@@ -67,8 +67,8 @@ class ResourceCreator {
 
     // handleAssociationsBeforeSave
     await this._handleSave(recordCreated, this._makePromisesBeforeSave);
-    // saveInstance (validate then save)
 
+    // saveInstance (validate then save)
     try {
       await recordCreated.validate();
     } catch (error) {

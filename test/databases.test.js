@@ -752,7 +752,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             connectionManager.closeConnection();
           }
         });
-
       });
       describe('update a record on a collection with a foreign key non pointing to a primary key', () => {
         it('should update a record', async () => {
@@ -767,18 +766,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const result = await new BelongsToUpdater(models.project, null, null, {
               recordId: '1',
               associationName: 'owner',
-              }, {
+            }, {
               data: {
-                  id: '3',
-                      type: 'owner',
-                },
-              }).perform();
+                id: '3',
+                type: 'owner',
+              },
+            }).perform();
 
             expect(result.id).toStrictEqual(1);
             expect(result.ownerIdKey).toStrictEqual(5);
           } finally {
-              connectionManager.closeConnection();
-            }
+            connectionManager.closeConnection();
+          }
         });
 
         it('should not update a record', async () => {
