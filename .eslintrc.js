@@ -23,6 +23,7 @@ module.exports = {
       }
     ],
     'no-param-reassign': 0,
+    "no-underscore-dangle": 0,
     'sonarjs/cognitive-complexity': 1,
     'sonarjs/no-collapsible-if': 0,
     'sonarjs/no-duplicate-string': 0,
