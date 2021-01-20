@@ -5,55 +5,80 @@ const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 
-function ResourceCreator(model, params) {
-  const schema = Interface.Schemas.schemas[model.name];
+class ResourceCreator {
+  constructor(model, params) {
+    this.model = model;
+    this.params = params;
+    this.schema = Interface.Schemas.schemas[model.name];
+  }
 
-  this.perform = function perform() {
-    const promises = [];
-    const recordCreated = model.build(params);
+  _makePromisesBeforeSave(record) {
+    return (promises, [name, association]) => {
+      if (association.associationType === 'BelongsTo') {
+        const setterName = `set${_.upperFirst(name)}`;
+        const promise = record[setterName](this.params[name], { save: false });
+        promises.push(promise);
+      }
+      return promises;
+    };
+  }
 
-    if (model.associations) {
-      _.forOwn(model.associations, (association, name) => {
-        if (association.associationType === 'BelongsTo') {
-          promises.push(recordCreated[`set${_.upperFirst(name)}`](params[name], { save: false }));
-        }
-      });
+  _makePromisesAfterSave(record) {
+    return (promises, [name, association]) => {
+      let setterName;
+      if (association.associationType === 'HasOne') {
+        setterName = `set${_.upperFirst(name)}`;
+      } else if (['BelongsToMany', 'HasMany'].includes(association.associationType)) {
+        setterName = `add${_.upperFirst(name)}`;
+      }
+      if (setterName) {
+        const promise = record[setterName](this.params[name]);
+        promises.push(promise);
+      }
+      return promises;
+    };
+  }
+
+  async _handleSave(record, callback) {
+    const { associations } = this.model;
+    if (associations) {
+      callback = callback.bind(this);
+      const promisesBeforeSave = Object.entries(associations).reduce(callback(record), []);
+      await P.all(promisesBeforeSave);
+    }
+  }
+
+  async perform() {
+    // buildInstance
+    const recordCreated = this.model.build(this.params);
+
+    // handleAssociationsBeforeSave
+    await this._handleSave(recordCreated, this._makePromisesBeforeSave);
+
+    // saveInstance (validate then save)
+    try {
+      await recordCreated.validate();
+    } catch (error) {
+      throw new ErrorHTTP422(error.message);
+    }
+    const record = await recordCreated.save();
+
+    // handleAssociationsAfterSave
+    // NOTICE: Many to many associations have to be set after the record creation in order to
+    //         have an id.
+    await this._handleSave(record, this._makePromisesAfterSave);
+
+    // appendCompositePrimary
+    if (this.schema.isCompositePrimary) {
+      record.forestCompositePrimary = new CompositeKeysManager(this.model, this.schema, record)
+        .createCompositePrimary();
     }
 
-    return P.all(promises)
-      .then(() => recordCreated.validate()
-        .catch((error) => {
-          throw new ErrorHTTP422(error.message);
-        }))
-      .then(() => recordCreated.save())
-      .then((record) => {
-        const promisesAfterSave = [];
-
-        // NOTICE: Many to many associations have to be set after the record creation in order to
-        //         have an id.
-        if (model.associations) {
-          _.forOwn(model.associations, (association, name) => {
-            if (association.associationType === 'HasOne') {
-              promisesAfterSave.push(record[`set${_.upperFirst(name)}`](params[name]));
-            } else if (['BelongsToMany', 'HasMany'].indexOf(association.associationType) > -1) {
-              promisesAfterSave.push(record[`add${_.upperFirst(name)}`](params[name]));
-            }
-          });
-        }
-
-        return P.all(promisesAfterSave)
-          .thenReturn(record);
-      })
-      .then((record) => {
-        if (schema.isCompositePrimary) {
-          record.forestCompositePrimary = new CompositeKeysManager(model, schema, record)
-            .createCompositePrimary();
-        }
-        return new ResourceGetter(model, {
-          recordId: record[schema.idField],
-        }).perform();
-      });
-  };
+    // return makeResourceGetter()
+    return new ResourceGetter(this.model, {
+      recordId: record[this.schema.idField],
+    }).perform();
+  }
 }
 
 module.exports = ResourceCreator;
