@@ -22,7 +22,7 @@ class BelongsToUpdater {
       const record = await associationRecord.get(association.target, pk);
       if (association.associationType === 'HasOne') {
         targetKey = record;
-      } else if (association.targetKey !== 'id') { // should we add _id, uuid?
+      } else if (association.targetKey !== 'id') {
         // NOTICE: special use case with foreign key non pointing to a primary key
         targetKey = record[association.targetKey];
       }
