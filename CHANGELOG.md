@@ -1,3 +1,10 @@
+## [6.7.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.1...v6.7.2) (2021-01-20)
+
+
+### Bug Fixes
+
+* **smart-action-hook:** value injected to an enum field of type  is now correctly handled ([#600](https://github.com/ForestAdmin/forest-express-sequelize/issues/600)) ([c0a3b58](https://github.com/ForestAdmin/forest-express-sequelize/commit/c0a3b58dc272f91d1802fa00dca3b3c79ca56e01))
+
 ## [6.7.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.0...v6.7.1) (2021-01-18)
 
 
