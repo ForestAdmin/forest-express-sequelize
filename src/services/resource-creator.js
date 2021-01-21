@@ -4,6 +4,7 @@ const Interface = require('forest-express');
 const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
+const associationRecord = require('../utils/association-record');
 
 class ResourceCreator {
   constructor(model, params) {
@@ -12,11 +13,23 @@ class ResourceCreator {
     this.schema = Interface.Schemas.schemas[model.name];
   }
 
+  async _getTargetKey(name, association) {
+    const pk = this.params[name];
+
+    let targetKey = pk;
+    if (association.targetKey !== 'id') {
+      const record = await associationRecord.get(association.target, pk);
+      targetKey = record[association.targetKey];
+    }
+    return targetKey;
+  }
+
   _makePromisesBeforeSave(record) {
-    return (promises, [name, association]) => {
+    return async (promises, [name, association]) => {
       if (association.associationType === 'BelongsTo') {
         const setterName = `set${_.upperFirst(name)}`;
-        const promise = record[setterName](this.params[name], { save: false });
+        const targetKey = await this._getTargetKey(name, association);
+        const promise = record[setterName](targetKey, { save: false });
         promises.push(promise);
       }
       return promises;
