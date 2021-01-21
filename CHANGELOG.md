@@ -1,3 +1,10 @@
+## [6.7.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.2...v6.7.3) (2021-01-21)
+
+
+### Bug Fixes
+
+* handle foreign key toward non primary key ([#585](https://github.com/ForestAdmin/forest-express-sequelize/issues/585)) ([64c78c7](https://github.com/ForestAdmin/forest-express-sequelize/commit/64c78c7545bc03fa03984572b39cf6977e927f17))
+
 ## [6.7.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.1...v6.7.2) (2021-01-20)
 
 
