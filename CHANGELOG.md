@@ -1,3 +1,10 @@
+## [6.7.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.3...v6.7.4) (2021-01-22)
+
+
+### Bug Fixes
+
+* fix belongsTo relationships creation when creating a record ([#602](https://github.com/ForestAdmin/forest-express-sequelize/issues/602)) ([e06dbc8](https://github.com/ForestAdmin/forest-express-sequelize/commit/e06dbc831dddeffed8d13a8a942b3998ef2982bf))
+
 ## [6.7.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.2...v6.7.3) (2021-01-21)
 
 
