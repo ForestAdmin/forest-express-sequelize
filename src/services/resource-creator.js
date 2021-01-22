@@ -24,40 +24,33 @@ class ResourceCreator {
     return targetKey;
   }
 
-  _makePromisesBeforeSave(record) {
-    return async (promises, [name, association]) => {
-      if (association.associationType === 'BelongsTo') {
-        const setterName = `set${_.upperFirst(name)}`;
-        const targetKey = await this._getTargetKey(name, association);
-        const promise = record[setterName](targetKey, { save: false });
-        promises.push(promise);
-      }
-      return promises;
-    };
+  async _makePromisesBeforeSave(record, [name, association]) {
+    if (association.associationType === 'BelongsTo') {
+      const setterName = `set${_.upperFirst(name)}`;
+      const targetKey = await this._getTargetKey(name, association);
+      return record[setterName](targetKey, { save: false });
+    }
+    return null;
   }
 
-  _makePromisesAfterSave(record) {
-    return (promises, [name, association]) => {
-      let setterName;
-      if (association.associationType === 'HasOne') {
-        setterName = `set${_.upperFirst(name)}`;
-      } else if (['BelongsToMany', 'HasMany'].includes(association.associationType)) {
-        setterName = `add${_.upperFirst(name)}`;
-      }
-      if (setterName) {
-        const promise = record[setterName](this.params[name]);
-        promises.push(promise);
-      }
-      return promises;
-    };
+  _makePromisesAfterSave(record, [name, association]) {
+    let setterName;
+    if (association.associationType === 'HasOne') {
+      setterName = `set${_.upperFirst(name)}`;
+    } else if (['BelongsToMany', 'HasMany'].includes(association.associationType)) {
+      setterName = `add${_.upperFirst(name)}`;
+    }
+    if (setterName) {
+      return record[setterName](this.params[name]);
+    }
+    return null;
   }
 
   async _handleSave(record, callback) {
     const { associations } = this.model;
     if (associations) {
-      callback = callback.bind(this);
-      const promisesBeforeSave = Object.entries(associations).reduce(callback(record), []);
-      await P.all(promisesBeforeSave);
+      await P.all(Object.entries(associations)
+        .map((entry) => callback.bind(this)(record, entry)));
     }
   }
 
