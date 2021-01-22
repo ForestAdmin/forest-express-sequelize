@@ -49,9 +49,8 @@ class ResourceCreator {
   async _handleSave(record, callback) {
     const { associations } = this.model;
     if (associations) {
-      const promises = await P.all(Object.entries(associations)
+      await P.all(Object.entries(associations)
         .map(async (entry) => callback.bind(this)(record, entry)));
-      await P.all(promises);
     }
   }
 
