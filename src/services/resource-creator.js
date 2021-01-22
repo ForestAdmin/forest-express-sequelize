@@ -24,40 +24,47 @@ class ResourceCreator {
     return targetKey;
   }
 
-  _makePromisesBeforeSave(record) {
-    return async (promises, [name, association]) => {
-      if (association.associationType === 'BelongsTo') {
-        const setterName = `set${_.upperFirst(name)}`;
-        const targetKey = await this._getTargetKey(name, association);
-        const promise = record[setterName](targetKey, { save: false });
-        promises.push(promise);
-      }
-      return promises;
-    };
+  async _makePromisesBeforeSave(record, [name, association]) {
+    if (association.associationType === 'BelongsTo') {
+      const setterName = `set${_.upperFirst(name)}`;
+      const targetKey = await this._getTargetKey(name, association);
+      return record[setterName](targetKey, { save: false });
+    }
+    return null;
   }
 
-  _makePromisesAfterSave(record) {
-    return (promises, [name, association]) => {
-      let setterName;
-      if (association.associationType === 'HasOne') {
-        setterName = `set${_.upperFirst(name)}`;
-      } else if (['BelongsToMany', 'HasMany'].includes(association.associationType)) {
-        setterName = `add${_.upperFirst(name)}`;
-      }
-      if (setterName) {
-        const promise = record[setterName](this.params[name]);
+  _makePromisesAfterSave(record, [name, association]) {
+    let setterName;
+    if (association.associationType === 'HasOne') {
+      setterName = `set${_.upperFirst(name)}`;
+    } else if (['BelongsToMany', 'HasMany'].includes(association.associationType)) {
+      setterName = `add${_.upperFirst(name)}`;
+    }
+    if (setterName) {
+      return record[setterName](this.params[name]);
+    }
+    return null;
+  }
+
+  async _getPromises(record, callback) {
+    const { associations } = this.model;
+    const promises = [];
+    // eslint-disable-next-line no-restricted-syntax
+    for (const entry of Object.entries(associations)) {
+      // eslint-disable-next-line no-await-in-loop
+      const promise = await callback.bind(this)(record, entry);
+      if (promise) {
         promises.push(promise);
       }
-      return promises;
-    };
+    }
+    return promises;
   }
 
   async _handleSave(record, callback) {
     const { associations } = this.model;
     if (associations) {
-      callback = callback.bind(this);
-      const promisesBeforeSave = Object.entries(associations).reduce(callback(record), []);
-      await P.all(promisesBeforeSave);
+      const promises = await this._getPromises(record, callback);
+      await P.all(promises);
     }
   }
 
