@@ -46,24 +46,11 @@ class ResourceCreator {
     return null;
   }
 
-  async _getPromises(record, callback) {
-    const { associations } = this.model;
-    const promises = [];
-    // eslint-disable-next-line no-restricted-syntax
-    for (const entry of Object.entries(associations)) {
-      // eslint-disable-next-line no-await-in-loop
-      const promise = await callback.bind(this)(record, entry);
-      if (promise) {
-        promises.push(promise);
-      }
-    }
-    return promises;
-  }
-
   async _handleSave(record, callback) {
     const { associations } = this.model;
     if (associations) {
-      const promises = await this._getPromises(record, callback);
+      const promises = await P.all(Object.entries(associations)
+        .map(async (entry) => callback.bind(this)(record, entry)));
       await P.all(promises);
     }
   }
