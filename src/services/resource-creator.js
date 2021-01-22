@@ -50,7 +50,7 @@ class ResourceCreator {
     const { associations } = this.model;
     if (associations) {
       await P.all(Object.entries(associations)
-        .map(async (entry) => callback.bind(this)(record, entry)));
+        .map((entry) => callback.bind(this)(record, entry)));
     }
   }
 
