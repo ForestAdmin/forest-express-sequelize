@@ -125,19 +125,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       ownerId: { type: Sequelize.INTEGER },
     });
 
-    models.customer = sequelize.define('customer', {
-      name: { type: Sequelize.STRING },
-    });
-
-    models.picture = sequelize.define('picture', {
-      name: { type: Sequelize.STRING },
-      customerId: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        allowNull: false,
-      },
-    });
-
     models.address.belongsTo(models.user);
     models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
     models.user.hasMany(models.address);
@@ -160,21 +147,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         field: 'owner_id',
       },
       sourceKey: 'ownerId',
-    });
-
-    models.customer.hasOne(models.picture, {
-      foreignKey: {
-        name: 'customerIdKey',
-        field: 'customer_id',
-      },
-      as: 'picture',
-    });
-    models.picture.belongsTo(models.customer, {
-      foreignKey: {
-        name: 'customerIdKey',
-        field: 'customer_id',
-      },
-      as: 'customer',
     });
 
     Interface.Schemas = {
@@ -343,26 +315,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             { field: 'id', type: 'Number' },
             { field: 'name', type: 'STRING' },
             { field: 'ownerId', type: 'Number', reference: 'owner.ownerId' },
-          ],
-        },
-        customer: {
-          name: 'owner',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'STRING' },
-          ],
-        },
-        picture: {
-          name: 'picture',
-          idField: 'customer_id',
-          primaryKeys: ['customer_id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'customerId', type: 'Number', reference: 'customer.id' },
-            { field: 'name', type: 'STRING' },
           ],
         },
       },
