@@ -1,16 +1,9 @@
 import Interface from 'forest-express';
-import sinon from 'sinon';
-import chai from 'chai';
 
-const ResourceGetter = require('../../src/services/resource-getter');
 const {
   sequelize,
   dataTypes,
 } = require('sequelize-test-helpers');
-
-chai.use(require('sinon-chai'));
-
-const { expect } = chai;
 
 const Owner = sequelize.define('owner', {
   name: { type: dataTypes.STRING },
@@ -28,6 +21,45 @@ Object.defineProperty(Project, 'name', {
   writable: true,
   value: 'project',
 });
+
+Owner.associate = (models) => {
+  Owner.hasMany(models.Project, {
+    foreignKey: {
+      name: 'ownerIdKey',
+      field: 'owner_id',
+    },
+    as: 'ownerProjects',
+  });
+};
+
+Project.associate = (models) => {
+  Project.belongsTo(models.Owner, {
+    foreignKey: {
+      name: 'ownerIdKey',
+      field: 'owner_id',
+    },
+    as: 'owner',
+  });
+};
+const models = { Project, Owner };
+Owner.associate(models);
+Project.associate(models);
+
+Owner.associations = {
+  project: {
+    associationType: 'HasMany',
+  },
+};
+
+Project.associations = {
+  owner: {
+    associationType: 'BelongsTo',
+    targetKey: 'id',
+    target: {
+      name: 'owner',
+    },
+  },
+};
 
 Interface.Schemas = {
   schemas: {
@@ -58,29 +90,66 @@ Interface.Schemas = {
 describe('services > resources-creator', () => {
   describe('perform', () => {
     it('should correctly create record', async () => {
-      const result = {
+      expect.assertions(2);
+      const params = {
         id: 1,
         name: 'foo',
       };
+      const mockResult = params;
 
-      sinon.stub(ResourceGetter, 'default').callsFake(sinon.stub().returns({
-        perform: sinon.stub().returns(result)
+      jest.mock('../../src/services/resource-getter', () => ({
+        __esModule: true, // this property makes it work
+        default: jest.fn().mockReturnValue({
+          perform: jest.fn().mockReturnValue(mockResult),
+        }),
       }));
-      Owner.build.returns({
-        id: 1,
-        name: 'foo',
-        validate: sinon.stub().resolves(),
-        save: sinon.stub().resolves(result),
-      });
-      const ResourceCreator = require('../../src/services/resource-creator');
-      const owner = await new ResourceCreator(Owner, result).perform();
+      const mockRecordCreated = {
+        ...mockResult,
+        validate: jest.fn().mockResolvedValue(true),
+        save: jest.fn().mockResolvedValue(mockResult),
+      };
+      const buildSpy = jest.spyOn(Project, 'build').mockReturnValue(mockRecordCreated);
 
-      expect(Owner.build).to.have.been.called;
+      // need to be declared here for resource getter to be modified
+      // eslint-disable-next-line global-require
+      const ResourceCreator = require('../../src/services/resource-creator');
+      const owner = await new ResourceCreator(Owner, params).perform();
+
+      expect(buildSpy).toHaveBeenCalledWith(params);
+      expect(owner).toBe(mockResult);
     });
 
-    // it('should correctly create record with belongsTo association', async () => {
-    //   expect.assertions(1);
-    //
-    // });
+    it('should correctly create record with belongsTo association', async () => {
+      expect.assertions(2);
+
+      const projectParams = {
+        id: 1,
+        name: 'bar',
+        owner: 1,
+      };
+      const mockProjectResult = projectParams;
+      const mockRecordCreated = {
+        ...mockProjectResult,
+        validate: jest.fn().mockResolvedValue(true),
+        save: jest.fn().mockResolvedValue(mockProjectResult),
+        setOwner: jest.fn(),
+      };
+      const buildSpy = jest.spyOn(Project, 'build').mockReturnValue(mockRecordCreated);
+      const setOwnerSpy = jest.spyOn(mockRecordCreated, 'setOwner');
+
+      jest.mock('../../src/services/resource-getter', () => ({
+        __esModule: true, // this property makes it work
+        default: jest.fn().mockReturnValue({
+          perform: jest.fn().mockReturnValue(mockProjectResult),
+        }),
+      }));
+      // need to be declared here for resource getter to be modified
+      // eslint-disable-next-line global-require
+      const ResourceCreator = require('../../src/services/resource-creator');
+      await new ResourceCreator(Project, projectParams).perform();
+
+      expect(buildSpy).toHaveBeenCalledWith(projectParams);
+      expect(setOwnerSpy).toHaveBeenCalledWith(projectParams.owner, { save: false });
+    });
   });
 });
