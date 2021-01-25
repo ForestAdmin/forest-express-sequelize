@@ -1,6 +1,7 @@
+import ResourceGetter from './resource-getter';
+
 const Interface = require('forest-express');
 const { ErrorHTTP422 } = require('./errors');
-const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 const ResourceFinder = require('./resource-finder');
 

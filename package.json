@@ -47,6 +47,7 @@
     "@semantic-release/git": "9.0.0",
     "@types/jest": "26.0.9",
     "babel-eslint": "10.0.3",
+    "chai": "4.2.0",
     "eslint": "6.8.0",
     "eslint-config-airbnb-base": "14.0.0",
     "eslint-plugin-import": "2.18.2",
@@ -58,12 +59,17 @@
     "mysql2": "2.1.0",
     "onchange": "6.0.0",
     "pg": "8.4.2",
+    "proxyquire": "2.1.3",
+    "rewiremock": "3.14.3",
     "semantic-release": "17.3.0",
     "semantic-release-npm-deprecate-old-versions": "1.1.2",
     "semantic-release-slack-bot": "1.6.2",
     "sequelize": "5.21.3",
     "sequelize-fixtures": "1.1.1",
-    "simple-git": "1.65.0"
+    "sequelize-test-helpers": "1.3.2",
+    "simple-git": "1.65.0",
+    "sinon": "9.2.3",
+    "sinon-chai": "3.5.0"
   },
   "scripts": {
     "build": "babel src --out-dir dist && echo '\n\\033[0;34m[+] \\033[0;32mBuild done\\033[0m'",

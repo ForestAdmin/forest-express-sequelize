@@ -1,8 +1,9 @@
+import ResourceGetter from './resource-getter';
+
 const _ = require('lodash');
 const P = require('bluebird');
 const Interface = require('forest-express');
 const { ErrorHTTP422 } = require('./errors');
-const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 const associationRecord = require('../utils/association-record');
 
@@ -80,7 +81,7 @@ class ResourceCreator {
         .createCompositePrimary();
     }
 
-    // return makeResourceGetter()
+    // return resource
     return new ResourceGetter(this.model, {
       recordId: record[this.schema.idField],
     }).perform();

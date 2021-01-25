@@ -27,4 +27,4 @@ function ResourceGetter(model, params) {
   };
 }
 
-module.exports = ResourceGetter;
+export default ResourceGetter;

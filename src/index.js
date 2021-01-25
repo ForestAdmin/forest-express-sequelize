@@ -116,7 +116,7 @@ exports.init = function init(opts) {
   exports.getModelNameOld = exports.getModelName;
 
   exports.ResourcesGetter = ResourcesGetter;
-  exports.ResourceGetter = ResourceGetter;
+  exports.ResourceGetter = ResourceGetter.default;
   exports.ResourceCreator = ResourceCreator;
   exports.ResourceUpdater = ResourceUpdater;
   exports.ResourceRemover = ResourceRemover;
