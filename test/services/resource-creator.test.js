@@ -1,9 +1,5 @@
 import Interface from 'forest-express';
-
-const {
-  sequelize,
-  dataTypes,
-} = require('sequelize-test-helpers');
+import { sequelize, dataTypes } from 'sequelize-test-helpers';
 
 // simple
 const Owner = sequelize.define('owner', {
