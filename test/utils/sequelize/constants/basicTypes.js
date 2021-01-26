@@ -1,0 +1,32 @@
+// see http://docs.sequelizejs.com/variable/index.html#static-variable-DataTypes
+const basicTypes = [
+  'ABSTRACT',
+  'ARRAY',
+  'BLOB',
+  'BOOLEAN',
+  'CIDR',
+  'DATE',
+  'DATEONLY',
+  'ENUM',
+  'GEOGRAPHY',
+  'GEOMETRY',
+  'HSTORE',
+  'INET',
+  'JSON',
+  'JSONB',
+  'JSONTYPE',
+  'MACADDR',
+  'MEDIUMINT',
+  'NOW',
+  'NUMBER',
+  'NUMERIC',
+  'RANGE',
+  'TEXT',
+  'TIME',
+  'UUID',
+  'UUIDV1',
+  'UUIDV4',
+  'VIRTUAL',
+];
+
+export default basicTypes;

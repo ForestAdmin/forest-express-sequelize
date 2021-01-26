@@ -1,108 +1,30 @@
 import Interface from 'forest-express';
-import { sequelize, dataTypes } from 'sequelize-test-helpers';
+import sequelizeMock from '../utils/sequelize';
+
+const { sequelize, dataTypes } = sequelizeMock;
 
 // simple
 const Owner = sequelize.define('owner', {
   name: { type: dataTypes.STRING },
 });
-Object.defineProperty(Owner, 'name', {
-  writable: true,
-  value: 'owner',
-});
 const Project = sequelize.define('project', {
   name: { type: dataTypes.STRING },
   ownerId: { type: dataTypes.INTEGER },
-});
-Object.defineProperty(Project, 'name', {
-  writable: true,
-  value: 'project',
 });
 const Shadow = sequelize.define('shadow', {
   name: { type: dataTypes.STRING },
   ownerId: { type: dataTypes.INTEGER },
 });
-Object.defineProperty(Shadow, 'name', {
-  writable: true,
-  value: 'shadow',
-});
-Owner.associate = (models) => {
-  Owner.hasMany(models.Project, {
-    foreignKey: {
-      name: 'ownerIdKey',
-      field: 'owner_id',
-    },
-    as: 'ownerProjects',
-  });
-  Owner.hasOne(models.Shadow, {
-    foreignKey: {
-      name: 'ownerIdKey',
-      field: 'owner_id',
-    },
-    as: 'ownerShadow',
-  });
-};
-Project.associate = (models) => {
-  Project.belongsTo(models.Owner, {
-    foreignKey: {
-      name: 'ownerIdKey',
-      field: 'owner_id',
-    },
-    as: 'owner',
-  });
-};
-Shadow.associate = (models) => {
-  Shadow.belongsTo(models.Owner, {
-    foreignKey: {
-      name: 'ownerIdKey',
-      field: 'owner_id',
-    },
-    as: 'owner',
-  });
-};
 
 // fk pointing to non primary key
 const User = sequelize.define('user', {
   name: { type: dataTypes.STRING },
   userId: { type: dataTypes.INTEGER },
 });
-Object.defineProperty(Owner, 'name', {
-  writable: true,
-  value: 'user',
-});
 const Team = sequelize.define('team', {
   name: { type: dataTypes.STRING },
   userId: { type: dataTypes.INTEGER },
 });
-Object.defineProperty(Team, 'name', {
-  writable: true,
-  value: 'team',
-});
-User.associate = (models) => {
-  User.hasMany(models.Team, {
-    foreignKey: {
-      name: 'teamIdKey',
-      field: 'team_id',
-    },
-    sourceKey: 'userId',
-    as: 'userTeams',
-  });
-};
-Team.associate = (models) => {
-  Team.belongsTo(models.User, {
-    foreignKey: {
-      name: 'userIdKey',
-      field: 'user_id',
-    },
-    targetKey: 'userId',
-    as: 'user',
-  });
-};
-
-// associations
-const models = {
-  Project, Owner, Shadow, User, Team,
-};
-Object.values(models).forEach((model) => model.associate(models));
 
 // simple
 Owner.associations = {
