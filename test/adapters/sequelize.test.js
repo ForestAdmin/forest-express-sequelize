@@ -25,6 +25,36 @@ function getField(schema, name) {
     },
   });
 
+  models.customer = sequelize.define('customer', {
+    name: { type: Sequelize.STRING },
+  });
+
+  models.picture = sequelize.define('picture', {
+    name: { type: Sequelize.STRING },
+    customerId: {
+      type: Sequelize.INTEGER,
+      primaryKey: true,
+      allowNull: false,
+    },
+  }, {
+    underscored: true,
+  });
+
+  models.customer.hasOne(models.picture, {
+    foreignKey: {
+      name: 'customerIdKey',
+      field: 'customer_id',
+    },
+    as: 'picture',
+  });
+  models.picture.belongsTo(models.customer, {
+    foreignKey: {
+      name: 'customerIdKey',
+      field: 'customer_id',
+    },
+    as: 'customer',
+  });
+
   describe(`with dialect ${connectionManager.getDialect()} (port: ${connectionManager.getPort()})`, () => {
     describe('with model `users`', () => {
       it('should set name correctly', async () => {
@@ -118,6 +148,15 @@ function getField(schema, name) {
             columnName: 'updatedAt',
           });
         });
+      });
+    });
+
+    describe('with association', () => {
+      it('should set fkIsPk to true', async () => {
+        expect.assertions(1);
+
+        const schema = await getSchema(models.picture, sequelizeOptions);
+        expect(schema.fields.find((x) => x.field === 'customer').fkIsPk).toBeTrue();
       });
     });
   });
