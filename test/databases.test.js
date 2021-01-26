@@ -139,6 +139,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         primaryKey: true,
         allowNull: false,
       },
+    }, {
+      underscored: true,
     });
 
     models.address.belongsTo(models.user);
@@ -370,8 +372,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         },
         picture: {
           name: 'picture',
-          idField: 'customer_id',
-          primaryKeys: ['customer_id'],
+          idField: 'customerId',
+          primaryKeys: ['customerId'],
           isCompositePrimary: false,
           fields: [
             { field: 'customerId', type: 'Number', reference: 'customer.id' },
@@ -684,6 +686,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               name: 'bar',
               owner: 4,
             }).perform()).rejects.toThrow(Error('related owner with pk 4 does not exist.'));
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
+      describe('create a record on a collection with a foreign key which is a primary key', () => {
+        it('should create a record', async () => {
+          expect.assertions(6);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.customer, {
+              id: 1,
+              name: 'foo',
+            }).perform();
+            const result = await new ResourceCreator(models.picture, {
+              name: 'bar',
+              customer: 1,
+            }).perform();
+
+            expect(result.customerId).toStrictEqual(1);
+            expect(result.customerIdKey).toStrictEqual(1);
+            expect(result.name).toStrictEqual('bar');
+
+            const picture = await models.picture.findOne({ where: { name: 'bar' }, include: { model: models.customer, as: 'customer' } });
+            expect(picture).not.toBeNull();
+            expect(picture.customerId).toStrictEqual(1);
+            expect(picture.customer.id).toStrictEqual(1);
           } finally {
             connectionManager.closeConnection();
           }
