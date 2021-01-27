@@ -1,3 +1,10 @@
+## [6.7.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.4...v6.7.5) (2021-01-27)
+
+
+### Bug Fixes
+
+* correctly set fields holding  belongsTo relationships to null when updated with a null value ([#607](https://github.com/ForestAdmin/forest-express-sequelize/issues/607)) ([374151f](https://github.com/ForestAdmin/forest-express-sequelize/commit/374151fcfa7d3e70ce5817039749656250131e2f))
+
 ## [6.7.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.3...v6.7.4) (2021-01-22)
 
 
