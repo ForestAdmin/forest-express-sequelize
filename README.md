@@ -1,6 +1,6 @@
 # Forest Admin in Nodejs (Express.js & Sequelize)
 [![npm package](https://badge.fury.io/js/forest-express-sequelize.svg)](https://badge.fury.io/js/forest-express-sequelize)
-[![CI status](https://travis-ci.org/ForestAdmin/forest-express-sequelize.svg?branch=devel)](https://travis-ci.org/ForestAdmin/forest-express-sequelize)
+[![CI status](https://github.com/ForestAdmin/forest-express-sequelize/workflows/.github/workflows/build.yml/badge.svg)](https://github.com/ForestAdmin/forest-express-sequelize/actions)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/42d6d0fce013a6b96ae2/test_coverage)](https://codeclimate.com/github/ForestAdmin/forest-express-sequelize/test_coverage)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 

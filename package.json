@@ -6,7 +6,8 @@
   "contributors": [
     "Arnaud Besnier <arnaudibesnier@gmail.com>",
     "Lucas Scariot <scluckas@gmail.com>",
-    "Arnaud Valensi <arnaud.valensi@gmail.com>"
+    "Arnaud Valensi <arnaud.valensi@gmail.com>",
+    "Vincent Molinié <molinie.vincent@gmail.com>"
   ],
   "license": "GPL-3.0",
   "homepage": "http://www.forestadmin.com",
@@ -42,7 +43,6 @@
     "@babel/register": "7.10.1",
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-conventional": "11.0.0",
-    "@commitlint/travis-cli": "11.0.0",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@types/jest": "26.0.9",
