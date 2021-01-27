@@ -752,6 +752,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             connectionManager.closeConnection();
           }
         });
+
+        it('should update a record when removing a reference to another record', async () => {
+          expect.assertions(2);
+          const { models } = initializeSequelize();
+
+          try {
+            const newMember = await new ResourceCreator(models.member, {
+              id: 421,
+              name: 'the member',
+            }).perform();
+
+            const newFriend = await new ResourceCreator(models.friend, {
+              id: 422,
+              member: newMember,
+              name: 'my friend',
+            }).perform();
+
+
+            expect(newFriend.memberId).not.toBeNull();
+
+            const result = await new BelongsToUpdater(models.friend, null, null, {
+              recordId: newFriend.id,
+              associationName: 'member',
+            }, { data: null }).perform();
+
+            expect(result.memberId).toBeNull();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
       });
       describe('update a record on a collection with a foreign key non pointing to a primary key', () => {
         it('should update a record', async () => {

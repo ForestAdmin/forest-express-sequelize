@@ -36,17 +36,17 @@ class BelongsToUpdater {
     const record = await orm.findRecord(this.model, recordId);
     const association = Object.values(this.model.associations)
       .find((a) => a.associationAccessor === associationName);
+    const setterName = `set${_.upperFirst(associationName)}`;
+    const options = { fields: null };
 
     if (association && this.data.data) {
       const targetKey = await this._getTargetKey(association);
 
       // NOTICE: Enable model hooks to change fields values during an association update.
-      const options = { fields: null };
-      const setterName = `set${_.upperFirst(associationName)}`;
       return record[setterName](targetKey, options);
     }
 
-    return null;
+    return record[setterName](null, options);
   }
 }
 
