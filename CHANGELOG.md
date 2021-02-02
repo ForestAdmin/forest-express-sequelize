@@ -1,3 +1,10 @@
+## [6.7.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.5...v6.7.6) (2021-02-02)
+
+
+### Bug Fixes
+
+* fix unconventional pk when referenced as null on creation ([#608](https://github.com/ForestAdmin/forest-express-sequelize/issues/608)) ([af70d62](https://github.com/ForestAdmin/forest-express-sequelize/commit/af70d62d36052ab0b77295a581d82ae69068ccda))
+
 ## [6.7.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.4...v6.7.5) (2021-01-27)
 
 
