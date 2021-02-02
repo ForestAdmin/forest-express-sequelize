@@ -2,6 +2,7 @@
 jest.mock('forest-express');
 import Sequelize from 'sequelize';
 import ForestExpress from 'forest-express';
+import { InvalidParameterError } from '../../src/services/errors';
 
 function generateModels() {
   const sequelize = new Sequelize({ dialect: 'postgres' });
@@ -61,23 +62,25 @@ function importLeaderBoardStatGetter() {
 }
 
 describe('services > leaderboard-stat-getter', () => {
+  const VALID_PARAMETERS = {
+    aggregate: 'Count',
+    collection: 'user',
+    label_field: 'username',
+    limit: 5,
+    relationship_field: 'addresses',
+    timezone: 'Europe/Paris',
+    type: 'Leaderboard',
+  };
+
   it('identifier should be double quoted', async () => {
-    expect.assertions(1);
+    expect.assertions(3);
 
     const models = generateModels();
     buildForestExpressSchema(models);
 
     const LeaderBoardStatGetter = importLeaderBoardStatGetter();
 
-    const params = {
-      aggregate: 'Count',
-      collection: 'user',
-      label_field: 'username',
-      limit: 5,
-      relationship_field: 'addresses',
-      timezone: 'Europe/Paris',
-      type: 'Leaderboard',
-    };
+    const params = VALID_PARAMETERS;
 
     const connection = {
       query: jest.fn(() => Promise.resolve()),
@@ -92,7 +95,98 @@ describe('services > leaderboard-stat-getter', () => {
 
     await leaderBoardStatGetter.perform();
 
-    const buildedQuery = connection.query.mock.calls[0][0];
-    expect(buildedQuery).toContain('"user"."username"');
+    const builtQuery = connection.query.mock.calls[0][0];
+    expect(builtQuery).toContain('"user"."username"');
+    expect(builtQuery).not.toContain(`${VALID_PARAMETERS.limit}`);
+    expect(connection.query.mock.calls[0][1]).toMatchObject({
+      replacements: {
+        limit: 5,
+      },
+    });
+  });
+
+  it('should throw an error if the aggregate function is not supported', async () => {
+    expect.assertions(1);
+
+    const models = generateModels();
+    buildForestExpressSchema(models);
+
+    const LeaderBoardStatGetter = importLeaderBoardStatGetter();
+
+    const params = {
+      ...VALID_PARAMETERS,
+      aggregate: 'HACKY',
+    };
+
+    const connection = {
+      query: jest.fn(() => Promise.resolve()),
+    };
+
+    expect(() => {
+      // eslint-disable-next-line no-new
+      new LeaderBoardStatGetter(
+        models.user,
+        models.address,
+        params,
+        { connections: [connection] },
+      );
+    }).toThrow(InvalidParameterError);
+  });
+
+  it('should throw an error if label_field does not exist', async () => {
+    expect.assertions(1);
+
+    const models = generateModels();
+    buildForestExpressSchema(models);
+
+    const LeaderBoardStatGetter = importLeaderBoardStatGetter();
+
+    const params = {
+      ...VALID_PARAMETERS,
+      label_field: 'HACKY',
+    };
+
+    const connection = {
+      query: jest.fn(() => Promise.resolve()),
+    };
+
+    expect(() => {
+      // eslint-disable-next-line no-new
+      new LeaderBoardStatGetter(
+        models.user,
+        models.address,
+        params,
+        { connections: [connection] },
+      );
+    }).toThrow(InvalidParameterError);
+  });
+
+
+  it('should throw an error if aggregate_field does not exist', async () => {
+    expect.assertions(1);
+
+    const models = generateModels();
+    buildForestExpressSchema(models);
+
+    const LeaderBoardStatGetter = importLeaderBoardStatGetter();
+
+    const params = {
+      ...VALID_PARAMETERS,
+      aggregate_field: 'HACKY',
+    };
+
+    const connection = {
+      query: jest.fn(() => Promise.resolve()),
+    };
+
+    expect(() => {
+      // eslint-disable-next-line no-new
+      new LeaderBoardStatGetter(
+        models.user,
+        models.address,
+        params,
+        { connections: [connection] },
+      );
+    }).toThrow(InvalidParameterError);
   });
 });
