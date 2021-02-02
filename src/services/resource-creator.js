@@ -17,7 +17,7 @@ class ResourceCreator {
     const pk = this.params[name];
 
     let targetKey = pk;
-    if (association.targetKey !== 'id') {
+    if (typeof pk !== 'undefined' && association.targetKey !== 'id') {
       const record = await associationRecord.get(association.target, pk);
       targetKey = record[association.targetKey];
     }
