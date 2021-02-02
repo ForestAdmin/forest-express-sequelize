@@ -21,6 +21,10 @@ function generateModels() {
       primaryKey: true,
     },
     username: Sequelize.DataTypes.STRING,
+    firstName: {
+      type: Sequelize.DataTypes.STRING,
+      field: 'first_name',
+    },
   });
 
   address.belongsTo(user, {
@@ -48,7 +52,10 @@ function buildForestExpressSchema(models) {
     schema[model.name] = {
       name: model.name,
       primaryKeys: Object.keys(model.primaryKeys),
-      fields: [],
+      fields: Object.values(model.rawAttributes).map((field) => ({
+        field: field.fieldName,
+        columnName: field.field,
+      })),
     };
     return schema;
   }, {});
@@ -188,5 +195,35 @@ describe('services > leaderboard-stat-getter', () => {
         { connections: [connection] },
       );
     }).toThrow(InvalidParameterError);
+  });
+
+  it('should the real column name for the firstName field', async () => {
+    expect.assertions(1);
+
+    const models = generateModels();
+    buildForestExpressSchema(models);
+
+    const LeaderBoardStatGetter = importLeaderBoardStatGetter();
+
+    const params = {
+      ...VALID_PARAMETERS,
+      label_field: 'firstName',
+    };
+
+    const connection = {
+      query: jest.fn(() => Promise.resolve()),
+    };
+
+    const statGetter = new LeaderBoardStatGetter(
+      models.user,
+      models.address,
+      params,
+      { connections: [connection] },
+    );
+
+    await statGetter.perform();
+
+    const builtQuery = connection.query.mock.calls[0][0];
+    expect(builtQuery).toContain('"user"."first_name"');
   });
 });

@@ -9,7 +9,7 @@ import { InvalidParameterError } from './errors';
  */
 function assertThatFieldExists(tableSchema, fieldName) {
   const field = Object.values(tableSchema.tableAttributes)
-    .find((tableAttribute) => tableAttribute.field === fieldName);
+    .find((tableAttribute) => tableAttribute.fieldName === fieldName);
 
   if (!field) {
     throw new InvalidParameterError(`Field ${fieldName} does not exist on ${tableSchema.name}`);
@@ -76,7 +76,8 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
   assertSupportedAggregation(aggregate);
   assertThatFieldExists(modelRelationship, aggregateField);
 
-  const groupBy = `"${associationAs}"."${labelField}"`;
+  const labelColumn = Orm.getColumnName(schema, labelField);
+  const groupBy = `"${associationAs}"."${labelColumn}"`;
 
 
   let joinQuery;
