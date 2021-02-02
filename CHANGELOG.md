@@ -1,3 +1,10 @@
+# [7.0.0-beta.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.8...v7.0.0-beta.9) (2021-02-02)
+
+
+### Features
+
+* return correct errors when the user needs to configure the 2FA ([#609](https://github.com/ForestAdmin/forest-express-sequelize/issues/609)) ([08b64a0](https://github.com/ForestAdmin/forest-express-sequelize/commit/08b64a038f2d9aef206710234d16d6e877274967))
+
 # [7.0.0-beta.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.7...v7.0.0-beta.8) (2021-01-08)
 
 
