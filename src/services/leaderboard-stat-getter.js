@@ -58,14 +58,17 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
       .unscoped()
       .findAll({
         attributes: [
+          options.sequelize.col(groupBy),
           [options.sequelize.fn(aggregate, options.sequelize.col(aggregateField)), 'value'],
         ],
+        includeIgnoreAttributes: false,
         include: [{
           model,
           attributes: [labelField],
           as: associationAs,
           required: true,
         }],
+        subQuery: false,
         group: groupBy,
         order: [[options.sequelize.literal('value'), 'DESC']],
         limit,
@@ -73,14 +76,10 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
       });
 
     return {
-      value: records.map((data) => {
-        const property = `${associationAs}.${labelField}`;
-
-        return {
-          key: data[property],
-          value: data.value,
-        };
-      }),
+      value: records.map((data) => ({
+        key: data[labelColumn],
+        value: data.value,
+      })),
     };
   };
 }
