@@ -10,7 +10,7 @@ function getAggregateField({
   const fieldName = aggregateField
     || schemaRelationship.primaryKeys[0]
     || schemaRelationship.fields[0].field;
-  return `"${modelRelationship.name}"."${Orm.getColumnName(schema, fieldName)}"`;
+  return `${modelRelationship.name}.${Orm.getColumnName(schema, fieldName)}`;
 }
 
 /**
@@ -78,7 +78,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
     return {
       value: records.map((data) => ({
         key: data[labelColumn],
-        value: data.value,
+        value: Number(data.value),
       })),
     };
   };
