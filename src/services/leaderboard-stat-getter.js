@@ -4,13 +4,13 @@ import Orm from '../utils/orm';
 import { InvalidParameterError } from './errors';
 
 function getAggregateField({
-  aggregateField, schemaRelationship, schema, modelRelationship,
+  aggregateField, schemaRelationship, modelRelationship,
 }) {
   // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
   const fieldName = aggregateField
     || schemaRelationship.primaryKeys[0]
     || schemaRelationship.fields[0].field;
-  return `${modelRelationship.name}.${Orm.getColumnName(schema, fieldName)}`;
+  return `${modelRelationship.name}.${Orm.getColumnName(schemaRelationship, fieldName)}`;
 }
 
 /**
@@ -37,7 +37,6 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
 
   const aggregateField = getAggregateField({
     aggregateField: params.aggregate_field,
-    schema,
     schemaRelationship,
     modelRelationship,
   });
