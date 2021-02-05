@@ -4,7 +4,7 @@ const Operators = require('../../src/utils/operators');
 describe('utils > operators', () => {
   describe('with an old sequelize', () => {
     it('should return a valid operator', () => {
-      expect.assertions(2);
+      expect.assertions(13);
 
       const Op = new Operators();
       expect(Op.AND).toStrictEqual('$and');
@@ -25,7 +25,7 @@ describe('utils > operators', () => {
 
   describe('with an up to date sequelize', () => {
     it('should return a valid operator', () => {
-      expect.assertions(2);
+      expect.assertions(13);
 
       const Op = new Operators({ sequelize });
       expect(Op.AND).toStrictEqual(sequelize.Op.and);
