@@ -4,7 +4,7 @@ const orm = require('../utils/orm');
 const { ErrorHTTP422 } = require('./errors');
 
 function HasManyDissociator(model, association, options, params, data) {
-  const OPERATORS = new Operators(options);
+  const OPERATORS = Operators.getInstance(options);
   const isDelete = Boolean(params.delete);
 
   this.perform = () => {

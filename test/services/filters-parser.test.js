@@ -12,7 +12,7 @@ describe('services > filters-parser', () => {
     sequelize: Sequelize,
   };
   const timezone = 'Europe/Paris';
-  const OPERATORS = new Operators(sequelizeOptions);
+  const OPERATORS = Operators.getInstance(sequelizeOptions);
   const defaultFiltersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
   const getExpectedCondition = (field, conditions) => {

@@ -17,7 +17,7 @@ function CompositeKeysManager(model, schema, record) {
   };
 
   this.getRecordsConditions = function getRecordsConditions(recordsIds, options) {
-    const { OR } = new Operators(options);
+    const { OR } = Operators.getInstance(options);
     return { [OR]: recordsIds.map((recordId) => this.getRecordConditions(recordId)) };
   };
 

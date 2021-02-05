@@ -5,7 +5,7 @@ import { NoMatchingOperatorError } from './errors';
 const { getReferenceSchema, getReferenceField } = require('../utils/query');
 
 function FiltersParser(modelSchema, timezone, options) {
-  this.OPERATORS = new Operators(options);
+  this.OPERATORS = Operators.getInstance(options);
   this.operatorDateParser = new BaseOperatorDateParser({ operators: this.OPERATORS, timezone });
 
   this.perform = async (filtersString) =>
