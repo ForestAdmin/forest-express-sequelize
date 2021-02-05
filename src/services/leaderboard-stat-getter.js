@@ -57,7 +57,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
       .unscoped()
       .findAll({
         attributes: [
-          options.sequelize.col(groupBy),
+          [options.sequelize.col(groupBy), 'key'],
           [options.sequelize.fn(aggregate, options.sequelize.col(aggregateField)), 'value'],
         ],
         includeIgnoreAttributes: false,
@@ -76,7 +76,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
 
     return {
       value: records.map((data) => ({
-        key: data[labelColumn],
+        key: data.key,
         value: Number(data.value),
       })),
     };
