@@ -3,4 +3,7 @@ module.exports = {
   collectCoverageFrom: [
     'src/**/*.{ts,js}',
   ],
+  setupFilesAfterEnv: [
+    'jest-extended',
+  ],
 };
