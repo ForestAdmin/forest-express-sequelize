@@ -6,7 +6,8 @@
   "contributors": [
     "Arnaud Besnier <arnaudibesnier@gmail.com>",
     "Lucas Scariot <scluckas@gmail.com>",
-    "Arnaud Valensi <arnaud.valensi@gmail.com>"
+    "Arnaud Valensi <arnaud.valensi@gmail.com>",
+    "Vincent Molinié <molinie.vincent@gmail.com>"
   ],
   "license": "GPL-3.0",
   "homepage": "http://www.forestadmin.com",
@@ -42,7 +43,6 @@
     "@babel/register": "7.10.1",
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-conventional": "11.0.0",
-    "@commitlint/travis-cli": "11.0.0",
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@types/jest": "26.0.9",
@@ -54,10 +54,12 @@
     "eslint-plugin-sonarjs": "0.5.0",
     "husky": "4.2.5",
     "jest": "26.0.1",
+    "jest-extended": "0.11.5",
     "mysql2": "2.1.0",
     "onchange": "6.0.0",
     "pg": "8.4.2",
     "semantic-release": "17.3.0",
+    "semantic-release-npm-deprecate-old-versions": "1.1.2",
     "semantic-release-slack-bot": "1.6.2",
     "sequelize": "5.21.3",
     "sequelize-fixtures": "1.1.1",

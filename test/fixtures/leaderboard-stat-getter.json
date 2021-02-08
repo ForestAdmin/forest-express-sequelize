@@ -1,0 +1,53 @@
+[{
+  "model": "theVendors",
+  "data": {
+    "id": 100,
+    "firstName": "Alice",
+    "lastName": "Doe"
+  }
+},{
+  "model": "theVendors",
+  "data": {
+    "id": 101,
+    "firstName": "Bob",
+    "lastName": "Doe"
+  }
+},{
+  "model": "theCustomers",
+  "data": {
+    "id": 100,
+    "name": "big customer",
+    "objectiveScore": 5
+  }
+},{
+  "model": "theCustomers",
+  "data": {
+    "id": 101,
+    "name": "small customer",
+    "objectiveScore": 1
+  }
+},{
+  "model": "theirSales",
+  "data": {
+    "id": 100,
+    "vendorId": 100,
+    "customerId": 100,
+    "sellingAmount": 100
+  }
+},{
+  "model": "theirSales",
+  "data": {
+    "id": 101,
+    "vendorId": 101,
+    "customerId": 100,
+    "sellingAmount": 200
+  }
+},{
+  "model": "theirSales",
+  "data": {
+    "id": 102,
+    "vendorId": 100,
+    "customerId": 101,
+    "sellingAmount": 150
+  }
+}]
