@@ -14,7 +14,6 @@
 * return correct errors when the user needs to configure the 2FA ([#609](https://github.com/ForestAdmin/forest-express-sequelize/issues/609)) ([08b64a0](https://github.com/ForestAdmin/forest-express-sequelize/commit/08b64a038f2d9aef206710234d16d6e877274967))
 
 
-
 ## [6.7.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.5...v6.7.6) (2021-02-02)
 
 
@@ -52,6 +51,7 @@
 
 ## [6.7.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.0...v6.7.1) (2021-01-18)
 
+
 ### Bug Fixes
 
 * **forestadmin-schema:** regenerate forestadmin schema only when files are valid ([#597](https://github.com/ForestAdmin/forest-express-sequelize/issues/597)) ([a24abbd](https://github.com/ForestAdmin/forest-express-sequelize/commit/a24abbdfd91c24aff87fc649e9889e5d88cef61d))
@@ -64,8 +64,8 @@
 * **filter:** add possibility to filter on smart field ([eaead56](https://github.com/ForestAdmin/forest-express-sequelize/commit/eaead56004a67edd4d266dc1583c43146ca393c3))
 * **filter:** add possibility to filter on smart field ([#583](https://github.com/ForestAdmin/forest-express-sequelize/issues/583)) ([dbf136a](https://github.com/ForestAdmin/forest-express-sequelize/commit/dbf136a2f8b1fd7b3694769792e9e15b4a93a6e4))
 
-
 # [7.0.0-beta.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.7...v7.0.0-beta.8) (2021-01-08)
+
 
 ### Bug Fixes
 
@@ -73,12 +73,13 @@
 
 # [7.0.0-beta.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.6...v7.0.0-beta.7) (2021-01-06)
 
+
 ### Bug Fixes
 
 * user being disconnected after 33min instead of 14 days ([#591](https://github.com/ForestAdmin/forest-express-sequelize/issues/591)) ([2e2dc81](https://github.com/ForestAdmin/forest-express-sequelize/commit/2e2dc811f497acb0d771497c55b75349480e46a5))
 
-
 # [7.0.0-beta.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.5...v7.0.0-beta.6) (2021-01-06)
+
 
 ### Bug Fixes
 
