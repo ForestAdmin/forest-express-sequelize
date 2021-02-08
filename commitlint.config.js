@@ -17,7 +17,7 @@ module.exports = {
   extends: ['@commitlint/config-conventional'],
   rules: {
     'header-max-length': [2, 'always', maxLineLength],
-    'body-max-length': [2, 'always', maxLineLength],
-    'footer-max-length': [2, 'always', maxLineLength],
+    'body-max-line-length': [2, 'always', maxLineLength],
+    'footer-max-line-length': [2, 'always', maxLineLength],
   },
 };
