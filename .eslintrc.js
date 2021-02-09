@@ -9,6 +9,7 @@ module.exports = {
     'sonarjs',
   ],
   env: {
+    es2020: true,
     node: true,
   },
   rules: {

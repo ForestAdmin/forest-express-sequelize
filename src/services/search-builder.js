@@ -148,10 +148,12 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, columnName);
         }
       } else if (field.type === 'Number') {
-        const value = Number(params.search);
-        if (!Number.isNaN(value)) {
+        try {
+          const value = BigInt(params.search);
+
           condition[field.field] = value;
           pushCondition(condition, field.field);
+        } catch (err) { // eslint-disable-line no-empty
         }
       }
     });
