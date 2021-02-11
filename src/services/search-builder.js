@@ -152,7 +152,9 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
 
         if (!Number.isNaN(value)) {
           if (Number.isInteger(value) && !Number.isSafeInteger(value)) {
-            value = BigInt(params.search);
+            // NOTE: Numbers higher than MAX_SAFE_INTEGER need to be handled as
+            //       strings to circumvent precision problems
+            value = params.search;
           }
 
           condition[field.field] = value;
