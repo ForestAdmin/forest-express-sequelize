@@ -5,7 +5,7 @@ const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 const associationRecord = require('../utils/association-record');
-const { primaryKeyIsForeignKey } = require('../utils/primaryKey-is-ForeignKey');
+const primaryKeyIsForeignKey = require('../utils/primaryKey-is-ForeignKey');
 
 class ResourceCreator {
   constructor(model, params) {

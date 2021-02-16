@@ -1,3 +1,3 @@
-exports.primaryKeyIsForeignKey = (association) =>
+module.exports = (association) =>
   Object.values(association.source.rawAttributes).filter((attr) =>
     attr.field === association.source.primaryKeyField).length > 1;

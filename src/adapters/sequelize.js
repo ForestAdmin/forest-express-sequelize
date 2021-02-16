@@ -3,7 +3,7 @@ const P = require('bluebird');
 const Interface = require('forest-express');
 const ApimapFieldBuilder = require('../services/apimap-field-builder');
 const ApimapFieldTypeDetector = require('../services/apimap-field-type-detector');
-const { primaryKeyIsForeignKey } = require('../utils/primaryKey-is-ForeignKey');
+const primaryKeyIsForeignKey = require('../utils/primaryKey-is-ForeignKey');
 
 module.exports = (model, opts) => {
   const fields = [];
