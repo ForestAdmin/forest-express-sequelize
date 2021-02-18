@@ -1026,7 +1026,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           });
 
           it('should handle numbers over MAX_SAFE_INTEGER', async () => {
-            expect.assertions(1);
+            expect.assertions(2);
             const { models, sequelizeOptions } = initializeSequelize();
             const params = {
               fields: {
@@ -1040,6 +1040,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               const result = await new ResourcesGetter(models.counter, sequelizeOptions, params)
                 .perform();
               expect(result[0]).toHaveLength(1);
+              expect(result[0][0].id).toBe(10);
             } finally {
               connectionManager.closeConnection();
             }
