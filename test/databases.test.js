@@ -124,6 +124,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       ownerId: { type: Sequelize.INTEGER },
     });
 
+    models.counter = sequelize.define('counter', {
+      clicks: { type: Sequelize.BIGINT },
+    });
+
     models.address.belongsTo(models.user);
     models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
     models.user.hasMany(models.address);
@@ -314,6 +318,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             { field: 'id', type: 'Number' },
             { field: 'name', type: 'STRING' },
             { field: 'ownerId', type: 'Number', reference: 'owner.ownerId' },
+          ],
+        },
+        counter: {
+          name: 'counter',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'clicks', type: 'Number' },
           ],
         },
       },
@@ -1006,6 +1020,26 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               params.search = '0';
               count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
               expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should handle numbers over MAX_SAFE_INTEGER', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                counter: 'id,clicks',
+              },
+              page: { number: '1', size: '30' },
+              search: '9013084467599484828',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const result = await new ResourcesGetter(models.counter, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
             } finally {
               connectionManager.closeConnection();
             }
