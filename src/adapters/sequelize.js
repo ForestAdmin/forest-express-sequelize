@@ -87,7 +87,7 @@ module.exports = (model, opts) => {
         const pkIsFk = primaryKeyIsForeignKey(association);
         if (pkIsFk) {
           const fk = fields.find((field) => field.reference === `${association.associationAccessor}.${association.foreignKey}`);
-          fk.fkIsPk = true;
+          fk.foreignAndPrimaryKey = true;
         }
       });
 

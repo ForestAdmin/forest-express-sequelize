@@ -152,11 +152,11 @@ function getField(schema, name) {
     });
 
     describe('with association', () => {
-      it('should set fkIsPk to true', async () => {
+      it('should set foreignAndPrimaryKey to true', async () => {
         expect.assertions(1);
 
         const schema = await getSchema(models.picture, sequelizeOptions);
-        expect(schema.fields.find((x) => x.field === 'customer').fkIsPk).toBeTrue();
+        expect(schema.fields.find((x) => x.field === 'customer').foreignAndPrimaryKey).toBeTrue();
       });
     });
   });
