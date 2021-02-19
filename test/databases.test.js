@@ -1028,6 +1028,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should handle numbers over MAX_SAFE_INTEGER', async () => {
             expect.assertions(2);
             const { models, sequelizeOptions } = initializeSequelize();
+
+            // HACK: sequelize-fixtures does not support BigInt in json files,
+            //       so we need to update the clicks value manually
+            const counter = await models.counter.findByPk(10);
+            counter.clicks = BigInt('9013084467599484828'); // eslint-disable-line no-undef
+            await counter.save();
+
             const params = {
               fields: {
                 counter: 'id,clicks',
