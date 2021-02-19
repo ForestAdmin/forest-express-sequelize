@@ -1,5 +1,12 @@
 [
   {
+    "model": "counter",
+    "data": {
+      "id": 10,
+      "clicks": 9013084467599484828
+    }
+  },
+  {
     "model": "user",
     "data": {
       "id": 100,
