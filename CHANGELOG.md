@@ -1,3 +1,28 @@
+# [7.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.11...v7.0.0) (2021-02-22)
+
+
+### Bug Fixes
+
+* **authentication:** error when authenticating with an invalid token in cookies ([#593](https://github.com/ForestAdmin/forest-express-sequelize/issues/593)) ([405feb4](https://github.com/ForestAdmin/forest-express-sequelize/commit/405feb439e34746b385203eb995aec92e955eeab))
+* connect to liana through safari ([#590](https://github.com/ForestAdmin/forest-express-sequelize/issues/590)) ([6a0fcb3](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a0fcb346c71f561e80b7d691f38774eaa8c24b9))
+* fix incorrect usage of the new connections parameter ([#557](https://github.com/ForestAdmin/forest-express-sequelize/issues/557)) ([2840e41](https://github.com/ForestAdmin/forest-express-sequelize/commit/2840e418bb782a83b861dda217d45b3d70175253))
+* user being disconnected after 33min instead of 14 days ([#591](https://github.com/ForestAdmin/forest-express-sequelize/issues/591)) ([2e2dc81](https://github.com/ForestAdmin/forest-express-sequelize/commit/2e2dc811f497acb0d771497c55b75349480e46a5))
+
+
+### Features
+
+* init function now uses connections & objectMapping instead of sequelize as parameter ([#539](https://github.com/ForestAdmin/forest-express-sequelize/issues/539)) ([74262ac](https://github.com/ForestAdmin/forest-express-sequelize/commit/74262acfc7d77ce1e0aa1b2f44d3e69b7fce470a))
+* return correct errors when the user needs to configure the 2FA ([#609](https://github.com/ForestAdmin/forest-express-sequelize/issues/609)) ([08b64a0](https://github.com/ForestAdmin/forest-express-sequelize/commit/08b64a038f2d9aef206710234d16d6e877274967))
+
+
+### BREAKING CHANGES
+
+* sequelize options is not supported anymore by Liana.init()
+connections and objectMapping is now required on Liana.init().
+Update forest-express dependency to 8.0.0-beta.1 (See https://github.com/ForestAdmin/forest-express/tree/v8.0.0-beta.1)
+
+Co-authored-by: jeffladiray <ladirayjeff@gmail.com>
+
 # [7.0.0-beta.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.11...v7.0.0-beta.12) (2021-02-22)
 
 
