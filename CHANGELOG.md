@@ -1,3 +1,10 @@
+## [6.7.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.8...v6.7.9) (2021-02-22)
+
+
+### Bug Fixes
+
+* fix record creation with unconventional pk field acting as a fk ([#598](https://github.com/ForestAdmin/forest-express-sequelize/issues/598)) ([d3779b7](https://github.com/ForestAdmin/forest-express-sequelize/commit/d3779b75f553830574c51850dfdec5c6ab3eabc6))
+
 ## [6.7.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.7...v6.7.8) (2021-02-19)
 
 
