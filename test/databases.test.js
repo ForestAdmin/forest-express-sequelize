@@ -128,6 +128,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       clicks: { type: Sequelize.BIGINT },
     });
 
+    models.customer = sequelize.define('customer', {
+      name: { type: Sequelize.STRING },
+    });
+
+    models.picture = sequelize.define('picture', {
+      name: { type: Sequelize.STRING },
+      customerId: {
+        type: Sequelize.INTEGER,
+        primaryKey: true,
+        allowNull: false,
+      },
+    }, {
+      underscored: true,
+    });
+
     models.address.belongsTo(models.user);
     models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
     models.user.hasMany(models.address);
@@ -150,6 +165,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         field: 'owner_id',
       },
       sourceKey: 'ownerId',
+    });
+
+    models.customer.hasOne(models.picture, {
+      foreignKey: {
+        name: 'customerIdKey',
+        field: 'customer_id',
+      },
+      as: 'picture',
+    });
+    models.picture.belongsTo(models.customer, {
+      foreignKey: {
+        name: 'customerIdKey',
+        field: 'customer_id',
+      },
+      as: 'customer',
     });
 
     Interface.Schemas = {
@@ -328,6 +358,26 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           fields: [
             { field: 'id', type: 'Number' },
             { field: 'clicks', type: 'Number' },
+          ],
+        },
+        customer: {
+          name: 'owner',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'STRING' },
+          ],
+        },
+        picture: {
+          name: 'picture',
+          idField: 'customerId',
+          primaryKeys: ['customerId'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'customerId', type: 'Number', reference: 'customer.id' },
+            { field: 'name', type: 'STRING' },
           ],
         },
       },
@@ -636,6 +686,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               name: 'bar',
               owner: 4,
             }).perform()).rejects.toThrow(Error('related owner with pk 4 does not exist.'));
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
+      describe('create a record on a collection with a foreign key which is a primary key', () => {
+        it('should create a record', async () => {
+          expect.assertions(6);
+          const { models } = initializeSequelize();
+          try {
+            await new ResourceCreator(models.customer, {
+              id: 1,
+              name: 'foo',
+            }).perform();
+            const result = await new ResourceCreator(models.picture, {
+              name: 'bar',
+              customer: 1,
+            }).perform();
+
+            expect(result.customerId).toStrictEqual(1);
+            expect(result.customerIdKey).toStrictEqual(1);
+            expect(result.name).toStrictEqual('bar');
+
+            const picture = await models.picture.findOne({ where: { name: 'bar' }, include: { model: models.customer, as: 'customer' } });
+            expect(picture).not.toBeNull();
+            expect(picture.customerId).toStrictEqual(1);
+            expect(picture.customer.id).toStrictEqual(1);
           } finally {
             connectionManager.closeConnection();
           }
