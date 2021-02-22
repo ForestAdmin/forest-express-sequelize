@@ -1,3 +1,16 @@
+# [7.0.0-beta.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.10...v7.0.0-beta.11) (2021-02-22)
+
+
+### Bug Fixes
+
+* fix record creation with unconventional pk field acting as a fk ([#598](https://github.com/ForestAdmin/forest-express-sequelize/issues/598)) ([d3779b7](https://github.com/ForestAdmin/forest-express-sequelize/commit/d3779b75f553830574c51850dfdec5c6ab3eabc6))
+* support foreign and primary key column ([#630](https://github.com/ForestAdmin/forest-express-sequelize/issues/630)) ([2a289b8](https://github.com/ForestAdmin/forest-express-sequelize/commit/2a289b805727d51d112719ee29af28b7745bff73))
+* **search:** don't convert float values to bigint ([75c1517](https://github.com/ForestAdmin/forest-express-sequelize/commit/75c151720bb9c260272325f1f2c088b0c9050ac7))
+* **search:** handle large numbers in search queries ([c0c1c70](https://github.com/ForestAdmin/forest-express-sequelize/commit/c0c1c70686ecdaab9c9e6bbf432f44a414cf8c2e))
+* **search:** handle large numbers in search queries ([#621](https://github.com/ForestAdmin/forest-express-sequelize/issues/621)) ([ec6ab89](https://github.com/ForestAdmin/forest-express-sequelize/commit/ec6ab8989cde26af379f814fa7ee4bd28a1cddd6))
+* **search:** handle tables that contain floats and bigints ([7ac2fe1](https://github.com/ForestAdmin/forest-express-sequelize/commit/7ac2fe152ae01af98484d88e8c98c612bcb50573))
+* **search:** revert changes when numbers are below MAX_SAFE_INTEGER ([1d95021](https://github.com/ForestAdmin/forest-express-sequelize/commit/1d95021f55a64a519d71c301ceb810196abfdd34))
+
 ## [6.7.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.9...v6.7.10) (2021-02-22)
 
 
