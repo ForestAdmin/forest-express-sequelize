@@ -1,3 +1,10 @@
+## [6.7.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.10...v6.7.11) (2021-02-22)
+
+
+### Bug Fixes
+
+* fix error when no foreign key is found but foreign and primary key is detected ([#632](https://github.com/ForestAdmin/forest-express-sequelize/issues/632)) ([6f06512](https://github.com/ForestAdmin/forest-express-sequelize/commit/6f0651264e28cb8259589f04f4c0a3eabcb59bb6))
+
 ## [6.7.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.9...v6.7.10) (2021-02-22)
 
 
