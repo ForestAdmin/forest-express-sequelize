@@ -21,9 +21,8 @@ function getAggregateField({
  *  aggregate: string;
  *  aggregate_field: string;
  * }} params
- * @param {*} options
  */
-function LeaderboardStatGetter(model, modelRelationship, params, options) {
+function LeaderboardStatGetter(model, modelRelationship, params) {
   const labelField = params.label_field;
   const aggregate = params.aggregate.toUpperCase();
   const { limit } = params;
@@ -57,8 +56,8 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
       .unscoped()
       .findAll({
         attributes: [
-          [options.sequelize.col(groupBy), 'key'],
-          [options.sequelize.fn(aggregate, options.sequelize.col(aggregateField)), 'value'],
+          [model.sequelize.col(groupBy), 'key'],
+          [model.sequelize.fn(aggregate, model.sequelize.col(aggregateField)), 'value'],
         ],
         includeIgnoreAttributes: false,
         include: [{
@@ -69,7 +68,7 @@ function LeaderboardStatGetter(model, modelRelationship, params, options) {
         }],
         subQuery: false,
         group: groupBy,
-        order: [[options.sequelize.literal('value'), 'DESC']],
+        order: [[model.sequelize.literal('value'), 'DESC']],
         limit,
         raw: true,
       });

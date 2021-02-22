@@ -1,7 +1,5 @@
-import _ from 'lodash';
 import { Schemas } from 'forest-express';
 import Orm from '../utils/orm';
-import Database from '../utils/database';
 
 const HAS_ONE = 'HasOne';
 const BELONGS_TO = 'BelongsTo';
@@ -111,17 +109,6 @@ function QueryBuilder(model, opts, params) {
       order = 'DESC';
     }
 
-    // NOTICE: Sequelize version previous to 4.4.2 generate a bad MSSQL query
-    //         if users sort the collection on the primary key, so we prevent
-    //         that.
-    const idField = _.keys(model.primaryKeys)[0];
-    if (Database.isMSSQL(opts) && _.includes([idField, `-${idField}`], params.sort)) {
-      const sequelizeVersion = opts.sequelize.version;
-      if (sequelizeVersion !== '4.4.2-forest') {
-        return null;
-      }
-    }
-
     if (params.sort.indexOf('.') !== -1) {
       // NOTICE: Sort on the belongsTo displayed field
       const sortingParameters = params.sort.split('.');
@@ -133,10 +120,10 @@ function QueryBuilder(model, opts, params) {
         associationName,
         fieldName,
       );
-      return [[opts.sequelize.col(column), order]];
+      return [[opts.Sequelize.col(column), order]];
     }
     if (aliasName) {
-      return [[opts.sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
+      return [[opts.Sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
     }
     return [[params.sort, order]];
   };

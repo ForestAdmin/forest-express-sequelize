@@ -17,7 +17,7 @@ class ConnectionManager {
   }
 
   getPort() {
-    return this.connection && this.connection.options && this.connection.options.port;
+    return /:(\d+)\//g.exec(this.connectionString)[1];
   }
 
   /**

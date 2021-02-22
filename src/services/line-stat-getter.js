@@ -28,25 +28,25 @@ function LineStatGetter(model, params, options) {
     const groupByDateFieldFormated = `\`${groupByDateField.replace('.', '`.`')}\``;
     switch (currentTimeRange) {
       case 'day':
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'DATE_FORMAT',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
           '%Y-%m-%d 00:00:00',
         );
       case 'week':
-        return options.sequelize
+        return options.Sequelize
           .literal(`DATE_FORMAT(DATE_SUB(${groupByDateFieldFormated}, \
 INTERVAL ((7 + WEEKDAY(${groupByDateFieldFormated})) % 7) DAY), '%Y-%m-%d 00:00:00')`);
       case 'month':
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'DATE_FORMAT',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
           '%Y-%m-01 00:00:00',
         );
       case 'year':
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'DATE_FORMAT',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
           '%Y-01-01 00:00:00',
         );
       default:
@@ -58,25 +58,25 @@ INTERVAL ((7 + WEEKDAY(${groupByDateFieldFormated})) % 7) DAY), '%Y-%m-%d 00:00:
     const groupByDateFieldFormated = `[${groupByDateField.replace('.', '].[')}]`;
     switch (currentTimeRange) {
       case 'day':
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'FORMAT',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
           'yyyy-MM-dd 00:00:00',
         );
       case 'week':
-        return options.sequelize
+        return options.Sequelize
           .literal(`FORMAT(DATEADD(DAY, -DATEPART(dw,${groupByDateFieldFormated}),\
 ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
       case 'month':
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'FORMAT',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
           'yyyy-MM-01 00:00:00',
         );
       case 'year':
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'FORMAT',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
           'yyyy-01-01 00:00:00',
         );
       default:
@@ -87,31 +87,31 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   function getGroupByDateFieldFormatedForSQLite(currentTimeRange) {
     switch (currentTimeRange) {
       case 'day': {
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'STRFTIME',
           '%Y-%m-%d',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
         );
       }
       case 'week': {
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'STRFTIME',
           '%Y-%W',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
         );
       }
       case 'month': {
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'STRFTIME',
           '%Y-%m-01',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
         );
       }
       case 'year': {
-        return options.sequelize.fn(
+        return options.Sequelize.fn(
           'STRFTIME',
           '%Y-01-01',
-          options.sequelize.col(groupByDateField),
+          options.Sequelize.col(groupByDateField),
         );
       }
       default:
@@ -120,22 +120,22 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   function getGroupByDateInterval() {
-    if (isMySQL(options)) {
+    if (isMySQL(model.sequelize)) {
       return [getGroupByDateFieldFormatedForMySQL(timeRange), 'date'];
     }
-    if (isMSSQL(options)) {
+    if (isMSSQL(model.sequelize)) {
       return [getGroupByDateFieldFormatedForMSSQL(timeRange), 'date'];
     }
-    if (isSQLite(options)) {
+    if (isSQLite(model.sequelize)) {
       return [getGroupByDateFieldFormatedForSQLite(timeRange), 'date'];
     }
     return [
-      options.sequelize.fn(
+      options.Sequelize.fn(
         'to_char',
-        options.sequelize.fn(
+        options.Sequelize.fn(
           'date_trunc',
           params.time_range,
-          options.sequelize.literal(`"${getGroupByDateField().replace('.', '"."')}" at time zone '${params.timezone}'`),
+          options.Sequelize.literal(`"${getGroupByDateField().replace('.', '"."')}" at time zone '${params.timezone}'`),
         ),
         'YYYY-MM-DD 00:00:00',
       ),
@@ -156,7 +156,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   function fillEmptyDateInterval(records) {
     if (records.length) {
       let sqlFormat = 'YYYY-MM-DD 00:00:00';
-      if (isSQLite(options) && timeRange === 'week') {
+      if (isSQLite(model.sequelize) && timeRange === 'week') {
         sqlFormat = 'YYYY-WW';
       }
 
@@ -181,9 +181,9 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
 
   function getAggregate() {
     return [
-      options.sequelize.fn(
+      options.Sequelize.fn(
         params.aggregate.toLowerCase(),
-        options.sequelize.col(getAggregateField()),
+        options.Sequelize.col(getAggregateField()),
       ),
       'value',
     ];
@@ -205,11 +205,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   function getGroupBy() {
-    return isMSSQL(options) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [options.sequelize.literal('1')];
+    return isMSSQL(model.sequelize) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [options.Sequelize.literal('1')];
   }
 
   function getOrder() {
-    return isMSSQL(options) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [options.sequelize.literal('1')];
+    return isMSSQL(model.sequelize) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [options.Sequelize.literal('1')];
   }
 
   this.perform = async () => {

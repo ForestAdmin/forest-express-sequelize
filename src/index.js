@@ -1,4 +1,3 @@
-const _ = require('lodash');
 const P = require('bluebird');
 const Interface = require('forest-express');
 const orm = require('./utils/orm');
@@ -54,11 +53,17 @@ exports.PUBLIC_ROUTES = Interface.PUBLIC_ROUTES;
 exports.init = function init(opts) {
   exports.opts = opts;
 
-  // NOTICE: Ensure compatibility with the old middleware configuration.
-  if (opts.sequelize && !('connections' in opts)) {
-    opts.connections = [opts.sequelize];
-    opts.sequelize = opts.sequelize.Sequelize;
+  if (!opts.objectMapping) {
+    Interface.logger.error('The objectMapping option appears to be missing. Please make sure it is set correctly.');
+    return Promise.resolve(() => {});
   }
+
+  if (opts.sequelize) {
+    Interface.logger.warn('The sequelize option is not supported anymore. Please remove this option.');
+  }
+
+  opts.Sequelize = opts.objectMapping;
+  opts.useMultipleDatabases = Object.keys(opts.connections).length > 1;
 
   exports.getLianaName = function getLianaName() {
     return 'forest-express-sequelize';
@@ -73,40 +78,16 @@ exports.init = function init(opts) {
   };
 
   exports.getOrmVersion = function getOrmVersion() {
-    if (!opts.sequelize) { return null; }
-
-    return orm.getVersion(opts.sequelize);
+    return orm.getVersion(opts.Sequelize);
   };
 
   exports.getDatabaseType = function getDatabaseType() {
-    if (!opts.connections) { return null; }
+    if (opts.useMultipleDatabases) return 'multiple';
 
-    return opts.connections[0].options.dialect;
+    return Object.values(opts.connections)[0].options.dialect;
   };
 
   exports.SchemaAdapter = SchemaAdapter;
-
-  exports.getModels = function getModels() {
-    // NOTICE: The default Forest configuration detects all models.
-    const detectAllModels = _.isEmpty(opts.includedModels) && _.isEmpty(opts.excludedModels);
-    const models = {};
-
-    _.each(opts.connections, (connection) => {
-      _.each(connection.models, (model) => {
-        if (detectAllModels) {
-          models[model.name] = model;
-        } else if (!_.isEmpty(opts.includedModels)
-          && _.includes(opts.includedModels, model.name)) {
-          models[model.name] = model;
-        } else if (!_.isEmpty(opts.excludedModels)
-          && !_.includes(opts.excludedModels, model.name)) {
-          models[model.name] = model;
-        }
-      });
-    });
-
-    return models;
-  };
 
   exports.getModelName = function getModelName(model) {
     return model.name;

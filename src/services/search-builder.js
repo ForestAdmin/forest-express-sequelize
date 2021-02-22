@@ -8,7 +8,7 @@ const REGEX_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-
 
 function SearchBuilder(model, opts, params, fieldNamesRequested) {
   const schema = Interface.Schemas.schemas[model.name];
-  const DataTypes = opts.sequelize;
+  const DataTypes = opts.Sequelize;
   const fields = _.clone(schema.fields);
   let associations = _.clone(model.associations);
   const hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
@@ -20,8 +20,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   function lowerIfNecessary(entry) {
     // NOTICE: MSSQL search is natively case insensitive, do not use the "lower" function for
     //         performance optimization.
-    if (Database.isMSSQL(opts)) { return entry; }
-    return opts.sequelize.fn('lower', entry);
+    if (Database.isMSSQL(model.sequelize)) { return entry; }
+    return opts.Sequelize.fn('lower', entry);
   }
 
   function selectSearchFields() {
@@ -60,10 +60,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         return null;
       }
 
-      return opts.sequelize.where(column, '=', value);
+      return opts.Sequelize.where(column, '=', value);
     }
 
-    return opts.sequelize.where(lowerIfNecessary(column), ' LIKE ', lowerIfNecessary(`%${value}%`));
+    return opts.Sequelize.where(lowerIfNecessary(column), ' LIKE ', lowerIfNecessary(`%${value}%`));
   }
 
   this.getFieldsSearched = () => fieldsSearched;
@@ -105,8 +105,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           }
         } else if (primaryKeyType instanceof DataTypes.STRING) {
           columnName = field.columnName || field.field;
-          condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(`${aliasName}.${columnName}`)),
+          condition = opts.Sequelize.where(
+            lowerIfNecessary(opts.Sequelize.col(`${aliasName}.${columnName}`)),
             ' LIKE ',
             lowerIfNecessary(`%${params.search}%`),
           );
@@ -140,8 +140,8 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         } else {
           columnName = field.columnName || field.field;
 
-          condition = opts.sequelize.where(
-            lowerIfNecessary(opts.sequelize.col(`${aliasName}.${columnName}`)),
+          condition = opts.Sequelize.where(
+            lowerIfNecessary(opts.Sequelize.col(`${aliasName}.${columnName}`)),
             ' LIKE ',
             lowerIfNecessary(`%${params.search}%`),
           );
@@ -187,13 +187,13 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
 
               let condition = null;
               const columnName = field.columnName || field.field;
-              const column = opts.sequelize.col(`${association.as}.${columnName}`);
+              const column = opts.Sequelize.col(`${association.as}.${columnName}`);
 
               if (field.field === schemaAssociation.idField) {
                 if (field.type === 'Number') {
                   const value = parseInt(params.search, 10) || 0;
                   if (value) {
-                    condition = opts.sequelize.where(column, ' = ', value);
+                    condition = opts.Sequelize.where(column, ' = ', value);
                     hasExtendedConditions = true;
                   }
                 } else if (field.type === 'String') {

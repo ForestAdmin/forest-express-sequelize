@@ -10,8 +10,8 @@ function getField(schema, name) {
   const sequelize = connectionManager.createConnection();
   const models = {};
   const sequelizeOptions = {
-    sequelize: Sequelize,
-    connections: [sequelize],
+    Sequelize,
+    connections: { sequelize },
   };
 
   models.user = sequelize.define('user', {

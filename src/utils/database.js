@@ -1,21 +1,9 @@
-function optionsInvalid(options) {
-  // TODO: This function only works with the connection 0, we should add a index
-  //       parameter in case of multiple database with different dialect.
-  return !(options && options.connections && options.connections[0]
-    && options.connections[0].options && options.connections[0].options.dialect);
+function getConnectionDialect(connection) {
+  return connection.options.dialect;
 }
 
-exports.isMySQL = (options) => {
-  if (optionsInvalid(options)) { return false; }
-  return ['mysql', 'mariadb'].indexOf(options.connections[0].options.dialect) > -1;
-};
+exports.isMySQL = (connection) => ['mysql', 'mariadb'].includes(getConnectionDialect(connection));
 
-exports.isMSSQL = (options) => {
-  if (optionsInvalid(options)) { return false; }
-  return options.connections[0].options.dialect === 'mssql';
-};
+exports.isMSSQL = (connection) => getConnectionDialect(connection) === 'mssql';
 
-exports.isSQLite = (options) => {
-  if (optionsInvalid(options)) { return false; }
-  return options.connections[0].options.dialect === 'sqlite';
-};
+exports.isSQLite = (connection) => getConnectionDialect(connection) === 'sqlite';

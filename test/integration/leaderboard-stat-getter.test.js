@@ -1,7 +1,7 @@
 const sequelizeFixtures = require('sequelize-fixtures');
 const Interface = require('forest-express');
 const {
-  Sequelize, DECIMAL, STRING, INTEGER,
+  DECIMAL, STRING, INTEGER,
 } = require('sequelize');
 const databases = require('../databases');
 const runWithConnection = require('../helpers/run-with-connection');
@@ -118,13 +118,7 @@ describe('integration > LeaderboardStatGetter', () => {
           },
         };
 
-        const sequelizeOptions = {
-          sequelize: Sequelize,
-          connections: [sequelize],
-        };
-
-
-        return { models, sequelizeOptions };
+        return { models };
       }
 
       describe('with a has-many relationship', () => {
@@ -132,7 +126,7 @@ describe('integration > LeaderboardStatGetter', () => {
           expect.assertions(1);
 
           await runWithConnection(connectionManager, async (sequelize) => {
-            const { models, sequelizeOptions } = await setup(sequelize);
+            const { models } = await setup(sequelize);
 
             const params = {
               label_field: 'firstName',
@@ -144,7 +138,6 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theirSales,
               params,
-              sequelizeOptions,
             );
             const result = await statGetter.perform();
 
@@ -164,7 +157,7 @@ describe('integration > LeaderboardStatGetter', () => {
           expect.assertions(1);
 
           await runWithConnection(connectionManager, async (sequelize) => {
-            const { models, sequelizeOptions } = await setup(sequelize);
+            const { models } = await setup(sequelize);
 
             const params = {
               label_field: 'firstName',
@@ -177,7 +170,6 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theirSales,
               params,
-              sequelizeOptions,
             );
             const result = await statGetter.perform();
 
@@ -199,7 +191,7 @@ describe('integration > LeaderboardStatGetter', () => {
           expect.assertions(1);
 
           await runWithConnection(connectionManager, async (sequelize) => {
-            const { models, sequelizeOptions } = await setup(sequelize);
+            const { models } = await setup(sequelize);
 
             const params = {
               label_field: 'firstName',
@@ -211,7 +203,6 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theCustomers,
               params,
-              sequelizeOptions,
             );
             const result = await statGetter.perform();
 
@@ -231,7 +222,7 @@ describe('integration > LeaderboardStatGetter', () => {
           expect.assertions(1);
 
           await runWithConnection(connectionManager, async (sequelize) => {
-            const { models, sequelizeOptions } = await setup(sequelize);
+            const { models } = await setup(sequelize);
 
             const params = {
               label_field: 'firstName',
@@ -244,7 +235,6 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theCustomers,
               params,
-              sequelizeOptions,
             );
             const result = await statGetter.perform();
 

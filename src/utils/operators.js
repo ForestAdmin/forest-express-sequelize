@@ -3,8 +3,8 @@ let instance = null;
 function Operators(options) {
   if (instance) return instance;
 
-  if (options && options.sequelize && options.sequelize.Op) {
-    const { Op } = options.sequelize;
+  if (options && options.Sequelize && options.Sequelize.Op) {
+    const { Op } = options.Sequelize;
     this.AND = Op.and;
     this.EQ = Op.eq;
     this.GT = Op.gt;
