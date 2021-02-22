@@ -1,3 +1,10 @@
+## [6.7.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.9...v6.7.10) (2021-02-22)
+
+
+### Bug Fixes
+
+* support foreign and primary key column ([#630](https://github.com/ForestAdmin/forest-express-sequelize/issues/630)) ([2a289b8](https://github.com/ForestAdmin/forest-express-sequelize/commit/2a289b805727d51d112719ee29af28b7745bff73))
+
 ## [6.7.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.8...v6.7.9) (2021-02-22)
 
 
