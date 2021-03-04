@@ -1,3 +1,10 @@
+## [7.0.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0...v7.0.1) (2021-03-04)
+
+
+### Bug Fixes
+
+* **authentication:** safari cannot login on remote lianas because of third party cookies ([#646](https://github.com/ForestAdmin/forest-express-sequelize/issues/646)) ([92f80b9](https://github.com/ForestAdmin/forest-express-sequelize/commit/92f80b904a517970320f33aecf2e3dc22ad5c232))
+
 # [7.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.11...v7.0.0) (2021-02-22)
 
 
