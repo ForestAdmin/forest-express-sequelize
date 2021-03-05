@@ -1,3 +1,10 @@
+## [7.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.2...v7.0.3) (2021-03-05)
+
+
+### Bug Fixes
+
+* **security:** patch lodash vulnerabilities ([#647](https://github.com/ForestAdmin/forest-express-sequelize/issues/647)) ([1dcd728](https://github.com/ForestAdmin/forest-express-sequelize/commit/1dcd728b86e145f289dbda363fd0a07d86b29d1c))
+
 ## [7.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.1...v7.0.2) (2021-03-05)
 
 
