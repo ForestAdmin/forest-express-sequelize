@@ -5,7 +5,7 @@ import { NoMatchingOperatorError } from './errors';
 const { getReferenceSchema, getReferenceField } = require('../utils/query');
 
 function FiltersParser(modelSchema, timezone, options) {
-  this.OPERATORS = new Operators(options);
+  this.OPERATORS = Operators.getInstance(options);
   this.operatorDateParser = new BaseOperatorDateParser({ operators: this.OPERATORS, timezone });
 
   this.perform = async (filtersString) =>
@@ -59,58 +59,6 @@ function FiltersParser(modelSchema, timezone, options) {
     }
   };
 
-  this.formatOperator = (operator) => {
-    switch (operator) {
-      case 'not':
-        return this.OPERATORS.NOT;
-      case 'greater_than':
-      case 'after':
-        return this.OPERATORS.GT;
-      case 'less_than':
-      case 'before':
-        return this.OPERATORS.LT;
-      case 'contains':
-      case 'starts_with':
-      case 'ends_with':
-        return this.OPERATORS.LIKE;
-      case 'not_contains':
-        return this.OPERATORS.NOT_LIKE;
-      case 'present':
-      case 'not_equal':
-        return this.OPERATORS.NE;
-      case 'blank':
-      case 'equal':
-        return this.OPERATORS.EQ;
-      default:
-        throw new NoMatchingOperatorError();
-    }
-  };
-
-  this.formatValue = (operator, value) => {
-    switch (operator) {
-      case 'not':
-      case 'greater_than':
-      case 'less_than':
-      case 'not_equal':
-      case 'equal':
-      case 'before':
-      case 'after':
-        return value;
-      case 'contains':
-      case 'not_contains':
-        return `%${value}%`;
-      case 'starts_with':
-        return `${value}%`;
-      case 'ends_with':
-        return `%${value}`;
-      case 'present':
-      case 'blank':
-        return null;
-      default:
-        throw new NoMatchingOperatorError();
-    }
-  };
-
   this.formatOperatorValue = (operator, value, isTextField = false) => {
     switch (operator) {
       case 'not':
@@ -143,6 +91,8 @@ function FiltersParser(modelSchema, timezone, options) {
         } : { [this.OPERATORS.EQ]: null };
       case 'equal':
         return { [this.OPERATORS.EQ]: value };
+      case 'includes_all':
+        return { [this.OPERATORS.CONTAINS]: value };
       default:
         throw new NoMatchingOperatorError();
     }

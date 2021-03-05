@@ -13,7 +13,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   let associations = _.clone(model.associations);
   const hasSearchFields = schema.searchFields && _.isArray(schema.searchFields);
   let searchAssociationFields;
-  const OPERATORS = new Operators(opts);
+  const OPERATORS = Operators.getInstance(opts);
   const fieldsSearched = [];
   let hasExtendedConditions = false;
 

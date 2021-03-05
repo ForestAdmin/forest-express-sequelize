@@ -15,7 +15,7 @@ function ResourcesGetter(model, options, params) {
   const queryBuilder = new QueryBuilder(model, options, params);
   let segmentScope;
   let segmentWhere;
-  const OPERATORS = new Operators(options);
+  const OPERATORS = Operators.getInstance(options);
   const primaryKey = _.keys(model.primaryKeys)[0];
   const filterParser = new FiltersParser(schema, params.timezone, options);
   let fieldNamesRequested;

@@ -12,7 +12,7 @@ describe('services > filters-parser', () => {
     sequelize: Sequelize,
   };
   const timezone = 'Europe/Paris';
-  const OPERATORS = new Operators(sequelizeOptions);
+  const OPERATORS = Operators.getInstance(sequelizeOptions);
   const defaultFiltersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
   const getExpectedCondition = (field, conditions) => {
@@ -119,6 +119,12 @@ describe('services > filters-parser', () => {
         expect.assertions(1);
         expect(defaultFiltersParser.formatOperatorValue.bind('random', value)).toThrow(NoMatchingOperatorError);
       });
+    });
+
+    it('should return the appropriate value (array)', () => {
+      expect.assertions(1);
+
+      expect(defaultFiltersParser.formatOperatorValue('includes_all', [1, 2])).toStrictEqual({ [OPERATORS.CONTAINS]: [1, 2] });
     });
   });
 
