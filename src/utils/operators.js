@@ -1,9 +1,13 @@
 class Operators {
   static _instance = null;
 
+  static _isNewSequelizeOp(options) {
+    return !!(options && options.Sequelize && options.Sequelize.Op);
+  }
+
   constructor(options) {
-    if (options && options.sequelize && options.sequelize.Op) {
-      const { Op } = options.sequelize;
+    if (Operators._isNewSequelizeOp(options)) {
+      const { Op } = options.Sequelize;
       this.AND = Op.and;
       this.CONTAINS = Op.contains;
       this.EQ = Op.eq;
