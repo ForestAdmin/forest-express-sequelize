@@ -1,3 +1,11 @@
+# [7.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.3...v7.1.0) (2021-03-05)
+
+
+### Features
+
+* **filter:** add "includes all" filter to array type ([21f9669](https://github.com/ForestAdmin/forest-express-sequelize/commit/21f96694cb5453369555d6cb549eab476b962b8c))
+* **filter:** add "includes all" filter to array type ([9d12de2](https://github.com/ForestAdmin/forest-express-sequelize/commit/9d12de22a109e43465adfb644c4aafca237b2ab2))
+
 ## [7.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.2...v7.0.3) (2021-03-05)
 
 
