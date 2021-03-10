@@ -1,3 +1,10 @@
+## [7.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.0...v7.1.1) (2021-03-10)
+
+
+### Bug Fixes
+
+* **authentication:** unable to login when the agents respond to an url starting with a prefix ([#651](https://github.com/ForestAdmin/forest-express-sequelize/issues/651)) ([e2cd4e4](https://github.com/ForestAdmin/forest-express-sequelize/commit/e2cd4e4ecb1fefb42211b6404c71302b16d0bdba))
+
 # [7.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.3...v7.1.0) (2021-03-05)
 
 
