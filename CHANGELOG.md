@@ -1,3 +1,10 @@
+## [7.1.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.1...v7.1.2) (2021-03-11)
+
+
+### Bug Fixes
+
+* **security:** decrease the time before expiration of forest session token ([#652](https://github.com/ForestAdmin/forest-express-sequelize/issues/652)) ([c242839](https://github.com/ForestAdmin/forest-express-sequelize/commit/c2428394e8a3a096cf45fbed8a7df1536cbe70fe))
+
 ## [7.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.0...v7.1.1) (2021-03-10)
 
 
