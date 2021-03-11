@@ -4661,17 +4661,10 @@ for-in@^1.0.2:
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
   integrity sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
 
-<<<<<<< HEAD
 forest-express@8.0.5:
   version "8.0.5"
   resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-8.0.5.tgz#f727ca8a19900fd78e963144f3c774a56533bf45"
   integrity sha512-UGs9ceHpUczNp/pX5CFSNbbwnzoy7AzIrK6lKSsFAFKPiHtMD9ZtrusQZ6qpEQBY0hUaGLBGKwiHmOOpf1VcKg==
-=======
-forest-express@8.0.4:
-  version "8.0.4"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-8.0.4.tgz#5cbc24b3cd7b5d76f1ac9141b4b6b34a78a758a8"
-  integrity sha512-kkXVhWp8eltiX6F35FNlJSrOKsbbdc+vRsKaC/rRmRRwG/CAnHbAVm47BRSh9yKVu7GU1mauo/99GJJRv/O+tA==
->>>>>>> master
   dependencies:
     "@babel/runtime" "7.10.1"
     base32-encode "1.1.1"
@@ -7060,27 +7053,10 @@ lodash.without@~4.4.0:
   resolved "https://registry.yarnpkg.com/lodash.without/-/lodash.without-4.4.0.tgz#3cd4574a00b67bae373a94b748772640507b7aac"
   integrity sha1-PNRXSgC2e643OpS3SHcmQFB7eqw=
 
-<<<<<<< HEAD
-lodash@4.17.19, lodash@^4.16.3, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4:
-  version "4.17.19"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
-  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
-
-lodash@4.17.21:
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
-  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
-
-lodash@^4.17.19:
-  version "4.17.20"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.20.tgz#b44a9b6297bcb698f1c51a3545a2b3b368d59c52"
-  integrity sha512-PlhdFcillOINfeV7Ni6oF1TAEayyZBoZ8bcshTHqOYJYlrqzRK5hagpagky5o4HfCzzd1TRkXPMFq6cKk9rGmA==
-=======
 lodash@4.17.21, lodash@^4.16.3, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.4:
   version "4.17.21"
   resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
->>>>>>> master
 
 logform@^2.1.1:
   version "2.1.2"
