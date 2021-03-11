@@ -1,11 +1,14 @@
-let instance = null;
+class Operators {
+  static _instance = null;
 
-function Operators(options) {
-  if (instance) return instance;
+  static _isNewSequelizeOp(options) {
+    return !!(options && options.Sequelize && options.Sequelize.Op);
+  }
 
-  if (options && options.Sequelize && options.Sequelize.Op) {
+  _setupNewSequelizeOp(options) {
     const { Op } = options.Sequelize;
     this.AND = Op.and;
+    this.CONTAINS = Op.contains;
     this.EQ = Op.eq;
     this.GT = Op.gt;
     this.GTE = Op.gte;
@@ -17,8 +20,11 @@ function Operators(options) {
     this.NOT = Op.not;
     this.NOT_LIKE = Op.notLike;
     this.OR = Op.or;
-  } else {
+  }
+
+  _setupOldSequelizeOp() {
     this.AND = '$and';
+    this.CONTAINS = '$contains';
     this.EQ = '$eq';
     this.GT = '$gt';
     this.GTE = '$gte';
@@ -32,8 +38,19 @@ function Operators(options) {
     this.OR = '$or';
   }
 
-  instance = this;
-  return this;
+  constructor(options) {
+    if (Operators._isNewSequelizeOp(options)) {
+      this._setupNewSequelizeOp(options);
+    } else {
+      this._setupOldSequelizeOp();
+    }
+
+    Operators._instance = this;
+  }
+
+  static getInstance(options) {
+    return Operators._instance || new Operators(options);
+  }
 }
 
 module.exports = Operators;

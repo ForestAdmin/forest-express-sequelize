@@ -1,3 +1,39 @@
+## [7.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.0...v7.1.1) (2021-03-10)
+
+
+### Bug Fixes
+
+* **authentication:** unable to login when the agents respond to an url starting with a prefix ([#651](https://github.com/ForestAdmin/forest-express-sequelize/issues/651)) ([e2cd4e4](https://github.com/ForestAdmin/forest-express-sequelize/commit/e2cd4e4ecb1fefb42211b6404c71302b16d0bdba))
+
+# [7.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.3...v7.1.0) (2021-03-05)
+
+
+### Features
+
+* **filter:** add "includes all" filter to array type ([21f9669](https://github.com/ForestAdmin/forest-express-sequelize/commit/21f96694cb5453369555d6cb549eab476b962b8c))
+* **filter:** add "includes all" filter to array type ([9d12de2](https://github.com/ForestAdmin/forest-express-sequelize/commit/9d12de22a109e43465adfb644c4aafca237b2ab2))
+
+## [7.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.2...v7.0.3) (2021-03-05)
+
+
+### Bug Fixes
+
+* **security:** patch lodash vulnerabilities ([#647](https://github.com/ForestAdmin/forest-express-sequelize/issues/647)) ([1dcd728](https://github.com/ForestAdmin/forest-express-sequelize/commit/1dcd728b86e145f289dbda363fd0a07d86b29d1c))
+
+## [7.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.1...v7.0.2) (2021-03-05)
+
+
+### Bug Fixes
+
+* **security:** patch lodash vulnerabilities ([#628](https://github.com/ForestAdmin/forest-express-sequelize/issues/628)) ([2c0449a](https://github.com/ForestAdmin/forest-express-sequelize/commit/2c0449a738fbe2e8122c037ba087770c9353a38c))
+
+## [7.0.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0...v7.0.1) (2021-03-04)
+
+
+### Bug Fixes
+
+* **authentication:** safari cannot login on remote lianas because of third party cookies ([#646](https://github.com/ForestAdmin/forest-express-sequelize/issues/646)) ([92f80b9](https://github.com/ForestAdmin/forest-express-sequelize/commit/92f80b904a517970320f33aecf2e3dc22ad5c232))
+
 # [7.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.11...v7.0.0) (2021-02-22)
 
 

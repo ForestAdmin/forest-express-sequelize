@@ -5,7 +5,7 @@ import FiltersParser from './filters-parser';
 import Orm from '../utils/orm';
 
 function ValueStatGetter(model, params, options) {
-  const OPERATORS = new Operators(options);
+  const OPERATORS = Operators.getInstance(options);
 
   this.operatorDateParser = new BaseOperatorDateParser({
     operators: OPERATORS,
