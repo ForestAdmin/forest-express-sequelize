@@ -1,3 +1,10 @@
+# [7.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.2...v7.2.0) (2021-03-15)
+
+
+### Features
+
+* **security:** authorised only allowed stats queries using permissions ([#654](https://github.com/ForestAdmin/forest-express-sequelize/issues/654)) ([2ad75e3](https://github.com/ForestAdmin/forest-express-sequelize/commit/2ad75e3b39838cc7be62a71cbadcedc0d8977f63))
+
 ## [7.1.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.1...v7.1.2) (2021-03-11)
 
 
