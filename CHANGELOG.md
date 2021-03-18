@@ -1,3 +1,10 @@
+## [7.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.2.0...v7.2.1) (2021-03-18)
+
+
+### Bug Fixes
+
+* **security:** downgrade forest-express while the charts are broken ([#656](https://github.com/ForestAdmin/forest-express-sequelize/issues/656)) ([a178b74](https://github.com/ForestAdmin/forest-express-sequelize/commit/a178b74048826ed5415aed2f574cc7a176f5c8a7))
+
 # [7.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.2...v7.2.0) (2021-03-15)
 
 
