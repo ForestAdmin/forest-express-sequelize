@@ -113,6 +113,8 @@ function ResourcesGetter(model, options, params) {
 
     const scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
     const include = queryBuilder.getIncludes(model, fieldNamesRequested);
+    console.log('===========================');
+    console.log('include find', include);
 
     return getWhere()
       .then((where) => {
