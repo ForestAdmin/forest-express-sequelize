@@ -104,7 +104,7 @@ function HasManyGetter(model, association, options, params) {
 
   async function getCount() {
     fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
-    const where = await buildWhereConditions(params.associationName);
+    const where = await buildWhereConditions(params.associationName, params.filters);
 
     console.log('===========================');
     console.log('include count', null);
