@@ -16,42 +16,28 @@ function HasManyGetter(model, association, options, params) {
   const { AND } = Operators.getInstance(options);
   const filtersParser = new FiltersParser(schema, params.timezone, options);
 
-  async function getFieldNamesRequested() {
-    if (!params.fields || !params.fields[association.name]) { return null; }
+  let fieldNamesRequested;
+  let searchBuilder;
 
-    // NOTICE: Populate the necessary associations for filters
-    const associations = params.filters ? await filtersParser.getAssociations(params.filters) : [];
+  function getFieldNamesRequested() {
+    if (!fieldNamesRequested) {
+      fieldNamesRequested = extractRequestedFields(
+        params.fields, association, Interface.Schemas.schemas,
+      );
+    }
 
-    // TODO: What to do?
-    // if (params.sort && params.sort.includes('.')) {
-    //   let associationFromSorting = params.sort.split('.')[0];
-    //   if (associationFromSorting[0] === '-') {
-    //     associationFromSorting = associationFromSorting.substring(1);
-    //   }
-    //   associations.push(associationFromSorting);
-    // }
-
-    const requestedFields = extractRequestedFields(params.fields, association, Interface.Schemas.schemas);
-
-    return _.union(
-      associations,
-      requestedFields,
-    );
+    return fieldNamesRequested;
   }
 
-  let fieldNamesRequested;
-  let searchBuilder;// = new SearchBuilder(association, options, params, fieldNamesRequested);
-
   function getSearchBuilder() {
-    if (searchBuilder) {
-      return searchBuilder;
+    if (!searchBuilder) {
+      searchBuilder = new SearchBuilder(
+        association,
+        options,
+        params,
+        getFieldNamesRequested(),
+      );
     }
-    searchBuilder = new SearchBuilder(
-      association,
-      options,
-      params,
-      fieldNamesRequested,
-    );
     return searchBuilder;
   }
 
@@ -75,11 +61,8 @@ function HasManyGetter(model, association, options, params) {
   async function findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
     const where = await buildWhereConditions(params.associationName, params.filters);
-    console.log('fieldNamesRequested find', fieldNamesRequested);
-    const include = queryBuilder.getIncludes(association, fieldNamesRequested);
+    const include = queryBuilder.getIncludes(association, getFieldNamesRequested());
 
-    console.log('===========================');
-    console.log('include find', include);
     return orm.findRecord(model, params.recordId, {
       order: queryOptions.order,
       subQuery: false,
@@ -103,11 +86,9 @@ function HasManyGetter(model, association, options, params) {
   }
 
   async function getCount() {
-    fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
     const where = await buildWhereConditions(params.associationName, params.filters);
+    const include = queryBuilder.getIncludes(association, getFieldNamesRequested());
 
-    console.log('===========================');
-    console.log('include count', null);
     return model.count({
       where: { [primaryKeyModel]: params.recordId },
       include: [{
@@ -116,13 +97,12 @@ function HasManyGetter(model, association, options, params) {
         where,
         required: true,
         scope: false,
+        include,
       }],
     });
   }
 
   async function getRecords() {
-    fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
-
     const queryOptions = {
       order: queryBuilder.getOrder(params.associationName, schema),
       offset: queryBuilder.getSkip(),
