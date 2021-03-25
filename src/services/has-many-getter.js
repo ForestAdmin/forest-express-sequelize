@@ -30,17 +30,18 @@ class HasManyGetter {
     );
   }
 
-  async buildWhereConditions(associationName, filters) {
+  async buildWhereConditions({ associationName, search, filters }) {
     const { AND } = this.operators;
     const where = { [AND]: [] };
 
-    if (this.params.search) {
+    if (search) {
       const searchCondition = this.searchBuilder.perform(associationName);
       where[AND].push(searchCondition);
     }
 
+
     if (filters) {
-      const formattedFilters = await this.filtersParser.perform(this.params.filters);
+      const formattedFilters = await this.filtersParser.perform(filters);
       where[AND].push(formattedFilters);
     }
 
@@ -49,9 +50,9 @@ class HasManyGetter {
 
   async findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
-    const { associationName, filters, recordId } = this.params;
+    const { associationName, recordId } = this.params;
 
-    const where = await this.buildWhereConditions(associationName, filters);
+    const where = await this.buildWhereConditions(this.params);
     const include = this.queryBuilder.getIncludes(this.association, this.fieldNamesRequested);
 
     const record = await orm.findRecord(this.model, recordId, {
@@ -78,8 +79,8 @@ class HasManyGetter {
   }
 
   async count() {
-    const { associationName, filters, recordId } = this.params;
-    const where = await this.buildWhereConditions(associationName, filters);
+    const { associationName, recordId } = this.params;
+    const where = await this.buildWhereConditions(this.params);
     const include = this.queryBuilder.getIncludes(this.association, this.fieldNamesRequested);
 
     return this.model.count({
