@@ -1,3 +1,10 @@
+# [7.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.2.2...v7.3.0) (2021-03-25)
+
+
+### Features
+
+* add filters support on related data ([#658](https://github.com/ForestAdmin/forest-express-sequelize/issues/658)) ([515fb70](https://github.com/ForestAdmin/forest-express-sequelize/commit/515fb70712bb5e8bd3432c1d4aabba04702f503c))
+
 ## [7.2.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.2.1...v7.2.2) (2021-03-19)
 
 
