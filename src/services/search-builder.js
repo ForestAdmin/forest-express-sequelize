@@ -110,7 +110,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
             ' LIKE ',
             lowerIfNecessary(`%${params.search}%`),
           );
-          pushCondition(condition, columnName);
+          pushCondition(condition, field.field);
         } else if (isUUID(DataTypes, primaryKeyType)
           && params.search.match(REGEX_UUID)) {
           condition[field.field] = params.search;
@@ -145,7 +145,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
             ' LIKE ',
             lowerIfNecessary(`%${params.search}%`),
           );
-          pushCondition(condition, columnName);
+          pushCondition(condition, field.field);
         }
       } else if (field.type === 'Number') {
         let value = Number(params.search);
