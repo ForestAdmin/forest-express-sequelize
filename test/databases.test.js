@@ -71,6 +71,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       name: { type: Sequelize.STRING, allowNull: false },
     });
 
+    models.georegion = sequelize.define('georegion', {
+      isocode: {
+        type: Sequelize.STRING,
+        primaryKey: true,
+      },
+      nameEnglish: { type: Sequelize.STRING, allowNull: false },
+      nameFrench: { type: Sequelize.STRING, allowNull: false },
+    });
+
     models.address = sequelize.define('address', {
       line: { type: Sequelize.STRING },
       zipCode: { type: Sequelize.STRING },
@@ -216,6 +225,17 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             { field: 'name', type: 'String' },
             { field: 'createdAt', type: 'Date' },
             { field: 'updatedAt', type: 'Date' },
+          ],
+        },
+        georegion: {
+          name: 'georegion',
+          idField: 'isocode',
+          primaryKeys: ['isocode'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'isocode', type: 'String' },
+            { field: 'nameEnglish', type: 'String' },
+            { field: 'nameFrench', type: 'String' },
           ],
         },
         address: {
@@ -1202,6 +1222,84 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             };
             try {
               const count = await new ResourcesGetter(models.bike, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      });
+
+      describe('request on the resources getter with a search on a string primary key', () => {
+        describe('with a string that does not matches', () => {
+          it('should return 0 records for the specified page', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                country: 'isocode,nameEnglish',
+              },
+              page: { number: '1', size: '30' },
+              search: 'en',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const result = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should count 0 records', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              search: 'en',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const count = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+
+        describe('with a string that matches', () => {
+          it('should return 1 record for the specified page', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                georegion: 'isocode,nameEnglish',
+              },
+              page: { number: '1', size: '30' },
+              search: 'es',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const result = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should count 1 record', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              search: 'es',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const count = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
                 .count();
               expect(count).toStrictEqual(1);
             } finally {
