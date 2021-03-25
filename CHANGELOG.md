@@ -1,3 +1,11 @@
+## [7.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.0...v7.3.1) (2021-03-25)
+
+
+### Bug Fixes
+
+* **search:** highlighting not working when the column name contains underscores ([45ac144](https://github.com/ForestAdmin/forest-express-sequelize/commit/45ac1442fec3cd5e93935ba19eec2496922ab1ad))
+* search highlighting not working when the column name contains underscores ([ca28ba9](https://github.com/ForestAdmin/forest-express-sequelize/commit/ca28ba96da12ba631e637621a50e015fb1064f22))
+
 # [7.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.2.2...v7.3.0) (2021-03-25)
 
 
