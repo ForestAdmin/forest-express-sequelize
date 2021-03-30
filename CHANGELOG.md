@@ -1,3 +1,15 @@
+# [8.0.0-beta.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.1...v8.0.0-beta.1) (2021-03-30)
+
+
+### Features
+
+* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([a61699a](https://github.com/ForestAdmin/forest-express-sequelize/commit/a61699ae2218c34508f00d2b9ac891107b9c5710))
+
+
+### BREAKING CHANGES
+
+* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+
 ## [7.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.0...v7.3.1) (2021-03-25)
 
 
