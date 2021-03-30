@@ -19,7 +19,6 @@ class ResourcesGetter {
     this.operators = Operators.getInstance(options);
     [this.primaryKey] = _.keys(model.primaryKeys);
     this.filterParser = new FiltersParser(this.schema, params.timezone, options);
-    this.hasSmartFieldSearch = false;
   }
 
   async getFieldNamesRequested() {
@@ -94,6 +93,37 @@ class ResourcesGetter {
     return where;
   }
 
+  /**
+   * @param {any} queryOptions The predefined query options containing sorts, filters and
+   * search on basic fields
+   * @param {any} schemaFields The fields definition issued from the user agent
+   * @param {string} searchValue The searchValue provided by the user through the request
+   * @returns {boolean} A boolean stating if options have been added due to custom
+   * search definition
+   */
+  // eslint-disable-next-line class-methods-use-this
+  addCustomFieldSearchToQueryOptions(queryOptions, schemaFields, searchValue) {
+    let hasCustomFieldSearch = false;
+
+    _.each(schemaFields, (field) => {
+      if (field.search) {
+        try {
+          // Custom field search definition adds custom conditions
+          // to the query where clause
+          field.search(queryOptions, searchValue);
+          hasCustomFieldSearch = true;
+        } catch (error) {
+          logger.error(
+            `Cannot search properly on Smart Field ${field.field}`,
+            error,
+          );
+        }
+      }
+    });
+
+    return hasCustomFieldSearch;
+  }
+
   async getRecords(searchBuilder, fieldNamesRequested) {
     const segment = await this.getSegment();
     const segmentScope = segment && segment.scope;
@@ -102,7 +132,7 @@ class ResourcesGetter {
 
     const where = await this.buildWhereConditions(searchBuilder, this.params, segment);
 
-    const findAllOpts = {
+    const queryOptions = {
       where,
       include,
       order: this.queryBuilder.getOrder(),
@@ -111,23 +141,15 @@ class ResourcesGetter {
     };
 
     const { search, searchExtended } = this.params;
+
     if (search) {
-      _.each(this.schema.fields, (field) => {
-        if (field.search) {
-          try {
-            field.search(findAllOpts, search);
-            this.hasSmartFieldSearch = true;
-          } catch (error) {
-            logger.error(
-              `Cannot search properly on Smart Field ${field.field}`,
-              error,
-            );
-          }
-        }
-      });
+      const hasCustomFieldSearch = this.addCustomFieldSearchToQueryOptions(
+        queryOptions, this.schema.fields, search,
+      );
 
       const fieldsSearched = searchBuilder.getFieldsSearched();
-      if (fieldsSearched.length === 0 && !this.hasSmartFieldSearch) {
+
+      if (fieldsSearched.length === 0 && !hasCustomFieldSearch) {
         if (!searchExtended || !searchBuilder.hasExtendedSearchConditions()) {
           // NOTICE: No search condition has been set for the current search, no record can be
           //         found.
@@ -136,8 +158,9 @@ class ResourcesGetter {
       }
     }
 
-    return scope.findAll(findAllOpts);
+    return scope.findAll(queryOptions);
   }
+
 
   async count() {
     const fieldNamesRequested = await this.getFieldNamesRequested();
@@ -154,35 +177,26 @@ class ResourcesGetter {
 
     const where = await this.buildWhereConditions(searchBuilder, this.params, segment);
 
-    const countOptions = {
+    const queryOptions = {
       include,
       where,
     };
 
     if (!this.primaryKey) {
       // NOTICE: If no primary key is found, use * as a fallback for Sequelize.
-      countOptions.col = '*';
+      queryOptions.col = '*';
     }
 
     const { search, searchExtended } = this.params;
 
     if (search) {
-      _.each(this.schema.fields, (field) => {
-        if (field.search) {
-          try {
-            field.search(countOptions, search);
-            this.hasSmartFieldSearch = true;
-          } catch (error) {
-            logger.error(
-              `Cannot search properly on Smart Field ${field.field}`,
-              error,
-            );
-          }
-        }
-      });
+      const hasCustomFieldSearch = this.addCustomFieldSearchToQueryOptions(
+        queryOptions, this.schema.fields, search,
+      );
 
       const fieldsSearched = searchBuilder.getFieldsSearched();
-      if (fieldsSearched.length === 0 && !this.hasSmartFieldSearch) {
+
+      if (fieldsSearched.length === 0 && !hasCustomFieldSearch) {
         if (!searchExtended
           || !searchBuilder.hasExtendedSearchConditions()) {
           // NOTICE: No search condition has been set for the current search, no record can be
@@ -192,7 +206,7 @@ class ResourcesGetter {
       }
     }
 
-    return scope.count(countOptions);
+    return scope.count(queryOptions);
   }
 
   async getSegment() {
