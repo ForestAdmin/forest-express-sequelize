@@ -1,3 +1,107 @@
+## [7.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.0...v7.3.1) (2021-03-25)
+
+
+### Bug Fixes
+
+* **search:** highlighting not working when the column name contains underscores ([45ac144](https://github.com/ForestAdmin/forest-express-sequelize/commit/45ac1442fec3cd5e93935ba19eec2496922ab1ad))
+* search highlighting not working when the column name contains underscores ([ca28ba9](https://github.com/ForestAdmin/forest-express-sequelize/commit/ca28ba96da12ba631e637621a50e015fb1064f22))
+
+# [7.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.2.2...v7.3.0) (2021-03-25)
+
+
+### Features
+
+* add filters support on related data ([#658](https://github.com/ForestAdmin/forest-express-sequelize/issues/658)) ([515fb70](https://github.com/ForestAdmin/forest-express-sequelize/commit/515fb70712bb5e8bd3432c1d4aabba04702f503c))
+
+## [7.2.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.2.1...v7.2.2) (2021-03-19)
+
+
+### Bug Fixes
+
+* **security:** authorised only allowed stats queries using permissions ([#657](https://github.com/ForestAdmin/forest-express-sequelize/issues/657)) ([bc4913c](https://github.com/ForestAdmin/forest-express-sequelize/commit/bc4913cbe1ca59f60fa3d2f76fb857c3e94ce8fb))
+
+## [7.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.2.0...v7.2.1) (2021-03-18)
+
+
+### Bug Fixes
+
+* **security:** downgrade forest-express while the charts are broken ([#656](https://github.com/ForestAdmin/forest-express-sequelize/issues/656)) ([a178b74](https://github.com/ForestAdmin/forest-express-sequelize/commit/a178b74048826ed5415aed2f574cc7a176f5c8a7))
+
+# [7.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.2...v7.2.0) (2021-03-15)
+
+
+### Features
+
+* **security:** authorised only allowed stats queries using permissions ([#654](https://github.com/ForestAdmin/forest-express-sequelize/issues/654)) ([2ad75e3](https://github.com/ForestAdmin/forest-express-sequelize/commit/2ad75e3b39838cc7be62a71cbadcedc0d8977f63))
+
+## [7.1.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.1...v7.1.2) (2021-03-11)
+
+
+### Bug Fixes
+
+* **security:** decrease the time before expiration of forest session token ([#652](https://github.com/ForestAdmin/forest-express-sequelize/issues/652)) ([c242839](https://github.com/ForestAdmin/forest-express-sequelize/commit/c2428394e8a3a096cf45fbed8a7df1536cbe70fe))
+
+## [7.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.1.0...v7.1.1) (2021-03-10)
+
+
+### Bug Fixes
+
+* **authentication:** unable to login when the agents respond to an url starting with a prefix ([#651](https://github.com/ForestAdmin/forest-express-sequelize/issues/651)) ([e2cd4e4](https://github.com/ForestAdmin/forest-express-sequelize/commit/e2cd4e4ecb1fefb42211b6404c71302b16d0bdba))
+
+# [7.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.3...v7.1.0) (2021-03-05)
+
+
+### Features
+
+* **filter:** add "includes all" filter to array type ([21f9669](https://github.com/ForestAdmin/forest-express-sequelize/commit/21f96694cb5453369555d6cb549eab476b962b8c))
+* **filter:** add "includes all" filter to array type ([9d12de2](https://github.com/ForestAdmin/forest-express-sequelize/commit/9d12de22a109e43465adfb644c4aafca237b2ab2))
+
+## [7.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.2...v7.0.3) (2021-03-05)
+
+
+### Bug Fixes
+
+* **security:** patch lodash vulnerabilities ([#647](https://github.com/ForestAdmin/forest-express-sequelize/issues/647)) ([1dcd728](https://github.com/ForestAdmin/forest-express-sequelize/commit/1dcd728b86e145f289dbda363fd0a07d86b29d1c))
+
+## [7.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.1...v7.0.2) (2021-03-05)
+
+
+### Bug Fixes
+
+* **security:** patch lodash vulnerabilities ([#628](https://github.com/ForestAdmin/forest-express-sequelize/issues/628)) ([2c0449a](https://github.com/ForestAdmin/forest-express-sequelize/commit/2c0449a738fbe2e8122c037ba087770c9353a38c))
+
+## [7.0.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0...v7.0.1) (2021-03-04)
+
+
+### Bug Fixes
+
+* **authentication:** safari cannot login on remote lianas because of third party cookies ([#646](https://github.com/ForestAdmin/forest-express-sequelize/issues/646)) ([92f80b9](https://github.com/ForestAdmin/forest-express-sequelize/commit/92f80b904a517970320f33aecf2e3dc22ad5c232))
+
+# [7.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v6.7.11...v7.0.0) (2021-02-22)
+
+
+### Bug Fixes
+
+* **authentication:** error when authenticating with an invalid token in cookies ([#593](https://github.com/ForestAdmin/forest-express-sequelize/issues/593)) ([405feb4](https://github.com/ForestAdmin/forest-express-sequelize/commit/405feb439e34746b385203eb995aec92e955eeab))
+* connect to liana through safari ([#590](https://github.com/ForestAdmin/forest-express-sequelize/issues/590)) ([6a0fcb3](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a0fcb346c71f561e80b7d691f38774eaa8c24b9))
+* fix incorrect usage of the new connections parameter ([#557](https://github.com/ForestAdmin/forest-express-sequelize/issues/557)) ([2840e41](https://github.com/ForestAdmin/forest-express-sequelize/commit/2840e418bb782a83b861dda217d45b3d70175253))
+* user being disconnected after 33min instead of 14 days ([#591](https://github.com/ForestAdmin/forest-express-sequelize/issues/591)) ([2e2dc81](https://github.com/ForestAdmin/forest-express-sequelize/commit/2e2dc811f497acb0d771497c55b75349480e46a5))
+
+
+### Features
+
+* init function now uses connections & objectMapping instead of sequelize as parameter ([#539](https://github.com/ForestAdmin/forest-express-sequelize/issues/539)) ([74262ac](https://github.com/ForestAdmin/forest-express-sequelize/commit/74262acfc7d77ce1e0aa1b2f44d3e69b7fce470a))
+* return correct errors when the user needs to configure the 2FA ([#609](https://github.com/ForestAdmin/forest-express-sequelize/issues/609)) ([08b64a0](https://github.com/ForestAdmin/forest-express-sequelize/commit/08b64a038f2d9aef206710234d16d6e877274967))
+
+
+### BREAKING CHANGES
+
+* sequelize options is not supported anymore by Liana.init()
+connections and objectMapping is now required on Liana.init().
+Update forest-express dependency to 8.0.0-beta.1 (See https://github.com/ForestAdmin/forest-express/tree/v8.0.0-beta.1)
+
+Co-authored-by: jeffladiray <ladirayjeff@gmail.com>
+
 # [7.0.0-beta.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.0.0-beta.11...v7.0.0-beta.12) (2021-02-22)
 
 

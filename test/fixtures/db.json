@@ -129,5 +129,13 @@
       "userId": 100,
       "teamId": 100
     }
+  },
+  {
+    "model": "georegion",
+    "data": {
+      "isocode": "es",
+      "nameEnglish": "Spain",
+      "nameFrench": "Espagne"
+    }
   }
 ]

@@ -4,27 +4,58 @@ const Interface = require('forest-express');
 const orm = require('../utils/orm');
 const QueryBuilder = require('./query-builder');
 const SearchBuilder = require('./search-builder');
+const FiltersParser = require('./filters-parser');
 const CompositeKeysManager = require('./composite-keys-manager');
 const extractRequestedFields = require('./requested-fields-extractor');
+const Operators = require('../utils/operators');
 
-function HasManyGetter(model, association, opts, params) {
-  const queryBuilder = new QueryBuilder(model, opts, params);
-  const schema = Interface.Schemas.schemas[association.name];
-  const primaryKeyModel = _.keys(model.primaryKeys)[0];
-
-  function getFieldNamesRequested() {
-    return extractRequestedFields(params.fields, association, Interface.Schemas.schemas);
+class HasManyGetter {
+  constructor(model, association, options, params) {
+    this.model = model;
+    this.association = association;
+    this.params = params;
+    this.queryBuilder = new QueryBuilder(model, options, params);
+    this.schema = Interface.Schemas.schemas[association.name];
+    [this.primaryKeyModel] = _.keys(model.primaryKeys);
+    this.operators = Operators.getInstance(options);
+    this.filtersParser = new FiltersParser(this.schema, params.timezone, options);
+    this.fieldNamesRequested = extractRequestedFields(
+      params.fields, association, Interface.Schemas.schemas,
+    );
+    this.searchBuilder = new SearchBuilder(
+      association,
+      options,
+      params,
+      this.fieldNamesRequested,
+    );
   }
 
-  const fieldNamesRequested = getFieldNamesRequested();
-  const searchBuilder = new SearchBuilder(association, opts, params, fieldNamesRequested);
-  const where = searchBuilder.perform(params.associationName);
-  const include = queryBuilder.getIncludes(association, fieldNamesRequested);
+  async buildWhereConditions({ associationName, search, filters }) {
+    const { AND } = this.operators;
+    const where = { [AND]: [] };
 
-  function findQuery(queryOptions) {
+    if (search) {
+      const searchCondition = this.searchBuilder.perform(associationName);
+      where[AND].push(searchCondition);
+    }
+
+
+    if (filters) {
+      const formattedFilters = await this.filtersParser.perform(filters);
+      where[AND].push(formattedFilters);
+    }
+
+    return where;
+  }
+
+  async findQuery(queryOptions) {
     if (!queryOptions) { queryOptions = {}; }
+    const { associationName, recordId } = this.params;
 
-    return orm.findRecord(model, params.recordId, {
+    const where = await this.buildWhereConditions(this.params);
+    const include = this.queryBuilder.getIncludes(this.association, this.fieldNamesRequested);
+
+    const record = await orm.findRecord(this.model, recordId, {
       order: queryOptions.order,
       subQuery: false,
       offset: queryOptions.offset,
@@ -35,61 +66,69 @@ function HasManyGetter(model, association, opts, params) {
       //         and we don't need the parent's attributes
       attributes: [],
       include: [{
-        model: association,
-        as: params.associationName,
+        model: this.association,
+        as: associationName,
         scope: false,
         required: false,
         where,
         include,
       }],
-    })
-      .then((record) => ((record && record[params.associationName]) || []));
+    });
+
+    return (record && record[associationName]) || [];
   }
 
-  function getCount() {
-    return model.count({
-      where: { [primaryKeyModel]: params.recordId },
+  async count() {
+    const { associationName, recordId } = this.params;
+    const where = await this.buildWhereConditions(this.params);
+    const include = this.queryBuilder.getIncludes(this.association, this.fieldNamesRequested);
+
+    return this.model.count({
+      where: { [this.primaryKeyModel]: recordId },
       include: [{
-        model: association,
-        as: params.associationName,
+        model: this.association,
+        as: associationName,
         where,
         required: true,
         scope: false,
+        include,
       }],
     });
   }
 
-  function getRecords() {
+  async getRecords() {
+    const { associationName } = this.params;
+
     const queryOptions = {
-      order: queryBuilder.getOrder(params.associationName, schema),
-      offset: queryBuilder.getSkip(),
-      limit: queryBuilder.getLimit(),
+      order: this.queryBuilder.getOrder(associationName, this.schema),
+      offset: this.queryBuilder.getSkip(),
+      limit: this.queryBuilder.getLimit(),
     };
 
-    return findQuery(queryOptions)
-      .then((records) => P.map(records, (record) => {
-        if (schema.isCompositePrimary) {
-          record.forestCompositePrimary = new CompositeKeysManager(association, schema, record)
-            .createCompositePrimary();
-        }
+    const records = await this.findQuery(queryOptions);
+    return P.map(records, (record) => {
+      if (this.schema.isCompositePrimary) {
+        record.forestCompositePrimary = new CompositeKeysManager(
+          this.association, this.schema, record,
+        )
+          .createCompositePrimary();
+      }
 
-        return record;
-      }));
+      return record;
+    });
   }
 
-  this.perform = () =>
-    getRecords()
-      .then((records) => {
-        let fieldsSearched = null;
+  async perform() {
+    const records = await this.getRecords();
 
-        if (params.search) {
-          fieldsSearched = searchBuilder.getFieldsSearched();
-        }
+    let fieldsSearched = null;
 
-        return [records, fieldsSearched];
-      });
+    if (this.params.search) {
+      fieldsSearched = this.searchBuilder.getFieldsSearched();
+    }
 
-  this.count = getCount;
+    return [records, fieldsSearched];
+  }
 }
 
 module.exports = HasManyGetter;
