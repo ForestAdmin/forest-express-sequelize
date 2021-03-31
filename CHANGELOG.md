@@ -1,3 +1,10 @@
+## [7.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.1...v7.3.2) (2021-03-31)
+
+
+### Bug Fixes
+
+* **security:** patch node-notifier vulnerabilities ([#669](https://github.com/ForestAdmin/forest-express-sequelize/issues/669)) ([a54b944](https://github.com/ForestAdmin/forest-express-sequelize/commit/a54b944e88b666ad6d05e5b7e2cf52355a26ac5b))
+
 ## [7.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.0...v7.3.1) (2021-03-25)
 
 
