@@ -1226,6 +1226,85 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
+      describe('with live query segment', () => {
+        describe('with a valid query', () => {
+          it('should return the records filtered by the segment', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
+              },
+              page: { number: '1', size: '30' },
+              timezone: 'Europe/Paris',
+              segmentQuery: "SELECT * FROM users WHERE users.email = 'richard@piedpiper.com'",
+            };
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should return the total records count filtered by the segment', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              search: '10',
+              timezone: 'Europe/Paris',
+              segmentQuery: "SELECT * FROM users WHERE users.email = 'richard@piedpiper.com'",
+            };
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+
+        describe('with an invalid query', () => {
+          it('should raise an error on perform', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
+              },
+              page: { number: '1', size: '30' },
+              timezone: 'Europe/Paris',
+              segmentQuery: 'SELECT * FROM use',
+            };
+            try {
+              await expect(new ResourcesGetter(models.user, sequelizeOptions, params).perform())
+                .rejects.toThrow('Invalid SQL query for this Live Query segment');
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should raise an error on count', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              search: '10',
+              timezone: 'Europe/Paris',
+              segmentQuery: 'SELECT * FROM use',
+            };
+            try {
+              await expect(new ResourcesGetter(models.user, sequelizeOptions, params).count())
+                .rejects.toThrow('Invalid SQL query for this Live Query segment');
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      });
+
       describe('request on the resources getter with a search on a UUID primary key', () => {
         describe('with a UUID that does not exist', () => {
           it('should return 0 records for the specified page', async () => {

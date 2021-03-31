@@ -44,8 +44,34 @@ class ResourcesGetter {
     );
   }
 
+  async buildSegmentQueryCondition(segmentQuery) {
+    const { IN } = this.operators;
+    const queryToFilterRecords = segmentQuery.trim();
+
+    new LiveQueryChecker().perform(queryToFilterRecords);
+
+    // WARNING: Choosing the first connection might generate issues if the model does not
+    //          belongs to this database.
+    try {
+      const connection = this.model.sequelize;
+      const results = await connection.query(queryToFilterRecords, {
+        type: this.options.Sequelize.QueryTypes.SELECT,
+      });
+
+      const recordIds = results.map((result) => result[this.primaryKey] || result.id);
+      const condition = { [this.primaryKey]: {} };
+      condition[this.primaryKey][IN] = recordIds;
+
+      return condition;
+    } catch (error) {
+      const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
+      logger.error(errorMessage);
+      throw new ErrorHTTP422(errorMessage);
+    }
+  }
+
   async buildWhereConditions(searchBuilder, { search, filters, segmentQuery }, segment) {
-    const { AND, IN } = this.operators;
+    const { AND } = this.operators;
     const where = { [AND]: [] };
 
     if (search) {
@@ -58,36 +84,14 @@ class ResourcesGetter {
       where[AND].push(formattedFilters);
     }
 
-    // TODO: improve
     const segmentWhere = segment && segment.where;
     if (segmentWhere) {
       where[AND].push(segmentWhere);
     }
 
     if (segmentQuery) {
-      const queryToFilterRecords = segmentQuery.trim();
-
-      new LiveQueryChecker().perform(queryToFilterRecords);
-
-      // WARNING: Choosing the first connection might generate issues if the model does not
-      //          belongs to this database.
-      try {
-        const connection = this.model.sequelize;
-        const results = await connection.query(queryToFilterRecords, {
-          type: this.options.Sequelize.QueryTypes.SELECT,
-        });
-
-        const recordIds = results.map((result) => result[this.primaryKey] || result.id);
-        const condition = { [this.primaryKey]: {} };
-        condition[this.primaryKey][IN] = recordIds;
-        where[AND].push(condition);
-
-        return where;
-      } catch (error) {
-        const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
-        logger.error(errorMessage);
-        throw new ErrorHTTP422(errorMessage);
-      }
+      const segmentQueryCondition = await this.buildSegmentQueryCondition(segmentQuery);
+      where[AND].push(segmentQueryCondition);
     }
 
     return where;
@@ -232,7 +236,7 @@ class ResourcesGetter {
       this.params,
       fieldNamesRequested,
     );
-    // TODO: improve?
+
     const records = await this.getRecords(searchBuilder, fieldNamesRequested);
     let fieldsSearched = null;
 
