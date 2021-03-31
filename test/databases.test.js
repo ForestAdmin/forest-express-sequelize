@@ -432,6 +432,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               },
             },
           ],
+          segments: [{
+            name: 'only monza sp*',
+            where: () => ({ model: { [Sequelize.Op.like]: '%Monza SP%' } }),
+          }],
         },
       },
     };
@@ -1302,6 +1306,49 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               connectionManager.closeConnection();
             }
           });
+        });
+      });
+
+      describe('with segment defined on the liana side', () => {
+        it('should return the records filtered by the segment', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const params = {
+            fields: {
+              car: 'id,brand,model',
+            },
+            page: { number: '1', size: '30' },
+            timezone: 'Europe/Paris',
+            segment: 'only monza sp*',
+          };
+          try {
+            const result = await new ResourcesGetter(models.car, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(2);
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should return the total records count filtered by the segment', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const params = {
+            fields: {
+              car: 'id,brand,model',
+            },
+            page: { number: '1', size: '30' },
+            timezone: 'Europe/Paris',
+            segment: 'only monza sp*',
+          };
+          try {
+            const count = await new ResourcesGetter(models.car, sequelizeOptions, params)
+              .count();
+
+            expect(count).toStrictEqual(2);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 

@@ -153,5 +153,13 @@
       "brand": "Ferrari",
       "model": "Monza SP1"
     }
+  },
+  {
+    "model": "car",
+    "data": {
+      "id": 102,
+      "brand": "Ferrari",
+      "model": "Monza SP2"
+    }
   }
 ]
