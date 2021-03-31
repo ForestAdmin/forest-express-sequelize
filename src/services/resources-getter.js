@@ -21,22 +21,25 @@ class ResourcesGetter {
     this.filterParser = new FiltersParser(this.schema, params.timezone, options);
   }
 
-  async getFieldNamesRequested() {
-    if (!this.params.fields || !this.params.fields[this.model.name]) { return null; }
-
+  async getAssociations(filters, sort) {
     // NOTICE: Populate the necessary associations for filters
-    const associations = this.params.filters
-      ? await this.filterParser.getAssociations(this.params.filters) : [];
+    const associations = filters ? await this.filterParser.getAssociations(filters) : [];
 
-    if (this.params.sort && this.params.sort.includes('.')) {
-      let associationFromSorting = this.params.sort.split('.')[0];
+    if (sort && sort.includes('.')) {
+      let associationFromSorting = sort.split('.')[0];
       if (associationFromSorting[0] === '-') {
         associationFromSorting = associationFromSorting.substring(1);
       }
       associations.push(associationFromSorting);
     }
+  }
 
-    const requestedFields = extractRequestedFields(this.params.fields, this.model, Schemas.schemas);
+  async getFieldNamesRequested() {
+    const { fields, filters, sort } = this.params;
+    if (!fields || !fields[this.model.name]) { return null; }
+
+    const associations = await this.getAssociations(filters, sort);
+    const requestedFields = extractRequestedFields(fields, this.model, Schemas.schemas);
 
     return _.union(
       associations,
