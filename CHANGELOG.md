@@ -1,3 +1,10 @@
+## [7.3.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.5...v7.3.6) (2021-04-06)
+
+
+### Bug Fixes
+
+* **security:** patch marked dependency vulnerabilities ([#674](https://github.com/ForestAdmin/forest-express-sequelize/issues/674)) ([5331694](https://github.com/ForestAdmin/forest-express-sequelize/commit/53316944d68e1943435f290544e9d2480eda9af0))
+
 ## [7.3.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.4...v7.3.5) (2021-04-01)
 
 
