@@ -1,3 +1,5 @@
+## [7.3.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.6...v7.3.7) (2021-04-07)
+
 ## [7.3.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.5...v7.3.6) (2021-04-06)
 
 
