@@ -1,3 +1,10 @@
+# [7.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.7...v7.4.0) (2021-04-09)
+
+
+### Features
+
+* **smart-action:** support hooks for smart collection ([#679](https://github.com/ForestAdmin/forest-express-sequelize/issues/679)) ([5d80f8a](https://github.com/ForestAdmin/forest-express-sequelize/commit/5d80f8a4e0ec12e2fb6d7a5c2098c7a69db05e5e))
+
 ## [7.3.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.6...v7.3.7) (2021-04-07)
 
 ## [7.3.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.5...v7.3.6) (2021-04-06)
