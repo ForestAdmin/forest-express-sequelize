@@ -1,3 +1,10 @@
+# [7.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.4.0...v7.5.0) (2021-04-12)
+
+
+### Features
+
+* **smart-action:** handle isReadOnly field in smart action forms ([#680](https://github.com/ForestAdmin/forest-express-sequelize/issues/680)) ([18dd191](https://github.com/ForestAdmin/forest-express-sequelize/commit/18dd191d525016835005cdf7d7fb0955ef9a2057))
+
 # [7.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.7...v7.4.0) (2021-04-09)
 
 
