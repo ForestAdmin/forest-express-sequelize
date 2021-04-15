@@ -8,6 +8,9 @@ module.exports = {
   plugins: [
     'sonarjs',
   ],
+  ignorePatterns: [
+    'dist/**'
+  ],
   env: {
     node: true,
   },
