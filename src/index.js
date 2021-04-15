@@ -1,5 +1,6 @@
 const P = require('bluebird');
 const Interface = require('forest-express');
+const BaseOperatorDateParser = require('forest-express/dist/services/base-operator-date-parser');
 const orm = require('./utils/orm');
 const lianaPackage = require('../package.json');
 
@@ -23,6 +24,7 @@ const PieStatGetter = require('./services/pie-stat-getter');
 const LineStatGetter = require('./services/line-stat-getter');
 const LeaderboardStatGetter = require('./services/leaderboard-stat-getter');
 const QueryStatGetter = require('./services/query-stat-getter');
+const FiltersParser = require('./services/filters-parser');
 
 const RecordsDecorator = require('./utils/records-decorator');
 
@@ -47,6 +49,22 @@ exports.RecordCreator = Interface.RecordCreator;
 exports.RecordRemover = Interface.RecordRemover;
 exports.RecordsRemover = Interface.RecordsRemover;
 exports.RecordSerializer = Interface.RecordSerializer;
+exports.BaseOperatorDateParser = BaseOperatorDateParser;
+
+/**
+ * @param {*} filter
+ * @param {*} modelSchema
+ * @param {string} timezone
+ * @returns {Promise<any>} Sequelize condition
+ */
+exports.parseFilter = (filter, modelSchema, timezone) => {
+  if (!exports.opts) {
+    throw new Error('forest-express-sequelize has not been initialized');
+  }
+  const parser = new FiltersParser(modelSchema, timezone, exports.opts);
+
+  return parser.perform(JSON.stringify(filter));
+};
 
 exports.PUBLIC_ROUTES = Interface.PUBLIC_ROUTES;
 
