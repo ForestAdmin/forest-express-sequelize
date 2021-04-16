@@ -137,5 +137,29 @@
       "nameEnglish": "Spain",
       "nameFrench": "Espagne"
     }
+  },
+  {
+    "model": "car",
+    "data": {
+      "id": 100,
+      "brand": "Ferrari",
+      "model": "Enzo"
+    }
+  },
+  {
+    "model": "car",
+    "data": {
+      "id": 101,
+      "brand": "Ferrari",
+      "model": "Monza SP1"
+    }
+  },
+  {
+    "model": "car",
+    "data": {
+      "id": 102,
+      "brand": "Ferrari",
+      "model": "Monza SP2"
+    }
   }
 ]
