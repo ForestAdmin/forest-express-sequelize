@@ -58,9 +58,6 @@ exports.BaseOperatorDateParser = BaseOperatorDateParser;
  * @returns {Promise<any>} Sequelize condition
  */
 exports.parseFilter = (filter, modelSchema, timezone) => {
-  if (!exports.opts) {
-    throw new Error('forest-express-sequelize has not been initialized');
-  }
   const parser = new FiltersParser(modelSchema, timezone, exports.opts);
 
   return parser.perform(JSON.stringify(filter));
