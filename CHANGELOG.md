@@ -1,3 +1,10 @@
+## [7.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.5.0...v7.5.1) (2021-04-16)
+
+
+### Bug Fixes
+
+* **date-filter:** filtering only on hours now returns the expected records ([#684](https://github.com/ForestAdmin/forest-express-sequelize/issues/684)) ([135ac47](https://github.com/ForestAdmin/forest-express-sequelize/commit/135ac475188d7373b375667b909d092d06b9b68b))
+
 # [7.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.4.0...v7.5.0) (2021-04-12)
 
 
