@@ -1,3 +1,10 @@
+# [7.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.5.1...v7.6.0) (2021-04-16)
+
+
+### Features
+
+* expose utils to parse filters ([#683](https://github.com/ForestAdmin/forest-express-sequelize/issues/683)) ([4333529](https://github.com/ForestAdmin/forest-express-sequelize/commit/4333529a64a172484ab307d587a633c472096d53))
+
 ## [7.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.5.0...v7.5.1) (2021-04-16)
 
 
