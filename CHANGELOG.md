@@ -1,3 +1,22 @@
+# [8.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.1...v8.0.0-beta.2) (2021-04-16)
+
+
+### Bug Fixes
+
+* **date-filter:** filtering only on hours now returns the expected records ([#684](https://github.com/ForestAdmin/forest-express-sequelize/issues/684)) ([135ac47](https://github.com/ForestAdmin/forest-express-sequelize/commit/135ac475188d7373b375667b909d092d06b9b68b))
+* **security:** patch forest-express transitive vulnerabilities ([#672](https://github.com/ForestAdmin/forest-express-sequelize/issues/672)) ([e5135d2](https://github.com/ForestAdmin/forest-express-sequelize/commit/e5135d208c0d878fb319e220fb334272c6dcdf72))
+* **security:** patch ini dependency vulnérability ([#670](https://github.com/ForestAdmin/forest-express-sequelize/issues/670)) ([3eb0958](https://github.com/ForestAdmin/forest-express-sequelize/commit/3eb0958b0495954dcbf957637a1ff636151432a7))
+* **security:** patch marked dependency vulnerabilities ([#674](https://github.com/ForestAdmin/forest-express-sequelize/issues/674)) ([5331694](https://github.com/ForestAdmin/forest-express-sequelize/commit/53316944d68e1943435f290544e9d2480eda9af0))
+* **security:** patch node-notifier vulnerabilities ([#669](https://github.com/ForestAdmin/forest-express-sequelize/issues/669)) ([a54b944](https://github.com/ForestAdmin/forest-express-sequelize/commit/a54b944e88b666ad6d05e5b7e2cf52355a26ac5b))
+* **security:** patch y18n dependency vulnerabilities ([#671](https://github.com/ForestAdmin/forest-express-sequelize/issues/671)) ([884a400](https://github.com/ForestAdmin/forest-express-sequelize/commit/884a400f748e26935b1081674431846fde092585))
+
+
+### Features
+
+* expose utils to parse filters ([#683](https://github.com/ForestAdmin/forest-express-sequelize/issues/683)) ([4333529](https://github.com/ForestAdmin/forest-express-sequelize/commit/4333529a64a172484ab307d587a633c472096d53))
+* **smart-action:** handle isReadOnly field in smart action forms ([#680](https://github.com/ForestAdmin/forest-express-sequelize/issues/680)) ([18dd191](https://github.com/ForestAdmin/forest-express-sequelize/commit/18dd191d525016835005cdf7d7fb0955ef9a2057))
+* **smart-action:** support hooks for smart collection ([#679](https://github.com/ForestAdmin/forest-express-sequelize/issues/679)) ([5d80f8a](https://github.com/ForestAdmin/forest-express-sequelize/commit/5d80f8a4e0ec12e2fb6d7a5c2098c7a69db05e5e))
+
 # [7.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.5.1...v7.6.0) (2021-04-16)
 
 
