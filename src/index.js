@@ -1,6 +1,5 @@
 const P = require('bluebird');
 const Interface = require('forest-express');
-const BaseOperatorDateParser = require('forest-express/dist/services/base-operator-date-parser');
 const orm = require('./utils/orm');
 const lianaPackage = require('../package.json');
 
@@ -50,7 +49,7 @@ exports.RecordCreator = Interface.RecordCreator;
 exports.RecordRemover = Interface.RecordRemover;
 exports.RecordsRemover = Interface.RecordsRemover;
 exports.RecordSerializer = Interface.RecordSerializer;
-exports.BaseOperatorDateParser = BaseOperatorDateParser;
+exports.BaseOperatorDateParser = Interface.BaseOperatorDateParser;
 exports.parseFilter = makeParseFilter(FiltersParser, exports);
 
 exports.PUBLIC_ROUTES = Interface.PUBLIC_ROUTES;
