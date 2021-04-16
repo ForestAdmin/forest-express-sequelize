@@ -3,7 +3,8 @@ const Interface = require('forest-express');
 const CompositeKeysManager = require('./composite-keys-manager');
 const ResourceFinder = require('./resource-finder');
 
-function ResourceGetter(model, params) {
+// eslint-disable-next-line no-unused-vars
+function ResourceGetter(model, lianaOptions, params, user) {
   const schema = Interface.Schemas.schemas[model.name];
 
   this.perform = function perform() {

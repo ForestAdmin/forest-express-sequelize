@@ -8,17 +8,50 @@ import LiveQueryChecker from './live-query-checker';
 import { ErrorHTTP422 } from './errors';
 import FiltersParser from './filters-parser';
 import extractRequestedFields from './requested-fields-extractor';
+import ScopeProvider from './scope-provider';
 
+
+/**
+ * An instance of this class represents a subset of a given collection.
+ * i.e. All books with a red cover.
+ *
+ * The two public methods are perform() and count()
+ * All the rest can be considered private
+ */
 class ResourcesGetter {
-  constructor(model, options, params) {
+  /**
+   * FIXME
+   * AFAIK lianaOptions is a global. Why pass it as param everywhere?
+   */
+  constructor(model, lianaOptions, queryString, user) {
     this.model = model;
-    this.options = options;
-    this.params = params;
+    this.lianaOptions = lianaOptions;
+    this.queryString = queryString;
+    this.user = user;
+
     this.schema = Schemas.schemas[model.name];
-    this.queryBuilder = new QueryBuilder(model, options, params);
-    this.operators = Operators.getInstance(options);
+    this.queryBuilder = new QueryBuilder(model, lianaOptions, queryString);
+    this.operators = Operators.getInstance(lianaOptions);
     [this.primaryKey] = _.keys(model.primaryKeys);
-    this.filterParser = new FiltersParser(this.schema, params.timezone, options);
+    this.filterParser = new FiltersParser(this.schema, queryString.timezone, lianaOptions);
+  }
+
+  /**
+   * Compute filter from user provided filters and scopes
+   */
+  async getFilters() {
+    const scopeFilter = await ScopeProvider.getScopeFilterAsJson(this.model, this.user);
+    const userFilter = this.queryString.filters;
+
+    if (scopeFilter && userFilter) {
+      return JSON.stringify({
+        aggregator: 'and',
+        conditions: [JSON.parse(scopeFilter), JSON.parse(userFilter)],
+      });
+    } if (scopeFilter) {
+      return scopeFilter;
+    }
+    return userFilter;
   }
 
   async getAssociations(filters, sort) {
@@ -35,7 +68,8 @@ class ResourcesGetter {
   }
 
   async getFieldNamesRequested() {
-    const { fields, filters, sort } = this.params;
+    const { fields, sort } = this.queryString;
+    const filters = await this.getFilters();
     if (!fields || !fields[this.model.name]) { return null; }
 
     const associations = await this.getAssociations(filters, sort);
@@ -58,7 +92,7 @@ class ResourcesGetter {
     try {
       const connection = this.model.sequelize;
       const results = await connection.query(queryToFilterRecords, {
-        type: this.options.Sequelize.QueryTypes.SELECT,
+        type: this.lianaOptions.Sequelize.QueryTypes.SELECT,
       });
 
       const recordIds = results.map((result) => result[this.primaryKey] || result.id);
@@ -73,7 +107,9 @@ class ResourcesGetter {
     }
   }
 
-  async buildWhereConditions(searchBuilder, { search, filters, segmentQuery }, segment) {
+  async buildWhereConditions(searchBuilder, queryString, segment) {
+    const { search, segmentQuery } = queryString;
+    const filters = await this.getFilters();
     const { AND } = this.operators;
     const where = { [AND]: [] };
 
@@ -137,7 +173,7 @@ class ResourcesGetter {
     const scope = segmentScope ? this.model.scope(segmentScope) : this.model.unscoped();
     const include = this.queryBuilder.getIncludes(this.model, fieldNamesRequested);
 
-    const where = await this.buildWhereConditions(searchBuilder, this.params, segment);
+    const where = await this.buildWhereConditions(searchBuilder, this.queryString, segment);
 
     const queryOptions = {
       where,
@@ -147,7 +183,7 @@ class ResourcesGetter {
       limit: this.queryBuilder.getLimit(),
     };
 
-    const { search, searchExtended } = this.params;
+    const { search, searchExtended } = this.queryString;
 
     if (search) {
       const hasCustomFieldSearch = this.addCustomFieldSearchToQueryOptions(
@@ -168,21 +204,17 @@ class ResourcesGetter {
     return scope.findAll(queryOptions);
   }
 
-
   async count() {
     const fieldNamesRequested = await this.getFieldNamesRequested();
     const searchBuilder = new SearchBuilder(
-      this.model,
-      this.options,
-      this.params,
-      fieldNamesRequested,
+      this.model, this.lianaOptions, this.queryString, fieldNamesRequested,
     );
     const segment = await this.getSegment();
     const segmentScope = segment && segment.scope;
     const scope = segmentScope ? this.model.scope(segmentScope) : this.model.unscoped();
     const include = this.queryBuilder.getIncludes(this.model, fieldNamesRequested);
 
-    const where = await this.buildWhereConditions(searchBuilder, this.params, segment);
+    const where = await this.buildWhereConditions(searchBuilder, this.queryString, segment);
 
     const queryOptions = {
       include,
@@ -194,7 +226,7 @@ class ResourcesGetter {
       queryOptions.col = '*';
     }
 
-    const { search, searchExtended } = this.params;
+    const { search, searchExtended } = this.queryString;
 
     if (search) {
       const hasCustomFieldSearch = this.addCustomFieldSearchToQueryOptions(
@@ -217,15 +249,15 @@ class ResourcesGetter {
   }
 
   async getSegment() {
-    if (!this.schema.segments || !this.params.segment) return null;
+    if (!this.schema.segments || !this.queryString.segment) return null;
 
     const segment = _.find(
       this.schema.segments,
-      (schemaSegment) => schemaSegment.name === this.params.segment,
+      (schemaSegment) => schemaSegment.name === this.queryString.segment,
     );
 
     if (segment && segment.where && _.isFunction(segment.where)) {
-      segment.where = await segment.where(this.params);
+      segment.where = await segment.where(this.queryString);
     }
 
     return segment;
@@ -235,15 +267,15 @@ class ResourcesGetter {
     const fieldNamesRequested = await this.getFieldNamesRequested();
     const searchBuilder = new SearchBuilder(
       this.model,
-      this.options,
-      this.params,
+      this.lianaOptions,
+      this.queryString,
       fieldNamesRequested,
     );
 
     const records = await this.getRecords(searchBuilder, fieldNamesRequested);
     let fieldsSearched = null;
 
-    if (this.params.search) {
+    if (this.queryString.search) {
       fieldsSearched = searchBuilder.getFieldsSearched();
     }
 
