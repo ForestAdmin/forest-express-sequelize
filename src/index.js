@@ -27,6 +27,7 @@ const QueryStatGetter = require('./services/query-stat-getter');
 const FiltersParser = require('./services/filters-parser');
 
 const RecordsDecorator = require('./utils/records-decorator');
+const makeParseFilter = require('./public/parse-filter');
 
 const REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
 
@@ -50,18 +51,7 @@ exports.RecordRemover = Interface.RecordRemover;
 exports.RecordsRemover = Interface.RecordsRemover;
 exports.RecordSerializer = Interface.RecordSerializer;
 exports.BaseOperatorDateParser = BaseOperatorDateParser;
-
-/**
- * @param {*} filter
- * @param {*} modelSchema
- * @param {string} timezone
- * @returns {Promise<any>} Sequelize condition
- */
-exports.parseFilter = (filter, modelSchema, timezone) => {
-  const parser = new FiltersParser(modelSchema, timezone, exports.opts);
-
-  return parser.perform(JSON.stringify(filter));
-};
+exports.parseFilter = makeParseFilter(FiltersParser, exports);
 
 exports.PUBLIC_ROUTES = Interface.PUBLIC_ROUTES;
 
