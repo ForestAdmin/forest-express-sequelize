@@ -152,6 +152,11 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       underscored: true,
     });
 
+    models.car = sequelize.define('car', {
+      brand: { type: Sequelize.STRING },
+      model: { type: Sequelize.STRING },
+    });
+
     models.address.belongsTo(models.user);
     models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
     models.user.hasMany(models.address);
@@ -399,6 +404,38 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             { field: 'customerId', type: 'Number', reference: 'customer.id' },
             { field: 'name', type: 'STRING' },
           ],
+        },
+        car: {
+          name: 'car',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'brand', type: 'String' },
+            { field: 'model', type: 'String' },
+            {
+              field: 'name',
+              isVirtual: true,
+              type: 'String',
+              get: (car) => `${car.brand} ${car.model}`,
+              search: (query, search) => {
+                const split = search.split(' ');
+                const searchCondition = {
+                  [Sequelize.Op.and]: [
+                    { brand: { [Sequelize.Op.like]: `%${split[0]}%` } },
+                    { model: { [Sequelize.Op.like]: `%${split[1]}%` } },
+                  ],
+                };
+                query.where[Sequelize.Op.and][0][Sequelize.Op.or].push(searchCondition);
+                return query;
+              },
+            },
+          ],
+          segments: [{
+            name: 'only monza sp*',
+            where: () => ({ model: { [Sequelize.Op.like]: '%Monza SP%' } }),
+          }],
         },
       },
     };
@@ -1150,6 +1187,168 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               connectionManager.closeConnection();
             }
           });
+        });
+
+        describe('with a "string" search on a smart field', () => {
+          it('should return the records for the specified page', async () => {
+            expect.assertions(3);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                car: 'id,name',
+              },
+              page: { number: '1', size: '30' },
+              search: 'Ferrari Enzo',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const result = await new ResourcesGetter(models.car, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+              expect(result[0][0].brand).toStrictEqual('Ferrari');
+              expect(result[0][0].model).toStrictEqual('Enzo');
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should return the total records count', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              search: 'Ferrari Enzo',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const count = await new ResourcesGetter(models.car, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      });
+
+      describe('with live query segment', () => {
+        describe('with a valid query', () => {
+          it('should return the records filtered by the segment', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
+              },
+              page: { number: '1', size: '30' },
+              timezone: 'Europe/Paris',
+              segmentQuery: "SELECT * FROM users WHERE users.email = 'richard@piedpiper.com'",
+            };
+            try {
+              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should return the total records count filtered by the segment', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              search: '10',
+              timezone: 'Europe/Paris',
+              segmentQuery: "SELECT * FROM users WHERE users.email = 'richard@piedpiper.com'",
+            };
+            try {
+              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
+                .count();
+
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+
+        describe('with an invalid query', () => {
+          it('should raise an error on perform', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              fields: {
+                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
+              },
+              page: { number: '1', size: '30' },
+              timezone: 'Europe/Paris',
+              segmentQuery: 'SELECT * FROM use',
+            };
+            try {
+              await expect(new ResourcesGetter(models.user, sequelizeOptions, params).perform())
+                .rejects.toThrow('Invalid SQL query for this Live Query segment');
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should raise an error on count', async () => {
+            expect.assertions(1);
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = {
+              search: '10',
+              timezone: 'Europe/Paris',
+              segmentQuery: 'SELECT * FROM use',
+            };
+            try {
+              await expect(new ResourcesGetter(models.user, sequelizeOptions, params).count())
+                .rejects.toThrow('Invalid SQL query for this Live Query segment');
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      });
+
+      describe('with segment defined on the liana side', () => {
+        it('should return the records filtered by the segment', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const params = {
+            fields: {
+              car: 'id,brand,model',
+            },
+            page: { number: '1', size: '30' },
+            timezone: 'Europe/Paris',
+            segment: 'only monza sp*',
+          };
+          try {
+            const result = await new ResourcesGetter(models.car, sequelizeOptions, params)
+              .perform();
+            expect(result[0]).toHaveLength(2);
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should return the total records count filtered by the segment', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const params = {
+            fields: {
+              car: 'id,brand,model',
+            },
+            page: { number: '1', size: '30' },
+            timezone: 'Europe/Paris',
+            segment: 'only monza sp*',
+          };
+          try {
+            const count = await new ResourcesGetter(models.car, sequelizeOptions, params)
+              .count();
+
+            expect(count).toStrictEqual(2);
+          } finally {
+            connectionManager.closeConnection();
+          }
         });
       });
 

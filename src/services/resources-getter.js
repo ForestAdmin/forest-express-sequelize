@@ -1,5 +1,4 @@
 import _ from 'lodash';
-import P from 'bluebird';
 import { Schemas, logger } from 'forest-express';
 import Operators from '../utils/operators';
 import CompositeKeysManager from './composite-keys-manager';
@@ -10,32 +9,37 @@ import { ErrorHTTP422 } from './errors';
 import FiltersParser from './filters-parser';
 import extractRequestedFields from './requested-fields-extractor';
 
-function ResourcesGetter(model, options, params) {
-  const schema = Schemas.schemas[model.name];
-  const queryBuilder = new QueryBuilder(model, options, params);
-  let segmentScope;
-  let segmentWhere;
-  const OPERATORS = Operators.getInstance(options);
-  const primaryKey = _.keys(model.primaryKeys)[0];
-  const filterParser = new FiltersParser(schema, params.timezone, options);
-  let fieldNamesRequested;
-  let searchBuilder;
+class ResourcesGetter {
+  constructor(model, options, params) {
+    this.model = model;
+    this.options = options;
+    this.params = params;
+    this.schema = Schemas.schemas[model.name];
+    this.queryBuilder = new QueryBuilder(model, options, params);
+    this.operators = Operators.getInstance(options);
+    [this.primaryKey] = _.keys(model.primaryKeys);
+    this.filterParser = new FiltersParser(this.schema, params.timezone, options);
+  }
 
-  async function getFieldNamesRequested() {
-    if (!params.fields || !params.fields[model.name]) { return null; }
-
+  async getAssociations(filters, sort) {
     // NOTICE: Populate the necessary associations for filters
-    const associations = params.filters ? await filterParser.getAssociations(params.filters) : [];
+    const associations = filters ? await this.filterParser.getAssociations(filters) : [];
 
-    if (params.sort && params.sort.includes('.')) {
-      let associationFromSorting = params.sort.split('.')[0];
+    if (sort && sort.includes('.')) {
+      let associationFromSorting = sort.split('.')[0];
       if (associationFromSorting[0] === '-') {
         associationFromSorting = associationFromSorting.substring(1);
       }
       associations.push(associationFromSorting);
     }
+  }
 
-    const requestedFields = extractRequestedFields(params.fields, model, Schemas.schemas);
+  async getFieldNamesRequested() {
+    const { fields, filters, sort } = this.params;
+    if (!fields || !fields[this.model.name]) { return null; }
+
+    const associations = await this.getAssociations(filters, sort);
+    const requestedFields = extractRequestedFields(fields, this.model, Schemas.schemas);
 
     return _.union(
       associations,
@@ -43,209 +47,215 @@ function ResourcesGetter(model, options, params) {
     );
   }
 
-  function getSearchBuilder() {
-    if (searchBuilder) {
-      return searchBuilder;
-    }
+  async buildSegmentQueryCondition(segmentQuery) {
+    const { IN } = this.operators;
+    const queryToFilterRecords = segmentQuery.trim();
 
-    searchBuilder = new SearchBuilder(
-      model,
-      options,
-      params,
-      fieldNamesRequested,
-    );
-    return searchBuilder;
+    new LiveQueryChecker().perform(queryToFilterRecords);
+
+    // WARNING: Choosing the first connection might generate issues if the model does not
+    //          belongs to this database.
+    try {
+      const connection = this.model.sequelize;
+      const results = await connection.query(queryToFilterRecords, {
+        type: this.options.Sequelize.QueryTypes.SELECT,
+      });
+
+      const recordIds = results.map((result) => result[this.primaryKey] || result.id);
+      const condition = { [this.primaryKey]: {} };
+      condition[this.primaryKey][IN] = recordIds;
+
+      return condition;
+    } catch (error) {
+      const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
+      logger.error(errorMessage);
+      throw new ErrorHTTP422(errorMessage);
+    }
   }
 
-  let hasSmartFieldSearch = false;
+  async buildWhereConditions(searchBuilder, { search, filters, segmentQuery }, segment) {
+    const { AND } = this.operators;
+    const where = { [AND]: [] };
 
-  async function handleFilterParams() {
-    return filterParser.perform(params.filters);
-  }
-
-  async function getWhere() {
-    const where = {};
-    where[OPERATORS.AND] = [];
-
-    if (params.search) {
-      where[OPERATORS.AND].push(getSearchBuilder().perform());
+    if (search) {
+      const searchCondition = searchBuilder.perform();
+      where[AND].push(searchCondition);
     }
 
-    if (params.filters) {
-      where[OPERATORS.AND].push(await handleFilterParams());
+    if (filters) {
+      const formattedFilters = await this.filterParser.perform(filters);
+      where[AND].push(formattedFilters);
     }
 
+    const segmentWhere = segment && segment.where;
     if (segmentWhere) {
-      where[OPERATORS.AND].push(segmentWhere);
+      where[AND].push(segmentWhere);
     }
 
-    if (params.segmentQuery) {
-      const queryToFilterRecords = params.segmentQuery.trim();
-
-      new LiveQueryChecker().perform(queryToFilterRecords);
-
-      // WARNING: Choosing the first connection might generate issues if the model does not
-      //          belongs to this database.
-      try {
-        const connection = model.sequelize;
-        const results = await connection.query(queryToFilterRecords, {
-          type: options.Sequelize.QueryTypes.SELECT,
-        });
-
-        const recordIds = results.map((result) => result[primaryKey] || result.id);
-        const condition = { [primaryKey]: {} };
-        condition[primaryKey][OPERATORS.IN] = recordIds;
-        where[OPERATORS.AND].push(condition);
-
-        return where;
-      } catch (error) {
-        const errorMessage = `Invalid SQL query for this Live Query segment:\n${error.message}`;
-        logger.error(errorMessage);
-        throw new ErrorHTTP422(errorMessage);
-      }
+    if (segmentQuery) {
+      const segmentQueryCondition = await this.buildSegmentQueryCondition(segmentQuery);
+      where[AND].push(segmentQueryCondition);
     }
 
     return where;
   }
 
-  async function getRecords() {
-    fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
+  /**
+   * @param {any} queryOptions The predefined query options containing sorts, filters and
+   * search on basic fields
+   * @param {any} schemaFields The fields definition issued from the user agent
+   * @param {string} searchValue The searchValue provided by the user through the request
+   * @returns {boolean} A boolean stating if options have been added due to custom
+   * search definition
+   */
+  // eslint-disable-next-line class-methods-use-this
+  addCustomFieldSearchToQueryOptions(queryOptions, schemaFields, searchValue) {
+    let hasCustomFieldSearch = false;
 
-    const scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
-    const include = queryBuilder.getIncludes(model, fieldNamesRequested);
-
-    return getWhere()
-      .then((where) => {
-        const findAllOpts = {
-          where,
-          include,
-          order: queryBuilder.getOrder(),
-          offset: queryBuilder.getSkip(),
-          limit: queryBuilder.getLimit(),
-        };
-
-        if (params.search) {
-          _.each(schema.fields, (field) => {
-            if (field.search) {
-              try {
-                field.search(findAllOpts, params.search);
-                hasSmartFieldSearch = true;
-              } catch (error) {
-                logger.error(
-                  `Cannot search properly on Smart Field ${field.field}`,
-                  error,
-                );
-              }
-            }
-          });
-
-          const fieldsSearched = getSearchBuilder().getFieldsSearched();
-          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
-            if (!params.searchExtended
-              || !getSearchBuilder().hasExtendedSearchConditions()) {
-              // NOTICE: No search condition has been set for the current search, no record can be
-              //         found.
-              return [];
-            }
-          }
+    _.each(schemaFields, (field) => {
+      if (field.search) {
+        try {
+          // Custom field search definition adds custom conditions
+          // to the query where clause
+          field.search(queryOptions, searchValue);
+          hasCustomFieldSearch = true;
+        } catch (error) {
+          logger.error(
+            `Cannot search properly on Smart Field ${field.field}`,
+            error,
+          );
         }
+      }
+    });
 
-        return scope.findAll(findAllOpts);
-      });
+    return hasCustomFieldSearch;
   }
 
-  async function countRecords() {
-    fieldNamesRequested = fieldNamesRequested || await getFieldNamesRequested();
+  async getRecords(searchBuilder, fieldNamesRequested) {
+    const segment = await this.getSegment();
+    const segmentScope = segment && segment.scope;
+    const scope = segmentScope ? this.model.scope(segmentScope) : this.model.unscoped();
+    const include = this.queryBuilder.getIncludes(this.model, fieldNamesRequested);
 
-    const scope = segmentScope ? model.scope(segmentScope) : model.unscoped();
-    const include = queryBuilder.getIncludes(model, fieldNamesRequested);
+    const where = await this.buildWhereConditions(searchBuilder, this.params, segment);
 
-    return getWhere()
-      .then((where) => {
-        const countOptions = {
-          include,
-          where,
-        };
+    const queryOptions = {
+      where,
+      include,
+      order: this.queryBuilder.getOrder(),
+      offset: this.queryBuilder.getSkip(),
+      limit: this.queryBuilder.getLimit(),
+    };
 
-        if (!primaryKey) {
-          // NOTICE: If no primary key is found, use * as a fallback for Sequelize.
-          countOptions.col = '*';
-        }
+    const { search, searchExtended } = this.params;
 
-        if (params.search) {
-          _.each(schema.fields, (field) => {
-            if (field.search) {
-              try {
-                field.search(countOptions, params.search);
-                hasSmartFieldSearch = true;
-              } catch (error) {
-                logger.error(
-                  `Cannot search properly on Smart Field ${field.field}`,
-                  error,
-                );
-              }
-            }
-          });
-
-          const fieldsSearched = getSearchBuilder().getFieldsSearched();
-          if (fieldsSearched.length === 0 && !hasSmartFieldSearch) {
-            if (!params.searchExtended
-              || !getSearchBuilder().hasExtendedSearchConditions()) {
-              // NOTICE: No search condition has been set for the current search, no record can be
-              //         found.
-              return 0;
-            }
-          }
-        }
-
-        return scope.count(countOptions);
-      });
-  }
-
-  function getSegment() {
-    if (schema.segments && params.segment) {
-      const segment = _.find(
-        schema.segments,
-        (schemaSegment) => schemaSegment.name === params.segment,
+    if (search) {
+      const hasCustomFieldSearch = this.addCustomFieldSearchToQueryOptions(
+        queryOptions, this.schema.fields, search,
       );
 
-      segmentScope = segment.scope;
-      segmentWhere = segment.where;
+      const fieldsSearched = searchBuilder.getFieldsSearched();
+
+      if (fieldsSearched.length === 0 && !hasCustomFieldSearch) {
+        if (!searchExtended || !searchBuilder.hasExtendedSearchConditions()) {
+          // NOTICE: No search condition has been set for the current search, no record can be
+          //         found.
+          return [];
+        }
+      }
     }
+
+    return scope.findAll(queryOptions);
   }
 
-  async function getSegmentCondition() {
-    getSegment();
-    if (_.isFunction(segmentWhere)) {
-      return segmentWhere(params)
-        .then((where) => {
-          segmentWhere = where;
-        });
+
+  async count() {
+    const fieldNamesRequested = await this.getFieldNamesRequested();
+    const searchBuilder = new SearchBuilder(
+      this.model,
+      this.options,
+      this.params,
+      fieldNamesRequested,
+    );
+    const segment = await this.getSegment();
+    const segmentScope = segment && segment.scope;
+    const scope = segmentScope ? this.model.scope(segmentScope) : this.model.unscoped();
+    const include = this.queryBuilder.getIncludes(this.model, fieldNamesRequested);
+
+    const where = await this.buildWhereConditions(searchBuilder, this.params, segment);
+
+    const queryOptions = {
+      include,
+      where,
+    };
+
+    if (!this.primaryKey) {
+      // NOTICE: If no primary key is found, use * as a fallback for Sequelize.
+      queryOptions.col = '*';
     }
-    return P.resolve();
+
+    const { search, searchExtended } = this.params;
+
+    if (search) {
+      const hasCustomFieldSearch = this.addCustomFieldSearchToQueryOptions(
+        queryOptions, this.schema.fields, search,
+      );
+
+      const fieldsSearched = searchBuilder.getFieldsSearched();
+
+      if (fieldsSearched.length === 0 && !hasCustomFieldSearch) {
+        if (!searchExtended
+          || !searchBuilder.hasExtendedSearchConditions()) {
+          // NOTICE: No search condition has been set for the current search, no record can be
+          //         found.
+          return 0;
+        }
+      }
+    }
+
+    return scope.count(queryOptions);
   }
 
-  this.perform = async () =>
-    getSegmentCondition()
-      .then(getRecords)
-      .then((records) => {
-        let fieldsSearched = null;
+  async getSegment() {
+    if (!this.schema.segments || !this.params.segment) return null;
 
-        if (params.search) {
-          fieldsSearched = getSearchBuilder().getFieldsSearched();
-        }
+    const segment = _.find(
+      this.schema.segments,
+      (schemaSegment) => schemaSegment.name === this.params.segment,
+    );
 
-        if (schema.isCompositePrimary) {
-          records.forEach((record) => {
-            record.forestCompositePrimary = new CompositeKeysManager(model, schema, record)
-              .createCompositePrimary();
-          });
-        }
+    if (segment && segment.where && _.isFunction(segment.where)) {
+      segment.where = await segment.where(this.params);
+    }
 
-        return [records, fieldsSearched];
+    return segment;
+  }
+
+  async perform() {
+    const fieldNamesRequested = await this.getFieldNamesRequested();
+    const searchBuilder = new SearchBuilder(
+      this.model,
+      this.options,
+      this.params,
+      fieldNamesRequested,
+    );
+
+    const records = await this.getRecords(searchBuilder, fieldNamesRequested);
+    let fieldsSearched = null;
+
+    if (this.params.search) {
+      fieldsSearched = searchBuilder.getFieldsSearched();
+    }
+
+    if (this.schema.isCompositePrimary) {
+      records.forEach((record) => {
+        record.forestCompositePrimary = new CompositeKeysManager(this.model, this.schema, record)
+          .createCompositePrimary();
       });
+    }
 
-  this.count = async () => getSegmentCondition().then(countRecords);
+    return [records, fieldsSearched];
+  }
 }
 
 module.exports = ResourcesGetter;
