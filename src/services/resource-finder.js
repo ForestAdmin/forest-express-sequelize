@@ -2,7 +2,7 @@ const _ = require('lodash');
 const Interface = require('forest-express');
 const CompositeKeysManager = require('./composite-keys-manager');
 
-function ResourceFinder(model, params, withIncludes) {
+function ResourceFinder(model, lianaOptions, params, withIncludes, user) {
   const schema = Interface.Schemas.schemas[model.name];
   const compositeKeysManager = new CompositeKeysManager(model, schema, params);
 

@@ -8,7 +8,7 @@ function ResourceGetter(model, lianaOptions, params, user) {
   const schema = Interface.Schemas.schemas[model.name];
 
   this.perform = function perform() {
-    return new ResourceFinder(model, params, true)
+    return new ResourceFinder(model, lianaOptions, params, true, user)
       .perform()
       .then((record) => {
         if (!record) {
