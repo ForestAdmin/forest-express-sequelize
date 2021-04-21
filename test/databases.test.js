@@ -1562,7 +1562,6 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
       describe('request on the resources getter with a search on a bigInt primary key', () => {
         describe('with a bigInt that does not matches', () => {
-
           it('should return 0 records for the specified page', async () => {
             expect.assertions(1);
 
@@ -1570,7 +1569,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
-            await models.bird.update({ id: BigInt('9223372036854770000') }, { where: { name: 'eagle' } });
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
 
             const params = {
               fields: {
@@ -1596,7 +1598,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
-            await models.bird.update({ id: BigInt('9223372036854770000') }, { where: { name: 'eagle' } });
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
 
             const params = {
               search: '9223372036854770001',
@@ -1620,7 +1625,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
-            await models.bird.update({ id: BigInt('9223372036854770000') }, { where: { name: 'eagle' } });
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
 
             const params = {
               fields: {
@@ -1646,7 +1654,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
-            await models.bird.update({ id: BigInt('9223372036854770000') }, { where: { name: 'eagle' } });
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
 
             const params = {
               search: '9223372036854770000',
