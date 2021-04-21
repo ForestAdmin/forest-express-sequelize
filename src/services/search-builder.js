@@ -98,8 +98,22 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         const primaryKeyType = model.primaryKeys[schema.idField].type;
 
         if (primaryKeyType instanceof DataTypes.INTEGER) {
-          const value = parseInt(params.search, 10) || 0;
-          if (value) {
+          const searchAsNumber = Number(params.search);
+          let value;
+
+          if (!Number.isNaN(searchAsNumber)) {
+            if (Number.isInteger(searchAsNumber)
+              && !Number.isSafeInteger(searchAsNumber)
+              && primaryKeyType instanceof DataTypes.BIGINT) {
+              // Numbers higher than MAX_SAFE_INTEGER need to be handled as strings to circumvent
+              // precision problems only if the field type is a big int.
+              value = params.search;
+            } else {
+              value = searchAsNumber;
+            }
+          }
+
+          if (value !== undefined) {
             condition[field.field] = value;
             pushCondition(condition, field.field);
           }
