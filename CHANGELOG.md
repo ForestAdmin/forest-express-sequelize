@@ -1,3 +1,10 @@
+## [7.6.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.0...v7.6.1) (2021-04-21)
+
+
+### Bug Fixes
+
+* **security:** patch ssri dependency vulnerability ([#690](https://github.com/ForestAdmin/forest-express-sequelize/issues/690)) ([6b0770d](https://github.com/ForestAdmin/forest-express-sequelize/commit/6b0770d91ffdecff0a78d5c623b3a28d40c17744))
+
 # [7.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.5.1...v7.6.0) (2021-04-16)
 
 
