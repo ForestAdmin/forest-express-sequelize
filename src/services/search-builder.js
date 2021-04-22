@@ -148,15 +148,22 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'Number') {
-        let value = Number(params.search);
+        const searchAsNumber = Number(params.search);
+        let value;
 
-        if (!Number.isNaN(value)) {
-          if (Number.isInteger(value) && !Number.isSafeInteger(value)) {
-            // NOTE: Numbers higher than MAX_SAFE_INTEGER need to be handled as
-            //       strings to circumvent precision problems
+        if (!Number.isNaN(searchAsNumber)) {
+          if (Number.isInteger(searchAsNumber)
+            && !Number.isSafeInteger(searchAsNumber)
+            && model.rawAttributes[field.field].type instanceof DataTypes.BIGINT) {
+            // Numbers higher than MAX_SAFE_INTEGER need to be handled as strings to circumvent
+            // precision problems only if the field type is a big int.
             value = params.search;
+          } else {
+            value = searchAsNumber;
           }
+        }
 
+        if (value !== undefined) {
           condition[field.field] = value;
           pushCondition(condition, field.field);
         }
