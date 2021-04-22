@@ -1,3 +1,10 @@
+## [7.6.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.1...v7.6.2) (2021-04-22)
+
+
+### Bug Fixes
+
+* **search:** searching for a big int value should not break if there is a regular integer field ([#694](https://github.com/ForestAdmin/forest-express-sequelize/issues/694)) ([af076ad](https://github.com/ForestAdmin/forest-express-sequelize/commit/af076ad208b0bfb9e186568b13ea488d0a2c545f))
+
 ## [7.6.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.0...v7.6.1) (2021-04-21)
 
 
