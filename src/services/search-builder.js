@@ -86,6 +86,23 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       fieldsSearched.push(fieldName);
     }
 
+    function getConditionValueForNumber(search, keyType) {
+      const searchAsNumber = Number(search);
+
+      if (Number.isNaN(searchAsNumber)) {
+        return null;
+      }
+      if (Number.isSafeInteger(searchAsNumber) || !Number.isInteger(searchAsNumber)) {
+        return searchAsNumber;
+      }
+      // Integers higher than MAX_SAFE_INTEGER need to be handled as strings to circumvent
+      // precision problems only if the field type is a big int.
+      if (keyType instanceof DataTypes.BIGINT) {
+        return search;
+      }
+      return null;
+    }
+
     _.each(fields, (field) => {
       if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
       if (field.integration) { return; } // NOTICE: Ignore integration fields.
@@ -98,9 +115,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         const primaryKeyType = model.primaryKeys[schema.idField].type;
 
         if (primaryKeyType instanceof DataTypes.INTEGER) {
-          const value = parseInt(params.search, 10) || 0;
-          if (value) {
-            condition[field.field] = value;
+          const conditionValue = getConditionValueForNumber(params.search, primaryKeyType);
+
+          if (conditionValue !== null) {
+            condition[field.field] = conditionValue;
             pushCondition(condition, field.field);
           }
         } else if (primaryKeyType instanceof DataTypes.STRING) {
@@ -148,23 +166,13 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'Number') {
-        const searchAsNumber = Number(params.search);
-        let value;
+        const conditionValue = getConditionValueForNumber(
+          params.search,
+          model.rawAttributes[field.field].type,
+        );
 
-        if (!Number.isNaN(searchAsNumber)) {
-          if (Number.isInteger(searchAsNumber)
-            && !Number.isSafeInteger(searchAsNumber)
-            && model.rawAttributes[field.field].type instanceof DataTypes.BIGINT) {
-            // Numbers higher than MAX_SAFE_INTEGER need to be handled as strings to circumvent
-            // precision problems only if the field type is a big int.
-            value = params.search;
-          } else {
-            value = searchAsNumber;
-          }
-        }
-
-        if (value !== undefined) {
-          condition[field.field] = value;
+        if (conditionValue !== null) {
+          condition[field.field] = conditionValue;
           pushCondition(condition, field.field);
         }
       }
