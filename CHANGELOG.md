@@ -1,3 +1,10 @@
+## [7.6.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.2...v7.6.3) (2021-04-22)
+
+
+### Bug Fixes
+
+* **search:** enable to search for a big integer in an ID field ([#695](https://github.com/ForestAdmin/forest-express-sequelize/issues/695)) ([9f8132c](https://github.com/ForestAdmin/forest-express-sequelize/commit/9f8132c3c920b4a29178fd35cf4dc56179cc8c8b))
+
 ## [7.6.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.1...v7.6.2) (2021-04-22)
 
 
