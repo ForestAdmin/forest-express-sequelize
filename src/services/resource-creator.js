@@ -5,7 +5,7 @@ const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
 const CompositeKeysManager = require('./composite-keys-manager');
 const associationRecord = require('../utils/association-record');
-const primaryKeyIsForeignKey = require('../utils/primaryKey-is-ForeignKey');
+const isPrimaryKeyAForeignKey = require('../utils/is-primary-key-a-foreign-key');
 
 class ResourceCreator {
   constructor(model, params) {
@@ -15,11 +15,11 @@ class ResourceCreator {
   }
 
   async _getTargetKey(name, association) {
-    const pk = this.params[name];
+    const primaryKey = this.params[name];
 
-    let targetKey = pk;
-    if (typeof pk !== 'undefined' && association.targetKey !== 'id') {
-      const record = await associationRecord.get(association.target, pk);
+    let targetKey = primaryKey;
+    if (typeof primaryKey !== 'undefined' && association.targetKey !== 'id') {
+      const record = await associationRecord.get(association.target, primaryKey);
       targetKey = record[association.targetKey];
     }
     return targetKey;
@@ -29,8 +29,8 @@ class ResourceCreator {
     if (association.associationType === 'BelongsTo') {
       const setterName = `set${_.upperFirst(name)}`;
       const targetKey = await this._getTargetKey(name, association);
-      const pkIsFk = primaryKeyIsForeignKey(association);
-      if (pkIsFk) {
+      const primaryKeyIsAForeignKey = isPrimaryKeyAForeignKey(association);
+      if (primaryKeyIsAForeignKey) {
         record[association.source.primaryKeyAttribute] = this.params[name];
       }
       return record[setterName](targetKey, { save: false });

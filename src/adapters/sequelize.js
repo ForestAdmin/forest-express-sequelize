@@ -3,7 +3,7 @@ const P = require('bluebird');
 const Interface = require('forest-express');
 const ApimapFieldBuilder = require('../services/apimap-field-builder');
 const ApimapFieldTypeDetector = require('../services/apimap-field-type-detector');
-const primaryKeyIsForeignKey = require('../utils/primaryKey-is-ForeignKey');
+const isPrimaryKeyAForeignKey = require('../utils/is-primary-key-a-foreign-key');
 
 module.exports = (model, opts) => {
   const fields = [];
@@ -84,11 +84,11 @@ module.exports = (model, opts) => {
       }
 
       Object.entries(model.associations).forEach(([, association]) => {
-        const pkIsFk = primaryKeyIsForeignKey(association);
-        if (pkIsFk) {
-          const fk = fields.find((field) => field.reference === `${association.associationAccessor}.${association.foreignKey}`);
-          if (fk) {
-            fk.foreignAndPrimaryKey = true;
+        const primaryKeyIsAForeignKey = isPrimaryKeyAForeignKey(association);
+        if (primaryKeyIsAForeignKey) {
+          const FieldWithForeignKey = fields.find((field) => field.reference === `${association.associationAccessor}.${association.foreignKey}`);
+          if (FieldWithForeignKey) {
+            FieldWithForeignKey.foreignAndPrimaryKey = true;
           }
         }
       });
