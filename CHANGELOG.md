@@ -1,3 +1,10 @@
+## [7.6.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.3...v7.6.4) (2021-04-27)
+
+
+### Bug Fixes
+
+* **schema:** do not remove primary key fields from the schema when tables have foreign keys that are primary keys ([8844fb5](https://github.com/ForestAdmin/forest-express-sequelize/commit/8844fb5631ce6335dc66d7ee33433b12e2618611))
+
 ## [7.6.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.2...v7.6.3) (2021-04-22)
 
 
