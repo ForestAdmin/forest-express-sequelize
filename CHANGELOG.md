@@ -1,3 +1,10 @@
+# [7.7.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.4...v7.7.0) (2021-04-28)
+
+
+### Features
+
+* support yarn 2 plug n play install mode ([#698](https://github.com/ForestAdmin/forest-express-sequelize/issues/698)) ([64b5734](https://github.com/ForestAdmin/forest-express-sequelize/commit/64b5734af0e6da5d2a3f73ddb44966162aa5a317))
+
 ## [7.6.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.3...v7.6.4) (2021-04-27)
 
 
