@@ -1,4 +1,4 @@
-import { Schemas, ScopeManager } from 'forest-express';
+import { Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import moment from 'moment';
 import { isMSSQL } from '../utils/database';
@@ -82,7 +82,7 @@ function PieStatGetter(model, params, options) {
 
   this.perform = async () => {
     const { filters, timezone } = params;
-    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);

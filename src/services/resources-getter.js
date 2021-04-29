@@ -1,4 +1,4 @@
-import { Schemas, ScopeManager } from 'forest-express';
+import { Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import CompositeKeysManager from './composite-keys-manager';
 import QueryOptions from './query-options';
@@ -56,7 +56,7 @@ class ResourcesGetter {
     } = this._params;
 
     const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
-    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name);
 
     const queryOptions = new QueryOptions(this._model, { tableAlias });
     await queryOptions.requireFields(requestedFields);

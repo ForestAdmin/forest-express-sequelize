@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import { BaseOperatorDateParser, Schemas, ScopeManager } from 'forest-express';
+import { BaseOperatorDateParser, Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import Operators from '../utils/operators';
 import Orm from '../utils/orm';
@@ -37,7 +37,7 @@ class ValueStatGetter {
 
   async perform() {
     const { filters, timezone } = this._params;
-    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name);
 
     const queryOptions = new QueryOptions(this._model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);

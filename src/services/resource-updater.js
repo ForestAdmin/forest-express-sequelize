@@ -1,4 +1,4 @@
-import { ScopeManager } from 'forest-express';
+import { scopeManager } from 'forest-express';
 import { ErrorHTTP422 } from './errors';
 import QueryOptions from './query-options';
 import ResourceGetter from './resource-getter';
@@ -13,7 +13,7 @@ class ResourceUpdater {
 
   async perform() {
     const { timezone } = this._params;
-    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name);
 
     const queryOptions = new QueryOptions(this._model);
     await queryOptions.filterByIds([this._params.recordId]);

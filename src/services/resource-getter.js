@@ -1,4 +1,4 @@
-import { ScopeManager } from 'forest-express';
+import { scopeManager } from 'forest-express';
 import createError from 'http-errors';
 import CompositeKeysManager from './composite-keys-manager';
 import QueryOptions from './query-options';
@@ -12,7 +12,7 @@ class ResourceGetter {
 
   async perform() {
     const { timezone } = this._params;
-    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name);
 
     const queryOptions = new QueryOptions(this._model, { includeRelations: true });
     await queryOptions.filterByIds([this._params.recordId]);
