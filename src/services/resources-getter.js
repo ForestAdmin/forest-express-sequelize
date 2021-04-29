@@ -1,14 +1,15 @@
+import { Schemas, ScopeManager } from 'forest-express';
 import _ from 'lodash';
-import { Schemas } from 'forest-express';
 import CompositeKeysManager from './composite-keys-manager';
 import QueryOptions from './query-options';
 import extractRequestedFields from './requested-fields-extractor';
 
 class ResourcesGetter {
-  constructor(model, lianaOptions, params) {
+  constructor(model, lianaOptions, params, user) {
     // The liana options argument is kept for retro-compatibility.
     this._model = model.unscoped();
     this._params = params;
+    this._user = user;
   }
 
   async perform() {
@@ -55,10 +56,13 @@ class ResourcesGetter {
     } = this._params;
 
     const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
+    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+
     const queryOptions = new QueryOptions(this._model, { tableAlias });
     await queryOptions.requireFields(requestedFields);
     await queryOptions.search(search, searchExtended);
     await queryOptions.filterByConditionTree(filters, timezone);
+    await queryOptions.filterByConditionTree(scopeFilters, timezone);
     await queryOptions.segment(segment);
     await queryOptions.segmentQuery(segmentQuery);
 

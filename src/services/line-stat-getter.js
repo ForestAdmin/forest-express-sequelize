@@ -1,9 +1,10 @@
-import { Schemas } from 'forest-express';
+import { Schemas, ScopeManager } from 'forest-express';
 import _ from 'lodash';
 import moment from 'moment';
 import { isMSSQL, isMySQL, isSQLite } from '../utils/database';
 import Orm from '../utils/orm';
 import QueryOptions from './query-options';
+
 
 function LineStatGetter(model, params, options) {
   const schema = Schemas.schemas[model.name];
@@ -198,8 +199,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
 
   this.perform = async () => {
     const { filters, timezone } = params;
+    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);
+    await queryOptions.filterByConditionTree(scopeFilters, timezone);
 
     const { include, where } = queryOptions.sequelizeOptions;
     const records = await model.unscoped().findAll({

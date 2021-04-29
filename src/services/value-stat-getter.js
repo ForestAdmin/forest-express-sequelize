@@ -1,5 +1,5 @@
 import Promise from 'bluebird';
-import { BaseOperatorDateParser, Schemas } from 'forest-express';
+import { BaseOperatorDateParser, Schemas, ScopeManager } from 'forest-express';
 import _ from 'lodash';
 import Operators from '../utils/operators';
 import Orm from '../utils/orm';
@@ -22,10 +22,11 @@ class ValueStatGetter {
     return `${this._schema.name}.${Orm.getColumnName(this._schema, fieldName)}`;
   }
 
-  constructor(model, params, options) {
+  constructor(model, params, options, user) {
     this._model = model;
     this._params = params;
     this._options = options;
+    this._user = user;
 
     this._OPERATORS = Operators.getInstance(options);
     this._schema = Schemas.schemas[model.name];
@@ -36,8 +37,11 @@ class ValueStatGetter {
 
   async perform() {
     const { filters, timezone } = this._params;
+    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+
     const queryOptions = new QueryOptions(this._model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);
+    await queryOptions.filterByConditionTree(scopeFilters, timezone);
 
     // No attributes should be retrieved from relations for the group by to work.
     const options = queryOptions.sequelizeOptions;

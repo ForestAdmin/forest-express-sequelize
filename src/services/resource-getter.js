@@ -1,16 +1,22 @@
+import { ScopeManager } from 'forest-express';
 import createError from 'http-errors';
 import CompositeKeysManager from './composite-keys-manager';
 import QueryOptions from './query-options';
 
 class ResourceGetter {
-  constructor(model, params) {
+  constructor(model, params, user) {
     this._model = model.unscoped();
     this._params = params;
+    this._user = user;
   }
 
   async perform() {
+    const { timezone } = this._params;
+    const scopeFilters = await ScopeManager.getScopeForUser(this._user, this._model.name);
+
     const queryOptions = new QueryOptions(this._model, { includeRelations: true });
     await queryOptions.filterByIds([this._params.recordId]);
+    await queryOptions.filterByConditionTree(scopeFilters, timezone);
 
     const record = await this._model.findOne(queryOptions.sequelizeOptions);
     if (!record) {
