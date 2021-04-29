@@ -5,7 +5,6 @@ import { isMSSQL, isMySQL, isSQLite } from '../utils/database';
 import Orm from '../utils/orm';
 import QueryOptions from './query-options';
 
-
 function LineStatGetter(model, params, options) {
   const schema = Schemas.schemas[model.name];
   const timeRange = params.time_range.toLowerCase();
