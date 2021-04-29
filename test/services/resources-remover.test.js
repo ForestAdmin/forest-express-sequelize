@@ -5,23 +5,41 @@ import { InvalidParameterError } from '../../src/services/errors';
 
 describe('services > resources-remover', () => {
   describe('perform', () => {
-    it('should throw error if ids is not an array or empty', () => {
+    it('should throw error if ids is not an array or empty', async () => {
       expect.assertions(3);
-      expect(() => new ResourcesRemover(null, []).perform()).toThrow(InvalidParameterError);
-      expect(() => new ResourcesRemover(null, 'foo').perform()).toThrow(InvalidParameterError);
-      expect(() => new ResourcesRemover(null, {}).perform()).toThrow(InvalidParameterError);
+      function Actor() {
+        this.unscoped = () => this;
+        this.sequelize = { constructor: Sequelize };
+      }
+
+      await expect(new ResourcesRemover(new Actor(), []).perform())
+        .rejects
+        .toBeInstanceOf(InvalidParameterError);
+
+      await expect(new ResourcesRemover(new Actor(), 'foo').perform())
+        .rejects
+        .toBeInstanceOf(InvalidParameterError);
+
+      await expect(new ResourcesRemover(new Actor(), {}).perform())
+        .rejects
+        .toBeInstanceOf(InvalidParameterError);
     });
 
     it('should remove resources with a single primary key', async () => {
       expect.assertions(1);
+
       function Actor() {
         this.name = 'actor';
         this.primaryKeys = { id: {} };
+        this.unscoped = () => this;
+        this.sequelize = { constructor: Sequelize };
+        this.associations = {};
         this.destroy = (condition) => {
           expect(condition).toStrictEqual({ where: { id: ['1', '2'] } });
         };
       }
       Interface.Schemas = { schemas: { actor: { idField: 'id' } } };
+
       await new ResourcesRemover(new Actor(), ['1', '2']).perform();
     });
 
@@ -30,6 +48,9 @@ describe('services > resources-remover', () => {
       function ActorFilm() {
         this.name = 'actorFilm';
         this.primaryKeys = { actorId: {}, filmId: {} };
+        this.unscoped = () => this;
+        this.sequelize = { constructor: Sequelize };
+        this.associations = {};
         this.destroy = (condition) => {
           expect(condition).toStrictEqual({
             where: {

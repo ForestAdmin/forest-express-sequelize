@@ -38,6 +38,19 @@ describe('services > composite-keys-manager', () => {
   });
 
   describe('getRecordsConditions', () => {
+    it('should throw if there is not primary key', () => {
+      expect.assertions(1);
+      const model = { ...modelBase, primaryKeys: { } };
+      const keyManager = new CompositeKeyManager(model);
+      expect(() => keyManager.getRecordsConditions(['1'])).toThrow('No primary key was found');
+    });
+    it('should return a condition that will not match for empty array', () => {
+      expect.assertions(1);
+      const model = { ...modelBase, primaryKeys: { id: {} } };
+      const keyManager = new CompositeKeyManager(model);
+      const conditions = keyManager.getRecordsConditions([]);
+      expect(conditions.val).toStrictEqual('(0=1)');
+    });
     it('should return a where condition with no key for non composite key', () => {
       expect.assertions(1);
       const model = { ...modelBase, primaryKeys: { id: {} } };

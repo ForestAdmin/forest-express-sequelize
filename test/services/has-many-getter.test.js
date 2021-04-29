@@ -13,13 +13,20 @@ describe('services > HasManyGetter', () => {
   const { AND, OR, GT } = Operators.getInstance(sequelizeOptions);
   const timezone = 'Europe/Paris';
 
-  describe('buildWhereConditions', () => {
-    const associationName = 'users';
-    const model = { name: 'cars' };
+  describe('_buildQueryOptions', () => {
+    const options = { tableAlias: 'users' };
+    const model = {
+      name: 'cars',
+      unscoped: () => model,
+      sequelize: sequelizePostgres.connection,
+      primaryKeys: { id: {} },
+    };
     const association = {
       name: 'users',
       rawAttributes: [{ field: 'name', type: 'String' }],
-      sequelize: Sequelize,
+      sequelize: sequelizePostgres.connection,
+      unscoped: () => association,
+      associations: { },
     };
     Interface.Schemas = {
       schemas: {
@@ -32,9 +39,11 @@ describe('services > HasManyGetter', () => {
       it('should build an empty where condition', async () => {
         expect.assertions(1);
 
-        const hasManyGetter = new HasManyGetter(model, association, sequelizeOptions, { timezone });
-        const whereConditions = await hasManyGetter.buildWhereConditions({ });
-        expect(whereConditions).toStrictEqual({ [AND]: [] });
+        const hasManyGetter = new HasManyGetter(model, association, sequelizeOptions, {
+          timezone, recordId: 1, associationName: 'users',
+        });
+        const queryOptions = await hasManyGetter._buildQueryOptions(options);
+        expect(queryOptions.include[0].where).toBeUndefined();
       });
     });
 
@@ -44,10 +53,12 @@ describe('services > HasManyGetter', () => {
         const filters = '{ "field": "id", "operator": "greater_than", "value": 1 }';
 
         const hasManyGetter = new HasManyGetter(
-          model, association, sequelizeOptions, { filters, timezone },
+          model, association, sequelizeOptions, {
+            filters, timezone, recordId: 1, associationName: 'users',
+          },
         );
-        const whereConditions = await hasManyGetter.buildWhereConditions({ filters });
-        expect(whereConditions).toStrictEqual({ [AND]: [{ id: { [GT]: 1 } }] });
+        const queryOptions = await hasManyGetter._buildQueryOptions(options);
+        expect(queryOptions.include[0].where).toStrictEqual({ id: { [GT]: 1 } });
       });
     });
 
@@ -57,21 +68,20 @@ describe('services > HasManyGetter', () => {
         const search = 'test';
 
         const hasManyGetter = new HasManyGetter(
-          model, association, sequelizeOptions, { search, timezone },
+          model, association, sequelizeOptions, {
+            search, timezone, recordId: 1, associationName: 'users',
+          },
         );
-        const whereConditions = await hasManyGetter
-          .buildWhereConditions({ search, associationName });
+        const queryOptions = await hasManyGetter._buildQueryOptions(options);
 
-        expect(whereConditions).toStrictEqual({
-          [AND]: [{
-            [OR]: expect.arrayContaining([
-              expect.objectContaining({
-                attribute: { args: [{ col: 'users.name' }], fn: 'lower' },
-                comparator: ' LIKE ',
-                logic: { args: ['%test%'], fn: 'lower' },
-              }),
-            ]),
-          }],
+        expect(queryOptions.include[0].where).toStrictEqual({
+          [OR]: expect.arrayContaining([
+            expect.objectContaining({
+              attribute: { args: [{ col: 'users.name' }], fn: 'lower' },
+              comparator: ' LIKE ',
+              logic: { args: ['%test%'], fn: 'lower' },
+            }),
+          ]),
         });
       });
     });
@@ -83,11 +93,12 @@ describe('services > HasManyGetter', () => {
         const search = 'test';
 
         const hasManyGetter = new HasManyGetter(
-          model, association, sequelizeOptions, { filters, search, timezone },
+          model, association, sequelizeOptions, {
+            filters, search, timezone, recordId: 1, associationName: 'users',
+          },
         );
-        const whereConditions = await hasManyGetter
-          .buildWhereConditions({ search, filters, associationName });
-        expect(whereConditions).toStrictEqual({
+        const queryOptions = await hasManyGetter._buildQueryOptions(options);
+        expect(queryOptions.include[0].where).toStrictEqual({
           [AND]: [{
             [OR]: expect.arrayContaining([
               expect.objectContaining({

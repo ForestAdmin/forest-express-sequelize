@@ -1,16 +1,22 @@
-const CompositeKeysManager = require('./composite-keys-manager');
 const { InvalidParameterError } = require('./errors');
+const QueryOptions = require('./query-options');
 
-function ResourcesRemover(model, ids, options) {
-  this.perform = () => {
-    if (!Array.isArray(ids) || !ids.length) {
+class ResourcesRemover {
+  constructor(model, ids) {
+    this._model = model.unscoped();
+    this._ids = ids;
+  }
+
+  async perform() {
+    if (!Array.isArray(this._ids) || !this._ids.length) {
       throw new InvalidParameterError('`ids` must be a non-empty array.');
     }
 
-    const where = new CompositeKeysManager(model).getRecordsConditions(ids, options);
+    const queryOptions = new QueryOptions(this._model);
+    await queryOptions.filterByIds(this._ids);
 
-    return model.destroy({ where });
-  };
+    return this._model.destroy(queryOptions.sequelizeOptions);
+  }
 }
 
 module.exports = ResourcesRemover;
