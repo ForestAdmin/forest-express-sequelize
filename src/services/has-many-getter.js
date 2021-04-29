@@ -2,8 +2,8 @@ import CompositeKeysManager from './composite-keys-manager';
 import ResourcesGetter from './resources-getter';
 
 class HasManyGetter extends ResourcesGetter {
-  constructor(model, association, lianaOptions, params) {
-    super(association, lianaOptions, params);
+  constructor(model, association, lianaOptions, params, user) {
+    super(association, lianaOptions, params, user);
 
     this._parentModel = model.unscoped();
   }
