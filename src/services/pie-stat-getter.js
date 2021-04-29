@@ -82,7 +82,7 @@ function PieStatGetter(model, params, options) {
 
   this.perform = async () => {
     const { filters, timezone } = params;
-    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name);
+    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);

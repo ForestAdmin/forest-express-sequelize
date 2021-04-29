@@ -56,7 +56,7 @@ class ResourcesGetter {
     } = this._params;
 
     const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
-    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name);
+    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
 
     const queryOptions = new QueryOptions(this._model, { tableAlias });
     await queryOptions.requireFields(requestedFields);
