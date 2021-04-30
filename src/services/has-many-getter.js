@@ -1,3 +1,6 @@
+
+import Operators from '../utils/operators';
+import Recursion from '../utils/recursion';
 import CompositeKeysManager from './composite-keys-manager';
 import ResourcesGetter from './resources-getter';
 
@@ -47,7 +50,43 @@ class HasManyGetter extends ResourcesGetter {
       parentOptions.order = (options.order || []).map((o) => [associationName, ...o]);
     }
 
+    this._bubbleWheresInPlace(parentOptions);
+
     return parentOptions;
+  }
+
+  /**
+   * Extract all where conditions along the include tree, and bubbles them up to the top.
+   * This allows to work around a sequelize quirk that cause nested 'where' to fails when they
+   * refer to relation fields from an intermediary include (ie '$book.id$').
+   *
+   * This happens when forest admin filters on relations are used.
+   *
+   * @see https://sequelize.org/master/manual/eager-loading.html#complex-where-clauses-at-the-top-level
+   * @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/filters-parser.js#L104
+   */
+  _bubbleWheresInPlace(options) {
+    const Ops = Operators.getInstance({ Sequelize: this._parentModel.sequelize.constructor });
+    const { associationName } = this._params;
+
+    (options.include ?? []).forEach((include) => {
+      this._bubbleWheresInPlace(include);
+
+      const { where } = include;
+      delete include.where;
+
+      const newWhere = Recursion.mapKeysDeep(where, (key) => (
+        key[0] === '$' && key[key.length - 1] === '$'
+          ? `$${associationName}.${key.substring(1)}`
+          : `$${associationName}.${key}$`
+      ));
+
+      if (options.where[Ops.AND]) {
+        options.where[Ops.AND].push(newWhere);
+      } else {
+        options.where = { [Ops.AND]: [options.where, newWhere] };
+      }
+    });
   }
 }
 
