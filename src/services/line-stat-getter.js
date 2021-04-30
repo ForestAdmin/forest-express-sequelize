@@ -5,7 +5,7 @@ import { isMSSQL, isMySQL, isSQLite } from '../utils/database';
 import Orm from '../utils/orm';
 import QueryOptions from './query-options';
 
-function LineStatGetter(model, params, options) {
+function LineStatGetter(model, params, options, user) {
   const schema = Schemas.schemas[model.name];
   const timeRange = params.time_range.toLowerCase();
 
@@ -198,7 +198,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
 
   this.perform = async () => {
     const { filters, timezone } = params;
-    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
+    const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);

@@ -9,7 +9,7 @@ import QueryOptions from './query-options';
 const ALIAS_GROUP_BY = 'forest_alias_groupby';
 const ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
-function PieStatGetter(model, params, options) {
+function PieStatGetter(model, params, options, user) {
   const needsDateOnlyFormating = isVersionLessThan4(options.Sequelize);
 
   const schema = Schemas.schemas[model.name];
@@ -82,7 +82,7 @@ function PieStatGetter(model, params, options) {
 
   this.perform = async () => {
     const { filters, timezone } = params;
-    const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
+    const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);
