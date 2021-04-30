@@ -8,10 +8,11 @@ const associationRecord = require('../utils/association-record');
 const isPrimaryKeyAForeignKey = require('../utils/is-primary-key-a-foreign-key');
 
 class ResourceCreator {
-  constructor(model, params) {
+  constructor(model, params, user) {
     this.model = model;
     this.params = params;
     this.schema = Interface.Schemas.schemas[model.name];
+    this._user = user;
   }
 
   async _getTargetKey(name, association) {
@@ -83,9 +84,9 @@ class ResourceCreator {
     new CompositeKeysManager(this.model).annotateRecords([record]);
 
     // return makeResourceGetter()
-    return new ResourceGetter(this.model, {
-      recordId: record[this.schema.idField],
-    }).perform();
+    return new ResourceGetter(
+      this.model, { recordId: record[this.schema.idField] }, this._user,
+    ).perform();
   }
 }
 

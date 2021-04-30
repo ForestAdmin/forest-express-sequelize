@@ -31,7 +31,9 @@ class ResourceUpdater {
       record.save();
     }
 
-    return new ResourceGetter(this._model, { recordId: this._params.recordId }).perform();
+    return new ResourceGetter(
+      this._model, { recordId: this._params.recordId }, this._user,
+    ).perform();
   }
 }
 
