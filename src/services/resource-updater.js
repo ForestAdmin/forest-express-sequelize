@@ -4,25 +4,29 @@ const CompositeKeysManager = require('./composite-keys-manager');
 const ResourceFinder = require('./resource-finder');
 
 function ResourceUpdater(model, params, newRecord) {
-  this.perform = () => new ResourceFinder(model, params)
-    .perform()
-    .then((record) => {
-      if (record) {
-        Object.assign(record, newRecord);
+  this.perform = () => {
+    const compositeKeysManager = new CompositeKeysManager(model);
 
-        return record.validate()
-          .catch((error) => { throw new ErrorHTTP422(error.message); })
-          .then(() => record.save());
-      }
-      return null;
-    })
-    .then(() => {
-      new CompositeKeysManager(model).annotateRecords([newRecord]);
+    return new ResourceFinder(model, params)
+      .perform()
+      .then((record) => {
+        if (record) {
+          Object.assign(record, newRecord);
 
-      return new ResourceGetter(model, {
-        recordId: params.recordId,
-      }).perform();
-    });
+          return record.validate()
+            .catch((error) => { throw new ErrorHTTP422(error.message); })
+            .then(() => record.save());
+        }
+        return null;
+      })
+      .then(() => {
+        compositeKeysManager.annotateRecords([newRecord]);
+
+        return new ResourceGetter(model, {
+          recordId: params.recordId,
+        }).perform();
+      });
+  };
 }
 
 module.exports = ResourceUpdater;
