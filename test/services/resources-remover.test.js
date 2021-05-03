@@ -1,4 +1,3 @@
-import Interface from 'forest-express';
 import Sequelize, { Op } from 'sequelize';
 import ResourcesRemover from '../../src/services/resources-remover';
 import { InvalidParameterError } from '../../src/services/errors';
@@ -15,19 +14,20 @@ describe('services > resources-remover', () => {
     it('should remove resources with a single primary key', async () => {
       expect.assertions(1);
       function Actor() {
+        this.sequelize = { constructor: Sequelize };
         this.name = 'actor';
         this.primaryKeys = { id: {} };
         this.destroy = (condition) => {
           expect(condition).toStrictEqual({ where: { id: ['1', '2'] } });
         };
       }
-      Interface.Schemas = { schemas: { actor: { idField: 'id' } } };
       await new ResourcesRemover(new Actor(), ['1', '2']).perform();
     });
 
     it('should remove resources with composite keys', async () => {
       expect.assertions(1);
       function ActorFilm() {
+        this.sequelize = { constructor: Sequelize };
         this.name = 'actorFilm';
         this.primaryKeys = { actorId: {}, filmId: {} };
         this.destroy = (condition) => {
@@ -41,14 +41,6 @@ describe('services > resources-remover', () => {
           });
         };
       }
-      Interface.Schemas = {
-        schemas: {
-          actorFilm: {
-            isCompositePrimary: true,
-            primaryKeys: ['actorId', 'filmId'],
-          },
-        },
-      };
       const sequelizeOptions = { Sequelize };
       await new ResourcesRemover(new ActorFilm(), ['1|2', '3|4'], sequelizeOptions).perform();
     });
