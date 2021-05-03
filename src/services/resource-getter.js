@@ -1,22 +1,25 @@
-const createError = require('http-errors');
-const PrimaryKeysManager = require('./primary-keys-manager');
-const ResourceFinder = require('./resource-finder');
+import createError from 'http-errors';
+import PrimaryKeysManager from './primary-keys-manager';
+import QueryOptions from './query-options';
 
-function ResourceGetter(model, params) {
-  this.perform = function perform() {
-    return new ResourceFinder(model, params, true)
-      .perform()
-      .then((record) => {
-        if (!record) {
-          throw createError(404, `The ${model.name} #${params.recordId
-          } does not exist.`);
-        }
+class ResourceGetter {
+  constructor(model, params) {
+    this._model = model.unscoped();
+    this._params = params;
+  }
 
-        new PrimaryKeysManager(model).annotateRecords([record]);
+  async perform() {
+    const queryOptions = new QueryOptions(this._model, { includeRelations: true });
+    await queryOptions.filterByIds([this._params.recordId]);
 
-        return record;
-      });
-  };
+    const record = await this._model.findOne(queryOptions.sequelizeOptions);
+    if (!record) {
+      throw createError(404, `The ${this._model.name} #${this._params.recordId} does not exist.`);
+    }
+
+    new PrimaryKeysManager(this._model).annotateRecords([record]);
+    return record;
+  }
 }
 
 module.exports = ResourceGetter;
