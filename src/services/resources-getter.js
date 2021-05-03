@@ -247,12 +247,7 @@ class ResourcesGetter {
       fieldsSearched = searchBuilder.getFieldsSearched();
     }
 
-    if (this.schema.isCompositePrimary) {
-      records.forEach((record) => {
-        record.forestCompositePrimary = new CompositeKeysManager(this.model, this.schema, record)
-          .createCompositePrimary();
-      });
-    }
+    new CompositeKeysManager(this.model).annotateRecords(records);
 
     return [records, fieldsSearched];
   }

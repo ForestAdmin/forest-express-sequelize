@@ -80,10 +80,7 @@ class ResourceCreator {
     await this._handleSave(record, this._makePromisesAfterSave);
 
     // appendCompositePrimary
-    if (this.schema.isCompositePrimary) {
-      record.forestCompositePrimary = new CompositeKeysManager(this.model, this.schema, record)
-        .createCompositePrimary();
-    }
+    new CompositeKeysManager(this.model).annotateRecords([record]);
 
     // return makeResourceGetter()
     return new ResourceGetter(this.model, {
