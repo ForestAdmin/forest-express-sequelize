@@ -1,5 +1,4 @@
-const Interface = require('forest-express');
-const CompositeKeysManager = require('./composite-keys-manager');
+const PrimaryKeysManager = require('./primary-keys-manager');
 const { InvalidParameterError } = require('./errors');
 
 function ResourcesRemover(model, ids, options) {
@@ -8,10 +7,7 @@ function ResourcesRemover(model, ids, options) {
       throw new InvalidParameterError('`ids` must be a non-empty array.');
     }
 
-    const schema = Interface.Schemas.schemas[model.name];
-    const compositeKeysManager = new CompositeKeysManager(model);
-    const where = schema.isCompositePrimary
-      ? compositeKeysManager.getRecordsConditions(ids, options) : { [schema.idField]: ids };
+    const where = new PrimaryKeysManager(model).getRecordsConditions(ids, options);
 
     return model.destroy({ where });
   };

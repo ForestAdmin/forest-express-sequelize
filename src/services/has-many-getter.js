@@ -1,11 +1,10 @@
 const _ = require('lodash');
-const P = require('bluebird');
 const Interface = require('forest-express');
 const orm = require('../utils/orm');
 const QueryBuilder = require('./query-builder');
 const SearchBuilder = require('./search-builder');
 const FiltersParser = require('./filters-parser');
-const CompositeKeysManager = require('./composite-keys-manager');
+const PrimaryKeysManager = require('./primary-keys-manager');
 const extractRequestedFields = require('./requested-fields-extractor');
 const Operators = require('../utils/operators');
 
@@ -106,16 +105,8 @@ class HasManyGetter {
     };
 
     const records = await this.findQuery(queryOptions);
-    return P.map(records, (record) => {
-      if (this.schema.isCompositePrimary) {
-        record.forestCompositePrimary = new CompositeKeysManager(
-          this.association, this.schema, record,
-        )
-          .createCompositePrimary();
-      }
-
-      return record;
-    });
+    new PrimaryKeysManager(this.association).annotateRecords(records);
+    return records;
   }
 
   async perform() {
