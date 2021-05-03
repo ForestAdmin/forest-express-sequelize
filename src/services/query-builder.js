@@ -38,7 +38,7 @@ function getMandatoryFields(association) {
 }
 
 function QueryBuilder(model, opts, params) {
-  const schema = Schemas.schemas[model.name];
+  const schema = Schemas.schemas[model?.name];
 
   function hasPagination() {
     return params.page && params.page.number;
