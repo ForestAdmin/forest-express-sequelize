@@ -50,7 +50,7 @@ class HasManyGetter extends ResourcesGetter {
       parentOptions.order = (options.order || []).map((o) => [associationName, ...o]);
     }
 
-    this._bubbleWheresInPlace(parentOptions);
+    this._bubbleWheresInPlace(parentOptions, associationName);
 
     return parentOptions;
   }
@@ -67,23 +67,18 @@ class HasManyGetter extends ResourcesGetter {
    */
   _bubbleWheresInPlace(options) {
     const Ops = Operators.getInstance({ Sequelize: this._parentModel.sequelize.constructor });
-    const { associationName } = this._params;
 
     (options.include ?? []).forEach((include) => {
       this._bubbleWheresInPlace(include);
 
-      const { where } = include;
-      delete include.where;
-
-      const newWhere = Recursion.mapKeysDeep(where, (key) => (
+      const newWhere = Recursion.mapKeysDeep(include.where, (key) => (
         key[0] === '$' && key[key.length - 1] === '$'
-          ? `$${associationName}.${key.substring(1)}`
-          : `$${associationName}.${key}$`
+          ? `$${include.as}.${key.substring(1)}`
+          : `$${include.as}.${key}$`
       ));
 
-      if (options.where[Ops.AND]) {
-        options.where[Ops.AND].push(newWhere);
-      } else {
+      delete include.where;
+      if (newWhere) {
         options.where = { [Ops.AND]: [options.where, newWhere] };
       }
     });
