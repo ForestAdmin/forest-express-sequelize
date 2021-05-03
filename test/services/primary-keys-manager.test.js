@@ -7,7 +7,7 @@ describe('services > primary-keys-manager', () => {
   };
 
   describe('getPrimaryKeyValues', () => {
-    it('should throw for invalid packed key', () => {
+    it('should throw if the number of primary keys does not match the provided packed key', () => {
       expect.assertions(1);
       const model = { ...modelBase, primaryKeys: { id: {} } };
       const keyManager = new PrimaryKeyManager(model);
@@ -38,7 +38,7 @@ describe('services > primary-keys-manager', () => {
   });
 
   describe('getRecordsConditions', () => {
-    it('should throw if there is not primary key', () => {
+    it('should throw if there is no primary key on the model', () => {
       expect.assertions(1);
       const model = { ...modelBase, primaryKeys: { } };
       const keyManager = new PrimaryKeyManager(model);
