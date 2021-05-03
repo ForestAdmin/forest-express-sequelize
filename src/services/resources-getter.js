@@ -1,7 +1,7 @@
 import _ from 'lodash';
 import { Schemas, logger } from 'forest-express';
 import Operators from '../utils/operators';
-import CompositeKeysManager from './composite-keys-manager';
+import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
 import LiveQueryChecker from './live-query-checker';
@@ -247,7 +247,7 @@ class ResourcesGetter {
       fieldsSearched = searchBuilder.getFieldsSearched();
     }
 
-    new CompositeKeysManager(this.model).annotateRecords(records);
+    new PrimaryKeysManager(this.model).annotateRecords(records);
 
     return [records, fieldsSearched];
   }

@@ -1,11 +1,11 @@
 const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
-const CompositeKeysManager = require('./composite-keys-manager');
+const PrimaryKeysManager = require('./primary-keys-manager');
 const ResourceFinder = require('./resource-finder');
 
 function ResourceUpdater(model, params, newRecord) {
   this.perform = () => {
-    const compositeKeysManager = new CompositeKeysManager(model);
+    const compositeKeysManager = new PrimaryKeysManager(model);
 
     return new ResourceFinder(model, params)
       .perform()

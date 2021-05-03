@@ -3,7 +3,7 @@ const P = require('bluebird');
 const Interface = require('forest-express');
 const { ErrorHTTP422 } = require('./errors');
 const ResourceGetter = require('./resource-getter');
-const CompositeKeysManager = require('./composite-keys-manager');
+const PrimaryKeysManager = require('./primary-keys-manager');
 const associationRecord = require('../utils/association-record');
 const isPrimaryKeyAForeignKey = require('../utils/is-primary-key-a-foreign-key');
 
@@ -80,7 +80,7 @@ class ResourceCreator {
     await this._handleSave(record, this._makePromisesAfterSave);
 
     // appendCompositePrimary
-    new CompositeKeysManager(this.model).annotateRecords([record]);
+    new PrimaryKeysManager(this.model).annotateRecords([record]);
 
     // return makeResourceGetter()
     return new ResourceGetter(this.model, {

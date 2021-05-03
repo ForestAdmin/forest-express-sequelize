@@ -1,5 +1,5 @@
 const _ = require('lodash');
-const CompositeKeysManager = require('./composite-keys-manager');
+const PrimaryKeysManager = require('./primary-keys-manager');
 
 function ResourceFinder(model, params, withIncludes) {
   function getIncludes() {
@@ -27,7 +27,7 @@ function ResourceFinder(model, params, withIncludes) {
       conditions.include = getIncludes();
     }
 
-    conditions.where = new CompositeKeysManager(model).getRecordsConditions([params.recordId]);
+    conditions.where = new PrimaryKeysManager(model).getRecordsConditions([params.recordId]);
 
     return model.findOne(conditions);
   };

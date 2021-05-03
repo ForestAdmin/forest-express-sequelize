@@ -1,5 +1,5 @@
 const createError = require('http-errors');
-const CompositeKeysManager = require('./composite-keys-manager');
+const PrimaryKeysManager = require('./primary-keys-manager');
 const ResourceFinder = require('./resource-finder');
 
 function ResourceGetter(model, params) {
@@ -12,7 +12,7 @@ function ResourceGetter(model, params) {
           } does not exist.`);
         }
 
-        new CompositeKeysManager(model).annotateRecords([record]);
+        new PrimaryKeysManager(model).annotateRecords([record]);
 
         return record;
       });

@@ -5,7 +5,7 @@ import Operators from '../utils/operators';
  * This helper class allows abstracting away the complexity
  * of using collection which have composite primary keys.
  */
-class CompositeKeysManager {
+class PrimaryKeysManager {
   static _GLUE = '|'
 
   constructor(model) {
@@ -61,7 +61,7 @@ class CompositeKeysManager {
   _createCompositePrimary(record) {
     return this._primaryKeys.map(
       (field) => (record[field] === null ? 'null' : record[field]),
-    ).join(CompositeKeysManager._GLUE);
+    ).join(PrimaryKeysManager._GLUE);
   }
 
   /** Unpack recordId into an array */
@@ -69,7 +69,7 @@ class CompositeKeysManager {
     // Prevent liana to crash when a composite primary keys is null,
     // this behaviour should be avoid instead of fixed.
     const unpacked = recordId
-      .split(CompositeKeysManager._GLUE)
+      .split(PrimaryKeysManager._GLUE)
       .map((key) => (key === 'null' ? null : key));
 
     if (unpacked.length !== this._primaryKeys.length) {
@@ -80,4 +80,4 @@ class CompositeKeysManager {
   }
 }
 
-module.exports = CompositeKeysManager;
+module.exports = PrimaryKeysManager;
