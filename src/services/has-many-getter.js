@@ -57,7 +57,7 @@ class HasManyGetter extends ResourcesGetter {
 
   /**
    * Extract all where conditions along the include tree, and bubbles them up to the top.
-   * This allows to work around a sequelize quirk that cause nested 'where' to fails when they
+   * This allows to work around a sequelize quirk that cause nested 'where' to fail when they
    * refer to relation fields from an intermediary include (ie '$book.id$').
    *
    * This happens when forest admin filters on relations are used.
