@@ -51,13 +51,6 @@ describe('services > primary-keys-manager', () => {
       const conditions = keyManager.getRecordsConditions([]);
       expect(conditions.val).toStrictEqual('(0=1)');
     });
-    it('should return a where condition with no key for non composite key', () => {
-      expect.assertions(1);
-      const model = { ...modelBase, primaryKeys: { id: {} } };
-      const keyManager = new PrimaryKeyManager(model);
-      const conditions = keyManager.getRecordsConditions(['1']);
-      expect(conditions).toStrictEqual({ id: '1' });
-    });
     it('should return a where condition with one key for non composite key', () => {
       expect.assertions(1);
       const model = { ...modelBase, primaryKeys: { id: {} } };
