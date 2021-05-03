@@ -15,7 +15,7 @@ class CompositeKeysManager {
 
   /** Build sequelize where condition from a list of packed recordIds */
   getRecordsConditions(recordIds) {
-    if (recordIds.length <= 0) {
+    if (recordIds.length === 0) {
       return this._Sequelize.literal('(0=1)');
     }
 
