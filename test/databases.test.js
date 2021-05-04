@@ -694,6 +694,27 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }
         });
       });
+
+      describe('chart with a filter', () => {
+        it('should generate a valid SQL query', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          try {
+            const stat = await new LineStatGetter(models.address, {
+              type: 'Line',
+              collection: 'address',
+              timezone: 'Europe/Paris',
+              group_by_date_field: 'createdAt',
+              aggregate: 'Count',
+              time_range: 'Year',
+              filters: JSON.stringify({ field: 'user:id', operator: 'equal', value: 100 }),
+            }, sequelizeOptions).perform();
+            expect(stat.value).toHaveLength(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
     });
 
     describe('resources > resources creator', () => {
