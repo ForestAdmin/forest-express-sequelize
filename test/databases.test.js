@@ -3145,7 +3145,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }
         });
 
-        it('should throw if the record is invalid according to sequelize validation', async () => {
+        it('should reject if the record is invalid according to sequelize validation', async () => {
           expect.assertions(1);
           const { models } = initializeSequelize();
           try {
