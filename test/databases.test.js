@@ -3104,6 +3104,20 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }
         });
       });
+
+      describe('get a non existing record', () => {
+        it('should fail', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          const params = { recordId: '123123|123' };
+
+          try {
+            await expect(new ResourceGetter(models.log, params).perform()).toReject();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
     });
 
     describe('resources > resources-remover', () => {
