@@ -19,7 +19,7 @@ class ResourceUpdater {
 
       try {
         await record.validate();
-        record.save();
+        await record.save();
       } catch (error) {
         throw new ErrorHTTP422(error.message);
       }
