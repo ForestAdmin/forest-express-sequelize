@@ -1,10 +1,5 @@
-import { Schemas } from 'forest-express';
-import Orm from '../utils/orm';
-
 const HAS_ONE = 'HasOne';
 const BELONGS_TO = 'BelongsTo';
-
-const { getReferenceField } = require('../utils/query');
 
 /**
  * @param {string[]} values
@@ -37,27 +32,13 @@ function getMandatoryFields(association) {
     .map((attribute) => getTargetFieldName(attribute, association));
 }
 
-function QueryBuilder(model, opts, params) {
-  const schema = Schemas.schemas[model?.name];
-
-  function hasPagination() {
-    return params.page && params.page.number;
-  }
-
-  this.getSkip = () => {
-    if (hasPagination()) {
-      return (Number.parseInt(params.page.number, 10) - 1) * this.getLimit();
-    }
-    return 0;
-  };
-
-  this.getLimit = () => {
-    if (hasPagination()) {
-      return Number.parseInt(params.page.size, 10) || 10;
-    }
-    return 10;
-  };
-
+/**
+ * Compute "includes" parameter which is expected by sequelize from a list of fields.
+ * The list of fields can contain fields from relations in the form 'author.firstname'
+ *
+ * @param {string[]} fieldNames model and relationship field names
+ */
+function QueryBuilder() {
   this.getIncludes = (modelForIncludes, fieldNamesRequested) => {
     const includes = [];
 
@@ -95,37 +76,6 @@ function QueryBuilder(model, opts, params) {
       });
 
     return includes;
-  };
-
-  // NOTICE: This function supports params such as `id`, `-id` (DESC) and `collection.id`.
-  //         It does not handle multiple columns sorting.
-  this.getOrder = (aliasName, aliasSchema) => {
-    if (!params.sort) { return null; }
-
-    let order = 'ASC';
-
-    if (params.sort[0] === '-') {
-      params.sort = params.sort.substring(1);
-      order = 'DESC';
-    }
-
-    if (params.sort.indexOf('.') !== -1) {
-      // NOTICE: Sort on the belongsTo displayed field
-      const sortingParameters = params.sort.split('.');
-      const associationName = aliasName ? `${aliasName}->${sortingParameters[0]}` : sortingParameters[0];
-      const fieldName = sortingParameters[1];
-      const column = getReferenceField(
-        Schemas.schemas,
-        (aliasSchema || schema),
-        associationName,
-        fieldName,
-      );
-      return [[opts.Sequelize.col(column), order]];
-    }
-    if (aliasName) {
-      return [[opts.Sequelize.col(`${aliasName}.${Orm.getColumnName(aliasSchema, params.sort)}`), order]];
-    }
-    return [[params.sort, order]];
   };
 }
 
