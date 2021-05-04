@@ -11,13 +11,6 @@ class ResourcesGetter {
     this._params = params ?? lianaOptions;
   }
 
-  async perform() {
-    return [
-      await this._getRecords(),
-      await this._getFieldsSearched(),
-    ];
-  }
-
   /** Count records matching current query (wo/ pagination) */
   async count() {
     const [model, options] = await this._buildQueryOptions({ forCount: true });
@@ -27,6 +20,13 @@ class ResourcesGetter {
       ...options,
       col: _.isEmpty(this._model.primaryKeys) ? '*' : undefined,
     });
+  }
+
+  async perform() {
+    return [
+      await this._getRecords(),
+      await this._getFieldsSearched(),
+    ];
   }
 
   /** Load records matching current query (w/ pagination) */
