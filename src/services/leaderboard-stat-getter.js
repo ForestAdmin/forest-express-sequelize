@@ -5,13 +5,13 @@ import { InvalidParameterError } from './errors';
 import QueryOptions from './query-options';
 
 function getAggregateField({
-  aggregateField, schemaRelationship, parentModel,
+  aggregateField, parentSchema, parentModel,
 }) {
   // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
   const fieldName = aggregateField
-    || schemaRelationship.primaryKeys[0]
-    || schemaRelationship.fields[0].field;
-  return `${parentModel.name}.${Orm.getColumnName(schemaRelationship, fieldName)}`;
+    || parentSchema.primaryKeys[0]
+    || parentSchema.fields[0].field;
+  return `${parentModel.name}.${Orm.getColumnName(parentSchema, fieldName)}`;
 }
 
 async function getSequelizeOptionsForModel(model, user, timezone) {
@@ -34,9 +34,9 @@ function LeaderboardStatGetter(childModel, parentModel, params, user) {
   const labelField = params.label_field;
   const aggregate = params.aggregate.toUpperCase();
   const { limit } = params;
-  const schema = Schemas.schemas[childModel.name];
-  const schemaRelationship = Schemas.schemas[parentModel.name];
-  let associationAs = schema.name;
+  const childSchema = Schemas.schemas[childModel.name];
+  const parentSchema = Schemas.schemas[parentModel.name];
+  let associationAs = childSchema.name;
   const associationFound = _.find(
     parentModel.associations,
     (association) => association.target.name === childModel.name,
@@ -44,7 +44,7 @@ function LeaderboardStatGetter(childModel, parentModel, params, user) {
 
   const aggregateField = getAggregateField({
     aggregateField: params.aggregate_field,
-    schemaRelationship,
+    parentSchema,
     parentModel,
   });
 
@@ -56,7 +56,7 @@ function LeaderboardStatGetter(childModel, parentModel, params, user) {
     associationAs = associationFound.as;
   }
 
-  const labelColumn = Orm.getColumnName(schema, labelField);
+  const labelColumn = Orm.getColumnName(childSchema, labelField);
   const groupBy = `${associationAs}.${labelColumn}`;
 
   this.perform = async () => {
