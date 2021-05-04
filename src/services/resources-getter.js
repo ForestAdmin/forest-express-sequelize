@@ -6,9 +6,9 @@ import extractRequestedFields from './requested-fields-extractor';
 
 class ResourcesGetter {
   constructor(model, lianaOptions, params) {
-    // The liana options argument is kept for retro-compatibility.
+    // The lianaOptions argument is kept for retrocompatibility w/ forest-express.
     this._model = model.unscoped();
-    this._params = params;
+    this._params = params ?? lianaOptions;
   }
 
   async perform() {

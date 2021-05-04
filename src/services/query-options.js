@@ -99,7 +99,7 @@ class QueryOptions {
    */
   async requireFields(fields) {
     if (fields) {
-      fields.forEach(this._requestedFields.add, this._requestedFields);
+      fields.forEach((field) => this._requestedFields.add(field));
     }
   }
 
@@ -115,24 +115,23 @@ class QueryOptions {
   /**
    * Apply condition tree to those query options (scopes, user filters, charts, ...)
    * @param {*} filters standard forest filters
-   * @param {*} timezone timezone of the user (required if filtering on dates)
+   * @param {string} timezone timezone of the user (required if filtering on dates)
    */
   async filterByConditionTree(filters, timezone) {
+    if (!filters) return;
+
     const filterParser = new FiltersParser(this._schema, timezone, { Sequelize: this._Sequelize });
+    const whereClause = await filterParser.perform(filters);
+    this._where.push(whereClause);
 
-    if (filters) {
-      const whereClause = await filterParser.perform(filters);
-      this._where.push(whereClause);
-
-      const associations = await filterParser.getAssociations(filters);
-      associations.forEach(this._neededFields.add, this._neededFields);
-    }
+    const associations = await filterParser.getAssociations(filters);
+    associations.forEach((association) => this._neededFields.add(association));
   }
 
   /**
    * Retrict rows to those matching a search string
    * @param {string} search search string
-   * @param {boolean|string} searchExtended if truthy, enable search in relations
+   * @param {boolean} searchExtended if truthy, enable search in relations
    */
   async search(search, searchExtended) {
     if (!search) return [];
@@ -174,7 +173,8 @@ class QueryOptions {
 
   /**
    * Apply a segment query.
-   * FIXME Select SQL injection allows to fetch any information from database.
+   * FIXME: Select SQL injection allows to fetch any information from database.
+   * @param {string} query
    */
   async segmentQuery(query) {
     if (!query) return;
@@ -200,34 +200,28 @@ class QueryOptions {
   /**
    * Apply sort instructions from a sort string in the form 'field', '-field' or 'field.subfield'.
    * Multiple sorts are not supported
-   *
    * @param {string} sortString a sort string
    */
   async sort(sortString) {
-    if (!sortString) {
-      return;
-    }
+    if (!sortString) return;
 
-    let order = 'ASC';
-    if (sortString[0] === '-') {
-      sortString = sortString.substring(1);
-      order = 'DESC';
-    }
+    const [sortField, order] = sortString[0] === '-'
+      ? [sortString.substring(1), 'DESC']
+      : [sortString, 'ASC'];
 
-    if (sortString.indexOf('.') !== -1) {
+    if (sortField.includes('.')) {
       // Sort on the belongsTo displayed field
-      const [associationName, fieldName] = sortString.split('.');
+      const [associationName, fieldName] = sortField.split('.');
       this._order.push([associationName, fieldName, order]);
-      this._neededFields.add(sortString);
+      this._neededFields.add(sortField);
     } else {
-      this._order.push([sortString, order]);
+      this._order.push([sortField, order]);
     }
   }
 
   /**
    * Apply pagination.
    * When called with invalid parameters the query will be paginated using default values.
-   *
    * @param {number|string} number page number (starting at one)
    * @param {number|string} size page size
    */
