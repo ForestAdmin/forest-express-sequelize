@@ -3140,7 +3140,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const car = await models.car.findOne({ where: { id: 102 } });
             expect(car.brand).toStrictEqual('Volvo');
           } finally {
-            await models.car.update({ brand: 'Volvo' }, { where: { id: 102 } });
+            await models.car.update({ brand: 'Ferrari' }, { where: { id: 102 } });
             connectionManager.closeConnection();
           }
         });
