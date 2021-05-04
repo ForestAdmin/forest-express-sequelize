@@ -7,21 +7,6 @@ import FiltersParser from './filters-parser';
 import QueryOptions from './query-options';
 
 class ValueStatGetter {
-  /** Function used to aggregate results (count, sum, ...) */
-  get _aggregateFn() {
-    return this._params.aggregate.toLowerCase();
-  }
-
-  /** Column name we're aggregating on */
-  get _aggregateField() {
-    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
-    const fieldName = this._params.aggregate_field
-      || this._schema.primaryKeys[0]
-      || this._schema.fields[0].field;
-
-    return `${this._schema.name}.${Orm.getColumnName(this._schema, fieldName)}`;
-  }
-
   constructor(model, params, options) {
     this._model = model;
     this._params = params;
@@ -42,7 +27,7 @@ class ValueStatGetter {
     // No attributes should be retrieved from relations for the group by to work.
     const options = queryOptions.sequelizeOptions;
     options.include = options.include
-      ? options.include.map((i) => ({ ...i, attributes: [] }))
+      ? options.include.map((includeProps) => ({ ...includeProps, attributes: [] }))
       : undefined;
 
     return {
@@ -53,10 +38,25 @@ class ValueStatGetter {
     };
   }
 
+  /** Function used to aggregate results (count, sum, ...) */
+  get _aggregateFunction() {
+    return this._params.aggregate.toLowerCase();
+  }
+
+  /** Column name we're aggregating on */
+  get _aggregateField() {
+    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
+    const fieldName = this._params.aggregate_field
+      || this._schema.primaryKeys[0]
+      || this._schema.fields[0].field;
+
+    return `${this._schema.name}.${Orm.getColumnName(this._schema, fieldName)}`;
+  }
+
   async _getCount(options) {
     const count = await this._model
       .unscoped()
-      .aggregate(this._aggregateField, this._aggregateFn, options);
+      .aggregate(this._aggregateField, this._aggregateFunction, options);
 
     return count ?? 0;
   }
@@ -84,9 +84,9 @@ class ValueStatGetter {
       rawInterval.operator, rawInterval.value,
     );
 
-    const newOptions = _.cloneDeepWith(options, (obj) => (
-      obj && obj[rawInterval.field]
-        ? { ...obj, [rawInterval.field]: interval }
+    const newOptions = _.cloneDeepWith(options, (object) => (
+      object && object[rawInterval.field]
+        ? { ...object, [rawInterval.field]: interval }
         : undefined
     ));
 
