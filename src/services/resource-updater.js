@@ -19,10 +19,10 @@ class ResourceUpdater {
 
       try {
         await record.validate();
+        record.save();
       } catch (error) {
         throw new ErrorHTTP422(error.message);
       }
-      record.save();
     }
 
     return new ResourceGetter(this._model, { recordId: this._params.recordId }).perform();
