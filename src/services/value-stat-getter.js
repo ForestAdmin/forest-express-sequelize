@@ -19,25 +19,6 @@ class ValueStatGetter {
     });
   }
 
-  async perform() {
-    const { filters, timezone } = this._params;
-    const queryOptions = new QueryOptions(this._model, { includeRelations: true });
-    await queryOptions.filterByConditionTree(filters, timezone);
-
-    // No attributes should be retrieved from relations for the group by to work.
-    const options = queryOptions.sequelizeOptions;
-    options.include = options.include
-      ? options.include.map((includeProps) => ({ ...includeProps, attributes: [] }))
-      : undefined;
-
-    return {
-      value: await Promise.props({
-        countCurrent: this._getCount(options),
-        countPrevious: this._getCountPrevious(options),
-      }),
-    };
-  }
-
   /** Function used to aggregate results (count, sum, ...) */
   get _aggregateFunction() {
     return this._params.aggregate.toLowerCase();
@@ -51,6 +32,25 @@ class ValueStatGetter {
       || this._schema.fields[0].field;
 
     return `${this._schema.name}.${Orm.getColumnName(this._schema, fieldName)}`;
+  }
+
+  async perform() {
+    const { filters, timezone } = this._params;
+    const queryOptions = new QueryOptions(this._model, { includeRelations: true });
+    await queryOptions.filterByConditionTree(filters, timezone);
+
+    // No attributes should be retrieved from relations for the group by to work.
+    const options = queryOptions.sequelizeOptions;
+    options.include = options.include
+      ? options.include.map((includeProperties) => ({ ...includeProperties, attributes: [] }))
+      : undefined;
+
+    return {
+      value: await Promise.props({
+        countCurrent: this._getCount(options),
+        countPrevious: this._getCountPrevious(options),
+      }),
+    };
   }
 
   async _getCount(options) {
