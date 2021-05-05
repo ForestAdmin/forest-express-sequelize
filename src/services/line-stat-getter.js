@@ -1,10 +1,9 @@
-import _ from 'lodash';
-import P from 'bluebird';
-import moment from 'moment';
 import { Schemas } from 'forest-express';
-import { isMySQL, isMSSQL, isSQLite } from '../utils/database';
-import FiltersParser from './filters-parser';
+import _ from 'lodash';
+import moment from 'moment';
+import { isMSSQL, isMySQL, isSQLite } from '../utils/database';
 import Orm from '../utils/orm';
+import QueryOptions from './query-options';
 
 function LineStatGetter(model, params, options) {
   const schema = Schemas.schemas[model.name];
@@ -189,21 +188,6 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     ];
   }
 
-  function getIncludes() {
-    const includes = [];
-    _.values(model.associations).forEach((association) => {
-      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        includes.push({
-          model: association.target.unscoped(),
-          as: association.associationAccessor,
-          attributes: [],
-        });
-      }
-    });
-
-    return includes;
-  }
-
   function getGroupBy() {
     return isMSSQL(model.sequelize) ? [getGroupByDateFieldFormatedForMSSQL(timeRange)] : [options.Sequelize.literal('1')];
   }
@@ -213,21 +197,30 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   this.perform = async () => {
-    const where = await new FiltersParser(schema, params.timezone, options).perform(params.filters);
+    const { filters, timezone } = params;
+    const queryOptions = new QueryOptions(model, { includeRelations: true });
+    await queryOptions.filterByConditionTree(filters, timezone);
 
-    return model.unscoped().findAll({
-      attributes: [getGroupByDateInterval(), getAggregate()],
-      include: getIncludes(),
+    const { include, where } = queryOptions.sequelizeOptions;
+    const records = await model.unscoped().findAll({
+      include: include
+        ? include.map((includeProperties) => ({ ...includeProperties, attributes: [] }))
+        : undefined,
       where,
+      attributes: [getGroupByDateInterval(), getAggregate()],
       group: getGroupBy(),
       order: getOrder(),
       raw: true,
-    })
-      .then((records) => P.map(records, (record) => ({
-        label: record.date,
-        values: { value: parseInt(record.value, 10) },
-      })))
-      .then((records) => ({ value: fillEmptyDateInterval(records) }));
+    });
+
+    return {
+      value: fillEmptyDateInterval(
+        records.map((record) => ({
+          label: record.date,
+          values: { value: parseInt(record.value, 10) },
+        })),
+      ),
+    };
   };
 }
 
