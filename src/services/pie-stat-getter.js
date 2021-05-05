@@ -92,15 +92,9 @@ function PieStatGetter(model, params, options) {
         : undefined,
       where,
       attributes: [
+        [options.Sequelize.col(groupByField), ALIAS_GROUP_BY],
         [
-          options.Sequelize.col(groupByField),
-          ALIAS_GROUP_BY,
-        ],
-        [
-          options.Sequelize.fn(
-            getAggregate(),
-            options.Sequelize.col(getAggregateField()),
-          ),
+          options.Sequelize.fn(getAggregate(), options.Sequelize.col(getAggregateField())),
           ALIAS_AGGREGATE,
         ],
       ],
