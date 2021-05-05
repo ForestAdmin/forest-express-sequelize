@@ -6,6 +6,7 @@ const SchemaAdapter = require('../src/adapters/sequelize');
 const { sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax } = require('./databases');
 const PieStatGetter = require('../src/services/pie-stat-getter');
 const LineStatGetter = require('../src/services/line-stat-getter');
+const ValueStatGetter = require('../src/services/value-stat-getter');
 const ResourcesGetter = require('../src/services/resources-getter');
 const ResourceGetter = require('../src/services/resource-getter');
 const ResourceCreator = require('../src/services/resource-creator');
@@ -693,6 +694,82 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             connectionManager.closeConnection();
           }
         });
+      });
+    });
+
+    describe('stats > value stat getter', () => {
+      it('should give correct answer without filters', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.user, {
+            type: 'Value',
+            aggregate: 'Sum',
+            aggregate_field: 'id',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: undefined });
+        } finally {
+          connectionManager.closeConnection();
+        }
+      });
+
+      it('should give correct answer and previous value', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.user, {
+            type: 'Value',
+            aggregate: 'Sum',
+            aggregate_field: 'id',
+            filters: '{"field":"createdAt","operator":"previous_month_to_date","value":null}',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: 0 });
+        } finally {
+          connectionManager.closeConnection();
+        }
+      });
+
+      it('should give correct answer and previous value with filters', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.user, {
+            type: 'Value',
+            aggregate: 'Sum',
+            aggregate_field: 'id',
+            filters: '{"aggregator":"and","conditions":[{"field":"createdAt","operator":"previous_month_to_date","value":null},{"field":"id","operator":"greater_than","value":100}]}',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 205, countPrevious: 0 });
+        } finally {
+          connectionManager.closeConnection();
+        }
+      });
+
+      it('should give correct answer with filter on related data', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.address, {
+            type: 'Value',
+            aggregate: 'Count',
+            filters: '{"field":"user:id","operator":"greater_than","value":0}',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 4, countPrevious: undefined });
+        } finally {
+          connectionManager.closeConnection();
+        }
       });
     });
 
