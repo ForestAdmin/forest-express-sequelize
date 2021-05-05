@@ -88,7 +88,7 @@ function PieStatGetter(model, params, options) {
     const { include, where } = queryOptions.sequelizeOptions;
     const records = await model.unscoped().findAll({
       include: include
-        ? include.map((includeProps) => ({ ...includeProps, attributes: [] }))
+        ? include.map((includeProperties) => ({ ...includeProperties, attributes: [] }))
         : undefined,
       where,
       attributes: [
