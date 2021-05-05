@@ -1,10 +1,9 @@
-import _ from 'lodash';
-import P from 'bluebird';
-import moment from 'moment';
 import { Schemas } from 'forest-express';
-import Orm, { isVersionLessThan4 } from '../utils/orm';
+import _ from 'lodash';
+import moment from 'moment';
 import { isMSSQL } from '../utils/database';
-import FiltersParser from './filters-parser';
+import Orm, { isVersionLessThan4 } from '../utils/orm';
+import QueryOptions from './query-options';
 
 // NOTICE: These aliases are not camelcased to prevent issues with Sequelize.
 const ALIAS_GROUP_BY = 'forest_alias_groupby';
@@ -55,27 +54,12 @@ function PieStatGetter(model, params, options) {
     return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 
-  function getIncludes() {
-    const includes = [];
-    _.values(model.associations).forEach((association) => {
-      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        includes.push({
-          model: association.target.unscoped(),
-          as: association.associationAccessor,
-          attributes: [],
-        });
-      }
-    });
-
-    return includes;
-  }
-
   function getGroupBy() {
     return isMSSQL(model.sequelize) ? [options.Sequelize.col(groupByField)] : [ALIAS_GROUP_BY];
   }
 
   function formatResults(records) {
-    return P.map(records, (record) => {
+    return records.map((record) => {
       let key;
 
       if (field.type === 'Date') {
@@ -97,30 +81,29 @@ function PieStatGetter(model, params, options) {
   }
 
   this.perform = async () => {
-    const where = await new FiltersParser(schema, params.timezone, options).perform(params.filters);
+    const { filters, timezone } = params;
+    const queryOptions = new QueryOptions(model, { includeRelations: true });
+    await queryOptions.filterByConditionTree(filters, timezone);
 
-    return model.unscoped().findAll({
+    const { include, where } = queryOptions.sequelizeOptions;
+    const records = await model.unscoped().findAll({
+      include: include
+        ? include.map((includeProperties) => ({ ...includeProperties, attributes: [] }))
+        : undefined,
+      where,
       attributes: [
+        [options.Sequelize.col(groupByField), ALIAS_GROUP_BY],
         [
-          options.Sequelize.col(groupByField),
-          ALIAS_GROUP_BY,
-        ],
-        [
-          options.Sequelize.fn(
-            getAggregate(),
-            options.Sequelize.col(getAggregateField()),
-          ),
+          options.Sequelize.fn(getAggregate(), options.Sequelize.col(getAggregateField())),
           ALIAS_AGGREGATE,
         ],
       ],
-      include: getIncludes(),
-      where,
       group: getGroupBy(),
       order: [[options.Sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
       raw: true,
-    })
-      .then(formatResults)
-      .then((records) => ({ value: records }));
+    });
+
+    return { value: formatResults(records) };
   };
 }
 
