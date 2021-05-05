@@ -10,6 +10,7 @@ const ValueStatGetter = require('../src/services/value-stat-getter');
 const ResourcesGetter = require('../src/services/resources-getter');
 const ResourceGetter = require('../src/services/resource-getter');
 const ResourceCreator = require('../src/services/resource-creator');
+const ResourceUpdater = require('../src/services/resource-updater');
 const BelongsToUpdater = require('../src/services/belongs-to-updater');
 const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
@@ -165,7 +166,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     });
 
     models.car = sequelize.define('car', {
-      brand: { type: Sequelize.STRING },
+      brand: {
+        type: Sequelize.STRING,
+        validate: {
+          reliable(value) {
+            if (value === 'Fiat') throw new Error('brand must be reliable.');
+          },
+        },
+      },
       model: { type: Sequelize.STRING },
     });
 
@@ -900,7 +908,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('resources > resources updater', () => {
+    describe('resources > relation updater', () => {
       describe('update a record on a collection', () => {
         it('should update a record', async () => {
           expect.assertions(2);
@@ -3190,6 +3198,47 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           try {
             await expect(new ResourceGetter(models.log, params).perform()).toReject();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+    });
+
+    describe('resources > resources updater', () => {
+      describe('update a record on a collection', () => {
+        it('should update a record', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            const updater = new ResourceUpdater(models.car, { recordId: 102 }, { brand: 'Volvo' });
+            await updater.perform();
+
+            const car = await models.car.findOne({ where: { id: 102 } });
+            expect(car.brand).toStrictEqual('Volvo');
+          } finally {
+            await models.car.update({ brand: 'Ferrari' }, { where: { id: 102 } });
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should reject if the record is invalid according to sequelize validation', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            const updater = new ResourceUpdater(models.car, { recordId: 102 }, { brand: 'Fiat' });
+            await expect(updater.perform()).toReject();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should reject if the record does not exists', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            const updater = new ResourceUpdater(models.car, { recordId: 666 }, { brand: 'Volvo' });
+            await expect(updater.perform()).toReject();
           } finally {
             connectionManager.closeConnection();
           }
