@@ -1,6 +1,6 @@
 import _ from 'lodash';
 import Orm from './orm';
-import Recursion from './recursion';
+import ObjectTools from './object-tools';
 
 exports.getReferenceSchema = (schemas, modelSchema, associationName) => {
   const schemaField = modelSchema.fields.find((field) => field.field === associationName);
@@ -33,11 +33,8 @@ const mergeWhere = (operators, ...wheres) => wheres.reduce((where1, where2) => {
   if (!where1) { return where2; }
   if (!where2) { return where1; }
 
-  const keys1 = [...Object.getOwnPropertyNames(where1), ...Object.getOwnPropertySymbols(where1)];
-  const keys2 = [...Object.getOwnPropertyNames(where2), ...Object.getOwnPropertySymbols(where2)];
-  const common = keys1.filter((key) => keys2.includes(key));
-
-  return common.length === 0 && _.isPlainObject(where1) && _.isPlainObject(where2)
+  return !ObjectTools.objectShareKeys(where1, where2)
+   && _.isPlainObject(where1) && _.isPlainObject(where2)
     ? { ...where1, ...where2 }
     : { [operators.AND]: [where1, where2] };
 });
@@ -55,18 +52,20 @@ exports.mergeWhere = mergeWhere;
  * @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/filters-parser.js#L104
  */
 const bubbleWheresInPlace = (operators, options) => {
-  (options.include ?? []).forEach((include) => {
+  const parentInclude = options.include ?? [];
+
+  parentInclude.forEach((include) => {
     bubbleWheresInPlace(operators, include);
 
-    const newWhere = Recursion.mapKeysDeep(include.where, (key) => (
-      key[0] === '$' && key[key.length - 1] === '$'
-        ? `$${include.as}.${key.substring(1)}`
-        : `$${include.as}.${key}$`
-    ));
+    if (include.where) {
+      const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => (
+        key[0] === '$' && key[key.length - 1] === '$'
+          ? `$${include.as}.${key.substring(1)}`
+          : `$${include.as}.${key}$`
+      ));
 
-    delete include.where;
-    if (newWhere) {
       options.where = mergeWhere(operators, options.where, newWhere);
+      delete include.where;
     }
   });
 
