@@ -32,7 +32,9 @@ class ResourceUpdater {
     }
 
     return new ResourceGetter(
-      this._model, { recordId: this._params.recordId }, this._user,
+      this._model,
+      { ...this.params, recordId: this._params.recordId },
+      this._user,
     ).perform();
   }
 }
