@@ -1,4 +1,4 @@
-import { Schemas } from 'forest-express';
+import { Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import moment from 'moment';
 import { isMSSQL } from '../utils/database';
@@ -9,7 +9,7 @@ import QueryOptions from './query-options';
 const ALIAS_GROUP_BY = 'forest_alias_groupby';
 const ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
-function PieStatGetter(model, params, options) {
+function PieStatGetter(model, params, options, user) {
   const needsDateOnlyFormating = isVersionLessThan4(options.Sequelize);
 
   const schema = Schemas.schemas[model.name];
@@ -82,8 +82,11 @@ function PieStatGetter(model, params, options) {
 
   this.perform = async () => {
     const { filters, timezone } = params;
+    const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
+
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);
+    await queryOptions.filterByConditionTree(scopeFilters, timezone);
 
     const { include, where } = queryOptions.sequelizeOptions;
     const records = await model.unscoped().findAll({

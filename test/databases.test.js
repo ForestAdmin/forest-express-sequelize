@@ -1,7 +1,7 @@
-const _ = require('lodash');
 const Sequelize = require('sequelize');
 const sequelizeFixtures = require('sequelize-fixtures');
 const Interface = require('forest-express');
+const { scopeManager } = require('forest-express');
 const SchemaAdapter = require('../src/adapters/sequelize');
 const { sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax } = require('./databases');
 const PieStatGetter = require('../src/services/pie-stat-getter');
@@ -16,29 +16,20 @@ const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
 const HasManyDissociator = require('../src/services/has-many-dissociator');
 
+const baseParams = { timezone: 'Europe/Paris' };
+const user = { renderingId: 1 };
+
 [sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((connectionManager) => {
   function initializeSequelize() {
     const sequelize = connectionManager.createConnection();
     const models = {};
-    const sequelizeOptions = {
-      Sequelize,
-      connections: { sequelize },
-    };
+    const options = { Sequelize, connections: { sequelize } };
 
     models.user = sequelize.define('user', {
-      email: {
-        type: Sequelize.STRING,
-        unique: true,
-        validate: { isEmail: true },
-      },
+      email: { type: Sequelize.STRING, unique: true, validate: { isEmail: true } },
       emailValid: { type: Sequelize.BOOLEAN },
       firstName: { type: Sequelize.STRING },
-      lastName: {
-        type: Sequelize.STRING,
-        validate: {
-          len: [0, 50],
-        },
-      },
+      lastName: { type: Sequelize.STRING, validate: { len: [0, 50] } },
       username: { type: Sequelize.STRING },
       password: { type: Sequelize.STRING },
       createdAt: { type: Sequelize.DATE },
@@ -63,31 +54,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     });
 
     models.bird = sequelize.define('bird', {
-      id: {
-        type: Sequelize.BIGINT,
-        primaryKey: true,
-      },
+      id: { type: Sequelize.BIGINT, primaryKey: true },
       createdAt: { type: Sequelize.DATE },
       updatedAt: { type: Sequelize.DATE },
       name: { type: Sequelize.STRING, allowNull: false },
     });
 
     models.bike = sequelize.define('bike', {
-      id: {
-        type: Sequelize.UUID,
-        primaryKey: true,
-        defaultValue: Sequelize.UUIDV4,
-      },
+      id: { type: Sequelize.UUID, primaryKey: true, defaultValue: Sequelize.UUIDV4 },
       createdAt: { type: Sequelize.DATE },
       updatedAt: { type: Sequelize.DATE },
       name: { type: Sequelize.STRING, allowNull: false },
     });
 
     models.georegion = sequelize.define('georegion', {
-      isocode: {
-        type: Sequelize.STRING,
-        primaryKey: true,
-      },
+      isocode: { type: Sequelize.STRING, primaryKey: true },
       nameEnglish: { type: Sequelize.STRING, allowNull: false },
       nameFrench: { type: Sequelize.STRING, allowNull: false },
     });
@@ -156,25 +137,19 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
     models.picture = sequelize.define('picture', {
       name: { type: Sequelize.STRING },
-      customerId: {
-        type: Sequelize.INTEGER,
-        primaryKey: true,
-        allowNull: false,
-      },
+      customerId: { type: Sequelize.INTEGER, primaryKey: true, allowNull: false },
     }, {
       underscored: true,
     });
 
     models.car = sequelize.define('car', {
+      model: { type: Sequelize.STRING },
       brand: {
         type: Sequelize.STRING,
         validate: {
-          reliable(value) {
-            if (value === 'Fiat') throw new Error('brand must be reliable.');
-          },
+          reliable(value) { if (value === 'Fiat') throw new Error('brand must be reliable.'); },
         },
       },
-      model: { type: Sequelize.STRING },
     });
 
     models.address.belongsTo(models.user);
@@ -187,32 +162,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     models.member.hasMany(models.friend);
     models.friend.belongsTo(models.member);
     models.project.belongsTo(models.owner, {
-      foreignKey: {
-        name: 'ownerIdKey',
-        field: 'owner_id',
-      },
+      foreignKey: { name: 'ownerIdKey', field: 'owner_id' },
       targetKey: 'ownerId',
     });
+
     models.owner.hasMany(models.project, {
-      foreignKey: {
-        name: 'ownerIdKey',
-        field: 'owner_id',
-      },
+      foreignKey: { name: 'ownerIdKey', field: 'owner_id' },
       sourceKey: 'ownerId',
     });
 
     models.customer.hasOne(models.picture, {
-      foreignKey: {
-        name: 'customerIdKey',
-        field: 'customer_id',
-      },
+      foreignKey: { name: 'customerIdKey', field: 'customer_id' },
       as: 'picture',
     });
+
     models.picture.belongsTo(models.customer, {
-      foreignKey: {
-        name: 'customerIdKey',
-        field: 'customer_id',
-      },
+      foreignKey: { name: 'customerIdKey', field: 'customer_id' },
       as: 'customer',
     });
 
@@ -473,14 +438,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       },
     };
 
-    return { sequelize, models, sequelizeOptions };
+    return { sequelize, models, options };
   }
 
   describe(`dialect ${connectionManager.getDialect()}`, () => {
     describe('schema adapter', () => {
       async function initializeSchema(modelName) {
-        const { models, sequelizeOptions } = initializeSequelize();
-        const schema = SchemaAdapter(models[modelName], sequelizeOptions);
+        const { models, options } = initializeSequelize();
+        const schema = SchemaAdapter(models[modelName], options);
         connectionManager.closeConnection();
         return schema;
       }
@@ -558,34 +523,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
     describe('stats > pie stat getter', () => {
       async function initializeDatabase() {
-        const { sequelize, models, sequelizeOptions } = initializeSequelize();
+        const { sequelize, models, options } = initializeSequelize();
         await sequelize.sync({ force: true });
         await sequelizeFixtures.loadFile(
           'test/fixtures/db.json',
           models,
           { log: () => { } },
         );
-        return { models, sequelizeOptions };
+        return { models, options, user };
       }
 
       describe('a simple pie chart', () => {
         describe('on an empty users table', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = await initializeDatabase();
+            const { models, options } = await initializeDatabase();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+
             try {
               const stat = await new PieStatGetter(models.user, {
+                ...baseParams,
                 type: 'Pie',
                 collection: 'user',
-                timezone: 'Europe/Paris',
                 group_by_field: 'firstName',
                 aggregate: 'Count',
                 time_range: null,
                 filters: null,
-              }, sequelizeOptions)
-                .perform();
+              }, options, user).perform();
               expect(stat.value).toHaveLength(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -594,20 +561,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a group by on a belongsTo association using an alias', () => {
           it('should respond correct data', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = await initializeDatabase();
+            const { models, options } = await initializeDatabase();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             try {
               const stat = await new PieStatGetter(models.addressWithUserAlias, {
+                ...baseParams,
                 type: 'Pie',
                 collection: 'addressWithUserAlias',
-                timezone: 'Europe/Paris',
                 group_by_field: 'userAlias:id',
                 aggregate: 'Count',
                 time_range: null,
                 filters: null,
-              }, sequelizeOptions)
-                .perform();
+              }, options, user).perform();
               expect(stat.value).toHaveLength(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -619,20 +587,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per day on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const stat = await new LineStatGetter(models.user, {
+              ...baseParams,
               type: 'Line',
               collection: 'user',
-              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Day',
               filters: null,
-            }, sequelizeOptions)
-              .perform();
+            }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -641,20 +610,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per week on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const stat = await new LineStatGetter(models.user, {
+              ...baseParams,
               type: 'Line',
               collection: 'user',
-              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Week',
               filters: null,
-            }, sequelizeOptions)
-              .perform();
+            }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -663,20 +633,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per month on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const stat = await new LineStatGetter(models.user, {
+              ...baseParams,
               type: 'Line',
               collection: 'user',
-              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Month',
               filters: null,
-            }, sequelizeOptions)
-              .perform();
+            }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -685,20 +656,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('a simple line chart per year on an empty users table', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const stat = await new LineStatGetter(models.user, {
+              ...baseParams,
               type: 'Line',
               collection: 'user',
-              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Year',
               filters: null,
-            }, sequelizeOptions)
-              .perform();
+            }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -707,19 +679,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('chart with a filter', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const stat = await new LineStatGetter(models.address, {
+              ...baseParams,
               type: 'Line',
               collection: 'address',
-              timezone: 'Europe/Paris',
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Year',
               filters: JSON.stringify({ field: 'user:id', operator: 'equal', value: 100 }),
-            }, sequelizeOptions).perform();
+            }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -729,74 +703,88 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     describe('stats > value stat getter', () => {
       it('should give correct answer without filters', async () => {
         expect.assertions(1);
-        const { models, sequelizeOptions } = initializeSequelize();
+        const { models, options } = initializeSequelize();
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
         try {
           const stat = await new ValueStatGetter(models.user, {
+            ...baseParams,
             type: 'Value',
             aggregate: 'Sum',
             aggregate_field: 'id',
-            timezone: 'Europe/Paris',
-          }, sequelizeOptions).perform();
+          }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: undefined });
         } finally {
+          spy.mockRestore();
           connectionManager.closeConnection();
         }
       });
 
       it('should give correct answer and previous value', async () => {
         expect.assertions(1);
-        const { models, sequelizeOptions } = initializeSequelize();
+        const { models, options } = initializeSequelize();
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
         try {
           const stat = await new ValueStatGetter(models.user, {
+            ...baseParams,
             type: 'Value',
             aggregate: 'Sum',
             aggregate_field: 'id',
             filters: '{"field":"createdAt","operator":"previous_month_to_date","value":null}',
-            timezone: 'Europe/Paris',
-          }, sequelizeOptions).perform();
+          }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: 0 });
         } finally {
+          spy.mockRestore();
           connectionManager.closeConnection();
         }
       });
 
       it('should give correct answer and previous value with filters', async () => {
         expect.assertions(1);
-        const { models, sequelizeOptions } = initializeSequelize();
+        const { models, options } = initializeSequelize();
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
         try {
           const stat = await new ValueStatGetter(models.user, {
+            ...baseParams,
             type: 'Value',
             aggregate: 'Sum',
             aggregate_field: 'id',
-            filters: '{"aggregator":"and","conditions":[{"field":"createdAt","operator":"previous_month_to_date","value":null},{"field":"id","operator":"greater_than","value":100}]}',
-            timezone: 'Europe/Paris',
-          }, sequelizeOptions).perform();
+            filters: JSON.stringify({
+              aggregator: 'and',
+              conditions: [
+                { field: 'createdAt', operator: 'previous_month_to_date', value: null },
+                { field: 'id', operator: 'greater_than', value: 100 },
+              ],
+            }),
+          }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 205, countPrevious: 0 });
         } finally {
+          spy.mockRestore();
           connectionManager.closeConnection();
         }
       });
 
       it('should give correct answer with filter on related data', async () => {
         expect.assertions(1);
-        const { models, sequelizeOptions } = initializeSequelize();
+        const { models, options } = initializeSequelize();
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
         try {
           const stat = await new ValueStatGetter(models.address, {
+            ...baseParams,
             type: 'Value',
             aggregate: 'Count',
             filters: '{"field":"user:id","operator":"greater_than","value":0}',
-            timezone: 'Europe/Paris',
-          }, sequelizeOptions).perform();
+          }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 4, countPrevious: undefined });
         } finally {
+          spy.mockRestore();
           connectionManager.closeConnection();
         }
       });
@@ -807,8 +795,9 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should create a record', async () => {
           expect.assertions(4);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            const result = await new ResourceCreator(models.user, {
+            const result = await new ResourceCreator(models.user, baseParams, {
               id: '1',
               email: 'jack@forestadmin.com',
               firstName: 'Jack',
@@ -816,15 +805,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               username: 'Jacouille',
               password: 'bonpoissonnet',
               teams: [],
-            })
-              .perform();
+            }, user).perform();
             expect(result.id).toStrictEqual(1);
             expect(result.firstName).toStrictEqual('Jack');
             expect(result.username).toStrictEqual('Jacouille');
 
-            const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
-            expect(user).not.toBeNull();
+            const newUser = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
+            expect(newUser).not.toBeNull();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -834,17 +823,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should create a record', async () => {
           expect.assertions(6);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            await new ResourceCreator(models.owner, {
+            await new ResourceCreator(models.owner, baseParams, {
               id: 1,
               name: 'foo',
               ownerId: 3,
-            }).perform();
-            const result = await new ResourceCreator(models.project, {
+            }, user).perform();
+            const result = await new ResourceCreator(models.project, baseParams, {
               id: 1,
               name: 'bar',
               owner: 1,
-            }).perform();
+            }, user).perform();
 
             expect(result.id).toStrictEqual(1);
             expect(result.name).toStrictEqual('bar');
@@ -855,6 +845,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             expect(project.owner.id).toStrictEqual(1);
             expect(project.owner.ownerId).toStrictEqual(3);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -862,18 +853,20 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should not create a record', async () => {
           expect.assertions(1);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            await new ResourceCreator(models.owner, {
+            await new ResourceCreator(models.owner, baseParams, {
               id: 2,
               name: 'foo',
               ownerId: 4,
-            }).perform();
-            await expect(new ResourceCreator(models.project, {
+            }, user).perform();
+            await expect(new ResourceCreator(models.project, baseParams, {
               id: 1,
               name: 'bar',
               owner: 4,
-            }).perform()).rejects.toThrow(Error('related owner with pk 4 does not exist.'));
+            }, user).perform()).rejects.toThrow(Error('related owner with pk 4 does not exist.'));
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -883,15 +876,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should create a record', async () => {
           expect.assertions(6);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            await new ResourceCreator(models.customer, {
+            await new ResourceCreator(models.customer, baseParams, {
               id: 1,
               name: 'foo',
-            }).perform();
-            const result = await new ResourceCreator(models.picture, {
+            }, user).perform();
+            const result = await new ResourceCreator(models.picture, baseParams, {
               name: 'bar',
               customer: 1,
-            }).perform();
+            }, user).perform();
 
             expect(result.customerId).toStrictEqual(1);
             expect(result.customerIdKey).toStrictEqual(1);
@@ -902,6 +896,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             expect(picture.customerId).toStrictEqual(1);
             expect(picture.customer.id).toStrictEqual(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -911,18 +906,19 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should create a record', async () => {
           expect.assertions(3);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            const result = await new ResourceCreator(models.log, {
+            const result = await new ResourceCreator(models.log, baseParams, {
               code: 'G@G#F@G@',
               trace: 'Ggg23g242@',
-            })
-              .perform();
+            }, user).perform();
             expect(result.code).toStrictEqual('G@G#F@G@');
             expect(result.trace).toStrictEqual('Ggg23g242@');
 
             const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
             expect(log).not.toBeNull();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -934,20 +930,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should update a record', async () => {
           expect.assertions(2);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            await new ResourceCreator(models.member, {
+            await new ResourceCreator(models.member, baseParams, {
               id: 1,
               name: 'foo',
-            }).perform();
-            await new ResourceCreator(models.member, {
+            }, user).perform();
+            await new ResourceCreator(models.member, baseParams, {
               id: 2,
               name: 'bar',
-            }).perform();
-            await new ResourceCreator(models.friend, {
+            }, user).perform();
+            await new ResourceCreator(models.friend, baseParams, {
               id: 1,
               name: 'foo',
               memberId: 1,
-            }).perform();
+            }, user).perform();
             const result = await new BelongsToUpdater(models.friend, null, null, {
               recordId: '1',
               associationName: 'member',
@@ -961,6 +958,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             expect(result.id).toStrictEqual(1);
             expect(result.memberId).toStrictEqual('2');
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -968,17 +966,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should update a record with hasOne association', async () => {
           expect.assertions(2);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            await new ResourceCreator(models.membership, {
+            await new ResourceCreator(models.membership, baseParams, {
               id: 1,
               type: 'basic',
               memberId: 1,
-            }).perform();
-            await new ResourceCreator(models.membership, {
+            }, user).perform();
+            await new ResourceCreator(models.membership, baseParams, {
               id: 2,
               type: 'premium',
               memberId: 2,
-            }).perform();
+            }, user).perform();
             await new BelongsToUpdater(models.member, null, null, {
               recordId: '1',
               associationName: 'membership',
@@ -996,6 +995,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             expect(member).not.toBeNull();
             expect(member.membership.id).toStrictEqual(2);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1003,6 +1003,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should not update a record', async () => {
           expect.assertions(1);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             await expect(new BelongsToUpdater(models.member, null, null, {
               recordId: '1',
@@ -1014,6 +1015,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               },
             }).perform()).rejects.toThrow(Error('related membership with pk 999 does not exist.'));
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1021,6 +1023,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should not update a record if no data', async () => {
           expect.assertions(1);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const result = await new BelongsToUpdater(models.member, null, null, {
               recordId: '1',
@@ -1028,6 +1031,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             }, {}).perform();
             expect(result).toBeNull();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1035,19 +1039,19 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should update a record when removing a reference to another record', async () => {
           expect.assertions(2);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
           try {
-            const newMember = await new ResourceCreator(models.member, {
+            const newMember = await new ResourceCreator(models.member, baseParams, {
               id: 421,
               name: 'the member',
-            }).perform();
+            }, user).perform();
 
-            const newFriend = await new ResourceCreator(models.friend, {
+            const newFriend = await new ResourceCreator(models.friend, baseParams, {
               id: 422,
               member: newMember,
               name: 'my friend',
-            }).perform();
-
+            }, user).perform();
 
             expect(newFriend.memberId).not.toBeNull();
 
@@ -1058,6 +1062,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
             expect(result.memberId).toBeNull();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1066,12 +1071,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should update a record', async () => {
           expect.assertions(2);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            await new ResourceCreator(models.owner, {
+            await new ResourceCreator(models.owner, baseParams, {
               id: 3,
               name: 'foo3',
               ownerId: 5,
-            }).perform();
+            }, user).perform();
             const result = await new BelongsToUpdater(models.project, null, null, {
               recordId: '1',
               associationName: 'owner',
@@ -1085,6 +1091,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             expect(result.id).toStrictEqual(1);
             expect(result.ownerIdKey).toStrictEqual(5);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1092,12 +1099,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         it('should not update a record', async () => {
           expect.assertions(1);
           const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            await new ResourceCreator(models.owner, {
+            await new ResourceCreator(models.owner, baseParams, {
               id: 4,
               name: 'foo4',
               ownerId: 6,
-            }).perform();
+            }, user).perform();
             await expect(new BelongsToUpdater(models.project, null, null, {
               recordId: '1',
               associationName: 'owner',
@@ -1108,6 +1116,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               },
             }).perform()).rejects.toThrow(Error('related owner with pk 6 does not exist.'));
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1118,18 +1127,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter without page size', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const params = {
-              fields: {
-                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-              },
+              ...baseParams,
+              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
               page: { number: '1' },
-              timezone: 'Europe/Paris',
             };
-            await new ResourcesGetter(models.user, sequelizeOptions, params).perform();
+            await new ResourcesGetter(models.user, null, params, user).perform();
             expect(true).toStrictEqual(true);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1138,33 +1147,33 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a page size', () => {
         it('should return the records for the specified page', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
+            ...baseParams,
             fields: {
               user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
             },
             page: { number: '1', size: '30' },
-            timezone: 'Europe/Paris',
           };
           try {
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.user, null, params, user).perform();
             expect(result[0]).toHaveLength(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
-          const params = {
-            timezone: 'Europe/Paris',
-          };
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            const count = await new ResourcesGetter(models.user, null, baseParams).count();
             expect(count).toStrictEqual(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1173,34 +1182,33 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a sort on the primary key', () => {
         it('should return the records for the specified page', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-            },
+            ...baseParams,
+            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
             sort: '-id',
             page: { number: '1', size: '30' },
-            timezone: 'Europe/Paris',
           };
           try {
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.user, null, params, user).perform();
             expect(result[0]).toHaveLength(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
-          const params = {
-            timezone: 'Europe/Paris',
-          };
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+
           try {
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            const count = await new ResourcesGetter(models.user, null, baseParams, user).count();
             expect(count).toStrictEqual(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1210,36 +1218,35 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "string" search', () => {
           it('should return the records for the specified page', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
+              ...baseParams,
               fields: {
                 user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
               },
               page: { number: '1', size: '30' },
               search: 'hello',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = {
-              search: 'hello',
-              timezone: 'Europe/Paris',
-            };
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...baseParams, search: 'hello' };
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1248,51 +1255,49 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "number" search', () => {
           it('should return the records for the specified page', async () => {
             expect.assertions(2);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
-              },
+              ...baseParams,
+              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
               page: { number: '1', size: '30' },
               search: '10',
-              timezone: 'Europe/Paris',
             };
             try {
-              let result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              let result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(2);
 
               params.search = '0';
-              result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(2);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = {
-              search: '10',
-              timezone: 'Europe/Paris',
-            };
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...baseParams, search: '10' };
             try {
-              let count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+              let count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(2);
 
               params.search = '0';
-              count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+              count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should handle numbers over MAX_SAFE_INTEGER', async () => {
             expect.assertions(2);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the clicks value manually
@@ -1301,26 +1306,27 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             await counter.save();
 
             const params = {
-              fields: {
-                counter: 'id,clicks',
-              },
+              ...baseParams,
+              fields: { counter: 'id,clicks' },
               page: { number: '1', size: '30' },
               search: '9013084467599484828',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.counter, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(
+                models.counter, null, params, user,
+              ).perform();
               expect(result[0]).toHaveLength(1);
               expect(result[0][0].id).toBe(10);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should handle numbers over MAX_SAFE_INTEGER even if there are fields that are not big int', async () => {
             expect.assertions(2);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the clicks value manually
@@ -1329,19 +1335,19 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             await counter.save();
 
             const params = {
-              fields: {
-                counter: 'id,clicks,quantity',
-              },
+              ...baseParams,
+              fields: { counter: 'id,clicks,quantity' },
               page: { number: '1', size: '30' },
               search: '9013084467599484828',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.counter, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(
+                models.counter, null, params, user,
+              ).perform();
               expect(result[0]).toHaveLength(1);
               expect(result[0][0].id).toBe(10);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1350,38 +1356,35 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "string" search on a smart field', () => {
           it('should return the records for the specified page', async () => {
             expect.assertions(3);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                car: 'id,name',
-              },
+              ...baseParams,
+              fields: { car: 'id,name' },
               page: { number: '1', size: '30' },
               search: 'Ferrari Enzo',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.car, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.car, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
               expect(result[0][0].brand).toStrictEqual('Ferrari');
               expect(result[0][0].model).toStrictEqual('Enzo');
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = {
-              search: 'Ferrari Enzo',
-              timezone: 'Europe/Paris',
-            };
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...baseParams, search: 'Ferrari Enzo' };
             try {
-              const count = await new ResourcesGetter(models.car, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.car, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1392,38 +1395,37 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a valid query', () => {
           it('should return the records filtered by the segment', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
-              },
+              ...baseParams,
+              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
               page: { number: '1', size: '30' },
-              timezone: 'Europe/Paris',
               segmentQuery: "SELECT * FROM users WHERE users.email = 'richard@piedpiper.com'",
             };
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count filtered by the segment', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
+              ...baseParams,
               search: '10',
-              timezone: 'Europe/Paris',
               segmentQuery: "SELECT * FROM users WHERE users.email = 'richard@piedpiper.com'",
             };
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
-
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1432,35 +1434,38 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with an invalid query', () => {
           it('should raise an error on perform', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age',
-              },
+              ...baseParams,
+              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
               page: { number: '1', size: '30' },
-              timezone: 'Europe/Paris',
               segmentQuery: 'SELECT * FROM use',
             };
+
             try {
-              await expect(new ResourcesGetter(models.user, sequelizeOptions, params).perform())
+              await expect(new ResourcesGetter(models.user, null, params, user).perform())
                 .rejects.toThrow('Invalid SQL query for this Live Query segment');
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should raise an error on count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
+              ...baseParams,
               search: '10',
-              timezone: 'Europe/Paris',
               segmentQuery: 'SELECT * FROM use',
             };
             try {
-              await expect(new ResourcesGetter(models.user, sequelizeOptions, params).count())
+              await expect(new ResourcesGetter(models.user, null, params, user).count())
                 .rejects.toThrow('Invalid SQL query for this Live Query segment');
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1470,41 +1475,38 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('with segment defined on the liana side', () => {
         it('should return the records filtered by the segment', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              car: 'id,brand,model',
-            },
+            ...baseParams,
+            fields: { car: 'id,brand,model' },
             page: { number: '1', size: '30' },
-            timezone: 'Europe/Paris',
             segment: 'only monza sp*',
           };
           try {
-            const result = await new ResourcesGetter(models.car, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.car, null, params, user).perform();
             expect(result[0]).toHaveLength(2);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count filtered by the segment', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              car: 'id,brand,model',
-            },
+            ...baseParams,
+            fields: { car: 'id,brand,model' },
             page: { number: '1', size: '30' },
-            timezone: 'Europe/Paris',
             segment: 'only monza sp*',
           };
           try {
-            const count = await new ResourcesGetter(models.car, sequelizeOptions, params)
-              .count();
-
+            const count = await new ResourcesGetter(models.car, null, params, user).count();
             expect(count).toStrictEqual(2);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1514,36 +1516,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a UUID that does not exist', () => {
           it('should return 0 records for the specified page', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                bike: 'id,name',
-              },
+              ...baseParams,
+              fields: { bike: 'id,name' },
               page: { number: '1', size: '30' },
               search: '39a704a7-9149-448c-ac93-9c869c5af41d',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.bike, null, params, user).perform();
               expect(result[0]).toHaveLength(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should count 0 records', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = {
-              search: '39a704a7-9149-448c-ac93-9c869c5af41d',
-              timezone: 'Europe/Paris',
-            };
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...baseParams, search: '39a704a7-9149-448c-ac93-9c869c5af41d' };
+
             try {
-              const count = await new ResourcesGetter(models.bike, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.bike, null, params, user).count();
               expect(count).toStrictEqual(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1552,36 +1552,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a UUID that exists', () => {
           it('should return 1 record for the specified page', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                bike: 'id,name',
-              },
+              ...baseParams,
+              fields: { bike: 'id,name' },
               page: { number: '1', size: '30' },
               search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.bike, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.bike, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should count 1 record', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = {
-              search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
-              timezone: 'Europe/Paris',
-            };
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...baseParams, search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3' };
+
             try {
-              const count = await new ResourcesGetter(models.bike, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.bike, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1592,36 +1590,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a string that does not matches', () => {
           it('should return 0 records for the specified page', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                country: 'isocode,nameEnglish',
-              },
+              ...baseParams,
+              fields: { country: 'isocode,nameEnglish' },
               page: { number: '1', size: '30' },
               search: 'en',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(
+                models.georegion, null, params, user,
+              ).perform();
               expect(result[0]).toHaveLength(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should count 0 records', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = {
-              search: 'en',
-              timezone: 'Europe/Paris',
-            };
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...baseParams, search: 'en' };
+
             try {
-              const count = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.georegion, null, params, user).count();
               expect(count).toStrictEqual(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1630,36 +1628,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a string that matches', () => {
           it('should return 1 record for the specified page', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
-              fields: {
-                georegion: 'isocode,nameEnglish',
-              },
+              ...baseParams,
+              fields: { georegion: 'isocode,nameEnglish' },
               page: { number: '1', size: '30' },
               search: 'es',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(
+                models.georegion, null, params, user,
+              ).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should count 1 record', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = {
-              search: 'es',
-              timezone: 'Europe/Paris',
-            };
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...baseParams, search: 'es' };
+
             try {
-              const count = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.georegion, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1671,7 +1669,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should return 0 records for the specified page', async () => {
             expect.assertions(1);
 
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
@@ -1681,18 +1680,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             );
 
             const params = {
-              fields: {
-                bird: 'id,name',
-              },
+              ...baseParams,
+              fields: { bird: 'id,name' },
               page: { number: '1', size: '30' },
               search: '9223372036854770001',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.bird, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.bird, null, params, user).perform();
               expect(result[0]).toHaveLength(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1700,7 +1697,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should count 0 records', async () => {
             expect.assertions(1);
 
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
@@ -1709,15 +1707,13 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               { where: { name: 'eagle' } },
             );
 
-            const params = {
-              search: '9223372036854770001',
-              timezone: 'Europe/Paris',
-            };
+            const params = { ...baseParams, search: '9223372036854770001' };
+
             try {
-              const count = await new ResourcesGetter(models.bird, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.bird, null, params, user).count();
               expect(count).toStrictEqual(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1727,7 +1723,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should return 1 record for the specified page', async () => {
             expect.assertions(1);
 
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
@@ -1737,18 +1734,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             );
 
             const params = {
-              fields: {
-                bird: 'id,name',
-              },
+              ...baseParams,
+              fields: { bird: 'id,name' },
               page: { number: '1', size: '30' },
               search: '9223372036854770000',
-              timezone: 'Europe/Paris',
             };
             try {
-              const result = await new ResourcesGetter(models.bird, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.bird, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1756,7 +1751,8 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           it('should count 1 record', async () => {
             expect.assertions(1);
 
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
             // HACK: sequelize-fixtures does not support BigInt in json files,
             //       so we need to update the id value manually
@@ -1765,15 +1761,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               { where: { name: 'eagle' } },
             );
 
-            const params = {
-              search: '9223372036854770000',
-              timezone: 'Europe/Paris',
-            };
+            const params = { ...baseParams, search: '9223372036854770000' };
             try {
-              const count = await new ResourcesGetter(models.bird, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.bird, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1783,35 +1776,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a search on a collection with searchFields', () => {
         it('should return the records for the specified page', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              order: 'id,amount,description,giftComment',
-            },
+            ...baseParams,
+            fields: { order: 'id,amount,description,giftComment' },
             page: { number: '1', size: '30' },
             search: 'gift',
-            timezone: 'Europe/Paris',
           };
           try {
-            const result = await new ResourcesGetter(models.order, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.order, null, params, user).perform();
             expect(result[0]).toHaveLength(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
-          const params = {
-            search: 'gift',
-            timezone: 'Europe/Paris',
-          };
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const params = { ...baseParams, search: 'gift' };
+
           try {
-            const count = await new ResourcesGetter(models.order, sequelizeOptions, params).count();
+            const count = await new ResourcesGetter(models.order, null, params, user).count();
             expect(count).toStrictEqual(1);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -1819,62 +1811,54 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
       describe('request on the resources getter with filters conditions', () => {
         const paramsBaseList = {
-          fields: {
-            user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-          },
+          ...baseParams,
+          fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
           page: { number: '1', size: '30' },
-          timezone: 'Europe/Paris',
         };
 
-        const paramsBaseCount = {
-          timezone: 'Europe/Paris',
-        };
+        const paramsBaseCount = { ...baseParams };
 
         const paramsAddressList = {
-          fields: {
-            address: 'id,city,country',
-          },
+          ...baseParams,
+          fields: { address: 'id,city,country' },
           page: { number: '1', size: '30' },
-          timezone: 'Europe/Paris',
         };
 
-        const paramsAddressCount = {
-          timezone: 'Europe/Paris',
-        };
+        const paramsAddressCount = { ...baseParams };
 
         describe('with a "is" condition on a number field', () => {
           it('should return the records for the specified page', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'equal',
-              value: 100,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'id', operator: 'equal', value: 100 }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'equal',
-              value: 100,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'id', operator: 'equal', value: 100 }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1883,36 +1867,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "greater than" condition on a number field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'greater_than',
-              value: 101,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'id', operator: 'greater_than', value: 101 }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'greater_than',
-              value: 101,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'id', operator: 'greater_than', value: 101 }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1921,36 +1905,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "less than" condition on a number field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'less_than',
-              value: 104,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'id', operator: 'less_than', value: 104 }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(4);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'less_than',
-              value: 104,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'id', operator: 'less_than', value: 104 }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(4);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1959,36 +1943,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not" condition on a number field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'not_equal',
-              value: 100,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'id', operator: 'not_equal', value: 100 }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the records result', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'id',
-              operator: 'not_equal',
-              value: 100,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'id', operator: 'not_equal', value: 100 }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -1997,36 +1981,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is null" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'equal',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'equal', value: null }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'equal',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'equal', value: null }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2035,36 +2019,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is true" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'equal',
-              value: true,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'equal', value: true }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'equal',
-              value: true,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'equal', value: true }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2073,36 +2057,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is false" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'equal',
-              value: false,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'equal', value: false }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'equal',
-              value: false,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'equal', value: false }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2111,36 +2095,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not null" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'not_equal',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'not_equal', value: null }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'not_equal',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'not_equal', value: null }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2149,36 +2133,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not true" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'not',
-              value: true,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'not', value: true }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'not',
-              value: true,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'not', value: true }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2187,36 +2171,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'email',
-              operator: 'not_equal',
-              value: 'richard@piedpiper.com',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'email', operator: 'not_equal', value: 'richard@piedpiper.com' }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'email',
-              operator: 'not_equal',
-              value: 'richard@piedpiper.com',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'email', operator: 'not_equal', value: 'richard@piedpiper.com' }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2225,36 +2209,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is not false" condition on a boolean field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'not',
-              value: false,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'not', value: false }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'emailValid',
-              operator: 'not',
-              value: false,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'emailValid', operator: 'not', value: false }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2263,36 +2247,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "contains" condition on a string field', () => {
           it('should generate a valid SQL query for list', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'firstName',
-              operator: 'contains',
-              value: 'Richa',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'firstName', operator: 'contains', value: 'Richa' }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should generate a valid SQL query for count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'firstName',
-              operator: 'contains',
-              value: 'Richa',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'firstName', operator: 'contains', value: 'Richa' }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2301,36 +2285,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "not contains" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'username',
-              operator: 'not_contains',
-              value: 'hello',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'username', operator: 'not_contains', value: 'hello' }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(4);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'username',
-              operator: 'not_contains',
-              value: 'hello',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'username', operator: 'not_contains', value: 'hello' }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(4);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2339,36 +2323,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "starts with" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'email',
-              operator: 'starts_with',
-              value: 'dinesh@',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'email', operator: 'starts_with', value: 'dinesh@' }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'email',
-              operator: 'starts_with',
-              value: 'dinesh@',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'email', operator: 'starts_with', value: 'dinesh@' }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(1);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2377,36 +2361,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "ends with" condition on a string field', () => {
           it('should generate a valid SQL query for list', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'email',
-              operator: 'ends_with',
-              value: '@piedpiper.com',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'email', operator: 'ends_with', value: '@piedpiper.com' }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should generate a valid SQL query for count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'email',
-              operator: 'ends_with',
-              value: '@piedpiper.com',
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'email', operator: 'ends_with', value: '@piedpiper.com' }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2415,22 +2399,22 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is present" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(4);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsAddressList);
-            params.filters = JSON.stringify({
-              field: 'country',
-              operator: 'present',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsAddressList,
+              filters: JSON.stringify({ field: 'country', operator: 'present', value: null }),
+            };
+
             try {
-              await new ResourcesGetter(models.address, sequelizeOptions, params)
-                .perform()
-                .then((result) => {
-                  _.each(result[0], (instance) => {
-                    expect(instance.dataValues.country).toBeDefined();
-                  });
-                });
+              const [records] = await new ResourcesGetter(
+                models.address, null, params, user,
+              ).perform();
+              records.forEach((instance) => {
+                expect(instance.dataValues.country).toBeDefined();
+              });
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2439,36 +2423,38 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is blank" condition on a string field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsAddressList);
-            params.filters = JSON.stringify({
-              field: 'country',
-              operator: 'blank',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsAddressList,
+              filters: JSON.stringify({ field: 'country', operator: 'blank', value: null }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(
+                models.address, null, params, user,
+              ).perform();
               expect(result[0]).toHaveLength(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsAddressCount);
-            params.filters = JSON.stringify({
-              field: 'country',
-              operator: 'blank',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsAddressCount,
+              filters: JSON.stringify({ field: 'country', operator: 'blank', value: null }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.address, null, params, user).count();
               expect(count).toStrictEqual(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2477,36 +2463,38 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "is blank" condition on a date field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsAddressList);
-            params.filters = JSON.stringify({
-              field: 'archivedAt',
-              operator: 'blank',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsAddressList,
+              filters: JSON.stringify({ field: 'archivedAt', operator: 'blank', value: null }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(
+                models.address, null, params, user,
+              ).perform();
               expect(result[0]).toHaveLength(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsAddressCount);
-            params.filters = JSON.stringify({
-              field: 'archivedAt',
-              operator: 'blank',
-              value: null,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsAddressCount,
+              filters: JSON.stringify({ field: 'archivedAt', operator: 'blank', value: null }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.address, null, params, user).count();
               expect(count).toStrictEqual(2);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2515,36 +2503,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "before x hours" condition on a date field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'createdAt',
-              operator: 'before_x_hours_ago',
-              value: 2,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'createdAt', operator: 'before_x_hours_ago', value: 2 }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'createdAt',
-              operator: 'before_x_hours_ago',
-              value: 2,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'createdAt', operator: 'before_x_hours_ago', value: 2 }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(0);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2553,36 +2541,36 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('with a "after x hours" condition on a date field', () => {
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = JSON.stringify({
-              field: 'createdAt',
-              operator: 'after_x_hours_ago',
-              value: 2,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseList,
+              filters: JSON.stringify({ field: 'createdAt', operator: 'after_x_hours_ago', value: 2 }),
+            };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(4);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = JSON.stringify({
-              field: 'createdAt',
-              operator: 'after_x_hours_ago',
-              value: 2,
-            });
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = {
+              ...paramsBaseCount,
+              filters: JSON.stringify({ field: 'createdAt', operator: 'after_x_hours_ago', value: 2 }),
+            };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(4);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2648,28 +2636,30 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
           it('should generate a valid SQL query', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseList);
-            params.filters = filters;
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...paramsBaseList, filters };
+
             try {
-              const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .perform();
+              const result = await new ResourcesGetter(models.user, null, params, user).perform();
               expect(result[0]).toHaveLength(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
 
           it('should return the total records count', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
-            const params = _.clone(paramsBaseCount);
-            params.filters = filters;
+            const { models } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            const params = { ...paramsBaseCount, filters };
+
             try {
-              const count = await new ResourcesGetter(models.user, sequelizeOptions, params)
-                .count();
+              const count = await new ResourcesGetter(models.user, null, params, user).count();
               expect(count).toStrictEqual(3);
             } finally {
+              spy.mockRestore();
               connectionManager.closeConnection();
             }
           });
@@ -2679,45 +2669,40 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a filter condition and search', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-            },
+            ...baseParams,
+            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
             page: { number: '2', size: '50' },
-            filters: JSON.stringify({
-              field: 'username',
-              operator: 'contains',
-              value: 'hello',
-            }),
+            filters: JSON.stringify({ field: 'username', operator: 'contains', value: 'hello' }),
             search: 'world',
-            timezone: 'Europe/Paris',
           };
+
           try {
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.user, null, params, user).perform();
             expect(result[0]).toHaveLength(0);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            filters: JSON.stringify({
-              field: 'username',
-              operator: 'contains',
-              value: 'hello',
-            }),
+            ...baseParams,
+            filters: JSON.stringify({ field: 'username', operator: 'contains', value: 'hello' }),
             search: 'world',
-            timezone: 'Europe/Paris',
           };
+
           try {
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            const count = await new ResourcesGetter(models.user, null, params, user).count();
             expect(count).toStrictEqual(0);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -2726,39 +2711,40 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with an extended search with a UUID input', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              address: 'line,zipCode,city,country,user',
-              user: 'id',
-            },
+            ...baseParams,
+            fields: { user: 'id', address: 'line,zipCode,city,country,user' },
             page: { number: '1', size: '10' },
             search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
             searchExtended: 1,
-            timezone: 'Europe/Paris',
           };
+
           try {
-            const result = await new ResourcesGetter(models.address, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.address, null, params, user).perform();
             expect(result[0]).toHaveLength(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
+            ...baseParams,
             search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
             searchExtended: 1,
-            timezone: 'Europe/Paris',
           };
+
           try {
-            const count = await new ResourcesGetter(models.address, sequelizeOptions, params)
-              .count();
+            const count = await new ResourcesGetter(models.address, null, params, user).count();
             expect(count).toStrictEqual(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -2767,46 +2753,41 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a filter condition, search and sort combined', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-            },
+            ...baseParams,
+            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
             page: { number: '2', size: '50' },
-            filters: JSON.stringify({
-              field: 'username',
-              operator: 'contains',
-              value: 'hello',
-            }),
+            filters: JSON.stringify({ field: 'username', operator: 'contains', value: 'hello' }),
             sort: '-id',
             search: 'world',
-            timezone: 'Europe/Paris',
           };
+
           try {
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.user, null, params, user).perform();
             expect(result[0]).toHaveLength(0);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            filters: JSON.stringify({
-              field: 'username',
-              operator: 'contains',
-              value: 'hello',
-            }),
+            ...baseParams,
+            filters: JSON.stringify({ field: 'username', operator: 'contains', value: 'hello' }),
             search: 'world',
-            timezone: 'Europe/Paris',
           };
+
           try {
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            const count = await new ResourcesGetter(models.user, null, params, user).count();
             expect(count).toStrictEqual(0);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -2815,36 +2796,38 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a Live Query segment', () => {
         it('should respond with a valid result', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
-            },
+            ...baseParams,
+            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
             page: { number: '1', size: '50' },
             sort: '-id',
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
-            timezone: 'Europe/Paris',
           };
+
           try {
-            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
-              .perform();
+            const result = await new ResourcesGetter(models.user, null, params, user).perform();
             expect(result[0]).toHaveLength(2);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             segmentQuery: 'select * from users\nwhere id in (100, 102);',
             timezone: 'Europe/Paris',
           };
           try {
-            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            const count = await new ResourcesGetter(models.user, null, params, user).count();
             expect(count).toStrictEqual(2);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -2853,56 +2836,46 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the resources getter with a smart field', () => {
         it('should only retrieve requested fields when only DB fields are used', async () => {
           expect.assertions(5);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              address: 'user',
-              user: 'firstName',
-            },
+            ...baseParams,
+            fields: { address: 'user', user: 'firstName' },
             page: { number: '1' },
-            timezone: 'Europe/Paris',
           };
-          try {
-            const result = await new ResourcesGetter(
-              models.address,
-              sequelizeOptions,
-              params,
-            ).perform();
 
+          try {
+            const result = await new ResourcesGetter(models.address, null, params).perform();
             expect(result[0]).not.toHaveLength(0);
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should retrieve all fields when a smart field is requested', async () => {
           expect.assertions(5);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            fields: {
-              address: 'user',
-              user: 'fullName',
-            },
+            ...baseParams,
+            fields: { address: 'user', user: 'fullName' },
             page: { number: '1' },
-            timezone: 'Europe/Paris',
           };
-          try {
-            const result = await new ResourcesGetter(
-              models.address,
-              sequelizeOptions,
-              params,
-            ).perform();
 
+          try {
+            const result = await new ResourcesGetter(models.address, null, params).perform();
             expect(result[0]).not.toHaveLength(0);
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).toHaveProperty('lastName');
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -2913,8 +2886,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the has-many getter without sort', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const { models, options } = initializeSequelize();
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
             fields: {
@@ -2927,42 +2902,47 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const result = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .perform();
+              user,
+            ).perform();
             expect(result[0]).toHaveLength(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const { models, options } = initializeSequelize();
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
-            timezone: 'Europe/Paris',
           };
           try {
             const count = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .count();
+              user,
+            ).count();
             expect(count).toStrictEqual(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should only return the ids of the other relationships when fields are specified', async () => {
           expect.assertions(2);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const { models, options } = initializeSequelize();
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
             fields: {
@@ -2970,21 +2950,21 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               user: 'id',
             },
             page: { number: '1', size: '20' },
-            timezone: 'Europe/Paris',
           };
           try {
             const result = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .perform();
+              user,
+            ).perform();
             expect(result[0]).not.toHaveLength(0);
-            const firstEntry = result[0][0];
 
+            const firstEntry = result[0][0];
             expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['id']);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -2993,8 +2973,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the has-many-getter with a sort on an attribute', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const { models, options } = initializeSequelize();
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
             fields: {
@@ -3002,40 +2984,42 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             },
             page: { number: '1', size: '20' },
             sort: 'city',
-            timezone: 'Europe/Paris',
           };
           try {
             const result = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .perform();
+              user,
+            ).perform();
             expect(result[0]).toHaveLength(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const { models, options } = initializeSequelize();
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
-            timezone: 'Europe/Paris',
           };
           try {
             const count = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .count();
+              user,
+            ).count();
             expect(count).toStrictEqual(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3044,49 +3028,48 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the has-many-getter with a sort on a belongsTo', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
-            fields: {
-              address: 'line,zipCode,city,country,user',
-            },
+            fields: { address: 'line,zipCode,city,country,user' },
             page: { number: '1', size: '20' },
             sort: '-user.id',
-            timezone: 'Europe/Paris',
           };
           try {
             const result = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .perform();
+              user,
+            ).perform();
             expect(result[0]).toHaveLength(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should return the total records count', async () => {
           expect.assertions(1);
-          const { models, sequelizeOptions } = initializeSequelize();
-          const params = {
-            recordId: 100,
-            associationName: 'addresses',
-            timezone: 'Europe/Paris',
-          };
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const params = { ...baseParams, recordId: 100, associationName: 'addresses' };
+
           try {
             const count = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .count();
+              user,
+            ).count();
             expect(count).toStrictEqual(4);
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3095,61 +3078,59 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('request on the has-many-getter with a smart field for an association', () => {
         it('should get all fields for addresses when a smart field is requested', async () => {
           expect.assertions(4);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
-            fields: {
-              address: 'street',
-              user: 'fullName',
-            },
+            fields: { address: 'street', user: 'fullName' },
             page: { number: '1', size: '20' },
-            timezone: 'Europe/Paris',
           };
           try {
             const result = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .perform();
+              user,
+            ).perform();
             expect(result[0]).not.toHaveLength(0);
             expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('lastName');
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should get only requested fields on the related users', async () => {
           expect.assertions(5);
-          const { models, sequelizeOptions } = initializeSequelize();
+          const { models, options } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
-            fields: {
-              address: 'street',
-              user: 'firstName',
-            },
+            fields: { address: 'street', user: 'firstName' },
             page: { number: '1', size: '20' },
-            timezone: 'Europe/Paris',
           };
           try {
             const result = await new HasManyGetter(
               models.user,
               models.address,
-              sequelizeOptions,
+              options,
               params,
-            )
-              .perform();
+              user,
+            ).perform();
             expect(result[0]).not.toHaveLength(0);
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3159,8 +3140,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     describe('request on the has-many-getter with a search parameter', () => {
       it('should return the records for the specified page', async () => {
         expect.assertions(1);
-        const { models, sequelizeOptions } = initializeSequelize();
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+        const { models, options } = initializeSequelize();
         const params = {
+          ...baseParams,
           recordId: 100,
           associationName: 'addresses',
           fields: {
@@ -3169,40 +3152,43 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           page: { number: '1', size: '20' },
           search: 'SF',
           sort: '-user.id',
-          timezone: 'Europe/Paris',
         };
         try {
           const result = await new HasManyGetter(
             models.user,
             models.address,
-            sequelizeOptions,
+            options,
             params,
-          )
-            .perform();
+            user,
+          ).perform();
           expect(result[0]).toHaveLength(1);
         } finally {
+          spy.mockRestore();
           connectionManager.closeConnection();
         }
       });
 
       it('should return the total records count', async () => {
         expect.assertions(1);
-        const { models, sequelizeOptions } = initializeSequelize();
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+        const { models, options } = initializeSequelize();
         const params = {
+          ...baseParams,
           recordId: 100,
           associationName: 'addresses',
           search: 'SF',
-          timezone: 'Europe/Paris',
         };
         try {
           const count = await new HasManyGetter(
             models.user,
             models.address,
-            sequelizeOptions,
+            options,
             params,
+            user,
           ).count();
           expect(count).toStrictEqual(1);
         } finally {
+          spy.mockRestore();
           connectionManager.closeConnection();
         }
       });
@@ -3212,16 +3198,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('get a record in a simple collection', () => {
         it('should retrieve the record', async () => {
           expect.assertions(3);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
-          const params = {
-            recordId: 100,
-          };
+          const params = { ...baseParams, recordId: 100 };
           try {
-            const user = await new ResourceGetter(models.user, params).perform();
-            expect(user).not.toBeNull();
-            expect(user.id).toStrictEqual(100);
-            expect(user.firstName).toStrictEqual('Richard');
+            const record = await new ResourceGetter(models.user, params, user).perform();
+            expect(record).not.toBeNull();
+            expect(record.id).toStrictEqual(100);
+            expect(record.firstName).toStrictEqual('Richard');
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3230,15 +3216,15 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('get a record in a collection with a composite primary key', () => {
         it('should retrieve the record', async () => {
           expect.assertions(2);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
-          const params = {
-            recordId: 'G@G#F@G@|Ggg23g242@',
-          };
+          const params = { ...baseParams, recordId: 'G@G#F@G@|Ggg23g242@' };
           try {
-            const log = await new ResourceGetter(models.log, params).perform();
+            const log = await new ResourceGetter(models.log, params, user).perform();
             expect(log).not.toBeNull();
             expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@|Ggg23g242@');
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3247,12 +3233,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('get a non existing record', () => {
         it('should fail', async () => {
           expect.assertions(1);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
-          const params = { recordId: '123123|123' };
+          const params = { ...baseParams, recordId: '123123|123' };
 
           try {
-            await expect(new ResourceGetter(models.log, params).perform()).toReject();
+            await expect(new ResourceGetter(models.log, params, user).perform()).toReject();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3263,37 +3251,46 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('update a record on a collection', () => {
         it('should update a record', async () => {
           expect.assertions(1);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
           try {
-            const updater = new ResourceUpdater(models.car, { recordId: 102 }, { brand: 'Volvo' });
+            const params = { ...baseParams, recordId: 102 };
+            const updater = new ResourceUpdater(models.car, params, { brand: 'Volvo' }, user);
             await updater.perform();
 
             const car = await models.car.findOne({ where: { id: 102 } });
             expect(car.brand).toStrictEqual('Volvo');
           } finally {
             await models.car.update({ brand: 'Ferrari' }, { where: { id: 102 } });
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should reject if the record is invalid according to sequelize validation', async () => {
           expect.assertions(1);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
           try {
-            const updater = new ResourceUpdater(models.car, { recordId: 102 }, { brand: 'Fiat' });
+            const params = { ...baseParams, recordId: 102 };
+            const updater = new ResourceUpdater(models.car, params, { brand: 'Fiat' }, user);
             await expect(updater.perform()).toReject();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
 
         it('should reject if the record does not exists', async () => {
           expect.assertions(1);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
           try {
-            const updater = new ResourceUpdater(models.car, { recordId: 666 }, { brand: 'Volvo' });
+            const params = { ...baseParams, recordId: 666 };
+            const updater = new ResourceUpdater(models.car, params, { brand: 'Volvo' }, user);
             await expect(updater.perform()).toReject();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3304,15 +3301,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('remove a record in a simple collection', () => {
         it('should destroy the record', async () => {
           expect.assertions(1);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
-          const params = {
-            recordId: 1,
-          };
+          const params = { ...baseParams, recordId: 1 };
+
           try {
-            await new ResourceRemover(models.user, params).perform();
-            const user = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
-            expect(user).toBeNull();
+            await new ResourceRemover(models.user, params, user).perform();
+            const record = await models.user.findOne({ where: { email: 'jack@forestadmin.com' } });
+            expect(record).toBeNull();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3321,15 +3319,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       describe('remove a record in a collection with a composite primary key', () => {
         it('should destroy the record', async () => {
           expect.assertions(1);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models } = initializeSequelize();
-          const params = {
-            recordId: 'G@G#F@G@|Ggg23g242@',
-          };
+          const params = { ...baseParams, recordId: 'G@G#F@G@|Ggg23g242@' };
+
           try {
-            await new ResourceRemover(models.log, params).perform();
+            await new ResourceRemover(models.log, params, user).perform();
             const log = await models.log.findOne({ where: { code: 'G@G#F@G@' } });
             expect(log).toBeNull();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
@@ -3341,7 +3340,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('on HasMany relationship', () => {
           it('should delete the relationship of the record', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models, options } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'addresses',
@@ -3355,11 +3354,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               await new HasManyDissociator(
                 models.user,
                 models.address,
-                sequelizeOptions,
+                options,
                 params,
                 data,
-              )
-                .perform();
+              ).perform();
 
               const address = await models.address.findOne({ where: { id: '103' } });
               expect(address.userId).toBeNull();
@@ -3372,7 +3370,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('on belongs-to-many relationship', () => {
           it('should delete the relationship of the record', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models, options } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'teams',
@@ -3386,11 +3384,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               await new HasManyDissociator(
                 models.user,
                 models.team,
-                sequelizeOptions,
+                options,
                 params,
                 data,
-              )
-                .perform();
+              ).perform();
 
               const userTeam = await models.userTeam
                 .findOne({ where: { userId: '100', teamId: '100' } });
@@ -3406,7 +3403,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('on has-many relationship', () => {
           it('should delete the relationship and delete the record', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models, options } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'addresses',
@@ -3421,11 +3418,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               await new HasManyDissociator(
                 models.user,
                 models.address,
-                sequelizeOptions,
+                options,
                 params,
                 data,
-              )
-                .perform();
+              ).perform();
 
               const address = await models.address.findOne({ where: { id: '103' } });
               expect(address).toBeNull();
@@ -3438,7 +3434,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         describe('on belongs-to-many relationship', () => {
           it('should delete the relationship and delete the record', async () => {
             expect.assertions(1);
-            const { models, sequelizeOptions } = initializeSequelize();
+            const { models, options } = initializeSequelize();
             const params = {
               recordId: '100',
               associationName: 'teams',
@@ -3453,11 +3449,10 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               await new HasManyDissociator(
                 models.user,
                 models.team,
-                sequelizeOptions,
+                options,
                 params,
                 data,
-              )
-                .perform();
+              ).perform();
 
               const userTeam = await models.userTeam
                 .findOne({ where: { userId: '100', teamId: '100' } });

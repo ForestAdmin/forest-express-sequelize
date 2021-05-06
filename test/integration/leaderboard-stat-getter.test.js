@@ -7,7 +7,15 @@ const databases = require('../databases');
 const runWithConnection = require('../helpers/run-with-connection');
 const LeaderboardStatGetter = require('../../src/services/leaderboard-stat-getter');
 
+const runWithCustomMocksAndConnection = async (connectionManager, testCallback) => {
+  const spyOnScopeManagerGetScopeForUser = jest.spyOn(Interface.scopeManager, 'getScopeForUser')
+    .mockReturnValue(null);
+  await runWithConnection(connectionManager, testCallback);
+  spyOnScopeManagerGetScopeForUser.mockRestore();
+};
+
 describe('integration > LeaderboardStatGetter', () => {
+  const fakeUser = { renderingId: 1 };
   Object.values(databases).forEach((connectionManager) => {
     describe(`dialect ${connectionManager.getDialect()}`, () => {
       /**
@@ -125,7 +133,7 @@ describe('integration > LeaderboardStatGetter', () => {
         it('should correctly return the right count', async () => {
           expect.assertions(1);
 
-          await runWithConnection(connectionManager, async (sequelize) => {
+          await runWithCustomMocksAndConnection(connectionManager, async (sequelize) => {
             const { models } = await setup(sequelize);
 
             const params = {
@@ -138,6 +146,7 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theirSales,
               params,
+              fakeUser,
             );
             const result = await statGetter.perform();
 
@@ -156,7 +165,7 @@ describe('integration > LeaderboardStatGetter', () => {
         it('should correctly return the right sum', async () => {
           expect.assertions(1);
 
-          await runWithConnection(connectionManager, async (sequelize) => {
+          await runWithCustomMocksAndConnection(connectionManager, async (sequelize) => {
             const { models } = await setup(sequelize);
 
             const params = {
@@ -170,6 +179,7 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theirSales,
               params,
+              fakeUser,
             );
             const result = await statGetter.perform();
 
@@ -190,7 +200,7 @@ describe('integration > LeaderboardStatGetter', () => {
         it('should correctly return the right count', async () => {
           expect.assertions(1);
 
-          await runWithConnection(connectionManager, async (sequelize) => {
+          await runWithCustomMocksAndConnection(connectionManager, async (sequelize) => {
             const { models } = await setup(sequelize);
 
             const params = {
@@ -203,6 +213,7 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theCustomers,
               params,
+              fakeUser,
             );
             const result = await statGetter.perform();
 
@@ -221,7 +232,7 @@ describe('integration > LeaderboardStatGetter', () => {
         it('should correctly return the right sum', async () => {
           expect.assertions(1);
 
-          await runWithConnection(connectionManager, async (sequelize) => {
+          await runWithCustomMocksAndConnection(connectionManager, async (sequelize) => {
             const { models } = await setup(sequelize);
 
             const params = {
@@ -235,6 +246,7 @@ describe('integration > LeaderboardStatGetter', () => {
               models.theVendors,
               models.theCustomers,
               params,
+              fakeUser,
             );
             const result = await statGetter.perform();
 

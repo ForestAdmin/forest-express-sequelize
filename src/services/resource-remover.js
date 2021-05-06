@@ -3,13 +3,9 @@ import ResourcesRemover from './resources-remover';
 /**
  * Kept for retro-compatibility with forest-express.
  */
-class ResourceRemover {
-  constructor(model, params) {
-    this.remover = new ResourcesRemover(model, [params.recordId]);
-  }
-
-  perform() {
-    return this.remover.perform();
+class ResourceRemover extends ResourcesRemover {
+  constructor(model, params, user) {
+    super(model, params, [params.recordId], user);
   }
 }
 
