@@ -33,8 +33,8 @@ const mergeWhere = (operators, ...wheres) => wheres.reduce((where1, where2) => {
   if (!where1) { return where2; }
   if (!where2) { return where1; }
 
-  return !ObjectTools.objectShareKeys(where1, where2)
-   && _.isPlainObject(where1) && _.isPlainObject(where2)
+  const isPlain = _.isPlainObject(where1) && _.isPlainObject(where2);
+  return isPlain && !ObjectTools.objectShareKeys(where1, where2)
     ? { ...where1, ...where2 }
     : { [operators.AND]: [where1, where2] };
 });
