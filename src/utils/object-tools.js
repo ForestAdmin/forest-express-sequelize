@@ -1,12 +1,16 @@
 import _ from 'lodash';
 
 /** Do object1 and object2 have at least one common key or Symbol? */
-exports.objectShareKeys = (object1, object2) => {
+exports.plainObjectsShareNoKeys = (object1, object2) => {
+  if (!_.isPlainObject(object1) || !_.isPlainObject(object2)) {
+    return false;
+  }
+
   const keys1 = [...Object.getOwnPropertyNames(object1), ...Object.getOwnPropertySymbols(object1)];
   const keys2 = [...Object.getOwnPropertyNames(object2), ...Object.getOwnPropertySymbols(object2)];
-  const common = keys1.filter((key) => keys2.includes(key));
+  const commonKeys = keys1.filter((key) => keys2.includes(key));
 
-  return common.length > 0;
+  return commonKeys.length === 0;
 };
 
 /**

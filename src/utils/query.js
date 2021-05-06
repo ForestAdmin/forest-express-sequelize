@@ -1,4 +1,3 @@
-import _ from 'lodash';
 import Orm from './orm';
 import ObjectTools from './object-tools';
 
@@ -30,19 +29,12 @@ exports.getReferenceField = (schemas, modelSchema, associationName, fieldName) =
  * makes debugging and testing more painful than it could be.
  */
 const mergeWhere = (operators, ...wheres) => wheres.reduce((where1, where2) => {
-  let where;
-  if (!where1) {
-    where = where2;
-  } else if (!where2) {
-    where = where1;
-  } else {
-    const isPlain = _.isPlainObject(where1) && _.isPlainObject(where2);
-    where = isPlain && !ObjectTools.objectShareKeys(where1, where2)
-      ? { ...where1, ...where2 }
-      : { [operators.AND]: [where1, where2] };
-  }
+  if (!where1) { return where2; }
+  if (!where2) { return where1; }
 
-  return where;
+  return ObjectTools.plainObjectsShareNoKeys(where1, where2)
+    ? { ...where1, ...where2 }
+    : { [operators.AND]: [where1, where2] };
 });
 
 exports.mergeWhere = mergeWhere;
