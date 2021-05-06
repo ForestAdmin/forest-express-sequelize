@@ -1,3 +1,5 @@
+import Operators from '../utils/operators';
+import QueryUtils from '../utils/query';
 import PrimaryKeysManager from './primary-keys-manager';
 import ResourcesGetter from './resources-getter';
 
@@ -20,12 +22,13 @@ class HasManyGetter extends ResourcesGetter {
   }
 
   async _buildQueryOptions(buildOptions = {}) {
+    const operators = Operators.getInstance({ Sequelize: this._parentModel.sequelize.constructor });
     const { associationName, recordId } = this._params;
     const [model, options] = await super._buildQueryOptions({
       ...buildOptions, tableAlias: associationName,
     });
 
-    const parentOptions = {
+    const parentOptions = QueryUtils.bubbleWheresInPlace(operators, {
       where: new PrimaryKeysManager(this._parentModel).getRecordsConditions([recordId]),
       include: [{
         model,
@@ -35,7 +38,7 @@ class HasManyGetter extends ResourcesGetter {
         where: options.where,
         include: options.include,
       }],
-    };
+    });
 
     if (!buildOptions.forCount) {
       parentOptions.subQuery = false; // Why?
