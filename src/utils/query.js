@@ -24,20 +24,15 @@ exports.getReferenceField = (schemas, modelSchema, associationName, fieldName) =
 };
 
 /**
- * When they don't have common keys, merge two objects together.
+ * When they don't have common keys, merge objects together.
  * This is used to avoid having too many nested 'AND' conditions on sequelize queries, which
  * makes debugging and testing more painful than it could be.
  */
-const mergeWhere = (operators, ...wheres) => wheres.reduce((where1, where2) => {
-  if (!where1) { return where2; }
-  if (!where2) { return where1; }
-
-  return ObjectTools.plainObjectsShareNoKeys(where1, where2)
+exports.mergeWhere = (operators, ...wheres) => wheres
+  .filter(Boolean)
+  .reduce((where1, where2) => (ObjectTools.plainObjectsShareNoKeys(where1, where2)
     ? { ...where1, ...where2 }
-    : { [operators.AND]: [where1, where2] };
-});
-
-exports.mergeWhere = mergeWhere;
+    : { [operators.AND]: [where1, where2] }));
 
 /**
  * Extract all where conditions along the include tree, and bubbles them up to the top.
@@ -49,11 +44,11 @@ exports.mergeWhere = mergeWhere;
  * @see https://sequelize.org/master/manual/eager-loading.html#complex-where-clauses-at-the-top-level
  * @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/filters-parser.js#L104
  */
-const bubbleWheresInPlace = (operators, options) => {
+exports.bubbleWheresInPlace = (operators, options) => {
   const parentInclude = options.include ?? [];
 
   parentInclude.forEach((include) => {
-    bubbleWheresInPlace(operators, include);
+    exports.bubbleWheresInPlace(operators, include);
 
     if (include.where) {
       const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => (
@@ -62,12 +57,10 @@ const bubbleWheresInPlace = (operators, options) => {
           : `$${include.as}.${key}$`
       ));
 
-      options.where = mergeWhere(operators, options.where, newWhere);
+      options.where = exports.mergeWhere(operators, options.where, newWhere);
       delete include.where;
     }
   });
 
   return options;
 };
-
-exports.bubbleWheresInPlace = bubbleWheresInPlace;
