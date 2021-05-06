@@ -1,3 +1,10 @@
+# [7.8.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.7.0...v7.8.0) (2021-05-06)
+
+
+### Features
+
+* add support for belongsTo and hasOne filters on related data ([#715](https://github.com/ForestAdmin/forest-express-sequelize/issues/715)) ([2bc769e](https://github.com/ForestAdmin/forest-express-sequelize/commit/2bc769e97f7c2807a6af3a8f68aba4be698bec77))
+
 # [7.7.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.6.4...v7.7.0) (2021-04-28)
 
 
