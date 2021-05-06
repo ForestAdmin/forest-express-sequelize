@@ -7,6 +7,7 @@ import LiveQueryChecker from './live-query-checker';
 import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
+import QueryUtils from '../utils/query';
 
 /**
  * Sequelize query options generator which is configured using forest admin concepts (filters,
@@ -41,7 +42,7 @@ class QueryOptions {
 
   /** Compute sequelize where condition for sequelizeOptions getter. */
   get _sequelizeWhere() {
-    const { AND } = Operators.getInstance({ Sequelize: this._Sequelize });
+    const operators = Operators.getInstance({ Sequelize: this._Sequelize });
 
     switch (this._where.length) {
       case 0:
@@ -49,7 +50,7 @@ class QueryOptions {
       case 1:
         return this._where[0];
       default:
-        return { [AND]: this._where };
+        return QueryUtils.mergeWhere(operators, ...this._where);
     }
   }
 
