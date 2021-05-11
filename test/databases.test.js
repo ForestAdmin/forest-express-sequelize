@@ -2588,6 +2588,39 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           });
         });
 
+        describe('with a "in" condition on a number field', () => {
+          it('should generate a valid SQL query', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = _.clone(paramsBaseList);
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'in',
+              value: [100, 101, 102],
+            });
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            // Only users with ids 100 and 102 exist in fixtures
+            expect(result[0]).toHaveLength(2);
+          });
+
+          it('should return the records result', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = _.clone(paramsBaseCount);
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'in',
+              value: [100, 101, 102],
+            });
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            // Only users with ids 100 and 102 exist in fixtures
+            expect(count).toStrictEqual(2);
+          });
+        });
+
         describe('with complex filters conditions', () => {
           const filters = JSON.stringify({
             aggregator: 'and',

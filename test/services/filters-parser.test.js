@@ -92,7 +92,7 @@ describe('services > filters-parser', () => {
 
     values.forEach((value) => {
       it(`should return the appropriate value (${typeof value})`, () => {
-        expect.assertions(14);
+        expect.assertions(15);
         expect(defaultFiltersParser.formatOperatorValue('starts_with', value)).toStrictEqual({ [OPERATORS.LIKE]: `${value}%` });
         expect(defaultFiltersParser.formatOperatorValue('ends_with', value)).toStrictEqual({ [OPERATORS.LIKE]: `%${value}` });
         expect(defaultFiltersParser.formatOperatorValue('contains', value)).toStrictEqual({ [OPERATORS.LIKE]: `%${value}%` });
@@ -113,6 +113,7 @@ describe('services > filters-parser', () => {
             [OPERATORS.EQ]: '',
           }],
         });
+        expect(defaultFiltersParser.formatOperatorValue('in', value)).toStrictEqual({ [OPERATORS.IN]: value });
       });
 
       it('should raise an error on unknown operator', () => {

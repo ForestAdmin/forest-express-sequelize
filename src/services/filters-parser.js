@@ -93,6 +93,8 @@ function FiltersParser(modelSchema, timezone, options) {
         return { [this.OPERATORS.EQ]: value };
       case 'includes_all':
         return { [this.OPERATORS.CONTAINS]: value };
+      case 'in':
+        return { [this.OPERATORS.IN]: value };
       default:
         throw new NoMatchingOperatorError();
     }
