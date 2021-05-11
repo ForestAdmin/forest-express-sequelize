@@ -1,3 +1,10 @@
+# [7.9.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.8.0...v7.9.0) (2021-05-11)
+
+
+### Features
+
+* **filters:** add support for the \`model.field IN array\` filter condition ([#719](https://github.com/ForestAdmin/forest-express-sequelize/issues/719)) ([5f58457](https://github.com/ForestAdmin/forest-express-sequelize/commit/5f5845758d8e93f493d82cf796ba1de9b058b9ac))
+
 # [7.8.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.7.0...v7.8.0) (2021-05-06)
 
 
