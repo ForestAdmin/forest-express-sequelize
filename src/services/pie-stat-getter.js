@@ -85,12 +85,8 @@ function PieStatGetter(model, params, options) {
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);
 
-    const { include, where } = queryOptions.sequelizeOptions;
-    const records = await model.unscoped().findAll({
-      include: include
-        ? include.map((includeProperties) => ({ ...includeProperties, attributes: [] }))
-        : undefined,
-      where,
+    const sequelizeOptions = {
+      ...queryOptions.sequelizeOptions,
       attributes: [
         [options.Sequelize.col(groupByField), ALIAS_GROUP_BY],
         [
@@ -101,7 +97,15 @@ function PieStatGetter(model, params, options) {
       group: getGroupBy(),
       order: [[options.Sequelize.literal(ALIAS_AGGREGATE), 'DESC']],
       raw: true,
-    });
+    };
+
+    if (sequelizeOptions.include) {
+      sequelizeOptions.include = sequelizeOptions.include.map(
+        (includeProperties) => ({ ...includeProperties, attributes: [] }),
+      );
+    }
+
+    const records = await model.unscoped().findAll(sequelizeOptions);
 
     return { value: formatResults(records) };
   };
