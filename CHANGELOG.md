@@ -1,3 +1,10 @@
+## [7.9.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.0...v7.9.1) (2021-05-12)
+
+
+### Bug Fixes
+
+* regression when fetching has-many and not selecting any fields on a hasone/belongsto relation ([#720](https://github.com/ForestAdmin/forest-express-sequelize/issues/720)) ([74ed623](https://github.com/ForestAdmin/forest-express-sequelize/commit/74ed6230b35c41e264854fafcb4c60667ff7ac99))
+
 # [7.9.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.8.0...v7.9.0) (2021-05-11)
 
 
