@@ -2957,6 +2957,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
+      describe('request on the has-many getter without relations', () => {
+        it('should generate a valid SQL query', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const params = {
+            recordId: 100,
+            associationName: 'addresses',
+            fields: {
+              address: 'line,zipCode,city,country',
+            },
+            page: { number: '1', size: '20' },
+            timezone: 'Europe/Paris',
+          };
+          try {
+            await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(true).toBeTrue();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
       describe('request on the has-many-getter with a sort on an attribute', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);

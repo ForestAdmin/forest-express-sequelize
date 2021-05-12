@@ -201,17 +201,22 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     const queryOptions = new QueryOptions(model, { includeRelations: true });
     await queryOptions.filterByConditionTree(filters, timezone);
 
-    const { include, where } = queryOptions.sequelizeOptions;
-    const records = await model.unscoped().findAll({
-      include: include
-        ? include.map((includeProperties) => ({ ...includeProperties, attributes: [] }))
-        : undefined,
-      where,
+    const sequelizeOptions = {
+      ...queryOptions.sequelizeOptions,
       attributes: [getGroupByDateInterval(), getAggregate()],
       group: getGroupBy(),
       order: getOrder(),
       raw: true,
-    });
+    };
+
+    // do not load related properties
+    if (sequelizeOptions.include) {
+      sequelizeOptions.include = sequelizeOptions.include.map(
+        (includeProperties) => ({ ...includeProperties, attributes: [] }),
+      );
+    }
+
+    const records = await model.unscoped().findAll(sequelizeOptions);
 
     return {
       value: fillEmptyDateInterval(

@@ -1,3 +1,4 @@
+import { pick } from 'lodash';
 import Operators from '../utils/operators';
 import QueryUtils from '../utils/query';
 import PrimaryKeysManager from './primary-keys-manager';
@@ -35,8 +36,7 @@ class HasManyGetter extends ResourcesGetter {
         as: associationName,
         scope: false,
         required: !!buildOptions.forCount, // Why?
-        where: options.where,
-        include: options.include,
+        ...pick(options, ['where', 'include']),
       }],
     });
 
