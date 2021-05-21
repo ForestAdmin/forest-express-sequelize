@@ -1,3 +1,10 @@
+## [7.9.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.1...v7.9.2) (2021-05-21)
+
+
+### Bug Fixes
+
+* distribution charts using groupby on a relationship throws 403 Forbidden ([#725](https://github.com/ForestAdmin/forest-express-sequelize/issues/725)) ([30e6744](https://github.com/ForestAdmin/forest-express-sequelize/commit/30e6744b02a9f95d44bb2265a187c4c3cf0a4027))
+
 ## [7.9.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.0...v7.9.1) (2021-05-12)
 
 
