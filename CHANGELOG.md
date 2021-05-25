@@ -1,3 +1,10 @@
+## [7.9.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.2...v7.9.3) (2021-05-25)
+
+
+### Bug Fixes
+
+* **smart-actions-change-hook:** record is no longer altered and is sent correctly ([#728](https://github.com/ForestAdmin/forest-express-sequelize/issues/728)) ([2ac7af8](https://github.com/ForestAdmin/forest-express-sequelize/commit/2ac7af8105e7d543556ca9b8497557a675e58d91))
+
 ## [7.9.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.1...v7.9.2) (2021-05-21)
 
 
