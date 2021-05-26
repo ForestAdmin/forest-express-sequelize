@@ -5,16 +5,16 @@ const HasManyGetter = require('./has-many-getter');
 const BATCH_INITIAL_PAGE = 1;
 const BATCH_SIZE = 1000;
 
-function ResourcesExporter(model, options, params, association) {
+function ResourcesExporter(model, options, params, association, user) {
   const primaryKeys = _.keys((association || model).primaryKeys);
   params.sort = primaryKeys[0] || 'id';
   params.page = { size: BATCH_SIZE };
 
   function getter() {
     if (association) {
-      return new HasManyGetter(model, association, options, params);
+      return new HasManyGetter(model, association, options, params, user);
     }
-    return new ResourcesGetter(model, options, params);
+    return new ResourcesGetter(model, options, params, user);
   }
 
   function retrieveBatch(dataSender, pageNumber) {
