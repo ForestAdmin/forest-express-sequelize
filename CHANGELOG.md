@@ -1,3 +1,29 @@
+# [8.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.2...v8.0.0-beta.3) (2021-05-26)
+
+
+### Bug Fixes
+
+* **smart-actions-change-hook:** record is no longer altered and is sent correctly ([#728](https://github.com/ForestAdmin/forest-express-sequelize/issues/728)) ([2ac7af8](https://github.com/ForestAdmin/forest-express-sequelize/commit/2ac7af8105e7d543556ca9b8497557a675e58d91))
+* distribution charts using groupby on a relationship throws 403 Forbidden ([#725](https://github.com/ForestAdmin/forest-express-sequelize/issues/725)) ([30e6744](https://github.com/ForestAdmin/forest-express-sequelize/commit/30e6744b02a9f95d44bb2265a187c4c3cf0a4027))
+* regression when fetching has-many and not selecting any fields on a hasone/belongsto relation ([#720](https://github.com/ForestAdmin/forest-express-sequelize/issues/720)) ([74ed623](https://github.com/ForestAdmin/forest-express-sequelize/commit/74ed6230b35c41e264854fafcb4c60667ff7ac99))
+* **schema:** do not remove primary key fields from the schema when tables have foreign keys that are primary keys ([8844fb5](https://github.com/ForestAdmin/forest-express-sequelize/commit/8844fb5631ce6335dc66d7ee33433b12e2618611))
+* **search:** enable to search for a big integer in an ID field ([#695](https://github.com/ForestAdmin/forest-express-sequelize/issues/695)) ([9f8132c](https://github.com/ForestAdmin/forest-express-sequelize/commit/9f8132c3c920b4a29178fd35cf4dc56179cc8c8b))
+* **search:** searching for a big int value should not break if there is a regular integer field ([#694](https://github.com/ForestAdmin/forest-express-sequelize/issues/694)) ([af076ad](https://github.com/ForestAdmin/forest-express-sequelize/commit/af076ad208b0bfb9e186568b13ea488d0a2c545f))
+* **security:** patch ssri dependency vulnerability ([#690](https://github.com/ForestAdmin/forest-express-sequelize/issues/690)) ([6b0770d](https://github.com/ForestAdmin/forest-express-sequelize/commit/6b0770d91ffdecff0a78d5c623b3a28d40c17744))
+
+
+### Features
+
+* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([c46fd66](https://github.com/ForestAdmin/forest-express-sequelize/commit/c46fd664bf56840cafa03d0e444d97754fdc239a))
+* **filters:** add support for the \`model.field IN array\` filter condition ([#719](https://github.com/ForestAdmin/forest-express-sequelize/issues/719)) ([5f58457](https://github.com/ForestAdmin/forest-express-sequelize/commit/5f5845758d8e93f493d82cf796ba1de9b058b9ac))
+* add support for belongsTo and hasOne filters on related data ([#715](https://github.com/ForestAdmin/forest-express-sequelize/issues/715)) ([2bc769e](https://github.com/ForestAdmin/forest-express-sequelize/commit/2bc769e97f7c2807a6af3a8f68aba4be698bec77))
+* support yarn 2 plug n play install mode ([#698](https://github.com/ForestAdmin/forest-express-sequelize/issues/698)) ([64b5734](https://github.com/ForestAdmin/forest-express-sequelize/commit/64b5734af0e6da5d2a3f73ddb44966162aa5a317))
+
+
+### BREAKING CHANGES
+
+* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+
 ## [7.9.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.2...v7.9.3) (2021-05-25)
 
 
