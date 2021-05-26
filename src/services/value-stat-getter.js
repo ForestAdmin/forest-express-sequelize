@@ -1,99 +1,97 @@
+import Promise from 'bluebird';
+import { BaseOperatorDateParser, Schemas } from 'forest-express';
 import _ from 'lodash';
-import { Schemas, BaseOperatorDateParser } from 'forest-express';
 import Operators from '../utils/operators';
-import FiltersParser from './filters-parser';
 import Orm from '../utils/orm';
+import FiltersParser from './filters-parser';
+import QueryOptions from './query-options';
 
-function ValueStatGetter(model, params, options) {
-  const OPERATORS = Operators.getInstance(options);
+class ValueStatGetter {
+  constructor(model, params, options) {
+    this._model = model;
+    this._params = params;
+    this._options = options;
 
-  this.operatorDateParser = new BaseOperatorDateParser({
-    operators: OPERATORS,
-    timezone: params.timezone,
-  });
-
-  const schema = Schemas.schemas[model.name];
-  function getAggregate() {
-    return params.aggregate.toLowerCase();
-  }
-
-  function getAggregateField() {
-    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
-    const fieldName = params.aggregate_field
-      || schema.primaryKeys[0]
-      || schema.fields[0].field;
-    return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
-  }
-
-  function getIncludes() {
-    const includes = [];
-    _.values(model.associations).forEach((association) => {
-      if (['HasOne', 'BelongsTo'].indexOf(association.associationType) > -1) {
-        includes.push({
-          model: association.target.unscoped(),
-          as: association.associationAccessor,
-          attributes: [],
-        });
-      }
+    this._OPERATORS = Operators.getInstance(options);
+    this._schema = Schemas.schemas[model.name];
+    this._operatorDateParser = new BaseOperatorDateParser({
+      operators: this._OPERATORS, timezone: params.timezone,
     });
-
-    return includes;
   }
 
-  this.perform = async () => {
-    let countCurrent;
-    const aggregateField = getAggregateField();
-    const aggregate = getAggregate();
-    let where;
-    let rawPreviousInterval;
-    if (params.filters) {
-      const conditionsParser = new FiltersParser(schema, params.timezone, options);
-      where = await conditionsParser.perform(params.filters);
-      rawPreviousInterval = conditionsParser.getPreviousIntervalCondition(params.filters);
+  /** Function used to aggregate results (count, sum, ...) */
+  get _aggregateFunction() {
+    return this._params.aggregate.toLowerCase();
+  }
+
+  /** Column name we're aggregating on */
+  get _aggregateField() {
+    // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
+    const fieldName = this._params.aggregate_field
+      || this._schema.primaryKeys[0]
+      || this._schema.fields[0].field;
+
+    return `${this._schema.name}.${Orm.getColumnName(this._schema, fieldName)}`;
+  }
+
+  async perform() {
+    const { filters, timezone } = this._params;
+    const queryOptions = new QueryOptions(this._model, { includeRelations: true });
+    await queryOptions.filterByConditionTree(filters, timezone);
+
+    // No attributes should be retrieved from relations for the group by to work.
+    const options = queryOptions.sequelizeOptions;
+    options.include = options.include
+      ? options.include.map((includeProperties) => ({ ...includeProperties, attributes: [] }))
+      : undefined;
+
+    return {
+      value: await Promise.props({
+        countCurrent: this._getCount(options),
+        countPrevious: this._getCountPrevious(options),
+      }),
+    };
+  }
+
+  async _getCount(options) {
+    const count = await this._model
+      .unscoped()
+      .aggregate(this._aggregateField, this._aggregateFunction, options);
+
+    return count ?? 0;
+  }
+
+  /**
+   * Fetch the value for the previous period.
+   *
+   * FIXME Will not work on edges cases
+   * - when the 'rawPreviousInterval.field' appears twice
+   * - when scopes use the same field as the filter
+   */
+  async _getCountPrevious(options) {
+    const { filters, timezone } = this._params;
+    if (!filters) {
+      return undefined;
     }
 
-    return model
-      .unscoped()
-      .aggregate(aggregateField, aggregate, {
-        include: getIncludes(),
-        where,
-      })
-      .then((count) => {
-        countCurrent = count || 0;
+    const conditionsParser = new FiltersParser(this._schema, timezone, this._options);
+    const rawInterval = conditionsParser.getPreviousIntervalCondition(filters);
+    if (!rawInterval) {
+      return undefined;
+    }
 
-        if (rawPreviousInterval) {
-          const formatedPreviousDateInterval = this.operatorDateParser
-            .getPreviousDateFilter(rawPreviousInterval.operator, rawPreviousInterval.value);
+    const interval = this._operatorDateParser.getPreviousDateFilter(
+      rawInterval.operator, rawInterval.value,
+    );
 
-          if (where[OPERATORS.AND]) {
-            where[OPERATORS.AND].forEach((condition) => {
-              if (condition[rawPreviousInterval.field]) {
-                // NOTICE: Might not work on super edgy cases (when the 'rawPreviousInterval.field'
-                //        appears twice ont the filters)
-                condition[rawPreviousInterval.field] = formatedPreviousDateInterval;
-              }
-            });
-          } else {
-            where[rawPreviousInterval.field] = formatedPreviousDateInterval;
-          }
+    const newOptions = _.cloneDeepWith(options, (object) => (
+      object && object[rawInterval.field]
+        ? { ...object, [rawInterval.field]: interval }
+        : undefined
+    ));
 
-          return model
-            .unscoped()
-            .aggregate(aggregateField, aggregate, {
-              include: getIncludes(),
-              where,
-            })
-            .then((resultCount) => resultCount || 0);
-        }
-        return undefined;
-      })
-      .then((countPrevious) => ({
-        value: {
-          countCurrent,
-          countPrevious,
-        },
-      }));
-  };
+    return this._getCount(newOptions);
+  }
 }
 
 module.exports = ValueStatGetter;

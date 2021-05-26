@@ -1,30 +1,25 @@
-const createError = require('http-errors');
-const Interface = require('forest-express');
-const CompositeKeysManager = require('./composite-keys-manager');
-const ResourceFinder = require('./resource-finder');
+import createError from 'http-errors';
+import PrimaryKeysManager from './primary-keys-manager';
+import QueryOptions from './query-options';
 
-function ResourceGetter(model, params) {
-  const schema = Interface.Schemas.schemas[model.name];
+class ResourceGetter {
+  constructor(model, params) {
+    this._model = model.unscoped();
+    this._params = params;
+  }
 
-  this.perform = function perform() {
-    return new ResourceFinder(model, params, true)
-      .perform()
-      .then((record) => {
-        if (!record) {
-          throw createError(404, `The ${model.name} #${params.recordId
-          } does not exist.`);
-        }
+  async perform() {
+    const queryOptions = new QueryOptions(this._model, { includeRelations: true });
+    await queryOptions.filterByIds([this._params.recordId]);
 
-        if (schema.isCompositePrimary) {
-          record.forestCompositePrimary = new CompositeKeysManager(
-            model,
-            schema, record,
-          ).createCompositePrimary();
-        }
+    const record = await this._model.findOne(queryOptions.sequelizeOptions);
+    if (!record) {
+      throw createError(404, `The ${this._model.name} #${this._params.recordId} does not exist.`);
+    }
 
-        return record;
-      });
-  };
+    new PrimaryKeysManager(this._model).annotateRecords([record]);
+    return record;
+  }
 }
 
 module.exports = ResourceGetter;

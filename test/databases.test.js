@@ -6,9 +6,11 @@ const SchemaAdapter = require('../src/adapters/sequelize');
 const { sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax } = require('./databases');
 const PieStatGetter = require('../src/services/pie-stat-getter');
 const LineStatGetter = require('../src/services/line-stat-getter');
+const ValueStatGetter = require('../src/services/value-stat-getter');
 const ResourcesGetter = require('../src/services/resources-getter');
 const ResourceGetter = require('../src/services/resource-getter');
 const ResourceCreator = require('../src/services/resource-creator');
+const ResourceUpdater = require('../src/services/resource-updater');
 const BelongsToUpdater = require('../src/services/belongs-to-updater');
 const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
@@ -58,6 +60,16 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     models.friend = sequelize.define('friend', {
       name: { type: Sequelize.STRING },
       memberId: { type: Sequelize.INTEGER },
+    });
+
+    models.bird = sequelize.define('bird', {
+      id: {
+        type: Sequelize.BIGINT,
+        primaryKey: true,
+      },
+      createdAt: { type: Sequelize.DATE },
+      updatedAt: { type: Sequelize.DATE },
+      name: { type: Sequelize.STRING, allowNull: false },
     });
 
     models.bike = sequelize.define('bike', {
@@ -135,6 +147,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 
     models.counter = sequelize.define('counter', {
       clicks: { type: Sequelize.BIGINT },
+      quantity: { type: Sequelize.INTEGER },
     });
 
     models.customer = sequelize.define('customer', {
@@ -153,7 +166,14 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
     });
 
     models.car = sequelize.define('car', {
-      brand: { type: Sequelize.STRING },
+      brand: {
+        type: Sequelize.STRING,
+        validate: {
+          reliable(value) {
+            if (value === 'Fiat') throw new Error('brand must be reliable.');
+          },
+        },
+      },
       model: { type: Sequelize.STRING },
     });
 
@@ -218,6 +238,18 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             { field: 'uuid', type: 'String' },
             { field: 'fullName', isVirtual: true, type: 'String' },
             { field: 'age', type: 'Number' },
+          ],
+        },
+        bird: {
+          name: 'bird',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'String' },
+            { field: 'createdAt', type: 'Date' },
+            { field: 'updatedAt', type: 'Date' },
           ],
         },
         bike: {
@@ -383,6 +415,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           fields: [
             { field: 'id', type: 'Number' },
             { field: 'clicks', type: 'Number' },
+            { field: 'quantity', type: 'Number' },
           ],
         },
         customer: {
@@ -670,6 +703,103 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           }
         });
       });
+
+      describe('chart with a filter', () => {
+        it('should generate a valid SQL query', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          try {
+            const stat = await new LineStatGetter(models.address, {
+              type: 'Line',
+              collection: 'address',
+              timezone: 'Europe/Paris',
+              group_by_date_field: 'createdAt',
+              aggregate: 'Count',
+              time_range: 'Year',
+              filters: JSON.stringify({ field: 'user:id', operator: 'equal', value: 100 }),
+            }, sequelizeOptions).perform();
+            expect(stat.value).toHaveLength(1);
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+    });
+
+    describe('stats > value stat getter', () => {
+      it('should give correct answer without filters', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.user, {
+            type: 'Value',
+            aggregate: 'Sum',
+            aggregate_field: 'id',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: undefined });
+        } finally {
+          connectionManager.closeConnection();
+        }
+      });
+
+      it('should give correct answer and previous value', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.user, {
+            type: 'Value',
+            aggregate: 'Sum',
+            aggregate_field: 'id',
+            filters: '{"field":"createdAt","operator":"previous_month_to_date","value":null}',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: 0 });
+        } finally {
+          connectionManager.closeConnection();
+        }
+      });
+
+      it('should give correct answer and previous value with filters', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.user, {
+            type: 'Value',
+            aggregate: 'Sum',
+            aggregate_field: 'id',
+            filters: '{"aggregator":"and","conditions":[{"field":"createdAt","operator":"previous_month_to_date","value":null},{"field":"id","operator":"greater_than","value":100}]}',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 205, countPrevious: 0 });
+        } finally {
+          connectionManager.closeConnection();
+        }
+      });
+
+      it('should give correct answer with filter on related data', async () => {
+        expect.assertions(1);
+        const { models, sequelizeOptions } = initializeSequelize();
+
+        try {
+          const stat = await new ValueStatGetter(models.address, {
+            type: 'Value',
+            aggregate: 'Count',
+            filters: '{"field":"user:id","operator":"greater_than","value":0}',
+            timezone: 'Europe/Paris',
+          }, sequelizeOptions).perform();
+
+          expect(stat.value).toStrictEqual({ countCurrent: 4, countPrevious: undefined });
+        } finally {
+          connectionManager.closeConnection();
+        }
+      });
     });
 
     describe('resources > resources creator', () => {
@@ -799,7 +929,7 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
       });
     });
 
-    describe('resources > resources updater', () => {
+    describe('resources > relation updater', () => {
       describe('update a record on a collection', () => {
         it('should update a record', async () => {
           expect.assertions(2);
@@ -1187,6 +1317,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
               connectionManager.closeConnection();
             }
           });
+
+          it('should handle numbers over MAX_SAFE_INTEGER even if there are fields that are not big int', async () => {
+            expect.assertions(2);
+            const { models, sequelizeOptions } = initializeSequelize();
+
+            // HACK: sequelize-fixtures does not support BigInt in json files,
+            //       so we need to update the clicks value manually
+            const counter = await models.counter.findByPk(10);
+            counter.clicks = BigInt('9013084467599484828'); // eslint-disable-line no-undef
+            await counter.save();
+
+            const params = {
+              fields: {
+                counter: 'id,clicks,quantity',
+              },
+              page: { number: '1', size: '30' },
+              search: '9013084467599484828',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const result = await new ResourcesGetter(models.counter, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+              expect(result[0][0].id).toBe(10);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
         });
 
         describe('with a "string" search on a smart field', () => {
@@ -1499,6 +1657,120 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             };
             try {
               const count = await new ResourcesGetter(models.georegion, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      });
+
+      describe('request on the resources getter with a search on a bigInt primary key', () => {
+        describe('with a bigInt that does not matches', () => {
+          it('should return 0 records for the specified page', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+
+            // HACK: sequelize-fixtures does not support BigInt in json files,
+            //       so we need to update the id value manually
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
+
+            const params = {
+              fields: {
+                bird: 'id,name',
+              },
+              page: { number: '1', size: '30' },
+              search: '9223372036854770001',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const result = await new ResourcesGetter(models.bird, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should count 0 records', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+
+            // HACK: sequelize-fixtures does not support BigInt in json files,
+            //       so we need to update the id value manually
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
+
+            const params = {
+              search: '9223372036854770001',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const count = await new ResourcesGetter(models.bird, sequelizeOptions, params)
+                .count();
+              expect(count).toStrictEqual(0);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+        });
+
+        describe('with a string that matches', () => {
+          it('should return 1 record for the specified page', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+
+            // HACK: sequelize-fixtures does not support BigInt in json files,
+            //       so we need to update the id value manually
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
+
+            const params = {
+              fields: {
+                bird: 'id,name',
+              },
+              page: { number: '1', size: '30' },
+              search: '9223372036854770000',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const result = await new ResourcesGetter(models.bird, sequelizeOptions, params)
+                .perform();
+              expect(result[0]).toHaveLength(1);
+            } finally {
+              connectionManager.closeConnection();
+            }
+          });
+
+          it('should count 1 record', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+
+            // HACK: sequelize-fixtures does not support BigInt in json files,
+            //       so we need to update the id value manually
+            await models.bird.update(
+              { id: BigInt('9223372036854770000') }, // eslint-disable-line no-undef
+              { where: { name: 'eagle' } },
+            );
+
+            const params = {
+              search: '9223372036854770000',
+              timezone: 'Europe/Paris',
+            };
+            try {
+              const count = await new ResourcesGetter(models.bird, sequelizeOptions, params)
                 .count();
               expect(count).toStrictEqual(1);
             } finally {
@@ -2316,6 +2588,39 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
           });
         });
 
+        describe('with a "in" condition on a number field', () => {
+          it('should generate a valid SQL query', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = _.clone(paramsBaseList);
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'in',
+              value: [100, 101, 102],
+            });
+            const result = await new ResourcesGetter(models.user, sequelizeOptions, params)
+              .perform();
+            // Only users with ids 100 and 102 exist in fixtures
+            expect(result[0]).toHaveLength(2);
+          });
+
+          it('should return the records result', async () => {
+            expect.assertions(1);
+
+            const { models, sequelizeOptions } = initializeSequelize();
+            const params = _.clone(paramsBaseCount);
+            params.filters = JSON.stringify({
+              field: 'id',
+              operator: 'in',
+              value: [100, 101, 102],
+            });
+            const count = await new ResourcesGetter(models.user, sequelizeOptions, params).count();
+            // Only users with ids 100 and 102 exist in fixtures
+            expect(count).toStrictEqual(2);
+          });
+        });
+
         describe('with complex filters conditions', () => {
           const filters = JSON.stringify({
             aggregator: 'and',
@@ -2685,6 +2990,34 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
         });
       });
 
+      describe('request on the has-many getter without relations', () => {
+        it('should generate a valid SQL query', async () => {
+          expect.assertions(1);
+          const { models, sequelizeOptions } = initializeSequelize();
+          const params = {
+            recordId: 100,
+            associationName: 'addresses',
+            fields: {
+              address: 'line,zipCode,city,country',
+            },
+            page: { number: '1', size: '20' },
+            timezone: 'Europe/Paris',
+          };
+          try {
+            await new HasManyGetter(
+              models.user,
+              models.address,
+              sequelizeOptions,
+              params,
+            )
+              .perform();
+            expect(true).toBeTrue();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
       describe('request on the has-many-getter with a sort on an attribute', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
@@ -2933,6 +3266,61 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
             const log = await new ResourceGetter(models.log, params).perform();
             expect(log).not.toBeNull();
             expect(log.forestCompositePrimary).toStrictEqual('G@G#F@G@|Ggg23g242@');
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
+      describe('get a non existing record', () => {
+        it('should fail', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          const params = { recordId: '123123|123' };
+
+          try {
+            await expect(new ResourceGetter(models.log, params).perform()).toReject();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+      });
+    });
+
+    describe('resources > resources updater', () => {
+      describe('update a record on a collection', () => {
+        it('should update a record', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            const updater = new ResourceUpdater(models.car, { recordId: 102 }, { brand: 'Volvo' });
+            await updater.perform();
+
+            const car = await models.car.findOne({ where: { id: 102 } });
+            expect(car.brand).toStrictEqual('Volvo');
+          } finally {
+            await models.car.update({ brand: 'Ferrari' }, { where: { id: 102 } });
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should reject if the record is invalid according to sequelize validation', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            const updater = new ResourceUpdater(models.car, { recordId: 102 }, { brand: 'Fiat' });
+            await expect(updater.perform()).toReject();
+          } finally {
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should reject if the record does not exists', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          try {
+            const updater = new ResourceUpdater(models.car, { recordId: 666 }, { brand: 'Volvo' });
+            await expect(updater.perform()).toReject();
           } finally {
             connectionManager.closeConnection();
           }

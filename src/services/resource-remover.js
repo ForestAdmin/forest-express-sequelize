@@ -1,14 +1,16 @@
-const ResourceFinder = require('./resource-finder');
+import ResourcesRemover from './resources-remover';
 
-function ResourceRemover(model, params) {
-  this.perform = () => new ResourceFinder(model, params)
-    .perform()
-    .then((record) => {
-      if (record) {
-        return record.destroy();
-      }
-      return null;
-    });
+/**
+ * Kept for retro-compatibility with forest-express.
+ */
+class ResourceRemover {
+  constructor(model, params) {
+    this.remover = new ResourcesRemover(model, [params.recordId]);
+  }
+
+  perform() {
+    return this.remover.perform();
+  }
 }
 
 module.exports = ResourceRemover;

@@ -1,37 +1,32 @@
-const Interface = require('forest-express');
-const { ErrorHTTP422 } = require('./errors');
-const ResourceGetter = require('./resource-getter');
-const CompositeKeysManager = require('./composite-keys-manager');
-const ResourceFinder = require('./resource-finder');
+import { ErrorHTTP422 } from './errors';
+import QueryOptions from './query-options';
+import ResourceGetter from './resource-getter';
 
-function ResourceUpdater(model, params, newRecord) {
-  const schema = Interface.Schemas.schemas[model.name];
+class ResourceUpdater {
+  constructor(model, params, newRecord) {
+    this._model = model.unscoped();
+    this._params = params;
+    this._newRecord = newRecord;
+  }
 
-  this.perform = () => {
-    const compositeKeysManager = new CompositeKeysManager(model, schema, newRecord);
+  async perform() {
+    const queryOptions = new QueryOptions(this._model);
+    await queryOptions.filterByIds([this._params.recordId]);
 
-    return new ResourceFinder(model, params)
-      .perform()
-      .then((record) => {
-        if (record) {
-          Object.assign(record, newRecord);
+    const record = await this._model.findOne(queryOptions.sequelizeOptions);
+    if (record) {
+      Object.assign(record, this._newRecord);
 
-          return record.validate()
-            .catch((error) => { throw new ErrorHTTP422(error.message); })
-            .then(() => record.save());
-        }
-        return null;
-      })
-      .then(() => {
-        if (schema.isCompositePrimary) {
-          newRecord.forestCompositePrimary = compositeKeysManager.createCompositePrimary();
-        }
+      try {
+        await record.validate();
+        await record.save();
+      } catch (error) {
+        throw new ErrorHTTP422(error.message);
+      }
+    }
 
-        return new ResourceGetter(model, {
-          recordId: params.recordId,
-        }).perform();
-      });
-  };
+    return new ResourceGetter(this._model, { recordId: this._params.recordId }).perform();
+  }
 }
 
 module.exports = ResourceUpdater;

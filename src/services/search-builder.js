@@ -70,6 +70,28 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
 
   this.hasExtendedSearchConditions = () => hasExtendedConditions;
 
+  this.performWithSmartFields = (associationName) => {
+    const { search } = params;
+
+    const where = this.perform(associationName);
+    if (!where[OPERATORS.OR]) {
+      where[OPERATORS.OR] = [];
+    }
+
+    schema.fields.filter((field) => field.search).forEach((field) => {
+      try {
+        // Retrocompatibility: customers which implement search on smart fields are expected to
+        // inject their conditions at .where[Op.and][0][Op.or].push(searchCondition)
+        // https://docs.forestadmin.com/documentation/reference-guide/fields/create-and-manage-smart-fields
+        field.search({ where: { [OPERATORS.AND]: [where] } }, search);
+      } catch (error) {
+        Interface.logger.error(`Cannot search properly on Smart Field ${field.field}`, error);
+      }
+    });
+
+    return where[OPERATORS.OR].length ? where : null;
+  };
+
   this.perform = (associationName) => {
     if (!params.search) { return null; }
 
@@ -86,6 +108,23 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       fieldsSearched.push(fieldName);
     }
 
+    function getConditionValueForNumber(search, keyType) {
+      const searchAsNumber = Number(search);
+
+      if (Number.isNaN(searchAsNumber)) {
+        return null;
+      }
+      if (Number.isSafeInteger(searchAsNumber) || !Number.isInteger(searchAsNumber)) {
+        return searchAsNumber;
+      }
+      // Integers higher than MAX_SAFE_INTEGER need to be handled as strings to circumvent
+      // precision problems only if the field type is a big int.
+      if (keyType instanceof DataTypes.BIGINT) {
+        return search;
+      }
+      return null;
+    }
+
     _.each(fields, (field) => {
       if (field.isVirtual) { return; } // NOTICE: Ignore Smart Fields.
       if (field.integration) { return; } // NOTICE: Ignore integration fields.
@@ -98,9 +137,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         const primaryKeyType = model.primaryKeys[schema.idField].type;
 
         if (primaryKeyType instanceof DataTypes.INTEGER) {
-          const value = parseInt(params.search, 10) || 0;
-          if (value) {
-            condition[field.field] = value;
+          const conditionValue = getConditionValueForNumber(params.search, primaryKeyType);
+
+          if (conditionValue !== null) {
+            condition[field.field] = conditionValue;
             pushCondition(condition, field.field);
           }
         } else if (primaryKeyType instanceof DataTypes.STRING) {
@@ -148,16 +188,13 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
           pushCondition(condition, field.field);
         }
       } else if (field.type === 'Number') {
-        let value = Number(params.search);
+        const conditionValue = getConditionValueForNumber(
+          params.search,
+          model.rawAttributes[field.field].type,
+        );
 
-        if (!Number.isNaN(value)) {
-          if (Number.isInteger(value) && !Number.isSafeInteger(value)) {
-            // NOTE: Numbers higher than MAX_SAFE_INTEGER need to be handled as
-            //       strings to circumvent precision problems
-            value = params.search;
-          }
-
-          condition[field.field] = value;
+        if (conditionValue !== null) {
+          condition[field.field] = conditionValue;
           pushCondition(condition, field.field);
         }
       }
