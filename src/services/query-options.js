@@ -8,6 +8,7 @@ import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
 import QueryUtils from '../utils/query';
+import { isMSSQL } from '../utils/database';
 
 /**
  * Sequelize query options generator which is configured using forest admin concepts (filters,
@@ -216,6 +217,15 @@ class QueryOptions {
       this._order.push([associationName, fieldName, order]);
       this._neededFields.add(sortField);
     } else {
+      if (
+        isMSSQL(this._model.sequelize)
+        && this._sequelizeInclude.length
+        && this._model.primaryKeys[sortField]
+      ) {
+        // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
+        // https://github.com/sequelize/sequelize/blob/71c91309ae45f32b173cf05ef84b543978309751/lib/dialects/mssql/query-generator.js#L872
+        return;
+      }
       this._order.push([sortField, order]);
     }
   }

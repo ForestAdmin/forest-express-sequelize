@@ -47,7 +47,9 @@ class HasManyGetter extends ResourcesGetter {
       parentOptions.limit = options.limit;
 
       // Order with the relation (https://github.com/sequelize/sequelize/issues/4553)
-      parentOptions.order = (options.order || []).map((fields) => [associationName, ...fields]);
+      if (options.order) {
+        parentOptions.order = options.order.map((fields) => [associationName, ...fields]);
+      }
     }
 
     return parentOptions;
