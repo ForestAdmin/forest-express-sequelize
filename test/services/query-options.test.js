@@ -7,7 +7,7 @@ describe('services > query-options', () => {
     const model = {
       name: 'actor',
       unscoped: () => model,
-      sequelize: { constructor: Sequelize },
+      sequelize: { constructor: Sequelize, options: { dialect: 'mysql' } },
       associations: {},
     };
     Interface.Schemas = { schemas: { actor: { idField: 'id' } } };
