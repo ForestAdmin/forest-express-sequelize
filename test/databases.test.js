@@ -2991,15 +2991,16 @@ const user = { renderingId: 1 };
       describe('request on the has-many getter without relations', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { models, sequelizeOptions } = initializeSequelize();
           const params = {
+            ...baseParams,
             recordId: 100,
             associationName: 'addresses',
             fields: {
               address: 'line,zipCode,city,country',
             },
             page: { number: '1', size: '20' },
-            timezone: 'Europe/Paris',
           };
           try {
             await new HasManyGetter(
@@ -3007,10 +3008,12 @@ const user = { renderingId: 1 };
               models.address,
               sequelizeOptions,
               params,
+              user,
             )
               .perform();
             expect(true).toBeTrue();
           } finally {
+            spy.mockRestore();
             connectionManager.closeConnection();
           }
         });
