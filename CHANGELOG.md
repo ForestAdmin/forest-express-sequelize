@@ -1,3 +1,13 @@
+# [8.0.0-beta.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.3...v8.0.0-beta.4) (2021-06-01)
+
+
+* feat(scopes)!: enforce scopes restrictions on a wider range of requests (#731) ([da7d71d](https://github.com/ForestAdmin/forest-express-sequelize/commit/da7d71dbee2662aa21dc65bbd6d271086fd31acc)), closes [#731](https://github.com/ForestAdmin/forest-express-sequelize/issues/731)
+
+
+### BREAKING CHANGES
+
+* the public API of forest-express has changed to include the parameters which are needed to evaluate scope filters. This includes PermissionMiddlewareCreator, all classes on the /exposed folder and most services. Many routes now require providing the current user timezone.
+
 # [8.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.2...v8.0.0-beta.3) (2021-05-26)
 
 
