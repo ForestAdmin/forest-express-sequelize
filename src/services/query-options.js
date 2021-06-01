@@ -219,7 +219,7 @@ class QueryOptions {
     } else {
       if (
         isMSSQL(this._model.sequelize)
-        && this._sequelizeInclude.length
+        && this._sequelizeInclude?.length
         && this._model.primaryKeys[sortField]
       ) {
         // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258

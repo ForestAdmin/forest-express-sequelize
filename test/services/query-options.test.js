@@ -4,33 +4,52 @@ import QueryOptions from '../../src/services/query-options';
 
 describe('services > query-options', () => {
   describe('order', () => {
-    const model = {
-      name: 'actor',
-      unscoped: () => model,
-      sequelize: { constructor: Sequelize, options: { dialect: 'mysql' } },
-      associations: {},
+    const buildModelMock = (dialect) => {
+      const sequelize = new Sequelize({ dialect });
+      const modelActor = sequelize.define('actor', {});
+      const modelMovie = sequelize.define('movie', {});
+
+      modelActor.belongsTo(modelMovie);
+
+      Interface.Schemas = { schemas: { actor: { idField: 'id' } } };
+
+      return modelActor;
     };
-    Interface.Schemas = { schemas: { actor: { idField: 'id' } } };
 
-    it('should return null if there is no sort param', async () => {
-      expect.assertions(1);
-      const options = new QueryOptions(model);
-      await options.sort();
-      expect(options.sequelizeOptions.order).toBeUndefined();
+    describe('with mssql', () => {
+      const model = buildModelMock('mssql');
+
+      it('should return null if the sorting params is the primarykey', async () => {
+        expect.assertions(1);
+        const options = new QueryOptions(model);
+        await options.sort('id');
+        expect(options.sequelizeOptions.order).toBeUndefined();
+      });
     });
 
-    it('should return should set order ASC by default', async () => {
-      expect.assertions(1);
-      const options = new QueryOptions(model);
-      await options.sort('id');
-      expect(options.sequelizeOptions.order).toStrictEqual([['id', 'ASC']]);
-    });
+    describe('with another orm', () => {
+      const model = buildModelMock('mysql');
 
-    it('should return should set order DESC if there is a minus sign', async () => {
-      expect.assertions(1);
-      const options = new QueryOptions(model);
-      await options.sort('-id');
-      expect(options.sequelizeOptions.order).toStrictEqual([['id', 'DESC']]);
+      it('should return null if there is no sort param', async () => {
+        expect.assertions(1);
+        const options = new QueryOptions(model);
+        await options.sort();
+        expect(options.sequelizeOptions.order).toBeUndefined();
+      });
+
+      it('should set order ASC by default', async () => {
+        expect.assertions(1);
+        const options = new QueryOptions(model);
+        await options.sort('id');
+        expect(options.sequelizeOptions.order).toStrictEqual([['id', 'ASC']]);
+      });
+
+      it('should set order DESC if there is a minus sign', async () => {
+        expect.assertions(1);
+        const options = new QueryOptions(model);
+        await options.sort('-id');
+        expect(options.sequelizeOptions.order).toStrictEqual([['id', 'DESC']]);
+      });
     });
   });
 });
