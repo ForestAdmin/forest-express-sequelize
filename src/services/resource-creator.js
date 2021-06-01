@@ -8,14 +8,16 @@ const associationRecord = require('../utils/association-record');
 const isPrimaryKeyAForeignKey = require('../utils/is-primary-key-a-foreign-key');
 
 class ResourceCreator {
-  constructor(model, params) {
+  constructor(model, params, body, user) {
     this.model = model;
     this.params = params;
+    this.body = body;
     this.schema = Interface.Schemas.schemas[model.name];
+    this.user = user;
   }
 
   async _getTargetKey(name, association) {
-    const primaryKey = this.params[name];
+    const primaryKey = this.body[name];
 
     let targetKey = primaryKey;
     if (typeof primaryKey !== 'undefined' && association.targetKey !== 'id') {
@@ -31,7 +33,7 @@ class ResourceCreator {
       const targetKey = await this._getTargetKey(name, association);
       const primaryKeyIsAForeignKey = isPrimaryKeyAForeignKey(association);
       if (primaryKeyIsAForeignKey) {
-        record[association.source.primaryKeyAttribute] = this.params[name];
+        record[association.source.primaryKeyAttribute] = this.body[name];
       }
       return record[setterName](targetKey, { save: false });
     }
@@ -46,7 +48,7 @@ class ResourceCreator {
       setterName = `add${_.upperFirst(name)}`;
     }
     if (setterName) {
-      return record[setterName](this.params[name]);
+      return record[setterName](this.body[name]);
     }
     return null;
   }
@@ -61,7 +63,7 @@ class ResourceCreator {
 
   async perform() {
     // buildInstance
-    const recordCreated = this.model.build(this.params);
+    const recordCreated = this.model.build(this.body);
 
     // handleAssociationsBeforeSave
     await this._handleSave(recordCreated, this._makePromisesBeforeSave);
@@ -83,9 +85,11 @@ class ResourceCreator {
     new PrimaryKeysManager(this.model).annotateRecords([record]);
 
     // return makeResourceGetter()
-    return new ResourceGetter(this.model, {
-      recordId: record[this.schema.idField],
-    }).perform();
+    return new ResourceGetter(
+      this.model,
+      { ...this.params, recordId: record[this.schema.idField] },
+      this.user,
+    ).perform();
   }
 }
 
