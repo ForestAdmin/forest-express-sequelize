@@ -24,7 +24,7 @@ class QueryOptions {
     const options = {};
     if (this._sequelizeWhere) options.where = this._sequelizeWhere;
     if (this._sequelizeInclude) options.include = this._sequelizeInclude;
-    if (this._order.length) options.order = this._order;
+    if (this._sequelizeOrder.length) options.order = this._sequelizeOrder;
     if (this._offset !== undefined && this._limit !== undefined) {
       options.offset = this._offset;
       options.limit = this._limit;
@@ -60,6 +60,20 @@ class QueryOptions {
     const fields = [...this._requestedFields, ...this._neededFields];
     const include = new QueryBuilder().getIncludes(this._model, fields.length ? fields : null);
     return include.length ? include : null;
+  }
+
+  get _sequelizeOrder() {
+    if (
+      isMSSQL(this._model.sequelize)
+      && this._sequelizeInclude?.length
+    ) {
+      // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
+      // https://github.com/sequelize/sequelize/blob/71c91309ae45f32b173cf05ef84b543978309751/lib/dialects/mssql/query-generator.js#L872
+      const primaryKeys = Object.keys(this._model.primaryKeys);
+      this._order = this._order.filter((order) => !primaryKeys.includes(order[0]));
+    }
+
+    return this._order;
   }
 
   /**
@@ -217,15 +231,6 @@ class QueryOptions {
       this._order.push([associationName, fieldName, order]);
       this._neededFields.add(sortField);
     } else {
-      if (
-        isMSSQL(this._model.sequelize)
-        && this._sequelizeInclude?.length
-        && this._model.primaryKeys[sortField]
-      ) {
-        // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
-        // https://github.com/sequelize/sequelize/blob/71c91309ae45f32b173cf05ef84b543978309751/lib/dialects/mssql/query-generator.js#L872
-        return;
-      }
       this._order.push([sortField, order]);
     }
   }
