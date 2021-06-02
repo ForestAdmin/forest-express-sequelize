@@ -71,25 +71,28 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
   this.hasExtendedSearchConditions = () => hasExtendedConditions;
 
   this.performWithSmartFields = (associationName) => {
-    const { search } = params;
-
-    const where = this.perform(associationName);
-    if (!where[OPERATORS.OR]) {
-      where[OPERATORS.OR] = [];
+    // Retrocompatibility: customers which implement search on smart fields are expected to
+    // inject their conditions at .where[Op.and][0][Op.or].push(searchCondition)
+    // https://docs.forestadmin.com/documentation/reference-guide/fields/create-and-manage-smart-fields
+    const query = { include: [], where: { [OPERATORS.AND]: [this.perform(associationName)] } };
+    if (!query.where[OPERATORS.AND][0][OPERATORS.OR]) {
+      query.where[OPERATORS.AND][0][OPERATORS.OR] = [];
     }
 
     schema.fields.filter((field) => field.search).forEach((field) => {
       try {
-        // Retrocompatibility: customers which implement search on smart fields are expected to
-        // inject their conditions at .where[Op.and][0][Op.or].push(searchCondition)
-        // https://docs.forestadmin.com/documentation/reference-guide/fields/create-and-manage-smart-fields
-        field.search({ where: { [OPERATORS.AND]: [where] } }, search);
+        field.search(query, params.search);
       } catch (error) {
         Interface.logger.error(`Cannot search properly on Smart Field ${field.field}`, error);
       }
     });
 
-    return where[OPERATORS.OR].length ? where : null;
+    return {
+      include: query.include,
+      conditions: query.where[OPERATORS.AND][0][OPERATORS.OR].length
+        ? query.where[OPERATORS.AND][0]
+        : null,
+    };
   };
 
   this.perform = (associationName) => {
