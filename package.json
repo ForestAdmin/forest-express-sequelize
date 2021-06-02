@@ -56,6 +56,7 @@
     "husky": "4.2.5",
     "jest": "26.6.3",
     "jest-extended": "0.11.5",
+    "mariadb": "2.5.3",
     "mysql2": "2.1.0",
     "onchange": "6.0.0",
     "pg": "8.4.2",
@@ -65,6 +66,7 @@
     "sequelize": "5.21.3",
     "sequelize-fixtures": "1.1.1",
     "simple-git": "1.65.0",
+    "sqlite3": "5.0.2",
     "tedious": "11.0.8"
   },
   "scripts": {

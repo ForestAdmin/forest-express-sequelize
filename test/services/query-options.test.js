@@ -27,28 +27,30 @@ describe('services > query-options', () => {
       });
     });
 
-    describe('with another orm', () => {
-      const model = buildModelMock('mysql');
+    ['mysql', 'mariadb', 'sqlite'].forEach((dialect) => {
+      describe(`with ${dialect}`, () => {
+        const model = buildModelMock(dialect);
 
-      it('should return null if there is no sort param', async () => {
-        expect.assertions(1);
-        const options = new QueryOptions(model);
-        await options.sort();
-        expect(options.sequelizeOptions.order).toBeUndefined();
-      });
+        it('should return null if there is no sort param', async () => {
+          expect.assertions(1);
+          const options = new QueryOptions(model);
+          await options.sort();
+          expect(options.sequelizeOptions.order).toBeUndefined();
+        });
 
-      it('should set order ASC by default', async () => {
-        expect.assertions(1);
-        const options = new QueryOptions(model);
-        await options.sort('id');
-        expect(options.sequelizeOptions.order).toStrictEqual([['id', 'ASC']]);
-      });
+        it('should set order ASC by default', async () => {
+          expect.assertions(1);
+          const options = new QueryOptions(model);
+          await options.sort('id');
+          expect(options.sequelizeOptions.order).toStrictEqual([['id', 'ASC']]);
+        });
 
-      it('should set order DESC if there is a minus sign', async () => {
-        expect.assertions(1);
-        const options = new QueryOptions(model);
-        await options.sort('-id');
-        expect(options.sequelizeOptions.order).toStrictEqual([['id', 'DESC']]);
+        it('should set order DESC if there is a minus sign', async () => {
+          expect.assertions(1);
+          const options = new QueryOptions(model);
+          await options.sort('-id');
+          expect(options.sequelizeOptions.order).toStrictEqual([['id', 'DESC']]);
+        });
       });
     });
   });
