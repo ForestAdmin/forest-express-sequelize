@@ -74,10 +74,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     // Retrocompatibility: customers which implement search on smart fields are expected to
     // inject their conditions at .where[Op.and][0][Op.or].push(searchCondition)
     // https://docs.forestadmin.com/documentation/reference-guide/fields/create-and-manage-smart-fields
-    const query = { include: [], where: { [OPERATORS.AND]: [this.perform(associationName)] } };
-    if (!query.where[OPERATORS.AND][0][OPERATORS.OR]) {
-      query.where[OPERATORS.AND][0][OPERATORS.OR] = [];
-    }
+    const query = {
+      include: [],
+      where: { [OPERATORS.AND]: [this.perform(associationName)] },
+    };
 
     schema.fields.filter((field) => field.search).forEach((field) => {
       try {
@@ -103,7 +103,6 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     }
 
     const aliasName = associationName || schema.name;
-    const where = {};
     const or = [];
 
     function pushCondition(condition, fieldName) {
@@ -258,8 +257,7 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
       });
     }
 
-    if (or.length) { where[OPERATORS.OR] = or; }
-    return where;
+    return { [OPERATORS.OR]: or };
   };
 }
 
