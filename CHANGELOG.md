@@ -1,3 +1,10 @@
+## [7.10.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.0...v7.10.1) (2021-06-03)
+
+
+### Bug Fixes
+
+* correctly get the IP address from the request headers ([#737](https://github.com/ForestAdmin/forest-express-sequelize/issues/737)) ([b2fbdca](https://github.com/ForestAdmin/forest-express-sequelize/commit/b2fbdca4ee3a72b7700c888a2882f28d03c3767d))
+
 # [7.10.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.4...v7.10.0) (2021-06-03)
 
 
