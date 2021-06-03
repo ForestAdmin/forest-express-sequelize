@@ -4,6 +4,8 @@ import { InvalidParameterError } from '../../src/services/errors';
 
 describe('services > resources-remover', () => {
   const buildModelMock = (dialect) => {
+    // Sequelize is created here without connection to a database
+    // is used to define properly a model instead of mock all the sequelize function
     const sequelize = new Sequelize({ dialect });
 
     const Actor = sequelize.define('actor', {});

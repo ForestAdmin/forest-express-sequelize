@@ -5,7 +5,10 @@ import QueryOptions from '../../src/services/query-options';
 describe('services > query-options', () => {
   describe('order', () => {
     const buildModelMock = (dialect) => {
+      // Sequelize is created here without connection to a database
+      // is used to define properly a model instead of mock all the sequelize function
       const sequelize = new Sequelize({ dialect });
+
       const modelActor = sequelize.define('actor', {});
       const modelMovie = sequelize.define('movie', {});
 
