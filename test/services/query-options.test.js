@@ -27,7 +27,7 @@ describe('services > query-options', () => {
       });
     });
 
-    ['mysql', 'mariadb', 'sqlite'].forEach((dialect) => {
+    ['mysql', 'postgres'].forEach((dialect) => {
       describe(`with ${dialect}`, () => {
         const model = buildModelMock(dialect);
 

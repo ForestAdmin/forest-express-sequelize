@@ -63,12 +63,8 @@ class QueryOptions {
   }
 
   get _sequelizeOrder() {
-    if (
-      isMSSQL(this._model.sequelize)
-      && this._sequelizeInclude?.length
-    ) {
+    if (isMSSQL(this._model.sequelize) && this._sequelizeInclude?.length) {
       // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
-      // https://github.com/sequelize/sequelize/blob/71c91309ae45f32b173cf05ef84b543978309751/lib/dialects/mssql/query-generator.js#L872
       const primaryKeys = Object.keys(this._model.primaryKeys);
       this._order = this._order.filter((order) => !primaryKeys.includes(order[0]));
     }

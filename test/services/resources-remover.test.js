@@ -25,7 +25,7 @@ describe('services > resources-remover', () => {
     return { Actor, Film, ActorFilm };
   };
 
-  ['mysql', 'mariadb', 'sqlite', 'mssql'].forEach((dialect) => {
+  ['mysql', 'mssql', 'postgres'].forEach((dialect) => {
     describe(`perform with ${dialect}`, () => {
       it('should throw error if ids is not an array or empty', async () => {
         expect.assertions(3);
