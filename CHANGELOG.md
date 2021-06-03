@@ -1,3 +1,10 @@
+# [7.10.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.4...v7.10.0) (2021-06-03)
+
+
+### Features
+
+* **schema:** move some meta data under stack attribute to prevent blocking scenarios on DWO ([#736](https://github.com/ForestAdmin/forest-express-sequelize/issues/736)) ([1876c97](https://github.com/ForestAdmin/forest-express-sequelize/commit/1876c975a1498879dc08862d8306a4f7e4140aa6))
+
 ## [7.9.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.3...v7.9.4) (2021-06-03)
 
 
