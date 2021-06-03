@@ -1,3 +1,10 @@
+## [7.9.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.3...v7.9.4) (2021-06-03)
+
+
+### Bug Fixes
+
+* allow injection of relations when using smartfield' search feature ([#735](https://github.com/ForestAdmin/forest-express-sequelize/issues/735)) ([6a39f05](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a39f05b867c4ab0860ec8b92f5759c33c531b46))
+
 ## [7.9.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.2...v7.9.3) (2021-05-25)
 
 
