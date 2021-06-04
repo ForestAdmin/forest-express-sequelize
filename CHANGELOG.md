@@ -1,3 +1,16 @@
+# [8.0.0-beta.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.5...v8.0.0-beta.6) (2021-06-04)
+
+
+### Bug Fixes
+
+* allow injection of relations when using smartfield' search feature ([#735](https://github.com/ForestAdmin/forest-express-sequelize/issues/735)) ([6a39f05](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a39f05b867c4ab0860ec8b92f5759c33c531b46))
+* correctly get the IP address from the request headers ([#737](https://github.com/ForestAdmin/forest-express-sequelize/issues/737)) ([b2fbdca](https://github.com/ForestAdmin/forest-express-sequelize/commit/b2fbdca4ee3a72b7700c888a2882f28d03c3767d))
+
+
+### Features
+
+* **schema:** move some meta data under stack attribute to prevent blocking scenarios on DWO ([#736](https://github.com/ForestAdmin/forest-express-sequelize/issues/736)) ([1876c97](https://github.com/ForestAdmin/forest-express-sequelize/commit/1876c975a1498879dc08862d8306a4f7e4140aa6))
+
 # [8.0.0-beta.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.4...v8.0.0-beta.5) (2021-06-04)
 
 
