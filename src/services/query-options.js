@@ -57,7 +57,11 @@ class QueryOptions {
   /** Compute includes for sequelizeOptions getter. */
   get _sequelizeInclude() {
     const fields = [...this._requestedFields, ...this._neededFields];
-    const include = new QueryBuilder().getIncludes(this._model, fields.length ? fields : null);
+    const include = [
+      ...new QueryBuilder().getIncludes(this._model, fields.length ? fields : null),
+      ...this._customerIncludes,
+    ];
+
     return include.length ? include : null;
   }
 
@@ -85,6 +89,7 @@ class QueryOptions {
     this._order = [];
     this._offset = undefined;
     this._limit = undefined;
+    this._customerIncludes = [];
 
     if (this._options.includeRelations) {
       _.values(this._model.associations)
@@ -141,11 +146,15 @@ class QueryOptions {
     const fieldNames = this._requestedFields.size ? [...this._requestedFields] : null;
     const helper = new SearchBuilder(this._model, options, { search, searchExtended }, fieldNames);
 
-    const conditions = helper.performWithSmartFields(this._options.tableAlias);
+    const { conditions, include } = helper.performWithSmartFields(this._options.tableAlias);
     if (conditions) {
       this._where.push(conditions);
     } else {
       this._where.push(this._Sequelize.literal('(0=1)'));
+    }
+
+    if (include) {
+      this._customerIncludes.push(...include);
     }
 
     return helper.getFieldsSearched();
