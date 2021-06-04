@@ -1,3 +1,10 @@
+# [8.0.0-beta.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.4...v8.0.0-beta.5) (2021-06-04)
+
+
+### Bug Fixes
+
+* correctly get the IP address from the request headers ([2b5ed1d](https://github.com/ForestAdmin/forest-express-sequelize/commit/2b5ed1d99ee0219dba954b63a6579ab1d9b211b1))
+
 # [8.0.0-beta.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.3...v8.0.0-beta.4) (2021-06-01)
 
 
