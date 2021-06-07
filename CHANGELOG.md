@@ -1,3 +1,16 @@
+# [8.0.0-beta.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.6...v8.0.0-beta.7) (2021-06-07)
+
+
+### Features
+
+* **smart-action:** user can add dynamically field with hook on smart action form ([#742](https://github.com/ForestAdmin/forest-express-sequelize/issues/742)) ([228bb42](https://github.com/ForestAdmin/forest-express-sequelize/commit/228bb42aeb0ae13d352e7b053e243a80d0ddc078))
+
+
+### BREAKING CHANGES
+
+* **smart-action:** fields parameters on hook function is no longer a map of field, it is now an array.
+change hook is no longer choosen by the field name, field need to have hook defined inside it definition by addin a props hook.
+
 # [8.0.0-beta.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.5...v8.0.0-beta.6) (2021-06-04)
 
 
