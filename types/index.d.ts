@@ -15,13 +15,12 @@ export interface LianaOptions {
     configDir?: string;
 }
 
-export function init (options: LianaOptions): Promise<Application>;
+export function init(options: LianaOptions): Promise<Application>;
 
 // Everything related to Forest Authentication
 
-export interface ensureAuthenticated {
-    (request: Request, response: Response, next: NextFunction): void
-}
+
+export function ensureAuthenticated(request: Request, response: Response, next: NextFunction): void;
 
 // Everything related to Forest constants
 
@@ -148,11 +147,6 @@ export interface SmartFieldSearcher {
     (query: any, search: string): any;
 }
 
-// TODO to be updated, deprecated since v6
-export interface SmartActionValuesInjector {
-    (record: Sequelize.Model): Record<string, unknown>;
-}
-
 export interface SegmentAggregationCreator {
     (): Record<string, unknown>;
 }
@@ -170,8 +164,15 @@ export interface SmartFieldOptions {
     search?: SmartFieldSearcher;
 }
 
-// TODO add smart field definition
-// TODO add enum for smart field type
+export interface SmartActionHook {
+    (context: { fields: Record<string, unknown>, record: Sequelize.Model}): Record<string, unknown>
+}
+
+export interface SmartActionHooks {
+    load: SmartActionHook;
+    change: Record<string, SmartActionHook>;
+}
+
 export interface SmartActionOptions {
     name: string;
     type?: string;
@@ -186,7 +187,7 @@ export interface SmartActionOptions {
     download?: boolean;
     endpoint?: string;
     httpMethod?: string;
-    values?: SmartActionValuesInjector;
+    hooks?: SmartActionHooks;
 }
 
 export interface SmartSegmentOptions {
@@ -194,7 +195,7 @@ export interface SmartSegmentOptions {
     where: SegmentAggregationCreator;
 }
 
-export declare interface CollectionOptions {
+export interface CollectionOptions {
     fields?: SmartFieldOptions[];
     actions?: SmartActionOptions[];
     segments?: SmartSegmentOptions[];
