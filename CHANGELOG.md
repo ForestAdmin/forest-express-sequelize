@@ -1,3 +1,10 @@
+## [7.10.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.1...v7.10.2) (2021-06-08)
+
+
+### Bug Fixes
+
+* fix mssql ordering collection by pk ([#734](https://github.com/ForestAdmin/forest-express-sequelize/issues/734)) ([7bbd19d](https://github.com/ForestAdmin/forest-express-sequelize/commit/7bbd19db7d304c7d9c50724b38585f117aa75b19))
+
 ## [7.10.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.0...v7.10.1) (2021-06-03)
 
 
