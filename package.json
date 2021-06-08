@@ -23,6 +23,7 @@
     "url": "git://github.com/ForestAdmin/forest-express-sequelize.git"
   },
   "main": "dist/index.js",
+  "types": "./types/index.d.ts",
   "dependencies": {
     "@babel/runtime": "7.10.1",
     "bluebird": "2.9.25",
@@ -47,6 +48,8 @@
     "@semantic-release/changelog": "5.0.1",
     "@semantic-release/git": "9.0.0",
     "@types/jest": "26.0.9",
+    "@typescript-eslint/eslint-plugin": "4.26.0",
+    "@typescript-eslint/parser": "4.26.0",
     "babel-eslint": "10.0.3",
     "eslint": "6.8.0",
     "eslint-config-airbnb-base": "14.0.0",
@@ -65,12 +68,13 @@
     "sequelize": "5.21.3",
     "sequelize-fixtures": "1.1.1",
     "simple-git": "1.65.0",
-    "tedious": "11.0.8"
+    "tedious": "11.0.8",
+    "typescript": "4.3.2"
   },
   "scripts": {
     "build": "babel src --out-dir dist",
     "build:watch": "onchange 'src/**/*.js' 'node_modules/forest-express/dist/*' --no-exclude -i -- babel --source-maps inline --out-dir dist src",
-    "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin src test",
+    "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin src test types/index.d.ts",
     "test": "jest",
     "test:coverage": "jest --coverage"
   }
