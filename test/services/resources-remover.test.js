@@ -3,67 +3,76 @@ import ResourcesRemover from '../../src/services/resources-remover';
 import { InvalidParameterError } from '../../src/services/errors';
 
 describe('services > resources-remover', () => {
-  describe('perform', () => {
-    it('should throw error if ids is not an array or empty', async () => {
-      expect.assertions(3);
-      function Actor() {
-        this.unscoped = () => this;
-        this.sequelize = { constructor: Sequelize };
-      }
+  const buildModelMock = (dialect) => {
+    // Sequelize is created here without connection to a database
+    const sequelize = new Sequelize({ dialect });
 
-      await expect(new ResourcesRemover(new Actor(), []).perform())
-        .rejects
-        .toBeInstanceOf(InvalidParameterError);
-
-      await expect(new ResourcesRemover(new Actor(), 'foo').perform())
-        .rejects
-        .toBeInstanceOf(InvalidParameterError);
-
-      await expect(new ResourcesRemover(new Actor(), {}).perform())
-        .rejects
-        .toBeInstanceOf(InvalidParameterError);
+    const Actor = sequelize.define('actor', {});
+    const Film = sequelize.define('film', {});
+    const ActorFilm = sequelize.define('ActorFilem', {
+      actorId: {
+        type: Sequelize.DataTypes.INTEGER,
+        primaryKey: true,
+      },
+      filmId: {
+        type: Sequelize.DataTypes.INTEGER,
+        primaryKey: true,
+      },
     });
 
-    it('should remove resources with a single primary key', async () => {
-      expect.assertions(1);
+    ActorFilm.belongsTo(Actor);
+    ActorFilm.belongsTo(Film);
 
-      function Actor() {
-        this.sequelize = { constructor: Sequelize };
-        this.name = 'actor';
-        this.primaryKeys = { id: {} };
-        this.unscoped = () => this;
-        this.sequelize = { constructor: Sequelize };
-        this.associations = {};
-        this.destroy = (condition) => {
+    return { Actor, Film, ActorFilm };
+  };
+
+  ['mysql', 'mssql', 'postgres'].forEach((dialect) => {
+    describe(`perform with ${dialect}`, () => {
+      it('should throw error if ids is not an array or empty', async () => {
+        expect.assertions(3);
+
+        const { Actor } = buildModelMock(dialect);
+
+        await expect(new ResourcesRemover(Actor, []).perform())
+          .rejects
+          .toBeInstanceOf(InvalidParameterError);
+
+        await expect(new ResourcesRemover(Actor, 'foo').perform())
+          .rejects
+          .toBeInstanceOf(InvalidParameterError);
+
+        await expect(new ResourcesRemover(Actor, {}).perform())
+          .rejects
+          .toBeInstanceOf(InvalidParameterError);
+      });
+
+      it('should remove resources with a single primary key', async () => {
+        expect.assertions(1);
+
+        const { Actor } = buildModelMock(dialect);
+        jest.spyOn(Actor, 'destroy').mockImplementation((condition) => {
           expect(condition).toStrictEqual({ where: { id: ['1', '2'] } });
-        };
-      }
+        });
 
-      await new ResourcesRemover(new Actor(), ['1', '2']).perform();
-    });
+        await new ResourcesRemover(Actor, ['1', '2']).perform();
+      });
 
-    it('should remove resources with composite keys', async () => {
-      expect.assertions(1);
-      function ActorFilm() {
-        this.sequelize = { constructor: Sequelize };
-        this.name = 'actorFilm';
-        this.primaryKeys = { actorId: {}, filmId: {} };
-        this.unscoped = () => this;
-        this.sequelize = { constructor: Sequelize };
-        this.associations = {};
-        this.destroy = (condition) => {
-          expect(condition).toStrictEqual({
-            where: {
-              [Op.or]: [
-                { actorId: '1', filmId: '2' },
-                { actorId: '3', filmId: '4' },
-              ],
-            },
+      it('should remove resources with composite keys', async () => {
+        expect.assertions(1);
+
+        const { ActorFilm } = buildModelMock(dialect);
+        jest.spyOn(ActorFilm, 'destroy').mockImplementation((condition) => {
+          expect(condition.where).toStrictEqual({
+            [Op.or]: [
+              { actorId: '1', filmId: '2' },
+              { actorId: '3', filmId: '4' },
+            ],
           });
-        };
-      }
-      const sequelizeOptions = { Sequelize };
-      await new ResourcesRemover(new ActorFilm(), ['1|2', '3|4'], sequelizeOptions).perform();
+        });
+
+        const sequelizeOptions = { Sequelize };
+        await new ResourcesRemover(ActorFilm, ['1|2', '3|4'], sequelizeOptions).perform();
+      });
     });
   });
 });

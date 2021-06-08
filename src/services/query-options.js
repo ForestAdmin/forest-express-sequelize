@@ -8,6 +8,7 @@ import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
 import QueryUtils from '../utils/query';
+import { isMSSQL } from '../utils/database';
 
 /**
  * Sequelize query options generator which is configured using forest admin concepts (filters,
@@ -23,7 +24,7 @@ class QueryOptions {
     const options = {};
     if (this._sequelizeWhere) options.where = this._sequelizeWhere;
     if (this._sequelizeInclude) options.include = this._sequelizeInclude;
-    if (this._order.length) options.order = this._order;
+    if (this._sequelizeOrder.length) options.order = this._sequelizeOrder;
     if (this._offset !== undefined && this._limit !== undefined) {
       options.offset = this._offset;
       options.limit = this._limit;
@@ -63,6 +64,16 @@ class QueryOptions {
     ];
 
     return include.length ? include : null;
+  }
+
+  get _sequelizeOrder() {
+    if (isMSSQL(this._model.sequelize) && this._sequelizeInclude?.length) {
+      // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
+      const primaryKeys = Object.keys(this._model.primaryKeys);
+      this._order = this._order.filter((order) => !primaryKeys.includes(order[0]));
+    }
+
+    return this._order;
   }
 
   /**
