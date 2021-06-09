@@ -1,3 +1,10 @@
+# [7.11.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.2...v7.11.0) (2021-06-09)
+
+
+### Features
+
+* include role in the user data inside the request ([#746](https://github.com/ForestAdmin/forest-express-sequelize/issues/746)) ([425bba5](https://github.com/ForestAdmin/forest-express-sequelize/commit/425bba58268a7561b675348b91c00cbc5e695efb))
+
 ## [7.10.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.1...v7.10.2) (2021-06-08)
 
 
