@@ -1,3 +1,10 @@
+## [7.11.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.0...v7.11.1) (2021-06-10)
+
+
+### Bug Fixes
+
+* prevent IP check from failing for the proxies including the port in the headers ([#751](https://github.com/ForestAdmin/forest-express-sequelize/issues/751)) ([92852f7](https://github.com/ForestAdmin/forest-express-sequelize/commit/92852f74831dd33f1ae411d61b2f576ea8f309be))
+
 # [7.11.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.2...v7.11.0) (2021-06-09)
 
 
