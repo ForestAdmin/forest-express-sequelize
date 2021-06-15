@@ -1,3 +1,10 @@
+## [7.11.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.1...v7.11.2) (2021-06-15)
+
+
+### Bug Fixes
+
+* **intercom:** fix date conversion from unix timestamp to js date of intercom attributes ([#754](https://github.com/ForestAdmin/forest-express-sequelize/issues/754)) ([11a1549](https://github.com/ForestAdmin/forest-express-sequelize/commit/11a1549f61407e15587d976b1b40bc916341e975))
+
 ## [7.11.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.0...v7.11.1) (2021-06-10)
 
 
