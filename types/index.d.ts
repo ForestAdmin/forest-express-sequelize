@@ -4,12 +4,10 @@ import * as Sequelize from 'sequelize';
 // Everything related to Forest initialization
 
 export interface LianaOptions {
-    objectMapping: Sequelize.Sequelize;
+    objectMapping: typeof Sequelize;
     envSecret: string;
     authSecret: string;
-    connections: {
-        [connectionName: string]: Sequelize.Sequelize;
-    };
+    connections: Record<string, Sequelize.Sequelize>;
     includedModels?: string[];
     excludedModels?: string[];
     configDir?: string;
@@ -17,8 +15,16 @@ export interface LianaOptions {
 
 export function init(options: LianaOptions): Promise<Application>;
 
-// Everything related to Forest Authentication
+export interface DatabaseConfiguration {
+    name: string,
+    modelsDir: string,
+    connection: {
+        url: string,
+        options: Sequelize.Options,
+    }
+}
 
+// Everything related to Forest Authentication
 
 export function ensureAuthenticated(request: Request, response: Response, next: NextFunction): void;
 
@@ -28,47 +34,50 @@ export const PUBLIC_ROUTES: string[];
 
 // Everything related to record manipulation
 
-export class AbstractRecordTool {
-    constructor(model: Sequelize.Model)
-    serialize(records: Sequelize.Model[]): Promise<StatSerialized>;
+interface RecordsSerialized {
+    data: Record<string, unknown>[],
+    included: Record<string, unknown>[],
 }
 
-export class RecordGetter extends AbstractRecordTool {
-    get(recordId: string): Promise<Sequelize.Model>;
+export class AbstractRecordTool<M extends Sequelize.Model> {
+    constructor(model: Sequelize.ModelCtor<M>)
+    serialize(records: M | M[]): Promise<RecordsSerialized>;
 }
 
-export class RecordsGetter extends AbstractRecordTool {
-    getAll(params: Params): Promise<Sequelize.Model[]>;
+export class RecordGetter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+    get(recordId: string): Promise<M>;
+}
+
+export class RecordsGetter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+    getAll(query: Query): Promise<M[]>;
     getIdsFromRequest(request: Request): Promise<string[]>;
 }
 
-export class RecordsCounter extends AbstractRecordTool {
-    count(params: Params): Promise<number>;
+export class RecordsCounter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+    count(query: Query): Promise<number>;
 }
 
-export class RecordsExporter extends AbstractRecordTool {
-    streamExport(response: Response, params: Params): Promise<void>;
+export class RecordsExporter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+    streamExport(response: Response, query: Query): Promise<void>;
 }
 
-export class RecordUpdater extends AbstractRecordTool {
+export class RecordUpdater<M extends Sequelize.Model> extends AbstractRecordTool<M> {
     deserialize(body: Record<string, unknown>): Promise<Record<string, unknown>>;
-    update(record: Record<string, unknown>, recordId: string): Promise<Sequelize.Model>;
+    update(record: Record<string, unknown>, recordId: string): Promise<M>;
 }
 
-export class RecordCreator extends AbstractRecordTool {
+export class RecordCreator<M extends Sequelize.Model> extends AbstractRecordTool<M> {
     deserialize(body: Record<string, unknown>): Promise<Record<string, unknown>>;
-    create(record: Record<string, unknown>): Promise<Sequelize.Model>;
+    create(record: Record<string, unknown>): Promise<M>;
 }
 
-export class RecordRemover extends AbstractRecordTool {
-    remove(recordId: string): Promise<void>;
+export class RecordRemover<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+    remove(recordId: string | number): Promise<void>;
 }
 
-export class RecordsRemover extends AbstractRecordTool {
-    remove(recordIds: string[]): Promise<void>;
+export class RecordsRemover<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+    remove(recordIds: string[] | number[]): Promise<void>;
 }
-
-export class RecordSerializer extends AbstractRecordTool { }
 
 // Everyting related to Forest permissions
 
@@ -103,8 +112,8 @@ export class StatSerializer {
 // Everything related to Forest request params
 
 export interface Page {
-    number: string;
-    size: string;
+    number: number;
+    size: number;
 }
 
 export interface Filter {
@@ -123,28 +132,42 @@ export interface AggregatedFilters {
     conditions: Filter[];
 }
 
-export interface Params {
-    timezone: string;
-    search: string;
-    fields: {[key: string]: string};
-    sort: string;
-    filters: Filter|AggregatedFilters;
-    page: Page;
-    searchExtended: string;
+export interface Query {
+    timezone?: string;
+    search?: string;
+    fields?: {[key: string]: string};
+    sort?: string;
+    filters?: Filter|AggregatedFilters;
+    page?: Page;
+    searchExtended?: string;
 }
 
 // Everything related to Forest collection configuration
 
-export interface SmartFieldValueGetter {
-    (record: Sequelize.Model): Sequelize.Model;
+export interface SmartFieldValueGetter<M extends Sequelize.Model = any> {
+    (record: M): any;
 }
 
-export interface SmartFieldValueSetter {
-    (record: Sequelize.Model, attributeValue: any): Sequelize.Model;
+export interface SmartFieldValueSetter<M extends Sequelize.Model = any> {
+    (record: M, fieldValue: any): any;
+}
+
+export interface SmartFieldSearchQuery {
+    include: string[],
+    where: Sequelize.WhereOptions,
 }
 
 export interface SmartFieldSearcher {
-    (query: any, search: string): any;
+    (query: SmartFieldSearchQuery, search: string): SmartFieldSearchQuery;
+}
+
+export interface SmartFieldFiltererFilter {
+    query: Sequelize.WhereOptions,
+    where: Record<symbol, Record<symbol, any> | any>,
+}
+
+export interface SmartFieldFilterer {
+    (filter: SmartFieldFiltererFilter): Sequelize.WhereOptions;
 }
 
 export interface SegmentAggregationCreator {
@@ -156,6 +179,7 @@ export interface SmartFieldOptions {
     description?: string;
     type: string | string[];
     isReadOnly?: boolean;
+    isRequired?: boolean;
     reference?: string;
     enums?: string[];
     defaultValue?: any;
@@ -164,8 +188,13 @@ export interface SmartFieldOptions {
     search?: SmartFieldSearcher;
 }
 
+export interface SmartActionHookContext<M extends Sequelize.Model = any> {
+    fields: Record<string, unknown>,
+    record: M,
+}
+
 export interface SmartActionHook {
-    (context: { fields: Record<string, unknown>, record: Sequelize.Model}): Record<string, unknown>
+    (context: SmartActionHookContext): Record<string, unknown>
 }
 
 export interface SmartActionHooks {
@@ -175,7 +204,7 @@ export interface SmartActionHooks {
 
 export interface SmartActionOptions {
     name: string;
-    type?: string;
+    type?: 'global' | 'bulk' | 'single';
     fields?: Array<{
         field: string;
         type: string | string[];
@@ -202,3 +231,5 @@ export interface CollectionOptions {
 }
 
 export function collection(name: string, options: CollectionOptions): void;
+
+export function errorHandler(): RequestHandler;
