@@ -1,3 +1,10 @@
+## [7.11.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.2...v7.11.3) (2021-06-23)
+
+
+### Bug Fixes
+
+* **authentication:** error during authentication when the environment is secret passed as a liana option and not an environment variable ([#758](https://github.com/ForestAdmin/forest-express-sequelize/issues/758)) ([39ab674](https://github.com/ForestAdmin/forest-express-sequelize/commit/39ab674f21cc607b0000937b784b031efbc154d7))
+
 ## [7.11.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.1...v7.11.2) (2021-06-15)
 
 
