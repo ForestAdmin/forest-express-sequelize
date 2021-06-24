@@ -162,7 +162,7 @@ export interface SmartFieldSearcher {
 }
 
 export interface SmartFieldFiltererFilter {
-  condition: Sequelize.WhereOptions,
+  condition: Filter,
   where: Record<symbol, Record<symbol, any> | any>,
 }
 
