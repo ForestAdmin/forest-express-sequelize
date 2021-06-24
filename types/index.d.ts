@@ -189,31 +189,43 @@ export interface SmartFieldOptions {
   filter?: SmartFieldFilterer;
 }
 
-export interface SmartActionHookContext<M extends Sequelize.Model = any> {
-  fields: Record<string, unknown>,
-  record: M,
+export interface SmartActionField {
+  value: any,
+  field: string,
+  description?: string,
+  type: string | string[],
+  isRequired?: boolean,
+  isReadOnly?: boolean,
+  enums?: string[] | number[] | Date[] | boolean[],
+  defaultValue?: any,
+  reference?: string,
 }
 
-export interface SmartActionHook {
-  (context: SmartActionHookContext): Record<string, unknown>
+export interface SmartActionLoadHookField extends SmartActionField{
+  position: number,
+}
+
+export interface SmartActionLoadHook<M extends Sequelize.Model = any> {
+  (context: { fields: SmartActionLoadHookField[], record: M }): SmartActionLoadHookField[]
+}
+
+export interface SmartActionChangeHookField extends SmartActionField{
+  previousValue: any,
+}
+
+export interface SmartActionChangeHook<M extends Sequelize.Model = any> {
+  (context: { fields: SmartActionChangeHookField[], record: M }): SmartActionLoadHookField[]
 }
 
 export interface SmartActionHooks {
-  load: SmartActionHook;
-  change: Record<string, SmartActionHook>;
+  load: SmartActionLoadHook;
+  change: Record<string, SmartActionChangeHook>;
 }
 
 export interface SmartActionOptions {
   name: string;
   type?: 'global' | 'bulk' | 'single';
-  fields?: Array<{
-    field: string;
-    type: string | string[];
-    reference?: string;
-    enums?: string[];
-    description?: string;
-    isRequired?: boolean;
-  }>;
+  fields?: SmartActionField[];
   download?: boolean;
   endpoint?: string;
   httpMethod?: string;
