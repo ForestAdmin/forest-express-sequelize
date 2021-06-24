@@ -19,8 +19,8 @@ export interface DatabaseConfiguration {
   name: string,
   modelsDir: string,
   connection: {
-      url: string,
-      options: Sequelize.Options,
+    url: string,
+    options: Sequelize.Options,
   }
 }
 
@@ -96,11 +96,11 @@ export class PermissionMiddlewareCreator {
 
 export interface StatSerialized {
   data: {
-      type: string,
-      id: string,
-      attributes: {
-          value: any[]
-      }
+    type: string,
+    id: string,
+    attributes: {
+      value: any[]
+    }
   };
 }
 
@@ -162,7 +162,7 @@ export interface SmartFieldSearcher {
 }
 
 export interface SmartFieldFiltererFilter {
-  query: Sequelize.WhereOptions,
+  condition: Sequelize.WhereOptions,
   where: Record<symbol, Record<symbol, any> | any>,
 }
 
@@ -186,6 +186,7 @@ export interface SmartFieldOptions {
   get?: SmartFieldValueGetter;
   set?: SmartFieldValueSetter;
   search?: SmartFieldSearcher;
+  filter?: SmartFieldFilterer;
 }
 
 export interface SmartActionHookContext<M extends Sequelize.Model = any> {
@@ -206,12 +207,12 @@ export interface SmartActionOptions {
   name: string;
   type?: 'global' | 'bulk' | 'single';
   fields?: Array<{
-      field: string;
-      type: string | string[];
-      reference?: string;
-      enums?: string[];
-      description?: string;
-      isRequired?: boolean;
+    field: string;
+    type: string | string[];
+    reference?: string;
+    enums?: string[];
+    description?: string;
+    isRequired?: boolean;
   }>;
   download?: boolean;
   endpoint?: string;
