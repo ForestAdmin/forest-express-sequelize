@@ -10,9 +10,9 @@ const getVersion = (sequelize) => {
   return null;
 };
 
-const isVersionLessThan4 = (sequelize) => {
+const isVersionLessThan = (sequelize, target) => {
   try {
-    return semver.lt(getVersion(sequelize), '4.0.0');
+    return semver.lt(getVersion(sequelize), target);
   } catch (error) {
     return true;
   }
@@ -36,7 +36,7 @@ const isUUID = (DataTypes, fieldType) =>
     || fieldType instanceof DataTypes.UUIDV4;
 
 exports.getVersion = getVersion;
-exports.isVersionLessThan4 = isVersionLessThan4;
+exports.isVersionLessThan = isVersionLessThan;
 exports.findRecord = findRecord;
 exports.getColumnName = getColumnName;
 exports.isUUID = isUUID;

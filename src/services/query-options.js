@@ -1,14 +1,15 @@
 import { logger, Schemas } from 'forest-express';
 import _ from 'lodash';
+import { isMSSQL } from '../utils/database';
 import Operators from '../utils/operators';
+import QueryUtils from '../utils/query';
+import SequelizeCompatibility from '../utils/sequelize-compatibility';
 import { ErrorHTTP422 } from './errors';
 import FiltersParser from './filters-parser';
 import LiveQueryChecker from './live-query-checker';
 import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
-import QueryUtils from '../utils/query';
-import { isMSSQL } from '../utils/database';
 
 /**
  * Sequelize query options generator which is configured using forest admin concepts (filters,
@@ -30,7 +31,7 @@ class QueryOptions {
       options.limit = this._limit;
     }
 
-    return options;
+    return SequelizeCompatibility.postProcess(this._model, options);
   }
 
   /**

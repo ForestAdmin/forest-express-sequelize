@@ -1,6 +1,5 @@
 import { pick } from 'lodash';
-import Operators from '../utils/operators';
-import QueryUtils from '../utils/query';
+import SequelizeCompatibility from '../utils/sequelize-compatibility';
 import PrimaryKeysManager from './primary-keys-manager';
 import ResourcesGetter from './resources-getter';
 
@@ -23,13 +22,12 @@ class HasManyGetter extends ResourcesGetter {
   }
 
   async _buildQueryOptions(buildOptions = {}) {
-    const operators = Operators.getInstance({ Sequelize: this._parentModel.sequelize.constructor });
     const { associationName, recordId } = this._params;
     const [model, options] = await super._buildQueryOptions({
       ...buildOptions, tableAlias: associationName,
     });
 
-    const parentOptions = QueryUtils.bubbleWheresInPlace(operators, {
+    const parentOptions = SequelizeCompatibility.postProcess(this._parentModel, {
       where: new PrimaryKeysManager(this._parentModel).getRecordsConditions([recordId]),
       include: [{
         model,
