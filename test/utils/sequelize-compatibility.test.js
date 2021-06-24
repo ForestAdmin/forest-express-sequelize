@@ -37,7 +37,7 @@ const SubSubModel2 = SubModel.associations.subsubmodel2Alias.target;
 
 describe('utils > sequelize-compatibility', () => {
   describe('postProcess -> normalizeInclude', () => {
-    it('should work when using the {model, as} syntax', () => {
+    it('should rewrite the include when using the {model, as} syntax', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, { include: [{ model: SubModel, as: 'submodelAlias' }] });
@@ -46,7 +46,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work when using the {model} syntax', () => {
+    it('should rewrite the include when using the {model} syntax', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, { include: [{ model: SubModel }] });
@@ -55,7 +55,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work when using the {as} syntax', () => {
+    it('should rewrite the include when using the {as} syntax', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, { include: [{ as: 'submodelAlias' }] });
@@ -64,7 +64,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work when using the {association} syntax', () => {
+    it('should rewrite the include when using the {association} syntax', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, { include: [{ association: 'submodelAlias' }] });
@@ -73,7 +73,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work when using the string syntax', () => {
+    it('should rewrite the include when using the string syntax', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, { include: ['submodelAlias'] });
@@ -82,7 +82,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work when using the Model syntax', () => {
+    it('should rewrite the include when using the Model syntax', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, { include: [SubModel] });
@@ -92,8 +92,8 @@ describe('utils > sequelize-compatibility', () => {
     });
   });
 
-  describe('postProcess -> bubbleWhere', () => {
-    it('work in a simple case', () => {
+  describe('postProcess', () => {
+    it('bubble where conditions', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
@@ -107,7 +107,37 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work when the parent have no where condition', () => {
+    it('shoud add attributes when both sides are defined', () => {
+      expect.assertions(1);
+
+      const options = postProcess(Model, {
+        include: [
+          { as: 'submodelAlias', attributes: ['id'] },
+          { as: 'submodelAlias', attributes: ['name'] },
+        ],
+      });
+
+      expect(options).toStrictEqual({
+        include: [{ as: 'submodelAlias', model: SubModel, attributes: ['id', 'name'] }],
+      });
+    });
+
+    it('shoud drop attributes when either side is undefined', () => {
+      expect.assertions(1);
+
+      const options = postProcess(Model, {
+        include: [
+          { as: 'submodelAlias', attributes: ['id'] },
+          { as: 'submodelAlias' },
+        ],
+      });
+
+      expect(options).toStrictEqual({
+        include: [{ as: 'submodelAlias', model: SubModel }],
+      });
+    });
+
+    it('should not crash if the root where conditions are undefined', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
@@ -120,7 +150,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work when multiple include have where conditions', () => {
+    it('should merge includes when there are duplicates (for sequelize < 5)', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
@@ -147,7 +177,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('should work recursively', () => {
+    it('should do all of the above recursively', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
