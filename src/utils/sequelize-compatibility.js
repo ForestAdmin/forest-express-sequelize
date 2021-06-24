@@ -105,7 +105,7 @@ function removeDuplicateAssociations(model, includeList) {
         newInclude.attributes = [...new Set([
           ...includeList[i - 1].attributes,
           ...includeList[i].attributes,
-        ])];
+        ])].sort();
       } else {
         delete newInclude.attributes;
       }
