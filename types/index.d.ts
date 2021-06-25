@@ -209,7 +209,7 @@ export interface SmartActionLoadHookField extends SmartActionHookField {
 }
 
 export interface SmartActionLoadHook<M extends Sequelize.Model = any> {
-  (context: { fields: Record<string, SmartActionLoadHookField>, record: M }): SmartActionLoadHookField[]
+  (context: { fields: Record<string, SmartActionLoadHookField>, record: M }): Record<string, SmartActionLoadHookField>
 }
 
 export interface SmartActionChangeHookField extends SmartActionHookField {
@@ -217,7 +217,7 @@ export interface SmartActionChangeHookField extends SmartActionHookField {
 }
 
 export interface SmartActionChangeHook<M extends Sequelize.Model = any> {
-  (context: { fields: Record<string, SmartActionLoadHookField>, record: M }): SmartActionLoadHookField[]
+  (context: { fields: Record<string, SmartActionChangeHookField>, record: M }): Record<string, SmartActionChangeHookField>
 }
 
 export interface SmartActionHooks {
