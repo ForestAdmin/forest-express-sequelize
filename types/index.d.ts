@@ -79,7 +79,7 @@ export class RecordsRemover<M extends Sequelize.Model> extends AbstractRecordToo
   remove(recordIds: string[] | number[]): Promise<void>;
 }
 
-// Everyting related to Forest permissions
+// Everything related to Forest permissions
 
 export class PermissionMiddlewareCreator {
   constructor(collectionName: string)
@@ -190,10 +190,9 @@ export interface SmartFieldOptions {
 }
 
 export interface SmartActionField {
-  value: any,
   field: string,
   description?: string,
-  type: string | string[],
+  type: "",
   isRequired?: boolean,
   isReadOnly?: boolean,
   enums?: string[] | number[] | Date[] | boolean[],
@@ -201,20 +200,24 @@ export interface SmartActionField {
   reference?: string,
 }
 
-export interface SmartActionLoadHookField extends SmartActionField{
+export interface SmartActionHookField extends SmartActionField {
+  value: any,
+}
+
+export interface SmartActionLoadHookField extends SmartActionHookField {
   position: number,
 }
 
 export interface SmartActionLoadHook<M extends Sequelize.Model = any> {
-  (context: { fields: SmartActionLoadHookField[], record: M }): SmartActionLoadHookField[]
+  (context: { fields: Record<string, SmartActionLoadHookField>, record: M }): SmartActionLoadHookField[]
 }
 
-export interface SmartActionChangeHookField extends SmartActionField{
+export interface SmartActionChangeHookField extends SmartActionHookField {
   previousValue: any,
 }
 
 export interface SmartActionChangeHook<M extends Sequelize.Model = any> {
-  (context: { fields: SmartActionChangeHookField[], record: M }): SmartActionLoadHookField[]
+  (context: { fields: Record<string, SmartActionLoadHookField>, record: M }): SmartActionLoadHookField[]
 }
 
 export interface SmartActionHooks {
