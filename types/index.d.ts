@@ -170,8 +170,8 @@ export interface SmartFieldFilterer {
   (filter: SmartFieldFiltererFilter): Sequelize.WhereOptions;
 }
 
-export interface SegmentAggregationCreator {
-  (): Record<string, unknown>;
+export interface SegmentAggregationCreator<M extends Sequelize.Model = any> {
+  (model: M): Sequelize.WhereOptions;
 }
 
 export interface SmartFieldOptions {
