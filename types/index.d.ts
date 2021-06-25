@@ -192,7 +192,7 @@ export interface SmartFieldOptions {
 export interface SmartActionField {
   field: string,
   description?: string,
-  type: "",
+  type: 'Boolean' | 'Date' | 'Dateonly' | 'Enum' | 'File' | 'Number' | 'String' | ['Enum'] | ['Number'] | ['String'],
   isRequired?: boolean,
   isReadOnly?: boolean,
   enums?: string[] | number[] | Date[] | boolean[],
