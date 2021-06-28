@@ -1,3 +1,10 @@
+## [7.11.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.3...v7.11.4) (2021-06-28)
+
+
+### Bug Fixes
+
+* **retrocompatibility:** make test suite pass with sequelize@4.x ([#761](https://github.com/ForestAdmin/forest-express-sequelize/issues/761)) ([a04be5c](https://github.com/ForestAdmin/forest-express-sequelize/commit/a04be5c97c117860544c935edaafac9952051663))
+
 ## [7.11.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.2...v7.11.3) (2021-06-23)
 
 
