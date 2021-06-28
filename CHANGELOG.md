@@ -1,3 +1,10 @@
+## [7.11.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.4...v7.11.5) (2021-06-28)
+
+
+### Bug Fixes
+
+* support inverseOf property ([#760](https://github.com/ForestAdmin/forest-express-sequelize/issues/760)) ([6fab976](https://github.com/ForestAdmin/forest-express-sequelize/commit/6fab976e0b5577e69f167d8398422ee421180f24))
+
 ## [7.11.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.3...v7.11.4) (2021-06-28)
 
 
