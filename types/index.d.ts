@@ -182,7 +182,7 @@ export interface SmartFieldOptions {
   field: string;
   description?: string;
   type: FieldType;
-  isFilterable: boolean;
+  isFilterable?: boolean;
   isReadOnly?: boolean;
   isRequired?: boolean;
   reference?: string;
