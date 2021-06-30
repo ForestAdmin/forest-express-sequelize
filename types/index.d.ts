@@ -174,14 +174,19 @@ export interface SegmentAggregationCreator<M extends Sequelize.Model = any> {
   (model: M): Sequelize.WhereOptions;
 }
 
+type FieldType = 'Boolean' | 'Date' | 'Dateonly' | 'Enum' | 'File' | 'Number' | 'String' | ['Enum'] | ['Number'] | ['String'];
+
+type FieldEnumsType = string[] | number[] | Date[] | boolean[];
+
 export interface SmartFieldOptions {
   field: string;
   description?: string;
-  type: string | string[];
+  type: FieldType;
+  isFilterable: boolean;
   isReadOnly?: boolean;
   isRequired?: boolean;
   reference?: string;
-  enums?: string[];
+  enums?: FieldEnumsType;
   defaultValue?: any;
   get?: SmartFieldValueGetter;
   set?: SmartFieldValueSetter;
@@ -192,10 +197,10 @@ export interface SmartFieldOptions {
 export interface SmartActionField {
   field: string,
   description?: string,
-  type: 'Boolean' | 'Date' | 'Dateonly' | 'Enum' | 'File' | 'Number' | 'String' | ['Enum'] | ['Number'] | ['String'],
+  type: FieldType,
   isRequired?: boolean,
   isReadOnly?: boolean,
-  enums?: string[] | number[] | Date[] | boolean[],
+  enums?: FieldEnumsType,
   defaultValue?: any,
   reference?: string,
 }
