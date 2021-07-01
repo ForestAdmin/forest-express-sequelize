@@ -1,3 +1,10 @@
+# [7.12.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.5...v7.12.0) (2021-07-01)
+
+
+### Features
+
+* add typescript declaration file ([#743](https://github.com/ForestAdmin/forest-express-sequelize/issues/743)) ([a536f1c](https://github.com/ForestAdmin/forest-express-sequelize/commit/a536f1cdcbe76199b1416f19bd9c9d6c0cfbb7d3))
+
 ## [7.11.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.4...v7.11.5) (2021-06-28)
 
 
