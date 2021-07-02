@@ -1,3 +1,10 @@
+# [8.0.0-beta.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.7...v8.0.0-beta.8) (2021-07-02)
+
+
+### Features
+
+* **security:** secure segments queries ([#764](https://github.com/ForestAdmin/forest-express-sequelize/issues/764)) ([98d7f74](https://github.com/ForestAdmin/forest-express-sequelize/commit/98d7f74272d144d6182a2e4cc39750e9b07108b3))
+
 # [8.0.0-beta.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.6...v8.0.0-beta.7) (2021-06-07)
 
 
