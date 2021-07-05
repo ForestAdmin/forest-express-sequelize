@@ -62,7 +62,8 @@ class ValueStatGetter {
       .unscoped()
       .aggregate(this._aggregateField, this._aggregateFunction, options);
 
-    return count ?? 0;
+    // sequelize@4 returns NaN, while sequelize@5+ returns null
+    return count || 0;
   }
 
   /**

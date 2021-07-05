@@ -25,15 +25,22 @@ module.exports = (model, opts) => {
     }
   }
 
+  function getInverseOf(association) {
+    const remoteAssociation = Object.values(association.target.associations)
+      .find((a) => a.identifierField === association.identifierField);
+    if (remoteAssociation) {
+      return remoteAssociation.associationAccessor;
+    }
+    return null;
+  }
+
   function getSchemaForAssociation(association) {
     const schema = {
       field: association.associationAccessor,
       type: getTypeForAssociation(association),
       relationship: association.associationType,
-      // TODO: For BelongsTo associations, the reference does not seem to be
-      //       correct; the target name is correct, but not the second part.
-      reference: `${association.target.name}.${association.foreignKey}`,
-      inverseOf: null,
+      reference: `${association.target.name}.${association.target.primaryKeyField}`,
+      inverseOf: getInverseOf(association),
     };
 
     // NOTICE: Detect potential foreign keys that should be excluded, if a
@@ -86,7 +93,7 @@ module.exports = (model, opts) => {
       Object.entries(model.associations).forEach(([, association]) => {
         const primaryKeyIsAForeignKey = isPrimaryKeyAForeignKey(association);
         if (primaryKeyIsAForeignKey) {
-          const FieldWithForeignKey = fields.find((field) => field.reference === `${association.associationAccessor}.${association.foreignKey}`);
+          const FieldWithForeignKey = fields.find((field) => field.reference === `${association.target.name}.${association.target.primaryKeyField}`);
           if (FieldWithForeignKey) {
             FieldWithForeignKey.foreignAndPrimaryKey = true;
           }

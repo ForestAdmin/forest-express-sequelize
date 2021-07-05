@@ -1,5 +1,5 @@
 const { Sequelize } = require('sequelize');
-const { getReferenceField, mergeWhere, bubbleWheresInPlace } = require('../../src/utils/query');
+const { getReferenceField, mergeWhere } = require('../../src/utils/query');
 
 const operators = { AND: '$and' };
 
@@ -67,48 +67,6 @@ describe('utils > query', () => {
           { id: 1 },
           Sequelize.literal('FALSE'),
         ],
-      });
-    });
-  });
-
-  describe('bubbleWheresInPlace', () => {
-    it('work in a simple case', () => {
-      expect.assertions(1);
-
-      const options = bubbleWheresInPlace(operators, {
-        include: [
-          { as: 'submodel', where: { id: 1 } },
-        ],
-        where: {
-          id: 1,
-        },
-      });
-
-      expect(options).toStrictEqual({
-        include: [
-          { as: 'submodel' },
-        ],
-        where: {
-          id: 1,
-          '$submodel.id$': 1,
-        },
-      });
-    });
-
-    it('should work when the parent have no where condition', () => {
-      expect.assertions(1);
-
-      const options = bubbleWheresInPlace(operators, {
-        include: [
-          { as: 'submodel', where: { id: 1 } },
-        ],
-      });
-
-      expect(options).toStrictEqual({
-        include: [
-          { as: 'submodel' },
-        ],
-        where: { '$submodel.id$': 1 },
       });
     });
   });

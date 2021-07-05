@@ -38,39 +38,16 @@ change hook is no longer choosen by the field name, field need to have hook defi
 
 * correctly get the IP address from the request headers ([2b5ed1d](https://github.com/ForestAdmin/forest-express-sequelize/commit/2b5ed1d99ee0219dba954b63a6579ab1d9b211b1))
 
-## [7.10.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.0...v7.10.1) (2021-06-03)
-
-
-### Bug Fixes
-
-* correctly get the IP address from the request headers ([#737](https://github.com/ForestAdmin/forest-express-sequelize/issues/737)) ([b2fbdca](https://github.com/ForestAdmin/forest-express-sequelize/commit/b2fbdca4ee3a72b7700c888a2882f28d03c3767d))
-
-# [7.10.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.4...v7.10.0) (2021-06-03)
-
-
-### Features
-
-* **schema:** move some meta data under stack attribute to prevent blocking scenarios on DWO ([#736](https://github.com/ForestAdmin/forest-express-sequelize/issues/736)) ([1876c97](https://github.com/ForestAdmin/forest-express-sequelize/commit/1876c975a1498879dc08862d8306a4f7e4140aa6))
-
-## [7.9.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.3...v7.9.4) (2021-06-03)
-
-
-### Bug Fixes
-
-* allow injection of relations when using smartfield' search feature ([#735](https://github.com/ForestAdmin/forest-express-sequelize/issues/735)) ([6a39f05](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a39f05b867c4ab0860ec8b92f5759c33c531b46))
-
 # [8.0.0-beta.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.3...v8.0.0-beta.4) (2021-06-01)
 
 
 * feat(scopes)!: enforce scopes restrictions on a wider range of requests (#731) ([da7d71d](https://github.com/ForestAdmin/forest-express-sequelize/commit/da7d71dbee2662aa21dc65bbd6d271086fd31acc)), closes [#731](https://github.com/ForestAdmin/forest-express-sequelize/issues/731)
-
 
 ### BREAKING CHANGES
 
 * the public API of forest-express has changed to include the parameters which are needed to evaluate scope filters. This includes PermissionMiddlewareCreator, all classes on the /exposed folder and most services. Many routes now require providing the current user timezone.
 
 # [8.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.2...v8.0.0-beta.3) (2021-05-26)
-
 
 ### Bug Fixes
 
@@ -94,6 +71,115 @@ change hook is no longer choosen by the field name, field need to have hook defi
 ### BREAKING CHANGES
 
 * **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+
+# [8.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.1...v8.0.0-beta.2) (2021-04-16)
+
+
+### Bug Fixes
+
+* **date-filter:** filtering only on hours now returns the expected records ([#684](https://github.com/ForestAdmin/forest-express-sequelize/issues/684)) ([135ac47](https://github.com/ForestAdmin/forest-express-sequelize/commit/135ac475188d7373b375667b909d092d06b9b68b))
+* **security:** patch forest-express transitive vulnerabilities ([#672](https://github.com/ForestAdmin/forest-express-sequelize/issues/672)) ([e5135d2](https://github.com/ForestAdmin/forest-express-sequelize/commit/e5135d208c0d878fb319e220fb334272c6dcdf72))
+* **security:** patch ini dependency vulnérability ([#670](https://github.com/ForestAdmin/forest-express-sequelize/issues/670)) ([3eb0958](https://github.com/ForestAdmin/forest-express-sequelize/commit/3eb0958b0495954dcbf957637a1ff636151432a7))
+* **security:** patch marked dependency vulnerabilities ([#674](https://github.com/ForestAdmin/forest-express-sequelize/issues/674)) ([5331694](https://github.com/ForestAdmin/forest-express-sequelize/commit/53316944d68e1943435f290544e9d2480eda9af0))
+* **security:** patch node-notifier vulnerabilities ([#669](https://github.com/ForestAdmin/forest-express-sequelize/issues/669)) ([a54b944](https://github.com/ForestAdmin/forest-express-sequelize/commit/a54b944e88b666ad6d05e5b7e2cf52355a26ac5b))
+* **security:** patch y18n dependency vulnerabilities ([#671](https://github.com/ForestAdmin/forest-express-sequelize/issues/671)) ([884a400](https://github.com/ForestAdmin/forest-express-sequelize/commit/884a400f748e26935b1081674431846fde092585))
+
+
+### Features
+
+* expose utils to parse filters ([#683](https://github.com/ForestAdmin/forest-express-sequelize/issues/683)) ([4333529](https://github.com/ForestAdmin/forest-express-sequelize/commit/4333529a64a172484ab307d587a633c472096d53))
+* **smart-action:** handle isReadOnly field in smart action forms ([#680](https://github.com/ForestAdmin/forest-express-sequelize/issues/680)) ([18dd191](https://github.com/ForestAdmin/forest-express-sequelize/commit/18dd191d525016835005cdf7d7fb0955ef9a2057))
+* **smart-action:** support hooks for smart collection ([#679](https://github.com/ForestAdmin/forest-express-sequelize/issues/679)) ([5d80f8a](https://github.com/ForestAdmin/forest-express-sequelize/commit/5d80f8a4e0ec12e2fb6d7a5c2098c7a69db05e5e))
+
+# [8.0.0-beta.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.1...v8.0.0-beta.1) (2021-03-30)
+
+
+### Features
+
+* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([a61699a](https://github.com/ForestAdmin/forest-express-sequelize/commit/a61699ae2218c34508f00d2b9ac891107b9c5710))
+
+
+### BREAKING CHANGES
+
+* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+
+
+# [7.12.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.5...v7.12.0) (2021-07-01)
+
+
+### Features
+
+* add typescript declaration file ([#743](https://github.com/ForestAdmin/forest-express-sequelize/issues/743)) ([a536f1c](https://github.com/ForestAdmin/forest-express-sequelize/commit/a536f1cdcbe76199b1416f19bd9c9d6c0cfbb7d3))
+
+## [7.11.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.4...v7.11.5) (2021-06-28)
+
+
+### Bug Fixes
+
+* support inverseOf property ([#760](https://github.com/ForestAdmin/forest-express-sequelize/issues/760)) ([6fab976](https://github.com/ForestAdmin/forest-express-sequelize/commit/6fab976e0b5577e69f167d8398422ee421180f24))
+
+## [7.11.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.3...v7.11.4) (2021-06-28)
+
+
+### Bug Fixes
+
+* **retrocompatibility:** make test suite pass with sequelize@4.x ([#761](https://github.com/ForestAdmin/forest-express-sequelize/issues/761)) ([a04be5c](https://github.com/ForestAdmin/forest-express-sequelize/commit/a04be5c97c117860544c935edaafac9952051663))
+
+## [7.11.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.2...v7.11.3) (2021-06-23)
+
+
+### Bug Fixes
+
+* **authentication:** error during authentication when the environment is secret passed as a liana option and not an environment variable ([#758](https://github.com/ForestAdmin/forest-express-sequelize/issues/758)) ([39ab674](https://github.com/ForestAdmin/forest-express-sequelize/commit/39ab674f21cc607b0000937b784b031efbc154d7))
+
+## [7.11.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.1...v7.11.2) (2021-06-15)
+
+
+### Bug Fixes
+
+* **intercom:** fix date conversion from unix timestamp to js date of intercom attributes ([#754](https://github.com/ForestAdmin/forest-express-sequelize/issues/754)) ([11a1549](https://github.com/ForestAdmin/forest-express-sequelize/commit/11a1549f61407e15587d976b1b40bc916341e975))
+
+## [7.11.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.0...v7.11.1) (2021-06-10)
+
+
+### Bug Fixes
+
+* prevent IP check from failing for the proxies including the port in the headers ([#751](https://github.com/ForestAdmin/forest-express-sequelize/issues/751)) ([92852f7](https://github.com/ForestAdmin/forest-express-sequelize/commit/92852f74831dd33f1ae411d61b2f576ea8f309be))
+
+# [7.11.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.2...v7.11.0) (2021-06-09)
+
+
+### Features
+
+* include role in the user data inside the request ([#746](https://github.com/ForestAdmin/forest-express-sequelize/issues/746)) ([425bba5](https://github.com/ForestAdmin/forest-express-sequelize/commit/425bba58268a7561b675348b91c00cbc5e695efb))
+
+## [7.10.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.1...v7.10.2) (2021-06-08)
+
+
+### Bug Fixes
+
+* fix mssql ordering collection by pk ([#734](https://github.com/ForestAdmin/forest-express-sequelize/issues/734)) ([7bbd19d](https://github.com/ForestAdmin/forest-express-sequelize/commit/7bbd19db7d304c7d9c50724b38585f117aa75b19))
+
+## [7.10.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.10.0...v7.10.1) (2021-06-03)
+
+
+### Bug Fixes
+
+* correctly get the IP address from the request headers ([#737](https://github.com/ForestAdmin/forest-express-sequelize/issues/737)) ([b2fbdca](https://github.com/ForestAdmin/forest-express-sequelize/commit/b2fbdca4ee3a72b7700c888a2882f28d03c3767d))
+
+# [7.10.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.4...v7.10.0) (2021-06-03)
+
+
+### Features
+
+* **schema:** move some meta data under stack attribute to prevent blocking scenarios on DWO ([#736](https://github.com/ForestAdmin/forest-express-sequelize/issues/736)) ([1876c97](https://github.com/ForestAdmin/forest-express-sequelize/commit/1876c975a1498879dc08862d8306a4f7e4140aa6))
+
+## [7.9.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.3...v7.9.4) (2021-06-03)
+
+
+### Bug Fixes
+
+* allow injection of relations when using smartfield' search feature ([#735](https://github.com/ForestAdmin/forest-express-sequelize/issues/735)) ([6a39f05](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a39f05b867c4ab0860ec8b92f5759c33c531b46))
 
 ## [7.9.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.9.2...v7.9.3) (2021-05-25)
 
@@ -165,25 +251,6 @@ change hook is no longer choosen by the field name, field need to have hook defi
 
 * **security:** patch ssri dependency vulnerability ([#690](https://github.com/ForestAdmin/forest-express-sequelize/issues/690)) ([6b0770d](https://github.com/ForestAdmin/forest-express-sequelize/commit/6b0770d91ffdecff0a78d5c623b3a28d40c17744))
 
-# [8.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.1...v8.0.0-beta.2) (2021-04-16)
-
-
-### Bug Fixes
-
-* **date-filter:** filtering only on hours now returns the expected records ([#684](https://github.com/ForestAdmin/forest-express-sequelize/issues/684)) ([135ac47](https://github.com/ForestAdmin/forest-express-sequelize/commit/135ac475188d7373b375667b909d092d06b9b68b))
-* **security:** patch forest-express transitive vulnerabilities ([#672](https://github.com/ForestAdmin/forest-express-sequelize/issues/672)) ([e5135d2](https://github.com/ForestAdmin/forest-express-sequelize/commit/e5135d208c0d878fb319e220fb334272c6dcdf72))
-* **security:** patch ini dependency vulnérability ([#670](https://github.com/ForestAdmin/forest-express-sequelize/issues/670)) ([3eb0958](https://github.com/ForestAdmin/forest-express-sequelize/commit/3eb0958b0495954dcbf957637a1ff636151432a7))
-* **security:** patch marked dependency vulnerabilities ([#674](https://github.com/ForestAdmin/forest-express-sequelize/issues/674)) ([5331694](https://github.com/ForestAdmin/forest-express-sequelize/commit/53316944d68e1943435f290544e9d2480eda9af0))
-* **security:** patch node-notifier vulnerabilities ([#669](https://github.com/ForestAdmin/forest-express-sequelize/issues/669)) ([a54b944](https://github.com/ForestAdmin/forest-express-sequelize/commit/a54b944e88b666ad6d05e5b7e2cf52355a26ac5b))
-* **security:** patch y18n dependency vulnerabilities ([#671](https://github.com/ForestAdmin/forest-express-sequelize/issues/671)) ([884a400](https://github.com/ForestAdmin/forest-express-sequelize/commit/884a400f748e26935b1081674431846fde092585))
-
-
-### Features
-
-* expose utils to parse filters ([#683](https://github.com/ForestAdmin/forest-express-sequelize/issues/683)) ([4333529](https://github.com/ForestAdmin/forest-express-sequelize/commit/4333529a64a172484ab307d587a633c472096d53))
-* **smart-action:** handle isReadOnly field in smart action forms ([#680](https://github.com/ForestAdmin/forest-express-sequelize/issues/680)) ([18dd191](https://github.com/ForestAdmin/forest-express-sequelize/commit/18dd191d525016835005cdf7d7fb0955ef9a2057))
-* **smart-action:** support hooks for smart collection ([#679](https://github.com/ForestAdmin/forest-express-sequelize/issues/679)) ([5d80f8a](https://github.com/ForestAdmin/forest-express-sequelize/commit/5d80f8a4e0ec12e2fb6d7a5c2098c7a69db05e5e))
-
 # [7.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.5.1...v7.6.0) (2021-04-16)
 
 
@@ -248,18 +315,6 @@ change hook is no longer choosen by the field name, field need to have hook defi
 ### Bug Fixes
 
 * **security:** patch node-notifier vulnerabilities ([#669](https://github.com/ForestAdmin/forest-express-sequelize/issues/669)) ([a54b944](https://github.com/ForestAdmin/forest-express-sequelize/commit/a54b944e88b666ad6d05e5b7e2cf52355a26ac5b))
-
-# [8.0.0-beta.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.1...v8.0.0-beta.1) (2021-03-30)
-
-
-### Features
-
-* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([a61699a](https://github.com/ForestAdmin/forest-express-sequelize/commit/a61699ae2218c34508f00d2b9ac891107b9c5710))
-
-
-### BREAKING CHANGES
-
-* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
 
 ## [7.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.3.0...v7.3.1) (2021-03-25)
 
