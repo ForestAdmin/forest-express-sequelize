@@ -1,4 +1,4 @@
-import { RequestHandler, Response, Request, NextFunction, Application } from 'express';
+import { Application, NextFunction, Request, RequestHandler, Response } from 'express';
 import * as Sequelize from 'sequelize';
 
 // Everything related to Forest initialization
@@ -28,6 +28,10 @@ export interface DatabaseConfiguration {
 
 export function ensureAuthenticated(request: Request, response: Response, next: NextFunction): void;
 
+export interface User {
+  renderingId: number;
+}
+
 // Everything related to Forest constants
 
 export const PUBLIC_ROUTES: string[];
@@ -40,7 +44,7 @@ interface RecordsSerialized {
 }
 
 export class AbstractRecordTool<M extends Sequelize.Model> {
-  constructor(model: Sequelize.ModelCtor<M>)
+  constructor(model: Sequelize.ModelCtor<M>, query: Record<string, any>, user: User)
   serialize(records: M | M[]): Promise<RecordsSerialized>;
 }
 
@@ -54,11 +58,11 @@ export class RecordsGetter<M extends Sequelize.Model> extends AbstractRecordTool
 }
 
 export class RecordsCounter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
-  count(query: Query): Promise<number>;
+  count(): Promise<number>;
 }
 
 export class RecordsExporter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
-  streamExport(response: Response, query: Query): Promise<void>;
+  streamExport(response: Response): Promise<void>;
 }
 
 export class RecordUpdater<M extends Sequelize.Model> extends AbstractRecordTool<M> {
