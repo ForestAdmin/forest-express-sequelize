@@ -207,6 +207,7 @@ export interface SmartActionField {
   enums?: FieldEnumsType,
   defaultValue?: any,
   reference?: string,
+  hook?: string,
 }
 
 export interface SmartActionHookField extends SmartActionField {
@@ -218,7 +219,7 @@ export interface SmartActionLoadHookField extends SmartActionHookField {
 }
 
 export interface SmartActionLoadHook<M extends Sequelize.Model = any> {
-  (context: { fields: Record<string, SmartActionLoadHookField>, record: M }): Record<string, SmartActionLoadHookField>
+  (context: { fields: Array<SmartActionLoadHookField>, record: M }): Array<SmartActionLoadHookField>
 }
 
 export interface SmartActionChangeHookField extends SmartActionHookField {
@@ -226,7 +227,7 @@ export interface SmartActionChangeHookField extends SmartActionHookField {
 }
 
 export interface SmartActionChangeHook<M extends Sequelize.Model = any> {
-  (context: { fields: Record<string, SmartActionChangeHookField>, record: M }): Record<string, SmartActionChangeHookField>
+  (context: { fields: Array<SmartActionChangeHookField>, record: M, changedField: SmartActionChangeHookField }): Array<SmartActionChangeHookField>
 }
 
 export interface SmartActionHooks {
