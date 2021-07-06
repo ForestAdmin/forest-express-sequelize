@@ -1,3 +1,22 @@
+# [8.0.0-beta.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.8...v8.0.0-beta.9) (2021-07-06)
+
+
+### Bug Fixes
+
+* fix types ([580ef41](https://github.com/ForestAdmin/forest-express-sequelize/commit/580ef4115c4b59820c05aafe7a90cc858cc623c6))
+* support inverseOf property ([#760](https://github.com/ForestAdmin/forest-express-sequelize/issues/760)) ([6fab976](https://github.com/ForestAdmin/forest-express-sequelize/commit/6fab976e0b5577e69f167d8398422ee421180f24))
+* **authentication:** error during authentication when the environment is secret passed as a liana option and not an environment variable ([#758](https://github.com/ForestAdmin/forest-express-sequelize/issues/758)) ([39ab674](https://github.com/ForestAdmin/forest-express-sequelize/commit/39ab674f21cc607b0000937b784b031efbc154d7))
+* **intercom:** fix date conversion from unix timestamp to js date of intercom attributes ([#754](https://github.com/ForestAdmin/forest-express-sequelize/issues/754)) ([11a1549](https://github.com/ForestAdmin/forest-express-sequelize/commit/11a1549f61407e15587d976b1b40bc916341e975))
+* **retrocompatibility:** make test suite pass with sequelize@4.x ([#761](https://github.com/ForestAdmin/forest-express-sequelize/issues/761)) ([a04be5c](https://github.com/ForestAdmin/forest-express-sequelize/commit/a04be5c97c117860544c935edaafac9952051663))
+* fix mssql ordering collection by pk ([#734](https://github.com/ForestAdmin/forest-express-sequelize/issues/734)) ([7bbd19d](https://github.com/ForestAdmin/forest-express-sequelize/commit/7bbd19db7d304c7d9c50724b38585f117aa75b19))
+* prevent IP check from failing for the proxies including the port in the headers ([#751](https://github.com/ForestAdmin/forest-express-sequelize/issues/751)) ([92852f7](https://github.com/ForestAdmin/forest-express-sequelize/commit/92852f74831dd33f1ae411d61b2f576ea8f309be))
+
+
+### Features
+
+* add typescript declaration file ([#743](https://github.com/ForestAdmin/forest-express-sequelize/issues/743)) ([a536f1c](https://github.com/ForestAdmin/forest-express-sequelize/commit/a536f1cdcbe76199b1416f19bd9c9d6c0cfbb7d3))
+* include role in the user data inside the request ([#746](https://github.com/ForestAdmin/forest-express-sequelize/issues/746)) ([425bba5](https://github.com/ForestAdmin/forest-express-sequelize/commit/425bba58268a7561b675348b91c00cbc5e695efb))
+
 # [8.0.0-beta.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.7...v8.0.0-beta.8) (2021-07-02)
 
 
