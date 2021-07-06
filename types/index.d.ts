@@ -32,6 +32,27 @@ export interface User {
   renderingId: number;
 }
 
+export interface ForestRequest extends Request {
+  user: User,
+}
+
+export interface SelectAllRequestBody {
+  data: {
+    attributes: {
+      collection_name: string,
+      ids: string[],
+      parent_collection_name: string,
+      parent_collection_id: string,
+      parent_association_name: string,
+      all_records: boolean,
+      all_records_subset_query: Query,
+      all_records_ids_excluded: string[],
+      smart_action_id: string,
+    },
+    type: string,
+  },
+}
+
 // Everything related to Forest constants
 
 export const PUBLIC_ROUTES: string[];
@@ -54,7 +75,7 @@ export class RecordGetter<M extends Sequelize.Model> extends AbstractRecordTool<
 
 export class RecordsGetter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
   getAll(query: Query): Promise<M[]>;
-  getIdsFromRequest(request: Request): Promise<string[]>;
+  getIdsFromRequest(request: ForestRequest): Promise<string[]>;
 }
 
 export class RecordsCounter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
@@ -218,8 +239,12 @@ export interface SmartActionLoadHookField extends SmartActionHookField {
   position: number,
 }
 
+export interface SmartActionHookRequest extends ForestRequest {
+  body: SelectAllRequestBody,
+}
+
 export interface SmartActionLoadHook<M extends Sequelize.Model = any> {
-  (context: { fields: SmartActionLoadHookField[], record: M }): SmartActionLoadHookField[]
+  (context: { fields: SmartActionLoadHookField[], request: SmartActionHookRequest }): SmartActionLoadHookField[]
 }
 
 export interface SmartActionChangeHookField extends SmartActionHookField {
@@ -227,7 +252,7 @@ export interface SmartActionChangeHookField extends SmartActionHookField {
 }
 
 export interface SmartActionChangeHook<M extends Sequelize.Model = any> {
-  (context: { fields: SmartActionChangeHookField[], record: M, changedField: SmartActionChangeHookField }): SmartActionChangeHookField[]
+  (context: { fields: SmartActionChangeHookField[], changedField: SmartActionChangeHookField, request: SmartActionHookRequest }): SmartActionChangeHookField[]
 }
 
 export interface SmartActionHooks {
