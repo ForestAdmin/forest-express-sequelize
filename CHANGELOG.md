@@ -1,3 +1,10 @@
+## [7.12.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.0...v7.12.1) (2021-07-06)
+
+
+### Bug Fixes
+
+* add missing Json value for FieldType Type ([#768](https://github.com/ForestAdmin/forest-express-sequelize/issues/768)) ([49b95d8](https://github.com/ForestAdmin/forest-express-sequelize/commit/49b95d8600055193ca353f72b207a599acfa380a))
+
 # [7.12.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.11.5...v7.12.0) (2021-07-01)
 
 
