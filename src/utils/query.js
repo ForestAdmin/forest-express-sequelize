@@ -1,5 +1,5 @@
-import Orm from './orm';
 import ObjectTools from './object-tools';
+import Orm from './orm';
 
 exports.getReferenceSchema = (schemas, modelSchema, associationName) => {
   const schemaField = modelSchema.fields.find((field) => field.field === associationName);
@@ -33,34 +33,3 @@ exports.mergeWhere = (operators, ...wheres) => wheres
   .reduce((where1, where2) => (ObjectTools.plainObjectsShareNoKeys(where1, where2)
     ? { ...where1, ...where2 }
     : { [operators.AND]: [where1, where2] }));
-
-/**
- * Extract all where conditions along the include tree, and bubbles them up to the top.
- * This allows to work around a sequelize quirk that cause nested 'where' to fail when they
- * refer to relation fields from an intermediary include (ie '$book.id$').
- *
- * This happens when forest admin filters on relations are used.
- *
- * @see https://sequelize.org/master/manual/eager-loading.html#complex-where-clauses-at-the-top-level
- * @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/filters-parser.js#L104
- */
-exports.bubbleWheresInPlace = (operators, options) => {
-  const parentInclude = options.include ?? [];
-
-  parentInclude.forEach((include) => {
-    exports.bubbleWheresInPlace(operators, include);
-
-    if (include.where) {
-      const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => (
-        key[0] === '$' && key[key.length - 1] === '$'
-          ? `$${include.as}.${key.substring(1)}`
-          : `$${include.as}.${key}$`
-      ));
-
-      options.where = exports.mergeWhere(operators, options.where, newWhere);
-      delete include.where;
-    }
-  });
-
-  return options;
-};

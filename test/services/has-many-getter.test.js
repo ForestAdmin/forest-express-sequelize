@@ -17,18 +17,19 @@ describe('services > HasManyGetter', () => {
 
   describe('_buildQueryOptions', () => {
     const options = { tableAlias: 'users' };
-    const model = {
-      name: 'cars',
-      unscoped: () => model,
-      sequelize: sequelizePostgres.connection,
-      primaryKeys: { id: {} },
-    };
-    const association = {
+    const UserModel = {
       name: 'users',
       rawAttributes: [{ field: 'name', type: 'String' }],
       sequelize: sequelizePostgres.connection,
-      unscoped: () => association,
+      unscoped: () => UserModel,
       associations: { },
+    };
+    const CarModel = {
+      name: 'cars',
+      unscoped: () => CarModel,
+      sequelize: sequelizePostgres.connection,
+      primaryKeys: { id: {} },
+      associations: { users: { target: UserModel } },
     };
     Interface.Schemas = {
       schemas: {
@@ -42,8 +43,8 @@ describe('services > HasManyGetter', () => {
         expect.assertions(1);
         const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
-        const hasManyGetter = new HasManyGetter(model, association, lianaOptions, baseParams, user);
-        const queryOptions = await hasManyGetter._buildQueryOptions(options);
+        const getter = new HasManyGetter(CarModel, UserModel, lianaOptions, baseParams, user);
+        const queryOptions = await getter._buildQueryOptions(options);
 
         expect(queryOptions.where).toStrictEqual({ id: 1 });
         spy.mockRestore();
@@ -59,7 +60,7 @@ describe('services > HasManyGetter', () => {
           ...baseParams,
           filters: '{ "field": "id", "operator": "greater_than", "value": 1 }',
         };
-        const hasManyGetter = new HasManyGetter(model, association, lianaOptions, params, user);
+        const hasManyGetter = new HasManyGetter(CarModel, UserModel, lianaOptions, params, user);
         const queryOptions = await hasManyGetter._buildQueryOptions(options);
 
         expect(queryOptions.where).toStrictEqual({
@@ -76,7 +77,7 @@ describe('services > HasManyGetter', () => {
         const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
         const params = { ...baseParams, search: 'test' };
-        const hasManyGetter = new HasManyGetter(model, association, lianaOptions, params, user);
+        const hasManyGetter = new HasManyGetter(CarModel, UserModel, lianaOptions, params, user);
         const queryOptions = await hasManyGetter._buildQueryOptions(options);
 
         expect(queryOptions.where).toStrictEqual({
@@ -103,7 +104,7 @@ describe('services > HasManyGetter', () => {
           filters: '{ "field": "id", "operator": "greater_than", "value": 1 }',
           search: 'test',
         };
-        const hasManyGetter = new HasManyGetter(model, association, lianaOptions, params, user);
+        const hasManyGetter = new HasManyGetter(CarModel, UserModel, lianaOptions, params, user);
         const queryOptions = await hasManyGetter._buildQueryOptions(options);
 
         expect(queryOptions.where).toStrictEqual({

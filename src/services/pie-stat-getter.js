@@ -2,7 +2,7 @@ import { Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import moment from 'moment';
 import { isMSSQL } from '../utils/database';
-import Orm, { isVersionLessThan4 } from '../utils/orm';
+import Orm, { isVersionLessThan } from '../utils/orm';
 import QueryOptions from './query-options';
 
 // NOTICE: These aliases are not camelcased to prevent issues with Sequelize.
@@ -10,7 +10,7 @@ const ALIAS_GROUP_BY = 'forest_alias_groupby';
 const ALIAS_AGGREGATE = 'forest_alias_aggregate';
 
 function PieStatGetter(model, params, options, user) {
-  const needsDateOnlyFormating = isVersionLessThan4(options.Sequelize);
+  const needsDateOnlyFormating = isVersionLessThan(options.Sequelize, '4.0.0');
 
   const schema = Schemas.schemas[model.name];
   let associationSplit;

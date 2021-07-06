@@ -1,8 +1,7 @@
 import _ from 'lodash';
 import { Schemas, scopeManager } from 'forest-express';
 import Orm from '../utils/orm';
-import Operators from '../utils/operators';
-import QueryUtils from '../utils/query';
+import SequelizeCompatibility from '../utils/sequelize-compatibility';
 import { InvalidParameterError } from './errors';
 import QueryOptions from './query-options';
 
@@ -63,11 +62,10 @@ function LeaderboardStatGetter(childModel, parentModel, params, user) {
 
   this.perform = async () => {
     const { timezone } = params;
-    const operators = Operators.getInstance({ Sequelize: parentModel.sequelize.constructor });
     const parentSequelizeOptions = await getSequelizeOptionsForModel(parentModel, user, timezone);
     const childSequelizeOptions = await getSequelizeOptionsForModel(childModel, user, timezone);
 
-    const queryOptions = QueryUtils.bubbleWheresInPlace(operators, {
+    const queryOptions = SequelizeCompatibility.postProcess(parentModel, {
       attributes: [
         [childModel.sequelize.col(groupBy), 'key'],
         [childModel.sequelize.fn(aggregate, childModel.sequelize.col(aggregateField)), 'value'],

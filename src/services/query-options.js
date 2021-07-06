@@ -1,13 +1,15 @@
 import { logger, Schemas } from 'forest-express';
 import _ from 'lodash';
+import { isMSSQL } from '../utils/database';
 import Operators from '../utils/operators';
+import QueryUtils from '../utils/query';
+import SequelizeCompatibility from '../utils/sequelize-compatibility';
 import { ErrorHTTP422 } from './errors';
 import FiltersParser from './filters-parser';
 import LiveQueryChecker from './live-query-checker';
 import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
-import QueryUtils from '../utils/query';
 
 /**
  * Sequelize query options generator which is configured using forest admin concepts (filters,
@@ -23,13 +25,13 @@ class QueryOptions {
     const options = {};
     if (this._sequelizeWhere) options.where = this._sequelizeWhere;
     if (this._sequelizeInclude) options.include = this._sequelizeInclude;
-    if (this._order.length) options.order = this._order;
+    if (this._sequelizeOrder.length) options.order = this._sequelizeOrder;
     if (this._offset !== undefined && this._limit !== undefined) {
       options.offset = this._offset;
       options.limit = this._limit;
     }
 
-    return options;
+    return SequelizeCompatibility.postProcess(this._model, options);
   }
 
   /**
@@ -63,6 +65,16 @@ class QueryOptions {
     ];
 
     return include.length ? include : null;
+  }
+
+  get _sequelizeOrder() {
+    if (isMSSQL(this._model.sequelize) && this._sequelizeInclude?.length) {
+      // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
+      const primaryKeys = Object.keys(this._model.primaryKeys);
+      this._order = this._order.filter((order) => !primaryKeys.includes(order[0]));
+    }
+
+    return this._order;
   }
 
   /**
