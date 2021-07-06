@@ -1,3 +1,10 @@
+## [7.12.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.1...v7.12.2) (2021-07-06)
+
+
+### Bug Fixes
+
+* add isSearchable to collection options ([#770](https://github.com/ForestAdmin/forest-express-sequelize/issues/770)) ([acf3d3e](https://github.com/ForestAdmin/forest-express-sequelize/commit/acf3d3e86e2d17fb313c0c267091d20278bc0d86))
+
 ## [7.12.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.0...v7.12.1) (2021-07-06)
 
 
