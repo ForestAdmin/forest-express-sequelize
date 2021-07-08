@@ -1,3 +1,10 @@
+# [8.0.0-beta.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.9...v8.0.0-beta.10) (2021-07-08)
+
+
+### Bug Fixes
+
+* abstractRecord type ([#772](https://github.com/ForestAdmin/forest-express-sequelize/issues/772)) ([81492b9](https://github.com/ForestAdmin/forest-express-sequelize/commit/81492b91a59cdd645ceefbad4431a45a0308f198))
+
 # [8.0.0-beta.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.8...v8.0.0-beta.9) (2021-07-06)
 
 
