@@ -44,7 +44,7 @@ interface RecordsSerialized {
 }
 
 export class AbstractRecordTool<M extends Sequelize.Model> {
-  constructor(model: Sequelize.ModelCtor<M>, query: Record<string, any>, user: User)
+  constructor(model: Sequelize.ModelCtor<M>, user: User, query: Record<string, any>)
   serialize(records: M | M[]): Promise<RecordsSerialized>;
 }
 
