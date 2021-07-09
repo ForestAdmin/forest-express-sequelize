@@ -1,3 +1,15 @@
+# [8.0.0-beta.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.10...v8.0.0-beta.11) (2021-07-09)
+
+
+### Features
+
+* allow hooks for global and bulk smart action ([#769](https://github.com/ForestAdmin/forest-express-sequelize/issues/769)) ([14c26cd](https://github.com/ForestAdmin/forest-express-sequelize/commit/14c26cde0c7841674e559a6d94f9a25dd4bb1fe4))
+
+
+### BREAKING CHANGES
+
+* record is no longer send to the hook middleware & values option on smart action is no longer supported
+
 # [8.0.0-beta.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.9...v8.0.0-beta.10) (2021-07-08)
 
 
