@@ -1,3 +1,11 @@
+# [8.0.0-beta.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.11...v8.0.0-beta.12) (2021-07-19)
+
+
+### Bug Fixes
+
+* add isSearchable to collection options ([#770](https://github.com/ForestAdmin/forest-express-sequelize/issues/770)) ([acf3d3e](https://github.com/ForestAdmin/forest-express-sequelize/commit/acf3d3e86e2d17fb313c0c267091d20278bc0d86))
+* add missing Json value for FieldType Type ([#768](https://github.com/ForestAdmin/forest-express-sequelize/issues/768)) ([49b95d8](https://github.com/ForestAdmin/forest-express-sequelize/commit/49b95d8600055193ca353f72b207a599acfa380a))
+
 # [8.0.0-beta.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.10...v8.0.0-beta.11) (2021-07-09)
 
 
