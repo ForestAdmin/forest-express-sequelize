@@ -1,3 +1,34 @@
+# [8.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.2...v8.0.0) (2021-07-19)
+
+
+### Bug Fixes
+
+* abstractRecord type ([#772](https://github.com/ForestAdmin/forest-express-sequelize/issues/772)) ([81492b9](https://github.com/ForestAdmin/forest-express-sequelize/commit/81492b91a59cdd645ceefbad4431a45a0308f198))
+* correctly get the IP address from the request headers ([2b5ed1d](https://github.com/ForestAdmin/forest-express-sequelize/commit/2b5ed1d99ee0219dba954b63a6579ab1d9b211b1))
+* fix types ([580ef41](https://github.com/ForestAdmin/forest-express-sequelize/commit/580ef4115c4b59820c05aafe7a90cc858cc623c6))
+
+
+### Features
+
+* allow hooks for global and bulk smart action ([#769](https://github.com/ForestAdmin/forest-express-sequelize/issues/769)) ([14c26cd](https://github.com/ForestAdmin/forest-express-sequelize/commit/14c26cde0c7841674e559a6d94f9a25dd4bb1fe4))
+* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([c46fd66](https://github.com/ForestAdmin/forest-express-sequelize/commit/c46fd664bf56840cafa03d0e444d97754fdc239a))
+* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([a61699a](https://github.com/ForestAdmin/forest-express-sequelize/commit/a61699ae2218c34508f00d2b9ac891107b9c5710))
+* **security:** secure segments queries ([#764](https://github.com/ForestAdmin/forest-express-sequelize/issues/764)) ([98d7f74](https://github.com/ForestAdmin/forest-express-sequelize/commit/98d7f74272d144d6182a2e4cc39750e9b07108b3))
+* **smart-action:** user can add dynamically field with hook on smart action form ([#742](https://github.com/ForestAdmin/forest-express-sequelize/issues/742)) ([228bb42](https://github.com/ForestAdmin/forest-express-sequelize/commit/228bb42aeb0ae13d352e7b053e243a80d0ddc078))
+
+
+* feat(scopes)!: enforce scopes restrictions on a wider range of requests (#731) ([da7d71d](https://github.com/ForestAdmin/forest-express-sequelize/commit/da7d71dbee2662aa21dc65bbd6d271086fd31acc)), closes [#731](https://github.com/ForestAdmin/forest-express-sequelize/issues/731)
+
+
+### BREAKING CHANGES
+
+* record is no longer send to the hook middleware & values option on smart action is no longer supported
+* **smart-action:** fields parameters on hook function is no longer a map of field, it is now an array.
+change hook is no longer choosen by the field name, field need to have hook defined inside it definition by addin a props hook.
+* the public API of forest-express has changed to include the parameters which are needed to evaluate scope filters. This includes PermissionMiddlewareCreator, all classes on the /exposed folder and most services. Many routes now require providing the current user timezone.
+* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+
 # [8.0.0-beta.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.12...v8.0.0-beta.13) (2021-07-19)
 
 # [8.0.0-beta.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.11...v8.0.0-beta.12) (2021-07-19)
