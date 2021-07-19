@@ -1,3 +1,5 @@
+# [8.0.0-beta.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.12...v8.0.0-beta.13) (2021-07-19)
+
 # [8.0.0-beta.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.11...v8.0.0-beta.12) (2021-07-19)
 
 
