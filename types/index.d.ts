@@ -237,7 +237,7 @@ export interface SegmentAggregationCreator<M extends Sequelize.Model = any> {
   (model: M): Sequelize.WhereOptions;
 }
 
-type FieldType = 'Boolean' | 'Date' | 'Dateonly' | 'Enum' | 'File' | 'Number' | 'String' | ['Enum'] | ['Number'] | ['String'];
+type FieldType = 'Boolean' | 'Date' | 'Dateonly' | 'Enum' | 'File' | 'Number' | 'String' | 'Json' | ['Enum'] | ['Number'] | ['String'];
 
 type FieldEnumsType = string[] | number[] | Date[] | boolean[];
 
@@ -310,6 +310,7 @@ export interface SmartSegmentOptions {
 }
 
 export interface CollectionOptions {
+  isSearchable?: boolean;
   fields?: SmartFieldOptions[];
   actions?: SmartActionOptions[];
   segments?: SmartSegmentOptions[];
