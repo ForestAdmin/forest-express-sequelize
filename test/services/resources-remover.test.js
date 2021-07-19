@@ -1,8 +1,12 @@
+import { scopeManager } from 'forest-express';
 import Sequelize, { Op } from 'sequelize';
-import ResourcesRemover from '../../src/services/resources-remover';
 import { InvalidParameterError } from '../../src/services/errors';
+import ResourcesRemover from '../../src/services/resources-remover';
 
 describe('services > resources-remover', () => {
+  const user = { renderingId: 1 };
+  const params = { timezone: 'Europe/Paris' };
+
   const buildModelMock = (dialect) => {
     // Sequelize is created here without connection to a database
     const sequelize = new Sequelize({ dialect });
@@ -32,35 +36,41 @@ describe('services > resources-remover', () => {
         expect.assertions(3);
 
         const { Actor } = buildModelMock(dialect);
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
 
-        await expect(new ResourcesRemover(Actor, []).perform())
+        await expect(new ResourcesRemover(Actor, params, [], user).perform())
           .rejects
           .toBeInstanceOf(InvalidParameterError);
 
-        await expect(new ResourcesRemover(Actor, 'foo').perform())
+        await expect(new ResourcesRemover(Actor, params, 'foo', user).perform())
           .rejects
           .toBeInstanceOf(InvalidParameterError);
 
-        await expect(new ResourcesRemover(Actor, {}).perform())
+        await expect(new ResourcesRemover(Actor, params, {}, user).perform())
           .rejects
           .toBeInstanceOf(InvalidParameterError);
+
+        spy.mockRestore();
       });
 
       it('should remove resources with a single primary key', async () => {
         expect.assertions(1);
 
         const { Actor } = buildModelMock(dialect);
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
         jest.spyOn(Actor, 'destroy').mockImplementation((condition) => {
           expect(condition).toStrictEqual({ where: { id: ['1', '2'] } });
         });
 
-        await new ResourcesRemover(Actor, ['1', '2']).perform();
+        await new ResourcesRemover(Actor, params, ['1', '2'], user).perform();
+        spy.mockRestore();
       });
 
       it('should remove resources with composite keys', async () => {
         expect.assertions(1);
 
         const { ActorFilm } = buildModelMock(dialect);
+        const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
         jest.spyOn(ActorFilm, 'destroy').mockImplementation((condition) => {
           expect(condition.where).toStrictEqual({
             [Op.or]: [
@@ -70,8 +80,8 @@ describe('services > resources-remover', () => {
           });
         });
 
-        const sequelizeOptions = { Sequelize };
-        await new ResourcesRemover(ActorFilm, ['1|2', '3|4'], sequelizeOptions).perform();
+        await new ResourcesRemover(ActorFilm, params, ['1|2', '3|4'], user).perform();
+        spy.mockRestore();
       });
     });
   });

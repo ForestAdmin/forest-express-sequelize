@@ -8,7 +8,7 @@ function ApimapFieldTypeDetector(column, options) {
       || column.type instanceof DataTypes.UUIDV1
       || column.type instanceof DataTypes.UUIDV4
       || (DataTypes.CITEXT && column.type instanceof DataTypes.CITEXT)
-      || column.type === 'citext') { // TODO: Remove 'citext' once Sequelize 4 has been unsupported.
+      || column.type === 'citext') { // TODO: Remove 'citext' once Sequelize 4 has been deprecated.
       return 'String';
     }
     if (column.type instanceof DataTypes.ENUM) {

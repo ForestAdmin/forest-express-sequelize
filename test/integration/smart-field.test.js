@@ -11,6 +11,8 @@ function rot13(s) {
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz'.indexOf(c)]);
 }
 
+const user = { renderingId: 1 };
+
 async function setup(sequelize) {
   Interface.Schemas = { schemas: {} };
 
@@ -124,6 +126,7 @@ describe('integration > Smart field', () => {
         expect.assertions(1);
 
         await runWithConnection(connectionManager, async (sequelize) => {
+          const spy = jest.spyOn(Interface.scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { Books } = await setup(sequelize);
           const params = {
             fields: { books: 'id,title,encrypted' },
@@ -133,8 +136,9 @@ describe('integration > Smart field', () => {
             search: 'hello',
           };
 
-          const count = await new ResourcesGetter(Books, null, params).count();
+          const count = await new ResourcesGetter(Books, null, params, user).count();
           expect(count).toStrictEqual(0);
+          spy.mockRestore();
         });
       });
 
@@ -142,6 +146,7 @@ describe('integration > Smart field', () => {
         expect.assertions(1);
 
         await runWithConnection(connectionManager, async (sequelize) => {
+          const spy = jest.spyOn(Interface.scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { Books } = await setup(sequelize);
           const params = {
             fields: { books: 'id,title,encrypted' },
@@ -151,8 +156,9 @@ describe('integration > Smart field', () => {
             search: 'abjurer',
           };
 
-          const count = await new ResourcesGetter(Books, null, params).count();
+          const count = await new ResourcesGetter(Books, null, params, user).count();
           expect(count).toStrictEqual(1);
+          spy.mockRestore();
         });
       });
 
@@ -160,6 +166,7 @@ describe('integration > Smart field', () => {
         expect.assertions(1);
 
         await runWithConnection(connectionManager, async (sequelize) => {
+          const spy = jest.spyOn(Interface.scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { Reviews } = await setup(sequelize);
           const params = {
             fields: { books: 'id,title,encrypted' },
@@ -169,8 +176,9 @@ describe('integration > Smart field', () => {
             search: '500',
           };
 
-          const count = await new ResourcesGetter(Reviews, null, params).count();
+          const count = await new ResourcesGetter(Reviews, null, params, user).count();
           expect(count).toStrictEqual(0);
+          spy.mockRestore();
         });
       });
 
@@ -178,6 +186,7 @@ describe('integration > Smart field', () => {
         expect.assertions(1);
 
         await runWithConnection(connectionManager, async (sequelize) => {
+          const spy = jest.spyOn(Interface.scopeManager, 'getScopeForUser').mockReturnValue(null);
           const { Reviews } = await setup(sequelize);
           const params = {
             fields: { books: 'id,title,encrypted' },
@@ -187,8 +196,9 @@ describe('integration > Smart field', () => {
             search: '666',
           };
 
-          const count = await new ResourcesGetter(Reviews, null, params).count();
+          const count = await new ResourcesGetter(Reviews, null, params, user).count();
           expect(count).toStrictEqual(1);
+          spy.mockRestore();
         });
       });
     });
