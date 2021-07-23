@@ -1,3 +1,10 @@
+## [8.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.1...v8.0.2) (2021-07-23)
+
+
+### Bug Fixes
+
+* fix display of week number in line chart ([#785](https://github.com/ForestAdmin/forest-express-sequelize/issues/785)) ([48d202d](https://github.com/ForestAdmin/forest-express-sequelize/commit/48d202d5954276a023728d8ef0a37c36ed378a68))
+
 ## [8.0.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0...v8.0.1) (2021-07-22)
 
 
