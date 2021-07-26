@@ -1,3 +1,10 @@
+## [8.0.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.3...v8.0.4) (2021-07-26)
+
+
+### Bug Fixes
+
+* **actions:** fix regression on the bulk delete action ([#786](https://github.com/ForestAdmin/forest-express-sequelize/issues/786)) ([f9bbdd8](https://github.com/ForestAdmin/forest-express-sequelize/commit/f9bbdd87a31f47b6a846f93aaa162d4585ced61e))
+
 ## [8.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.2...v8.0.3) (2021-07-26)
 
 
