@@ -1,3 +1,10 @@
+## [8.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.2...v8.0.3) (2021-07-26)
+
+
+### Bug Fixes
+
+* do not modify query options object when applying workarounds for specific drivers ([#783](https://github.com/ForestAdmin/forest-express-sequelize/issues/783)) ([5989fda](https://github.com/ForestAdmin/forest-express-sequelize/commit/5989fda2135f26ca329756aeea68bec91992599e))
+
 ## [8.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.1...v8.0.2) (2021-07-23)
 
 
