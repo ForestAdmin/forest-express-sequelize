@@ -42,7 +42,7 @@ class QueryOptions {
     return this._scopes;
   }
 
-  /** Compute sequelize where condition for sequelizeOptions getter. */
+  /** Compute sequelize query `.where` property */
   get _sequelizeWhere() {
     const operators = Operators.getInstance({ Sequelize: this._Sequelize });
 
@@ -56,7 +56,7 @@ class QueryOptions {
     }
   }
 
-  /** Compute includes for sequelizeOptions getter. */
+  /** Compute sequelize query `.include` property */
   get _sequelizeInclude() {
     const fields = [...this._requestedFields, ...this._neededFields];
     const include = [
@@ -67,11 +67,12 @@ class QueryOptions {
     return include.length ? include : null;
   }
 
+  /** Compute sequelize query `.order` property */
   get _sequelizeOrder() {
     if (isMSSQL(this._model.sequelize) && this._sequelizeInclude?.length) {
-      // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
+      // Work around sequelize bug: https://github.com/sequelize/sequelize/issues/11258
       const primaryKeys = Object.keys(this._model.primaryKeys);
-      this._order = this._order.filter((order) => !primaryKeys.includes(order[0]));
+      return this._order.filter((order) => !primaryKeys.includes(order[0]));
     }
 
     return this._order;
