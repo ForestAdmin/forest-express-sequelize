@@ -1,3 +1,10 @@
+## [8.0.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.4...v8.0.5) (2021-07-27)
+
+
+### Bug Fixes
+
+* **update:** fix update record regression when using scopes ([#787](https://github.com/ForestAdmin/forest-express-sequelize/issues/787)) ([1acfa8d](https://github.com/ForestAdmin/forest-express-sequelize/commit/1acfa8da602e5278d3974f822eb5f586e00c7eff))
+
 ## [8.0.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.3...v8.0.4) (2021-07-26)
 
 
