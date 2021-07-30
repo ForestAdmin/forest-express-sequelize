@@ -26,9 +26,15 @@ module.exports = (model, opts) => {
   }
 
   function getInverseOf(association) {
+    // Notice: get inverse relation field
+    // return null if not found
     const remoteAssociation = Object.values(association.target.associations)
-      .find((a) => a.identifierField === association.identifierField
-          && association.source.name === a.target.name);
+      .find((a) => {
+        const { identifierField, foreignIdentifierField } = association;
+        const field = association.associationType === 'BelongsToMany' ? foreignIdentifierField : identifierField;
+
+        return a.identifierField === field && association.source.name === a.target.name;
+      });
     if (remoteAssociation) {
       return remoteAssociation.associationAccessor;
     }
