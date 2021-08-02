@@ -1,3 +1,10 @@
+## [8.0.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.5...v8.0.6) (2021-08-02)
+
+
+### Bug Fixes
+
+* inverseOf computation with multiple associations is supported ([#788](https://github.com/ForestAdmin/forest-express-sequelize/issues/788)) ([7736d01](https://github.com/ForestAdmin/forest-express-sequelize/commit/7736d01322ee8adcbc1e933879079a2bf564b004))
+
 ## [8.0.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.4...v8.0.5) (2021-07-27)
 
 
