@@ -20,11 +20,16 @@ function bubbleWheresInPlace(operators, options) {
     bubbleWheresInPlace(operators, include);
 
     if (include.where) {
-      const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => (
-        key[0] === '$' && key[key.length - 1] === '$'
-          ? `$${include.as}.${key.substring(1)}`
-          : `$${include.as}.${key}$`
-      ));
+      const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => {
+        // Targeting a nested field, simply nest it deeper.
+        if (key[0] === '$' && key[key.length - 1] === '$') {
+          return `$${include.as}.${key.substring(1)}`;
+        }
+
+        // Targeting a simple field.
+        // Try to resolve the column name, as sequelize does not allow using model aliases here.
+        return `$${include.as}.${include.model?.rawAttributes?.[key]?.field ?? key}$`;
+      });
 
       options.where = QueryUtils.mergeWhere(operators, options.where, newWhere);
       delete include.where;
