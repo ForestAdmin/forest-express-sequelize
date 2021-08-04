@@ -29,7 +29,7 @@
     "bluebird": "2.9.25",
     "core-js": "3.6.5",
     "forest-express": "9.0.3",
-    "http-errors": "1.6.1",
+    "http-errors": "1.8.0",
     "lodash": "4.17.21",
     "moment": "2.19.4",
     "semver": "5.4.1"
