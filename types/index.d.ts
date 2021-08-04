@@ -142,6 +142,9 @@ export class RecordsRemover<M extends Sequelize.Model> extends AbstractRecordToo
   remove(recordIds: string[] | number[]): Promise<void>;
 }
 
+export class RecordSerializer<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+}
+
 // Everything related to Forest permissions
 
 export class PermissionMiddlewareCreator {
