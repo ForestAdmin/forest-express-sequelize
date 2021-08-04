@@ -1,3 +1,10 @@
+## [8.0.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.6...v8.0.7) (2021-08-04)
+
+
+### Bug Fixes
+
+* **types:** add missing RecordSerializer ([#794](https://github.com/ForestAdmin/forest-express-sequelize/issues/794)) ([4bf6b60](https://github.com/ForestAdmin/forest-express-sequelize/commit/4bf6b6045b5818cc31790d59e3f1e3cc6aa8852a))
+
 ## [8.0.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.5...v8.0.6) (2021-08-02)
 
 
