@@ -1,3 +1,10 @@
+## [8.0.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.7...v8.0.8) (2021-08-05)
+
+
+### Bug Fixes
+
+* **exposed:** reduce number of mandatory parameters in records-getter and record-serializer ([#795](https://github.com/ForestAdmin/forest-express-sequelize/issues/795)) ([62eac98](https://github.com/ForestAdmin/forest-express-sequelize/commit/62eac98af760413f8c564a5a3e8f15b858314687))
+
 ## [8.0.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.6...v8.0.7) (2021-08-04)
 
 
