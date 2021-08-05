@@ -112,7 +112,7 @@ export class RecordGetter<M extends Sequelize.Model> extends AbstractRecordTool<
 }
 
 export class RecordsGetter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
-  getAll(query: Query): Promise<M[]>;
+  getAll(queryExtra?: Query): Promise<M[]>;
   getIdsFromRequest(request: SmartActionRequest | SmartActionLoadHookRequest | SmartActionChangeHookRequest): Promise<string[]>;
 }
 
@@ -142,7 +142,9 @@ export class RecordsRemover<M extends Sequelize.Model> extends AbstractRecordToo
   remove(recordIds: string[] | number[]): Promise<void>;
 }
 
-export class RecordSerializer<M extends Sequelize.Model> extends AbstractRecordTool<M> {
+export class RecordSerializer {
+  constructor(model: { name: string } | Sequelize.ModelCtor<any>, user?: User, query?: Query);
+  serialize(records: Record<string, any> | Record<string, any>[]): Promise<RecordsSerialized>;
 }
 
 // Everything related to Forest permissions

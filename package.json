@@ -28,7 +28,7 @@
     "@babel/runtime": "7.10.1",
     "bluebird": "2.9.25",
     "core-js": "3.6.5",
-    "forest-express": "9.0.3",
+    "forest-express": "9.1.1",
     "http-errors": "1.6.1",
     "lodash": "4.17.21",
     "moment": "2.19.4",
