@@ -1,3 +1,10 @@
+## [8.0.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.8...v8.0.9) (2021-08-09)
+
+
+### Bug Fixes
+
+* **queries:** query generation for camelCased fields on related data ([#792](https://github.com/ForestAdmin/forest-express-sequelize/issues/792)) ([a6fa9d5](https://github.com/ForestAdmin/forest-express-sequelize/commit/a6fa9d5d8e7eaa53d9c6cf125ebd9443a7f480f4))
+
 ## [8.0.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.7...v8.0.8) (2021-08-05)
 
 
