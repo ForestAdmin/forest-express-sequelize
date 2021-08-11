@@ -30,6 +30,9 @@ class QueryOptions {
       options.offset = this._offset;
       options.limit = this._limit;
     }
+    if (this._requestedFields.size) {
+      options.attributes = [...this._requestedFields].filter((s) => !s.includes('.'));
+    }
 
     return SequelizeCompatibility.postProcess(this._model, options);
   }

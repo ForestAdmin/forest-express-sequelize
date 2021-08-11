@@ -55,11 +55,9 @@ class ResourcesGetter {
       fields, filters, search, searchExtended, segment, segmentQuery, timezone,
     } = this._params;
 
-    const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
     const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
 
     const queryOptions = new QueryOptions(this._model, { tableAlias });
-    await queryOptions.requireFields(requestedFields);
     await queryOptions.search(search, searchExtended);
     await queryOptions.filterByConditionTree(filters, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
@@ -67,6 +65,8 @@ class ResourcesGetter {
     await queryOptions.segmentQuery(segmentQuery);
 
     if (!forCount) {
+      const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
+      await queryOptions.requireFields(requestedFields);
       const { sort, page } = this._params;
       await queryOptions.sort(sort);
       await queryOptions.paginate(page?.number, page?.size);
