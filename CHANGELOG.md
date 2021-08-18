@@ -1,3 +1,10 @@
+## [8.0.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.9...v8.0.10) (2021-08-18)
+
+
+### Bug Fixes
+
+* **related-data:** fail to display records using composite pks on related data ([#798](https://github.com/ForestAdmin/forest-express-sequelize/issues/798)) ([c168b9a](https://github.com/ForestAdmin/forest-express-sequelize/commit/c168b9a956ec3efccd3e6d8bdd4760250905d0c9))
+
 ## [8.0.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.8...v8.0.9) (2021-08-09)
 
 
