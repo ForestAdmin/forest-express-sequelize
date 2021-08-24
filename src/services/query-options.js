@@ -30,7 +30,8 @@ class QueryOptions {
       options.offset = this._offset;
       options.limit = this._limit;
     }
-    if (this._requestedFields.size) {
+
+    if (this._restrictFieldsOnRootModel && this._requestedFields.size) {
       options.attributes = [...this._requestedFields].filter((s) => !s.includes('.'));
     }
 
@@ -96,6 +97,7 @@ class QueryOptions {
     this._options = options;
 
     // Used to compute relations that will go in the final 'include'
+    this._restrictFieldsOnRootModel = false;
     this._requestedFields = new Set();
     this._neededFields = new Set();
     this._scopes = []; // @see sequelizeScopes getter
@@ -118,11 +120,15 @@ class QueryOptions {
    * Add the required includes from a list of field names.
    * @param {string[]} fields Fields of HasOne and BelongTo relations are
    *  accepted (ie. 'book.name').
+   * @param {string[]} fields the output of the extractRequestedFields() util function
+   * @param {boolean} applyOnRootModel restrict fetched fields also on the root
    */
-  async requireFields(fields) {
+  async requireFields(fields, applyOnRootModel = false) {
     if (fields) {
       fields.forEach((field) => this._requestedFields.add(field));
     }
+
+    this._restrictFieldsOnRootModel = Boolean(applyOnRootModel);
   }
 
   /**
