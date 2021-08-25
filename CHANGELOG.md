@@ -1,3 +1,10 @@
+## [8.0.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.11...v8.0.12) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch handlebars dependency vulnerabilities (from 4.7.6 to 4.7.7) ([#716](https://github.com/ForestAdmin/forest-express-sequelize/issues/716)) ([2430587](https://github.com/ForestAdmin/forest-express-sequelize/commit/2430587f3db9f7ce3a61ab9c91b3c3857675a706))
+
 ## [8.0.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.10...v8.0.11) (2021-08-25)
 
 
