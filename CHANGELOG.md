@@ -1,3 +1,10 @@
+## [8.0.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.10...v8.0.11) (2021-08-25)
+
+
+### Bug Fixes
+
+* **charts:** objective charts now returns correct values ([#800](https://github.com/ForestAdmin/forest-express-sequelize/issues/800)) ([866e4ac](https://github.com/ForestAdmin/forest-express-sequelize/commit/866e4ac080d28761484f482ddb0f428df0c0e3a2))
+
 ## [8.0.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.9...v8.0.10) (2021-08-18)
 
 
