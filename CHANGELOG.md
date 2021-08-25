@@ -1,3 +1,10 @@
+## [8.0.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.13...v8.0.14) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch hosted-git-info dependency vulnerability ([#717](https://github.com/ForestAdmin/forest-express-sequelize/issues/717)) ([92ee9ed](https://github.com/ForestAdmin/forest-express-sequelize/commit/92ee9ed478bf3aa9abc8aef4dc01f0bee44914f6))
+
 ## [8.0.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.12...v8.0.13) (2021-08-25)
 
 
