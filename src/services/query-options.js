@@ -32,6 +32,11 @@ class QueryOptions {
     }
 
     if (this._restrictFieldsOnRootModel && this._requestedFields.size) {
+      // Restricting loaded fields on the root model is optin with sequelize to avoid
+      // side-effects as this was not supported historically and it would probably break
+      // smart fields.
+      // @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/resources-getter.js#L142
+
       options.attributes = [...this._requestedFields].filter((s) => !s.includes('.'));
     }
 
