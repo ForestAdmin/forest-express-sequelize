@@ -1,3 +1,10 @@
+## [8.0.15](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.14...v8.0.15) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch color-string dependency vulnerability ([#776](https://github.com/ForestAdmin/forest-express-sequelize/issues/776)) ([04a4221](https://github.com/ForestAdmin/forest-express-sequelize/commit/04a4221a8ce050356e589522d4274d1e64655566))
+
 ## [8.0.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.13...v8.0.14) (2021-08-25)
 
 
