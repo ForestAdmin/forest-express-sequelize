@@ -1,3 +1,10 @@
+# [8.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.16...v8.1.0) (2021-08-26)
+
+
+### Features
+
+* include tags in the user data inside the request ([#802](https://github.com/ForestAdmin/forest-express-sequelize/issues/802)) ([70bff6a](https://github.com/ForestAdmin/forest-express-sequelize/commit/70bff6a9edd1a611fbf146ab79dd615273288dd4))
+
 ## [8.0.16](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.15...v8.0.16) (2021-08-25)
 
 
