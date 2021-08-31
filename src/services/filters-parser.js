@@ -18,8 +18,11 @@ function FiltersParser(modelSchema, timezone, options) {
 
   this.formatCondition = async (condition) => {
     const isTextField = this.isTextField(condition.field);
+
     if (this.isSmartField(modelSchema, condition.field)) {
-      const fieldFound = modelSchema.fields.find((field) => field.field === condition.field);
+      const fieldFound = modelSchema.fields.find(function (field) {
+        return (!!field.isVirtual && field.field === condition.field) || (!!field.reference && field.field === condition.field.split(':')[0]);
+      });
 
       if (!fieldFound.filter) throw new Error(`"filter" method missing on smart field "${fieldFound.field}"`);
 
@@ -123,7 +126,9 @@ function FiltersParser(modelSchema, timezone, options) {
   };
 
   this.isSmartField = (schema, fieldName) => {
-    const fieldFound = schema.fields.find((field) => field.field === fieldName);
+    const fieldFound = schema.fields.find(function (field) {
+      return (!!field.isVirtual && field.field === fieldName) || (!!field.reference && field.field === fieldName.split(':')[0]);
+    });
     return !!fieldFound && !!fieldFound.isVirtual;
   };
 
