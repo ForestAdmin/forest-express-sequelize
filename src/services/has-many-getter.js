@@ -37,7 +37,7 @@ class HasManyGetter extends ResourcesGetter {
         as: associationName,
         scope: false,
         required: !!buildOptions.forCount, // Why?
-        ...pick(options, ['where', 'include']),
+        ...pick(options, ['attributes', 'where', 'include']),
       }],
     });
 

@@ -573,7 +573,7 @@ const user = { renderingId: 1 };
                 time_range: null,
                 filters: null,
               }, options, user).perform();
-              expect(stat.value).toHaveLength(0);
+              expect(stat.value).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1230,7 +1230,7 @@ const user = { renderingId: 1 };
             };
             try {
               const result = await new ResourcesGetter(models.user, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1526,7 +1526,7 @@ const user = { renderingId: 1 };
             };
             try {
               const result = await new ResourcesGetter(models.bike, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1602,7 +1602,7 @@ const user = { renderingId: 1 };
               const result = await new ResourcesGetter(
                 models.georegion, null, params, user,
               ).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1687,7 +1687,7 @@ const user = { renderingId: 1 };
             };
             try {
               const result = await new ResourcesGetter(models.bird, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -2512,7 +2512,7 @@ const user = { renderingId: 1 };
 
             try {
               const result = await new ResourcesGetter(models.user, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -2699,7 +2699,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.user, null, params, user).perform();
-            expect(result[0]).toHaveLength(0);
+            expect(result[0]).toBeEmpty();
           } finally {
             spy.mockRestore();
             connectionManager.closeConnection();
@@ -2784,7 +2784,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.user, null, params, user).perform();
-            expect(result[0]).toHaveLength(0);
+            expect(result[0]).toBeEmpty();
           } finally {
             spy.mockRestore();
             connectionManager.closeConnection();
@@ -2852,7 +2852,7 @@ const user = { renderingId: 1 };
       });
 
       describe('request on the resources getter with a smart field', () => {
-        it('should only retrieve requested fields when only DB fields are used', async () => {
+        it('should only retrieve requested fields on relations when only DB fields are used', async () => {
           expect.assertions(5);
           const { models } = initializeSequelize();
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
@@ -2864,7 +2864,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.address, null, params).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
@@ -2875,7 +2875,7 @@ const user = { renderingId: 1 };
           }
         });
 
-        it('should retrieve all fields when a smart field is requested', async () => {
+        it('should retrieve all fields on relations when a smart field is requested', async () => {
           expect.assertions(5);
           const { models } = initializeSequelize();
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
@@ -2887,11 +2887,62 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.address, null, params).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).toHaveProperty('lastName');
+          } finally {
+            spy.mockRestore();
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
+      describe('request on the resources getter with restrictFieldsOnRootModel flag', () => {
+        it('should only retrieve requested fields with the flag', async () => {
+          expect.assertions(6);
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const params = {
+            ...baseParams,
+            fields: { address: 'id,line,zipCode' },
+            page: { number: '1' },
+            restrictFieldsOnRootModel: true,
+          };
+
+          try {
+            const result = await new ResourcesGetter(models.address, null, params).perform();
+            expect(result[0]).not.toBeEmpty();
+            expect(result[0][0].dataValues).toHaveProperty('id');
+            expect(result[0][0].dataValues).toHaveProperty('line');
+            expect(result[0][0].dataValues).toHaveProperty('zipCode');
+            expect(result[0][0].dataValues).not.toHaveProperty('city');
+            expect(result[0][0].dataValues).not.toHaveProperty('country');
+          } finally {
+            spy.mockRestore();
+            connectionManager.closeConnection();
+          }
+        });
+
+        it('should ignore requested fields without the flag', async () => {
+          expect.assertions(6);
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const params = {
+            ...baseParams,
+            fields: { address: 'id,line,zipCode' },
+            page: { number: '1' },
+          };
+
+          try {
+            const result = await new ResourcesGetter(models.address, null, params).perform();
+            expect(result[0]).not.toBeEmpty();
+            expect(result[0][0].dataValues).toHaveProperty('id');
+            expect(result[0][0].dataValues).toHaveProperty('line');
+            expect(result[0][0].dataValues).toHaveProperty('zipCode');
+            expect(result[0][0].dataValues).toHaveProperty('city');
+            expect(result[0][0].dataValues).toHaveProperty('country');
           } finally {
             spy.mockRestore();
             connectionManager.closeConnection();
@@ -2977,7 +3028,7 @@ const user = { renderingId: 1 };
               params,
               user,
             ).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
 
             const firstEntry = result[0][0];
             expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['id']);
@@ -3144,7 +3195,7 @@ const user = { renderingId: 1 };
               params,
               user,
             ).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('lastName');
@@ -3173,7 +3224,7 @@ const user = { renderingId: 1 };
               params,
               user,
             ).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
