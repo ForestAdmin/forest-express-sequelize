@@ -573,7 +573,7 @@ const user = { renderingId: 1 };
                 time_range: null,
                 filters: null,
               }, options, user).perform();
-              expect(stat.value).toHaveLength(0);
+              expect(stat.value).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1230,7 +1230,7 @@ const user = { renderingId: 1 };
             };
             try {
               const result = await new ResourcesGetter(models.user, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1526,7 +1526,7 @@ const user = { renderingId: 1 };
             };
             try {
               const result = await new ResourcesGetter(models.bike, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1602,7 +1602,7 @@ const user = { renderingId: 1 };
               const result = await new ResourcesGetter(
                 models.georegion, null, params, user,
               ).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -1687,7 +1687,7 @@ const user = { renderingId: 1 };
             };
             try {
               const result = await new ResourcesGetter(models.bird, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -2512,7 +2512,7 @@ const user = { renderingId: 1 };
 
             try {
               const result = await new ResourcesGetter(models.user, null, params, user).perform();
-              expect(result[0]).toHaveLength(0);
+              expect(result[0]).toBeEmpty();
             } finally {
               spy.mockRestore();
               connectionManager.closeConnection();
@@ -2699,7 +2699,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.user, null, params, user).perform();
-            expect(result[0]).toHaveLength(0);
+            expect(result[0]).toBeEmpty();
           } finally {
             spy.mockRestore();
             connectionManager.closeConnection();
@@ -2784,7 +2784,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.user, null, params, user).perform();
-            expect(result[0]).toHaveLength(0);
+            expect(result[0]).toBeEmpty();
           } finally {
             spy.mockRestore();
             connectionManager.closeConnection();
@@ -2864,7 +2864,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.address, null, params).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
@@ -2887,7 +2887,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.address, null, params).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');
@@ -2913,7 +2913,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.address, null, params).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0].dataValues).toHaveProperty('id');
             expect(result[0][0].dataValues).toHaveProperty('line');
             expect(result[0][0].dataValues).toHaveProperty('zipCode');
@@ -2937,7 +2937,7 @@ const user = { renderingId: 1 };
 
           try {
             const result = await new ResourcesGetter(models.address, null, params).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0].dataValues).toHaveProperty('id');
             expect(result[0][0].dataValues).toHaveProperty('line');
             expect(result[0][0].dataValues).toHaveProperty('zipCode');
@@ -3028,7 +3028,7 @@ const user = { renderingId: 1 };
               params,
               user,
             ).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
 
             const firstEntry = result[0][0];
             expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['id']);
@@ -3195,7 +3195,7 @@ const user = { renderingId: 1 };
               params,
               user,
             ).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('lastName');
@@ -3224,7 +3224,7 @@ const user = { renderingId: 1 };
               params,
               user,
             ).perform();
-            expect(result[0]).not.toHaveLength(0);
+            expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('id');

@@ -52,12 +52,15 @@ class ResourcesGetter {
   async _buildQueryOptions(buildOptions = {}) {
     const { forCount, tableAlias } = buildOptions;
     const {
-      filters, search, searchExtended, segment, segmentQuery, timezone,
+      fields, filters, restrictFieldsOnRootModel,
+      search, searchExtended, segment, segmentQuery, timezone,
     } = this._params;
 
     const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
 
+    const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
     const queryOptions = new QueryOptions(this._model, { tableAlias });
+    await queryOptions.requireFields(requestedFields, restrictFieldsOnRootModel);
     await queryOptions.search(search, searchExtended);
     await queryOptions.filterByConditionTree(filters, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
@@ -65,12 +68,7 @@ class ResourcesGetter {
     await queryOptions.segmentQuery(segmentQuery);
 
     if (!forCount) {
-      const {
-        fields, restrictFieldsOnRootModel, sort, page,
-      } = this._params;
-
-      const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
-      await queryOptions.requireFields(requestedFields, restrictFieldsOnRootModel);
+      const { sort, page } = this._params;
       await queryOptions.sort(sort);
       await queryOptions.paginate(page?.number, page?.size);
     }
