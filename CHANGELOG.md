@@ -1,3 +1,10 @@
+## [8.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.0...v8.1.1) (2021-09-02)
+
+
+### Performance Improvements
+
+* **bulk-actions:** improve performance when calling getIdsFromRequest ([#797](https://github.com/ForestAdmin/forest-express-sequelize/issues/797)) ([95ff02d](https://github.com/ForestAdmin/forest-express-sequelize/commit/95ff02da334a24d3bf65083fa4bf4b0e25a9d998))
+
 # [8.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.16...v8.1.0) (2021-08-26)
 
 
