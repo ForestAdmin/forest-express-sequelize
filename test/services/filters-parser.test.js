@@ -88,7 +88,7 @@ describe('services > filters-parser', () => {
   });
 
   describe('formatOperatorValue function', () => {
-    const values = [5, 'toto', null];
+    const values = [5, 'toto,tutu ', null];
 
     values.forEach((value) => {
       it(`should return the appropriate value (${typeof value})`, () => {
@@ -113,7 +113,11 @@ describe('services > filters-parser', () => {
             [OPERATORS.EQ]: '',
           }],
         });
-        expect(defaultFiltersParser.formatOperatorValue('in', value)).toStrictEqual({ [OPERATORS.IN]: value });
+        expect(defaultFiltersParser.formatOperatorValue('in', value)).toStrictEqual(
+          typeof value === 'string'
+            ? { [OPERATORS.IN]: value.split(',').map((elem) => elem.trim()) }
+            : { [OPERATORS.IN]: value },
+        );
       });
 
       it('should raise an error on unknown operator', () => {
