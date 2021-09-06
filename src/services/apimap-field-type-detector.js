@@ -4,9 +4,6 @@ function ApimapFieldTypeDetector(column, options) {
   this.perform = () => {
     if (column.type instanceof DataTypes.STRING
       || column.type instanceof DataTypes.TEXT
-      || column.type instanceof DataTypes.UUID
-      || column.type instanceof DataTypes.UUIDV1
-      || column.type instanceof DataTypes.UUIDV4
       || (DataTypes.CITEXT && column.type instanceof DataTypes.CITEXT)
       || column.type === 'citext') { // TODO: Remove 'citext' once Sequelize 4 has been deprecated.
       return 'String';
@@ -40,6 +37,11 @@ function ApimapFieldTypeDetector(column, options) {
     if (column.type instanceof DataTypes.GEOMETRY
       && column.type.type === 'POINT') {
       return 'Point';
+    }
+    if (column.type instanceof DataTypes.UUID
+      || column.type instanceof DataTypes.UUIDV1
+      || column.type instanceof DataTypes.UUIDV4) {
+      return 'Uuid';
     }
     // NOTICE: Detect Array types (Array(String), Array(Integer), ...)
     if (column.type.type) {
