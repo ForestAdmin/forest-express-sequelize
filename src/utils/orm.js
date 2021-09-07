@@ -1,3 +1,5 @@
+import { SchemaUtils } from 'forest-express';
+
 const semver = require('semver');
 
 const REGEX_VERSION = /(\d+\.)?(\d+\.)?(\*|\d+)/;
@@ -26,7 +28,7 @@ const findRecord = (model, recordId, options) => {
 };
 
 const getColumnName = (schema, fieldName) => {
-  const schemaField = schema.fields.find((field) => field.field === fieldName);
+  const schemaField = SchemaUtils.getField(schema, fieldName);
   return (schemaField && schemaField.columnName) ? schemaField.columnName : fieldName;
 };
 
