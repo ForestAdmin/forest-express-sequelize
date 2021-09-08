@@ -1,3 +1,10 @@
+## [8.1.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.1...v8.1.2) (2021-09-08)
+
+
+### Bug Fixes
+
+* **types:** fix typing errors and limitations ([#799](https://github.com/ForestAdmin/forest-express-sequelize/issues/799)) ([a594f78](https://github.com/ForestAdmin/forest-express-sequelize/commit/a594f7877994b9739db8c6b1f7526902be8d6f78))
+
 ## [8.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.0...v8.1.1) (2021-09-02)
 
 
