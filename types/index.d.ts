@@ -103,7 +103,7 @@ interface RecordsSerialized {
 }
 
 export class AbstractRecordTool<M extends Sequelize.Model> {
-  constructor(model: Sequelize.ModelCtor<M>, user: User, query: Record<string, any>)
+  constructor(model: Sequelize.ModelCtor<M>, user: User, query: Query)
   serialize(records: M | M[]): Promise<RecordsSerialized>;
 }
 
@@ -144,7 +144,7 @@ export class RecordsRemover<M extends Sequelize.Model> extends AbstractRecordToo
 
 export class RecordSerializer {
   constructor(model: { name: string } | Sequelize.ModelCtor<any>, user?: User, query?: Query);
-  serialize(records: Record<string, any> | Record<string, any>[]): Promise<RecordsSerialized>;
+  serialize(records: Record<string, any> | Record<string, any>[], meta: Record<string, any>): Promise<RecordsSerialized>;
 }
 
 // Everything related to Forest permissions
@@ -205,7 +205,7 @@ export interface Query {
   search?: string;
   fields?: {[key: string]: string};
   sort?: string;
-  filters?: Filter|AggregatedFilters;
+  filters?: string
   page?: Page;
   searchExtended?: string;
 }
@@ -272,6 +272,7 @@ export interface SmartActionField {
   defaultValue?: any,
   reference?: string,
   hook?: string,
+  widget?: string;
 }
 
 export interface SmartActionHookField extends SmartActionField {
