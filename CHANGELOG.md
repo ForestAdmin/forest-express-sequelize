@@ -1,3 +1,10 @@
+# [8.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.2...v8.2.0) (2021-09-10)
+
+
+### Features
+
+* **filter:** add "is in" filter ([#806](https://github.com/ForestAdmin/forest-express-sequelize/issues/806)) ([bb10856](https://github.com/ForestAdmin/forest-express-sequelize/commit/bb108567d0fa6b93982c39e5b5cca68468972536))
+
 ## [8.1.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.1...v8.1.2) (2021-09-08)
 
 
