@@ -94,7 +94,9 @@ function FiltersParser(modelSchema, timezone, options) {
       case 'includes_all':
         return { [this.OPERATORS.CONTAINS]: value };
       case 'in':
-        return { [this.OPERATORS.IN]: value };
+        return typeof value === 'string'
+          ? { [this.OPERATORS.IN]: value.split(',').map((elem) => elem.trim()) }
+          : { [this.OPERATORS.IN]: value };
       default:
         throw new NoMatchingOperatorError();
     }
