@@ -1,4 +1,4 @@
-import { SchemaUtils } from 'forest-express';
+const { SchemaUtils } = require('forest-express');
 
 const semver = require('semver');
 
