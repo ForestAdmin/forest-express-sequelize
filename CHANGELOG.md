@@ -1,3 +1,10 @@
+## [8.2.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.1...v8.2.2) (2021-09-14)
+
+
+### Bug Fixes
+
+* **segments:** after fixing performance issue, some segments were ignored by delete and smart actions ([#808](https://github.com/ForestAdmin/forest-express-sequelize/issues/808)) ([8611f61](https://github.com/ForestAdmin/forest-express-sequelize/commit/8611f61e9193417ff77d52f65879d15641b7c2c8))
+
 ## [8.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.0...v8.2.1) (2021-09-14)
 
 
