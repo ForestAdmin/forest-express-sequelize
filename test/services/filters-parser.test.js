@@ -1,5 +1,6 @@
 import moment from 'moment';
 import Sequelize from 'sequelize';
+import { SchemaUtils } from 'forest-express';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
 import { NoMatchingOperatorError } from '../../src/services/errors';
@@ -227,8 +228,13 @@ describe('services > filters-parser', () => {
 
       it('should not be null', async () => {
         expect.assertions(1);
+
+        const spy = jest.spyOn(SchemaUtils, 'isSmartField').mockReturnValue(false);
+
         expect(await filtersParser.perform(filters))
           .toStrictEqual({ '$car.brandName$': { [OPERATORS.LIKE]: 'Ferrari%' } });
+
+        spy.mockRestore();
       });
     });
   });
