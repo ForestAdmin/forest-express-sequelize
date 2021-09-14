@@ -1,3 +1,10 @@
+## [8.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.0...v8.2.1) (2021-09-14)
+
+
+### Bug Fixes
+
+* **smart field:** fix filter on smart reference ([#807](https://github.com/ForestAdmin/forest-express-sequelize/issues/807)) ([41edb92](https://github.com/ForestAdmin/forest-express-sequelize/commit/41edb9269b60d18c88fbdbbe871adcd2e479c497))
+
 # [8.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.2...v8.2.0) (2021-09-10)
 
 
