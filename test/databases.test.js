@@ -181,260 +181,258 @@ const user = { renderingId: 1 };
       as: 'customer',
     });
 
-    Interface.Schemas = {
-      schemas: {
-        user: {
-          name: 'user',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'email', type: 'String' },
-            { field: 'emailValid', type: 'Boolean' },
-            { field: 'firstName', type: 'String' },
-            { field: 'lastName', type: 'String' },
-            { field: 'username', type: 'String' },
-            { field: 'password', type: 'String' },
-            { field: 'createdAt', type: 'Date' },
-            { field: 'updatedAt', type: 'Date' },
-            { field: 'resetPasswordToken', type: 'String' },
-            { field: 'addresses', type: ['Number'] },
-            { field: 'uuid', type: 'String' },
-            { field: 'fullName', isVirtual: true, type: 'String' },
-            { field: 'age', type: 'Number' },
-          ],
-        },
-        bird: {
-          name: 'bird',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'String' },
-            { field: 'createdAt', type: 'Date' },
-            { field: 'updatedAt', type: 'Date' },
-          ],
-        },
-        bike: {
-          name: 'bike',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'String' },
-            { field: 'name', type: 'String' },
-            { field: 'createdAt', type: 'Date' },
-            { field: 'updatedAt', type: 'Date' },
-          ],
-        },
-        georegion: {
-          name: 'georegion',
-          idField: 'isocode',
-          primaryKeys: ['isocode'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'isocode', type: 'String' },
-            { field: 'nameEnglish', type: 'String' },
-            { field: 'nameFrench', type: 'String' },
-          ],
-        },
-        address: {
-          name: 'address',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'line', type: 'String' },
-            { field: 'zipCode', type: 'String' },
-            { field: 'city', type: 'String' },
-            { field: 'country', type: 'String' },
-            { field: 'user', type: 'Number', reference: 'user.id' },
-            { field: 'createdAt', type: 'Date' },
-            { field: 'updatedAt', type: 'Date' },
-          ],
-        },
-        addressWithUserAlias: {
-          name: 'addressWithUserAlias',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'line', type: 'String' },
-            { field: 'zipCode', type: 'String' },
-            { field: 'city', type: 'String' },
-            { field: 'country', type: 'String' },
-            { field: 'user', type: 'Number', reference: 'userAlias.id' },
-            { field: 'createdAt', type: 'Date' },
-            { field: 'updatedAt', type: 'Date' },
-          ],
-        },
-        log: {
-          name: 'log',
-          idField: 'forestCompositePrimary',
-          primaryKeys: ['code', 'trace'],
-          isCompositePrimary: true,
-          fields: [
-            { field: 'code', type: 'String' },
-            { field: 'trace', type: 'String' },
-            { field: 'stack', type: 'String' },
-            { field: 'createdAt', type: 'Date' },
-            { field: 'updatedAt', type: 'Date' },
-          ],
-        },
-        order: {
-          name: 'order',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          searchFields: ['amount', 'comment'],
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'amount', type: 'Number' },
-            { field: 'comment', type: 'String' },
-            { field: 'giftMessage', type: 'String' },
-          ],
-        },
-        team: {
-          name: 'team',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'String' },
-          ],
-        },
-        userTeam: {
-          name: 'userTeam',
-          idField: 'forestCompositePrimary',
-          primaryKeys: ['userId', 'teamId'],
-          isCompositePrimary: true,
-          fields: [
-            { field: 'user', type: 'Number', reference: 'user.id' },
-            { field: 'team', type: 'Number', reference: 'team.id' },
-          ],
-        },
-        member: {
-          name: 'member',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'String' },
-          ],
-        },
-        membership: {
-          name: 'membership',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'type', type: 'String' },
-            { field: 'member', type: 'Number', reference: 'member.id' },
-          ],
-        },
-        friend: {
-          name: 'friend',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'String' },
-            { field: 'member', type: 'Number', reference: 'member.id' },
-          ],
-        },
-        owner: {
-          name: 'owner',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'STRING' },
-            { field: 'ownerId', type: 'Number' },
-          ],
-        },
-        project: {
-          name: 'project',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'STRING' },
-            { field: 'ownerId', type: 'Number', reference: 'owner.ownerId' },
-          ],
-        },
-        counter: {
-          name: 'counter',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'clicks', type: 'Number' },
-            { field: 'quantity', type: 'Number' },
-          ],
-        },
-        customer: {
-          name: 'owner',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'name', type: 'STRING' },
-          ],
-        },
-        picture: {
-          name: 'picture',
-          idField: 'customerId',
-          primaryKeys: ['customerId'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'customerId', type: 'Number', reference: 'customer.id' },
-            { field: 'name', type: 'STRING' },
-          ],
-        },
-        car: {
-          name: 'car',
-          idField: 'id',
-          primaryKeys: ['id'],
-          isCompositePrimary: false,
-          fields: [
-            { field: 'id', type: 'Number' },
-            { field: 'brand', type: 'String' },
-            { field: 'model', type: 'String' },
-            {
-              field: 'name',
-              isVirtual: true,
-              type: 'String',
-              get: (car) => `${car.brand} ${car.model}`,
-              search: (query, search) => {
-                const split = search.split(' ');
-                const searchCondition = {
-                  [Sequelize.Op.and]: [
-                    { brand: { [Sequelize.Op.like]: `%${split[0]}%` } },
-                    { model: { [Sequelize.Op.like]: `%${split[1]}%` } },
-                  ],
-                };
-                query.where[Sequelize.Op.and][0][Sequelize.Op.or].push(searchCondition);
-                return query;
-              },
+    Interface.Schemas.schemas = {
+      user: {
+        name: 'user',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'email', type: 'String' },
+          { field: 'emailValid', type: 'Boolean' },
+          { field: 'firstName', type: 'String' },
+          { field: 'lastName', type: 'String' },
+          { field: 'username', type: 'String' },
+          { field: 'password', type: 'String' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+          { field: 'resetPasswordToken', type: 'String' },
+          { field: 'addresses', type: ['Number'] },
+          { field: 'uuid', type: 'String' },
+          { field: 'fullName', isVirtual: true, type: 'String' },
+          { field: 'age', type: 'Number' },
+        ],
+      },
+      bird: {
+        name: 'bird',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'String' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+        ],
+      },
+      bike: {
+        name: 'bike',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'String' },
+          { field: 'name', type: 'String' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+        ],
+      },
+      georegion: {
+        name: 'georegion',
+        idField: 'isocode',
+        primaryKeys: ['isocode'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'isocode', type: 'String' },
+          { field: 'nameEnglish', type: 'String' },
+          { field: 'nameFrench', type: 'String' },
+        ],
+      },
+      address: {
+        name: 'address',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'line', type: 'String' },
+          { field: 'zipCode', type: 'String' },
+          { field: 'city', type: 'String' },
+          { field: 'country', type: 'String' },
+          { field: 'user', type: 'Number', reference: 'user.id' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+        ],
+      },
+      addressWithUserAlias: {
+        name: 'addressWithUserAlias',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'line', type: 'String' },
+          { field: 'zipCode', type: 'String' },
+          { field: 'city', type: 'String' },
+          { field: 'country', type: 'String' },
+          { field: 'user', type: 'Number', reference: 'userAlias.id' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+        ],
+      },
+      log: {
+        name: 'log',
+        idField: 'forestCompositePrimary',
+        primaryKeys: ['code', 'trace'],
+        isCompositePrimary: true,
+        fields: [
+          { field: 'code', type: 'String' },
+          { field: 'trace', type: 'String' },
+          { field: 'stack', type: 'String' },
+          { field: 'createdAt', type: 'Date' },
+          { field: 'updatedAt', type: 'Date' },
+        ],
+      },
+      order: {
+        name: 'order',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        searchFields: ['amount', 'comment'],
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'amount', type: 'Number' },
+          { field: 'comment', type: 'String' },
+          { field: 'giftMessage', type: 'String' },
+        ],
+      },
+      team: {
+        name: 'team',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'String' },
+        ],
+      },
+      userTeam: {
+        name: 'userTeam',
+        idField: 'forestCompositePrimary',
+        primaryKeys: ['userId', 'teamId'],
+        isCompositePrimary: true,
+        fields: [
+          { field: 'user', type: 'Number', reference: 'user.id' },
+          { field: 'team', type: 'Number', reference: 'team.id' },
+        ],
+      },
+      member: {
+        name: 'member',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'String' },
+        ],
+      },
+      membership: {
+        name: 'membership',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'type', type: 'String' },
+          { field: 'member', type: 'Number', reference: 'member.id' },
+        ],
+      },
+      friend: {
+        name: 'friend',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'String' },
+          { field: 'member', type: 'Number', reference: 'member.id' },
+        ],
+      },
+      owner: {
+        name: 'owner',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'STRING' },
+          { field: 'ownerId', type: 'Number' },
+        ],
+      },
+      project: {
+        name: 'project',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'STRING' },
+          { field: 'ownerId', type: 'Number', reference: 'owner.ownerId' },
+        ],
+      },
+      counter: {
+        name: 'counter',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'clicks', type: 'Number' },
+          { field: 'quantity', type: 'Number' },
+        ],
+      },
+      customer: {
+        name: 'owner',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'name', type: 'STRING' },
+        ],
+      },
+      picture: {
+        name: 'picture',
+        idField: 'customerId',
+        primaryKeys: ['customerId'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'customerId', type: 'Number', reference: 'customer.id' },
+          { field: 'name', type: 'STRING' },
+        ],
+      },
+      car: {
+        name: 'car',
+        idField: 'id',
+        primaryKeys: ['id'],
+        isCompositePrimary: false,
+        fields: [
+          { field: 'id', type: 'Number' },
+          { field: 'brand', type: 'String' },
+          { field: 'model', type: 'String' },
+          {
+            field: 'name',
+            isVirtual: true,
+            type: 'String',
+            get: (car) => `${car.brand} ${car.model}`,
+            search: (query, search) => {
+              const split = search.split(' ');
+              const searchCondition = {
+                [Sequelize.Op.and]: [
+                  { brand: { [Sequelize.Op.like]: `%${split[0]}%` } },
+                  { model: { [Sequelize.Op.like]: `%${split[1]}%` } },
+                ],
+              };
+              query.where[Sequelize.Op.and][0][Sequelize.Op.or].push(searchCondition);
+              return query;
             },
-          ],
-          segments: [{
-            name: 'only monza sp*',
-            where: () => ({ model: { [Sequelize.Op.like]: '%Monza SP%' } }),
-          }],
-        },
+          },
+        ],
+        segments: [{
+          name: 'only monza sp*',
+          where: () => ({ model: { [Sequelize.Op.like]: '%Monza SP%' } }),
+        }],
       },
     };
 
