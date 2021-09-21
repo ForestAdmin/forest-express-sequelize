@@ -1,3 +1,13 @@
+## [8.2.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.4...v8.2.5) (2021-09-21)
+
+
+### Bug Fixes
+
+* **security:** patch jose dependency vulnerability ([#692](https://github.com/ForestAdmin/forest-express-sequelize/issues/692)) ([e9e3b96](https://github.com/ForestAdmin/forest-express-sequelize/commit/e9e3b96b60558554cc274a816b9fe13a0024344f))
+* **security:** patch path-parse dependency vulnerabilities ([#796](https://github.com/ForestAdmin/forest-express-sequelize/issues/796)) ([caf63e4](https://github.com/ForestAdmin/forest-express-sequelize/commit/caf63e449fe6555234c3c9817769def1746de09e))
+* **security:** patch semantic-release-slack-bot vulnerabilities ([#812](https://github.com/ForestAdmin/forest-express-sequelize/issues/812)) ([a8d8c5d](https://github.com/ForestAdmin/forest-express-sequelize/commit/a8d8c5d6afc9f2139e212e21813e7a40eeafdc8b))
+* **security:** patch tmpl dependency vulnerabilities ([#809](https://github.com/ForestAdmin/forest-express-sequelize/issues/809)) ([20b15c5](https://github.com/ForestAdmin/forest-express-sequelize/commit/20b15c505453e80364003b3baaaeb3e044300088))
+
 ## [8.2.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.3...v8.2.4) (2021-09-21)
 
 
