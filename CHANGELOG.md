@@ -1,3 +1,10 @@
+## [8.2.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.5...v8.2.6) (2021-09-21)
+
+
+### Bug Fixes
+
+* **security:** patch dependencies of dependencies vulnerabilities ([#823](https://github.com/ForestAdmin/forest-express-sequelize/issues/823)) ([3befd2c](https://github.com/ForestAdmin/forest-express-sequelize/commit/3befd2c1997d0cec34a2f74d4cd0da5737d190c8))
+
 ## [8.2.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.4...v8.2.5) (2021-09-21)
 
 
