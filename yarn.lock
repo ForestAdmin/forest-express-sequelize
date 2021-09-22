@@ -1272,31 +1272,17 @@
     pirates "^4.0.0"
     source-map-support "^0.5.16"
 
-"@babel/runtime@7.10.1", "@babel/runtime@^7.8.4":
+"@babel/runtime@7.10.1":
   version "7.10.1"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.10.1.tgz#b6eb75cac279588d3100baecd1b9894ea2840822"
   integrity sha512-nQbbCbQc9u/rpg1XCxoMYQTbSMVZjCDxErQ1ClCn9Pvcmv1lGads19ep0a2VsEiIJeHqjZley6EQGEC3Yo1xMA==
   dependencies:
     regenerator-runtime "^0.13.4"
 
-"@babel/runtime@7.15.4":
+"@babel/runtime@7.15.4", "@babel/runtime@^7.11.2", "@babel/runtime@^7.8.4", "@babel/runtime@^7.8.7":
   version "7.15.4"
   resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.15.4.tgz#fd17d16bfdf878e6dd02d19753a39fa8a8d9c84a"
   integrity sha512-99catp6bHCaxr4sJ/DbTGgHS4+Rs2RVd2g7iOap6SLGPDknRK9ztKNsE/Fg6QhSeh1FGE5f6gHGQmvvn3I3xhw==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
-"@babel/runtime@^7.11.2":
-  version "7.12.5"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.12.5.tgz#410e7e487441e1b360c29be715d870d9b985882e"
-  integrity sha512-plcc+hbExy3McchJCEQG3knOsuh3HH+Prx1P6cLIkET/0dLuQDEnrT+s27Axgc9bqfsmNUNHfscgMUdBpC9xfg==
-  dependencies:
-    regenerator-runtime "^0.13.4"
-
-"@babel/runtime@^7.8.7":
-  version "7.9.2"
-  resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.9.2.tgz#d90df0583a3a252f09aaa619665367bae518db06"
-  integrity sha512-NE2DtOdufG7R5vnfQUTehdTfNycfUANEtCa9PssN9O/xmTzP4E08UI797ixaei6hBEVL9BI/PsdJS5x7mWoB9Q==
   dependencies:
     regenerator-runtime "^0.13.4"
 
@@ -5127,10 +5113,10 @@ for-in@^1.0.2:
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
   integrity sha1-gQaNKVqBQuwKxybG4iAMMPttXoA=
 
-forest-express@9.2.5:
-  version "9.2.5"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-9.2.5.tgz#3364f7f185227ec9ef200ec7e33d87c229219c9e"
-  integrity sha512-vxqGRs9/lL+RwOSvpfPeKn0VSqy2wCJ4MY2kzL4DjirrBaOTHz8dsV2H0qIpxMMVQ8FyUDBhHH3fWsT+drWrgg==
+forest-express@9.2.6:
+  version "9.2.6"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-9.2.6.tgz#e0bcb8bed0338bdb69dfdc1982a46bfa3d2331b6"
+  integrity sha512-kcHWjjb/GfcA9EDUjIL6pII0y+/EZDVv7ahPJ3W+HZtTpYJSVNvXCMyw7ZVkZxeW7fWgvIsd2xzDe2YYSFBgXw==
   dependencies:
     "@babel/runtime" "7.10.1"
     base32-encode "1.1.1"
@@ -10134,12 +10120,12 @@ semver@7.0.0:
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.0.0.tgz#5f3ca35761e47e05b206c6daff2cf814f0316b8e"
   integrity sha512-+GB6zVA9LWh6zovYQLALHwv5rb2PHGlJi3lfiqIHxR0uuwCgefcOJc59v9fv1w8GbStwxuuqqAjI9NMAOOgq1A==
 
-semver@7.3.2, semver@^7.1.2, semver@^7.3.2:
+semver@7.3.2:
   version "7.3.2"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.2.tgz#604962b052b81ed0786aae84389ffba70ffd3938"
   integrity sha512-OrOb32TeeambH6UrhtShmF7CRDqhL6/5XpPNp2DuRH6+9QLw/orhp72j87v8Qa1ScDkvrrBNpZcDejAirJmfXQ==
 
-semver@^7.3.5:
+semver@^7.1.2, semver@^7.3.2, semver@^7.3.5:
   version "7.3.5"
   resolved "https://registry.yarnpkg.com/semver/-/semver-7.3.5.tgz#0b621c879348d8998e4b0e4be94b3f12e6018ef7"
   integrity sha512-PoeGJYh8HK4BTO/a9Tf6ZG3veo/A7ZVsYrSA6J8ny9nb3B1VrpkuN+z9OE5wfE5p6H4LchYZsegiQgbJD94ZFQ==
