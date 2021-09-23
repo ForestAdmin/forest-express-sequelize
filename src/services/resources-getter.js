@@ -60,7 +60,7 @@ class ResourcesGetter {
 
     const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
     const queryOptions = new QueryOptions(this._model, { tableAlias });
-    await queryOptions.requireFields(requestedFields, restrictFieldsOnRootModel);
+    if (!forCount) await queryOptions.requireFields(requestedFields, restrictFieldsOnRootModel);
     await queryOptions.search(search, searchExtended);
     await queryOptions.filterByConditionTree(filters, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
