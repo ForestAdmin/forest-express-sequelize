@@ -52,7 +52,7 @@ class ResourcesGetter {
   async _buildQueryOptions(buildOptions = {}) {
     const { forCount, tableAlias } = buildOptions;
     const {
-      fields, filters, restrictFieldsOnRootModel,
+      fields, filters,
       search, searchExtended, segment, segmentQuery, timezone,
     } = this._params;
 
@@ -60,7 +60,7 @@ class ResourcesGetter {
 
     const requestedFields = extractRequestedFields(fields, this._model, Schemas.schemas);
     const queryOptions = new QueryOptions(this._model, { tableAlias });
-    if (!forCount) await queryOptions.requireFields(requestedFields, restrictFieldsOnRootModel);
+    if (!forCount) await queryOptions.requireFields(requestedFields);
     await queryOptions.search(search, searchExtended);
     await queryOptions.filterByConditionTree(filters, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
