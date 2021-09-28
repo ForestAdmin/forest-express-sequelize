@@ -1,3 +1,10 @@
+## [8.2.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.7...v8.2.8) (2021-09-28)
+
+
+### Bug Fixes
+
+* **resources getter:** retrieve only the requested fields if no smart fields are requested ([#832](https://github.com/ForestAdmin/forest-express-sequelize/issues/832)) ([21cb24f](https://github.com/ForestAdmin/forest-express-sequelize/commit/21cb24f941217f432e544ff6ed38beed385ab525))
+
 ## [8.2.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.6...v8.2.7) (2021-09-22)
 
 
