@@ -31,13 +31,18 @@ class QueryOptions {
       options.limit = this._limit;
     }
 
-    if (this._restrictFieldsOnRootModel && this._requestedFields.size) {
+    if (this._requestedFields.size && !this._hasRequestedSmartFields) {
       // Restricting loaded fields on the root model is opt-in with sequelize to avoid
       // side-effects as this was not supported historically and it would probably break
       // smart fields.
       // @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/resources-getter.js#L142
 
-      options.attributes = [...this._requestedFields].filter((s) => !s.includes('.'));
+      const simpleSchemaFields = this._schema.fields
+        .filter((field) => !field.reference)
+        .map((field) => field.field);
+      options.attributes = [...this._requestedFields]
+        .filter((field) => simpleSchemaFields.includes(field));
+      options.attributes.push(...this._schema.primaryKeys);
     }
 
     return SequelizeCompatibility.postProcess(this._model, options);
@@ -67,7 +72,7 @@ class QueryOptions {
 
   /** Compute sequelize query `.include` property */
   get _sequelizeInclude() {
-    const fields = [...this._requestedFields, ...this._neededFields];
+    const fields = [...this._requestedFields, ...this._requestedRelations, ...this._neededFields];
     const include = [
       ...new QueryBuilder().getIncludes(this._model, fields.length ? fields : null),
       ...this._customerIncludes,
@@ -87,6 +92,11 @@ class QueryOptions {
     return this._order;
   }
 
+  get _hasRequestedSmartFields() {
+    return this._schema.fields
+      .some((field) => field.isVirtual && this._requestedFields.has(field.field));
+  }
+
   /**
    * @param {sequelize.model} model Sequelize model that should be targeted
    * @param {boolean} options.includeRelations Include BelongsTo and HasOne relations by default
@@ -102,8 +112,8 @@ class QueryOptions {
     this._options = options;
 
     // Used to compute relations that will go in the final 'include'
-    this._restrictFieldsOnRootModel = false;
     this._requestedFields = new Set();
+    this._requestedRelations = new Set();
     this._neededFields = new Set();
     this._scopes = []; // @see sequelizeScopes getter
 
@@ -117,7 +127,7 @@ class QueryOptions {
     if (this._options.includeRelations) {
       _.values(this._model.associations)
         .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
-        .forEach((association) => this._requestedFields.add(association.associationAccessor));
+        .forEach((association) => this._requestedRelations.add(association.associationAccessor));
     }
   }
 
@@ -128,12 +138,10 @@ class QueryOptions {
    * @param {string[]} fields the output of the extractRequestedFields() util function
    * @param {boolean} applyOnRootModel restrict fetched fields also on the root
    */
-  async requireFields(fields, applyOnRootModel = false) {
+  async requireFields(fields) {
     if (fields) {
       fields.forEach((field) => this._requestedFields.add(field));
     }
-
-    this._restrictFieldsOnRootModel = Boolean(applyOnRootModel);
   }
 
   /**

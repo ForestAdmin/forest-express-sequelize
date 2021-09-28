@@ -2856,6 +2856,7 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             ...baseParams,
+            sort: 'id',
             fields: { address: 'user', user: 'firstName' },
             page: { number: '1' },
           };
@@ -2879,6 +2880,7 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             ...baseParams,
+            sort: 'id',
             fields: { address: 'user', user: 'fullName' },
             page: { number: '1' },
           };
@@ -2897,8 +2899,8 @@ const user = { renderingId: 1 };
         });
       });
 
-      describe('request on the resources getter with restrictFieldsOnRootModel flag', () => {
-        it('should only retrieve requested fields with the flag', async () => {
+      describe('request on the resources getter with no smart fields', () => {
+        it('should only retrieve requested fields', async () => {
           expect.assertions(6);
           const { models } = initializeSequelize();
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
@@ -2906,7 +2908,6 @@ const user = { renderingId: 1 };
             ...baseParams,
             fields: { address: 'id,line,zipCode' },
             page: { number: '1' },
-            restrictFieldsOnRootModel: true,
           };
 
           try {
@@ -2917,30 +2918,6 @@ const user = { renderingId: 1 };
             expect(result[0][0].dataValues).toHaveProperty('zipCode');
             expect(result[0][0].dataValues).not.toHaveProperty('city');
             expect(result[0][0].dataValues).not.toHaveProperty('country');
-          } finally {
-            spy.mockRestore();
-            connectionManager.closeConnection();
-          }
-        });
-
-        it('should ignore requested fields without the flag', async () => {
-          expect.assertions(6);
-          const { models } = initializeSequelize();
-          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
-          const params = {
-            ...baseParams,
-            fields: { address: 'id,line,zipCode' },
-            page: { number: '1' },
-          };
-
-          try {
-            const result = await new ResourcesGetter(models.address, null, params).perform();
-            expect(result[0]).not.toBeEmpty();
-            expect(result[0][0].dataValues).toHaveProperty('id');
-            expect(result[0][0].dataValues).toHaveProperty('line');
-            expect(result[0][0].dataValues).toHaveProperty('zipCode');
-            expect(result[0][0].dataValues).toHaveProperty('city');
-            expect(result[0][0].dataValues).toHaveProperty('country');
           } finally {
             spy.mockRestore();
             connectionManager.closeConnection();
