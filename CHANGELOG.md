@@ -1,3 +1,10 @@
+## [8.2.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.8...v8.2.9) (2021-09-29)
+
+
+### Bug Fixes
+
+* smart actions restricted to a segment using segment query should be visible ([#837](https://github.com/ForestAdmin/forest-express-sequelize/issues/837)) ([dc9707b](https://github.com/ForestAdmin/forest-express-sequelize/commit/dc9707b9422c909a0255d479d7b0a02e75c65895))
+
 ## [8.2.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.7...v8.2.8) (2021-09-28)
 
 
