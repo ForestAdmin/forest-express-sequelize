@@ -1,3 +1,10 @@
+# [8.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.9...v8.3.0) (2021-09-30)
+
+
+### Features
+
+* **filter:** handle correctly uuid field type ([#835](https://github.com/ForestAdmin/forest-express-sequelize/issues/835)) ([92463c0](https://github.com/ForestAdmin/forest-express-sequelize/commit/92463c0adabfb1ca86eabeb18b14930995953caf))
+
 ## [8.2.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.8...v8.2.9) (2021-09-29)
 
 
