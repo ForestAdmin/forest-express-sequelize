@@ -483,7 +483,7 @@ const user = { renderingId: 1 };
           expect(schema.fields[7].type).toStrictEqual('Date');
           expect(schema.fields[8].type).toStrictEqual('Date');
           expect(schema.fields[9].type).toStrictEqual('String');
-          expect(schema.fields[10].type).toStrictEqual('String');
+          expect(schema.fields[10].type).toStrictEqual('Uuid');
           expect(schema.fields[11].type).toStrictEqual('Number');
           expect(schema.fields[12].type[0]).toStrictEqual('Number');
           expect(schema.fields[13].type[0]).toStrictEqual('Number');
