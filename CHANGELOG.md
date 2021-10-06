@@ -1,3 +1,10 @@
+## [8.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.0...v8.3.1) (2021-10-06)
+
+
+### Bug Fixes
+
+* **types:** update smart action hook return type ([#845](https://github.com/ForestAdmin/forest-express-sequelize/issues/845)) ([f6e7937](https://github.com/ForestAdmin/forest-express-sequelize/commit/f6e793763987a9f60e181432e6993d9997d91522))
+
 # [8.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.9...v8.3.0) (2021-09-30)
 
 
