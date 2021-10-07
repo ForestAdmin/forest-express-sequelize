@@ -1,3 +1,10 @@
+## [8.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.1...v8.3.2) (2021-10-07)
+
+
+### Bug Fixes
+
+* fix change hook types to allow asynchronous hook ([#847](https://github.com/ForestAdmin/forest-express-sequelize/issues/847)) ([63d4424](https://github.com/ForestAdmin/forest-express-sequelize/commit/63d44246e03fa44b075acc6ca24d9f9d8e54fcbc))
+
 ## [8.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.0...v8.3.1) (2021-10-06)
 
 
