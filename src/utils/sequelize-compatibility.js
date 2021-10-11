@@ -17,7 +17,7 @@ function bubbleWheresInPlace(operators, options) {
   const parentIncludeList = options.include ?? [];
 
   parentIncludeList.forEach((include) => {
-    bubbleWheresInPlace(operators, include);
+    bubbleWheresInPlace(operators, include instanceof Array ? include : [include]);
 
     if (include.where) {
       const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => {
