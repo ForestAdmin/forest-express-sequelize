@@ -107,7 +107,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('shoud add attributes when both sides are defined', () => {
+    it('should add attributes when both sides are defined', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
@@ -122,7 +122,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('shoud drop attributes when either side is undefined', () => {
+    it('should drop attributes when either side is undefined', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
@@ -231,6 +231,49 @@ describe('utils > sequelize-compatibility', () => {
           '$submodelAlias.subsubmodel1Alias.subsubTitle$': 'subsubtitle1',
           '$submodelAlias.subsubmodel2Alias.subsubTitle$': 'subsubtitle2',
         },
+      });
+    });
+
+
+    it('should add attributes when include is not an array (for sequelize > 5)', () => {
+      expect.assertions(1);
+
+      const sequelizeV6 = { constructor: { version: '6.5.5' } };
+      const ModelV6 = {
+        sequelize: sequelizeV6,
+        name: 'model',
+        associations: {
+          submodelAlias: {
+            target: {
+              sequelize: sequelizeV6,
+              name: 'submodel',
+              associations: {
+                subsubmodel1Alias: {
+                  target: {
+                    sequelize: sequelizeV6,
+                    name: 'subsubmodel2',
+                    associations: {},
+                  },
+                },
+                subsubmodel2Alias: {
+                  target: {
+                    sequelize: sequelizeV6,
+                    name: 'subsubmodel1',
+                    associations: {},
+                  },
+                },
+              },
+            },
+          },
+        },
+      };
+
+      const options = postProcess(ModelV6, {
+        include: { as: 'submodelAlias', attributes: ['id'] },
+      });
+
+      expect(options).toStrictEqual({
+        include: { as: 'submodelAlias', attributes: ['id'] },
       });
     });
   });

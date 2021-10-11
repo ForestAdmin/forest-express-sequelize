@@ -14,10 +14,11 @@ import QueryUtils from './query';
  * @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/filters-parser.js#L104
  */
 function bubbleWheresInPlace(operators, options) {
-  const parentIncludeList = options.include ?? [];
+  const includeOptions = options.include ?? [];
+  const parentIncludeList = includeOptions instanceof Array ? includeOptions : [includeOptions];
 
   parentIncludeList.forEach((include) => {
-    bubbleWheresInPlace(operators, include instanceof Array ? include : [include]);
+    bubbleWheresInPlace(operators, include);
 
     if (include.where) {
       const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => {
