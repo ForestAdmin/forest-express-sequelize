@@ -1,3 +1,10 @@
+## [8.3.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.2...v8.3.3) (2021-10-14)
+
+
+### Bug Fixes
+
+* **types:** add schemaDir property in LianaOptions type ([#853](https://github.com/ForestAdmin/forest-express-sequelize/issues/853)) ([f88aad0](https://github.com/ForestAdmin/forest-express-sequelize/commit/f88aad0935d94d40894583fc77decc3d6410935e))
+
 ## [8.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.1...v8.3.2) (2021-10-07)
 
 
