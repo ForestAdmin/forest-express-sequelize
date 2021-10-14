@@ -11,6 +11,7 @@ export interface LianaOptions {
   includedModels?: string[];
   excludedModels?: string[];
   configDir?: string;
+  schemaDir?: string;
 }
 
 export function init(options: LianaOptions): Promise<Application>;
