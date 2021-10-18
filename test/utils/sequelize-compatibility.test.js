@@ -235,45 +235,20 @@ describe('utils > sequelize-compatibility', () => {
     });
 
 
-    it('should add attributes when include is not an array (for sequelize > 5)', () => {
+    it('should add attributes when sub include is not an array', () => {
       expect.assertions(1);
 
-      const sequelizeV6 = { constructor: { version: '6.5.5' } };
-      const ModelV6 = {
-        sequelize: sequelizeV6,
-        name: 'model',
-        associations: {
-          submodelAlias: {
-            target: {
-              sequelize: sequelizeV6,
-              name: 'submodel',
-              associations: {
-                subsubmodel1Alias: {
-                  target: {
-                    sequelize: sequelizeV6,
-                    name: 'subsubmodel2',
-                    associations: {},
-                  },
-                },
-                subsubmodel2Alias: {
-                  target: {
-                    sequelize: sequelizeV6,
-                    name: 'subsubmodel1',
-                    associations: {},
-                  },
-                },
-              },
-            },
-          },
-        },
-      };
-
-      const options = postProcess(ModelV6, {
-        include: { as: 'submodelAlias', attributes: ['id'] },
+      const options = postProcess(Model, {
+        include: [{ as: 'submodelAlias', attributes: ['id'], include: 'subsubmodel1Alias' }],
       });
 
       expect(options).toStrictEqual({
-        include: { as: 'submodelAlias', attributes: ['id'] },
+        include: [{
+          as: 'submodelAlias',
+          model: SubModel,
+          attributes: ['id'],
+          include: [{ as: 'subsubmodel1Alias', model: SubSubModel1 }],
+        }],
       });
     });
   });

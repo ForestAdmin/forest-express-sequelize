@@ -90,7 +90,7 @@ function normalizeInclude(model, include) {
         (childInclude) => normalizeInclude(include.model, childInclude),
       );
     } else {
-      include.include = normalizeInclude(include.model, include.include);
+      include.include = [normalizeInclude(include.model, include.include)];
     }
   }
 
