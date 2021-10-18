@@ -16,7 +16,7 @@ describe('services > query-options', () => {
       schemas: {
         actor: {
           idField: 'id',
-          fields: [{ field: 'smartField', search: (query) => { query.include = 'movie'; } }],
+          fields: [{ field: 'smartField' }],
         },
       },
     };
@@ -114,6 +114,18 @@ describe('services > query-options', () => {
         expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField', errorThrown);
 
         loggerErrorSpy.mockClear();
+      });
+    });
+
+    describe('when smartField return none array include', () => {
+      it('should transform to include to array', async () => {
+        expect.assertions(1);
+
+        Interface.Schemas.schemas.actor.fields[0].search = (query) => { query.include = 'movie'; };
+
+        const options = new QueryOptions(model);
+        await options.search('search string', null);
+        expect(options._customerIncludes).toStrictEqual(['movie']);
       });
     });
   });
