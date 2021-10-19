@@ -224,7 +224,7 @@ class QueryOptions {
   async segmentQuery(query) {
     if (!query) return;
 
-    const [primaryKey] = _.keys(this._model.primaryKeys);
+    const primaryKey = _.values(this._model.primaryKeys)[0].field;
     const queryToFilterRecords = query.trim();
 
     new LiveQueryChecker().perform(queryToFilterRecords);
