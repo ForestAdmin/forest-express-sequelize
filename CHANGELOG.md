@@ -1,3 +1,10 @@
+# [8.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.3...v8.4.0) (2021-10-19)
+
+
+### Features
+
+* **perf:** do not send schema to Forest when unchanged ([#858](https://github.com/ForestAdmin/forest-express-sequelize/issues/858)) ([fb81ea7](https://github.com/ForestAdmin/forest-express-sequelize/commit/fb81ea78ff0ea62fae62345a18f51783893b4694))
+
 ## [8.3.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.2...v8.3.3) (2021-10-14)
 
 
