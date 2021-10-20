@@ -1,3 +1,10 @@
+## [8.4.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.0...v8.4.1) (2021-10-20)
+
+
+### Bug Fixes
+
+* allow async search on smart field ([#860](https://github.com/ForestAdmin/forest-express-sequelize/issues/860)) ([a497af1](https://github.com/ForestAdmin/forest-express-sequelize/commit/a497af1f74cdabdb7682e7eec7ad08499f23755d))
+
 # [8.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.3...v8.4.0) (2021-10-19)
 
 
