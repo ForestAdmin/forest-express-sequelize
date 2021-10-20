@@ -130,10 +130,10 @@ describe('services > query-options', () => {
     });
 
     describe('when smartField return none array include', () => {
-      it('should transform to include to array', async () => {
+      it('should transform include to array', async () => {
         expect.assertions(1);
 
-        Interface.Schemas.schemas.actor.fields[0].search = (query) => { query.include.push = 'movie'; };
+        Interface.Schemas.schemas.actor.fields[0].search = (query) => { query.include = 'movie'; };
 
         const options = new QueryOptions(model);
         await options.search('search string', null);
