@@ -1,3 +1,10 @@
+## [8.4.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.1...v8.4.2) (2021-10-20)
+
+
+### Bug Fixes
+
+* **retrocompatibility:** handle sequelize includables on smart field search ([#850](https://github.com/ForestAdmin/forest-express-sequelize/issues/850)) ([114e88f](https://github.com/ForestAdmin/forest-express-sequelize/commit/114e88fc4ea008fff2cf8db1e72d638085b4d492))
+
 ## [8.4.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.0...v8.4.1) (2021-10-20)
 
 
