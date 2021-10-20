@@ -1,3 +1,10 @@
+## [8.4.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.3...v8.4.4) (2021-10-20)
+
+
+### Bug Fixes
+
+* **segment query:** segment query returns no result when primary key is camelCased ([#859](https://github.com/ForestAdmin/forest-express-sequelize/issues/859)) ([7244a11](https://github.com/ForestAdmin/forest-express-sequelize/commit/7244a11acfe730830d7baa5d70c5d7dc6d14fe0e))
+
 ## [8.4.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.2...v8.4.3) (2021-10-20)
 
 
