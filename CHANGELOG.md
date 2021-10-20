@@ -1,3 +1,10 @@
+## [8.4.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.2...v8.4.3) (2021-10-20)
+
+
+### Bug Fixes
+
+* **smart-field:** smart field should allow to request all fields ([#861](https://github.com/ForestAdmin/forest-express-sequelize/issues/861)) ([8f27c23](https://github.com/ForestAdmin/forest-express-sequelize/commit/8f27c236aa58501b426ec1fd0306b1b38e92bde1))
+
 ## [8.4.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.1...v8.4.2) (2021-10-20)
 
 
