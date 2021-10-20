@@ -85,8 +85,10 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
         try {
           await field.search(query, params.search);
         } catch (error) {
-          Interface.logger.error(`Cannot search properly on Smart Field ${field.field}`, error);
+          const errorMessage = `Cannot search properly on Smart Field ${field.field}`;
+          Interface.logger.error(errorMessage, error);
         }
+        return Promise.resolve();
       }),
     );
 
