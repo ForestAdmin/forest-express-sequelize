@@ -1,3 +1,12 @@
+## [7.12.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.2...v7.12.3) (2021-10-20)
+
+
+### Bug Fixes
+
+* **retrocompatibility:** handle sequelize includables on smart field search ([#850](https://github.com/ForestAdmin/forest-express-sequelize/issues/850)) ([3c1a677](https://github.com/ForestAdmin/forest-express-sequelize/commit/3c1a6770a5f77ab2575e626a32d5c483089691ca))
+* **smart-field:** smart field should allow to request all fields ([#861](https://github.com/ForestAdmin/forest-express-sequelize/issues/861)) ([80c4fcc](https://github.com/ForestAdmin/forest-express-sequelize/commit/80c4fcc75544cbc8e9e3c1132452edbf64f61713))
+* allow async search on smart field ([#860](https://github.com/ForestAdmin/forest-express-sequelize/issues/860)) ([bdf9edd](https://github.com/ForestAdmin/forest-express-sequelize/commit/bdf9edd6b75dddb0da9cb2005f775ad3bbb16981))
+
 ## [7.12.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.1...v7.12.2) (2021-07-06)
 
 
