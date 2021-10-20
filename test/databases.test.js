@@ -27,7 +27,7 @@ const user = { renderingId: 1 };
 
     models.user = sequelize.define('user', {
       primaryId: {
-        type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true,
+        type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true, field: 'a_custom_name',
       },
       email: { type: Sequelize.STRING, unique: true, validate: { isEmail: true } },
       emailValid: { type: Sequelize.BOOLEAN },
