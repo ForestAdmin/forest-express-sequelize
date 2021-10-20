@@ -25,7 +25,17 @@ describe('services > requested-fields-extractor', () => {
       associations: {},
     };
 
-    const result = extractRequestedFields(fields, model);
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
 
     expect(result).toStrictEqual(['id', 'name']);
   });
@@ -43,7 +53,17 @@ describe('services > requested-fields-extractor', () => {
       associations: {},
     };
 
-    const result = extractRequestedFields(fields, model);
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
 
     expect(result).toStrictEqual(['id', 'name']);
   });
@@ -70,7 +90,15 @@ describe('services > requested-fields-extractor', () => {
     };
 
     const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
       addresses: {
+        name: 'addresses',
         fields: [{
           field: 'street',
           isVirtual: false,
@@ -105,7 +133,15 @@ describe('services > requested-fields-extractor', () => {
     };
 
     const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
       addresses: {
+        name: 'addresses',
         fields: [
           {
             field: 'street',
@@ -147,7 +183,15 @@ describe('services > requested-fields-extractor', () => {
     };
 
     const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
       addresses: {
+        name: 'addresses',
         fields: [
           {
             field: 'street',
@@ -164,6 +208,40 @@ describe('services > requested-fields-extractor', () => {
       'name',
       'account',
       'homeAddress',
+    ]);
+  });
+
+  it('should include requested smart field', () => {
+    expect.assertions(1);
+
+    const fields = {
+      user: 'smartField',
+    };
+
+    const model = {
+      name: 'user',
+      primaryKeys: { id: null, uid: null },
+      associations: {},
+    };
+
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'smartField',
+          isVirtual: true,
+        }, {
+          field: 'anotherSmartField',
+          isVirtual: true,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
+
+    expect(result).toStrictEqual([
+      'id',
+      'smartField',
     ]);
   });
 });
