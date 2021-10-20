@@ -227,7 +227,7 @@ export interface SmartFieldSearchQuery {
 }
 
 export interface SmartFieldSearcher {
-  (query: SmartFieldSearchQuery, search: string): SmartFieldSearchQuery;
+  (query: SmartFieldSearchQuery, search: string): SmartFieldSearchQuery | Promise<SmartFieldSearchQuery>;
 }
 
 export interface SmartFieldFiltererFilter {
