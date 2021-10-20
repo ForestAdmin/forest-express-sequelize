@@ -3,6 +3,17 @@ import Interface from 'forest-express';
 import QueryOptions from '../../src/services/query-options';
 
 describe('services > query-options', () => {
+  const resetSchema = () => {
+    Interface.Schemas = {
+      schemas: {
+        actor: {
+          idField: 'id',
+          fields: [{ field: 'smartField' }, { field: 'secondSmartField' }],
+        },
+      },
+    };
+  };
+
   const buildModelMock = (dialect) => {
     // Sequelize is created here without connection to a database
     const sequelize = new Sequelize({ dialect });
@@ -10,16 +21,9 @@ describe('services > query-options', () => {
     const modelActor = sequelize.define('actor', {});
     const modelMovie = sequelize.define('movie', {});
 
-    modelActor.belongsTo(modelMovie);
+    resetSchema();
 
-    Interface.Schemas = {
-      schemas: {
-        actor: {
-          idField: 'id',
-          fields: [{ field: 'smartField' }],
-        },
-      },
-    };
+    modelActor.belongsTo(modelMovie);
 
     return modelActor;
   };
@@ -83,20 +87,27 @@ describe('services > query-options', () => {
           expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField', errorThrown);
 
           loggerErrorSpy.mockClear();
+          resetSchema();
         });
       });
 
-      it('should add the search query', async () => {
+      it('should add the search includes', async () => {
         expect.assertions(1);
 
         Interface.Schemas.schemas.actor.fields[0].search = async (query) => {
           await Promise.resolve();
-          query.include = ['movie'];
+          query.include.push('movie');
+        };
+        Interface.Schemas.schemas.actor.fields[1].search = async (query) => {
+          await Promise.resolve();
+          query.include.push('toto');
         };
 
         const options = new QueryOptions(model);
         await options.search('search string', null);
-        expect(options._customerIncludes).toStrictEqual(['movie']);
+        expect(options._customerIncludes).toStrictEqual(['movie', 'toto']);
+
+        resetSchema();
       });
     });
 
@@ -114,6 +125,7 @@ describe('services > query-options', () => {
         expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField', errorThrown);
 
         loggerErrorSpy.mockClear();
+        resetSchema();
       });
     });
 
@@ -121,11 +133,13 @@ describe('services > query-options', () => {
       it('should transform to include to array', async () => {
         expect.assertions(1);
 
-        Interface.Schemas.schemas.actor.fields[0].search = (query) => { query.include = 'movie'; };
+        Interface.Schemas.schemas.actor.fields[0].search = (query) => { query.include.push = 'movie'; };
 
         const options = new QueryOptions(model);
         await options.search('search string', null);
         expect(options._customerIncludes).toStrictEqual(['movie']);
+
+        resetSchema();
       });
     });
   });
