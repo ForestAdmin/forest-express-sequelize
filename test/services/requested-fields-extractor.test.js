@@ -210,4 +210,38 @@ describe('services > requested-fields-extractor', () => {
       'homeAddress',
     ]);
   });
+
+  it('should include requested smart field', () => {
+    expect.assertions(1);
+
+    const fields = {
+      user: 'smartField',
+    };
+
+    const model = {
+      name: 'user',
+      primaryKeys: { id: null, uid: null },
+      associations: {},
+    };
+
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'smartField',
+          isVirtual: true,
+        }, {
+          field: 'anotherSmartField',
+          isVirtual: true,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
+
+    expect(result).toStrictEqual([
+      'id',
+      'smartField',
+    ]);
+  });
 });
