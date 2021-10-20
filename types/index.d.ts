@@ -153,7 +153,7 @@ export interface SmartFieldValueSetter<M extends Sequelize.Model = any> {
 }
 
 export interface SmartFieldSearchQuery {
-  include: string[],
+  include: Sequelize.Includeable | Sequelize.Includeable[],
   where: Sequelize.WhereOptions,
 }
 
