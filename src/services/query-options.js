@@ -158,7 +158,7 @@ class QueryOptions {
     const fieldNames = this._requestedFields.size ? [...this._requestedFields] : null;
     const helper = new SearchBuilder(this._model, options, { search, searchExtended }, fieldNames);
 
-    const { conditions, include } = helper.performWithSmartFields(this._options.tableAlias);
+    const { conditions, include } = await helper.performWithSmartFields(this._options.tableAlias);
     if (conditions) {
       this._where.push(conditions);
     } else {
