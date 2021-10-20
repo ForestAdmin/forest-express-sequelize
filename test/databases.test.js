@@ -26,6 +26,9 @@ const user = { renderingId: 1 };
     const options = { Sequelize, connections: { sequelize } };
 
     models.user = sequelize.define('user', {
+      primaryId: {
+        type: Sequelize.INTEGER, primaryKey: true, autoIncrement: true,
+      },
       email: { type: Sequelize.STRING, unique: true, validate: { isEmail: true } },
       emailValid: { type: Sequelize.BOOLEAN },
       firstName: { type: Sequelize.STRING },
@@ -152,11 +155,11 @@ const user = { renderingId: 1 };
       },
     });
 
-    models.address.belongsTo(models.user);
-    models.addressWithUserAlias.belongsTo(models.user, { as: 'userAlias' });
-    models.user.hasMany(models.address);
-    models.team.belongsToMany(models.user, { through: 'userTeam' });
-    models.user.belongsToMany(models.team, { through: 'userTeam' });
+    models.address.belongsTo(models.user, { foreignKey: 'userId' });
+    models.addressWithUserAlias.belongsTo(models.user, { foreignKey: 'userId', as: 'userAlias' });
+    models.user.hasMany(models.address, { foreignKey: 'userId' });
+    models.team.belongsToMany(models.user, { through: 'userTeam', otherKey: 'userId' });
+    models.user.belongsToMany(models.team, { through: 'userTeam', foreignKey: 'userId' });
     models.membership.belongsTo(models.member);
     models.member.hasOne(models.membership);
     models.member.hasMany(models.friend);
@@ -184,11 +187,11 @@ const user = { renderingId: 1 };
     Interface.Schemas.schemas = {
       user: {
         name: 'user',
-        idField: 'id',
-        primaryKeys: ['id'],
+        idField: 'primaryId',
+        primaryKeys: ['primaryId'],
         isCompositePrimary: false,
         fields: [
-          { field: 'id', type: 'Number' },
+          { field: 'primaryId', type: 'Number' },
           { field: 'email', type: 'String' },
           { field: 'emailValid', type: 'Boolean' },
           { field: 'firstName', type: 'String' },
@@ -250,7 +253,7 @@ const user = { renderingId: 1 };
           { field: 'zipCode', type: 'String' },
           { field: 'city', type: 'String' },
           { field: 'country', type: 'String' },
-          { field: 'user', type: 'Number', reference: 'user.id' },
+          { field: 'user', type: 'Number', reference: 'user.primaryId' },
           { field: 'createdAt', type: 'Date' },
           { field: 'updatedAt', type: 'Date' },
         ],
@@ -266,7 +269,7 @@ const user = { renderingId: 1 };
           { field: 'zipCode', type: 'String' },
           { field: 'city', type: 'String' },
           { field: 'country', type: 'String' },
-          { field: 'user', type: 'Number', reference: 'userAlias.id' },
+          { field: 'user', type: 'Number', reference: 'userAlias.primaryId' },
           { field: 'createdAt', type: 'Date' },
           { field: 'updatedAt', type: 'Date' },
         ],
@@ -313,7 +316,7 @@ const user = { renderingId: 1 };
         primaryKeys: ['userId', 'teamId'],
         isCompositePrimary: true,
         fields: [
-          { field: 'user', type: 'Number', reference: 'user.id' },
+          { field: 'user', type: 'Number', reference: 'user.primaryId' },
           { field: 'team', type: 'Number', reference: 'team.id' },
         ],
       },
@@ -458,9 +461,9 @@ const user = { renderingId: 1 };
         it('should define an idField', async () => {
           expect.assertions(3);
           const schema = await initializeSchema('user');
-          expect(schema.idField).toStrictEqual('id');
+          expect(schema.idField).toStrictEqual('primaryId');
           expect(schema.primaryKeys).toHaveLength(1);
-          expect(schema.primaryKeys[0]).toStrictEqual('id');
+          expect(schema.primaryKeys[0]).toStrictEqual('primaryId');
         });
 
         it('should not detect a composite primary key', async () => {
@@ -566,7 +569,7 @@ const user = { renderingId: 1 };
                 ...baseParams,
                 type: 'Pie',
                 collection: 'addressWithUserAlias',
-                group_by_field: 'userAlias:id',
+                group_by_field: 'userAlias:primaryId',
                 aggregate: 'Count',
                 time_range: null,
                 filters: null,
@@ -687,7 +690,7 @@ const user = { renderingId: 1 };
               group_by_date_field: 'createdAt',
               aggregate: 'Count',
               time_range: 'Year',
-              filters: JSON.stringify({ field: 'user:id', operator: 'equal', value: 100 }),
+              filters: JSON.stringify({ field: 'user:primaryId', operator: 'equal', value: 100 }),
             }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
@@ -709,7 +712,7 @@ const user = { renderingId: 1 };
             ...baseParams,
             type: 'Value',
             aggregate: 'Sum',
-            aggregate_field: 'id',
+            aggregate_field: 'primaryId',
           }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: undefined });
@@ -729,7 +732,7 @@ const user = { renderingId: 1 };
             ...baseParams,
             type: 'Value',
             aggregate: 'Sum',
-            aggregate_field: 'id',
+            aggregate_field: 'primaryId',
             filters: '{"field":"createdAt","operator":"previous_month_to_date","value":null}',
           }, options, user).perform();
 
@@ -750,12 +753,12 @@ const user = { renderingId: 1 };
             ...baseParams,
             type: 'Value',
             aggregate: 'Sum',
-            aggregate_field: 'id',
+            aggregate_field: 'primaryId',
             filters: JSON.stringify({
               aggregator: 'and',
               conditions: [
                 { field: 'createdAt', operator: 'previous_month_to_date', value: null },
-                { field: 'id', operator: 'greater_than', value: 100 },
+                { field: 'primaryId', operator: 'greater_than', value: 100 },
               ],
             }),
           }, options, user).perform();
@@ -777,7 +780,7 @@ const user = { renderingId: 1 };
             ...baseParams,
             type: 'Value',
             aggregate: 'Count',
-            filters: '{"field":"user:id","operator":"greater_than","value":0}',
+            filters: '{"field":"user:primaryId","operator":"greater_than","value":0}',
           }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 4, countPrevious: undefined });
@@ -796,7 +799,7 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           try {
             const result = await new ResourceCreator(models.user, baseParams, {
-              id: '1',
+              primaryId: '1',
               email: 'jack@forestadmin.com',
               firstName: 'Jack',
               lastName: 'Lumberjack',
@@ -804,7 +807,7 @@ const user = { renderingId: 1 };
               password: 'bonpoissonnet',
               teams: [],
             }, user).perform();
-            expect(result.id).toStrictEqual(1);
+            expect(result.primaryId).toStrictEqual(1);
             expect(result.firstName).toStrictEqual('Jack');
             expect(result.username).toStrictEqual('Jacouille');
 
@@ -1130,7 +1133,7 @@ const user = { renderingId: 1 };
           try {
             const params = {
               ...baseParams,
-              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
+              fields: { user: 'primaryprimaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
               page: { number: '1' },
             };
             await new ResourcesGetter(models.user, null, params, user).perform();
@@ -1150,7 +1153,7 @@ const user = { renderingId: 1 };
           const params = {
             ...baseParams,
             fields: {
-              user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
+              user: 'primaryprimaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
             },
             page: { number: '1', size: '30' },
           };
@@ -1184,8 +1187,8 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             ...baseParams,
-            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
-            sort: '-id',
+            fields: { user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
+            sort: '-primaryId',
             page: { number: '1', size: '30' },
           };
           try {
@@ -1221,7 +1224,7 @@ const user = { renderingId: 1 };
             const params = {
               ...baseParams,
               fields: {
-                user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
+                user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken',
               },
               page: { number: '1', size: '30' },
               search: 'hello',
@@ -1257,7 +1260,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...baseParams,
-              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
+              fields: { user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
               page: { number: '1', size: '30' },
               search: '10',
             };
@@ -1397,7 +1400,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...baseParams,
-              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
+              fields: { user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
               page: { number: '1', size: '30' },
               segmentQuery: "SELECT * FROM users WHERE users.email = 'richard@piedpiper.com'",
             };
@@ -1436,7 +1439,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...baseParams,
-              fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
+              fields: { user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken,age' },
               page: { number: '1', size: '30' },
               segmentQuery: 'SELECT * FROM use',
             };
@@ -1810,7 +1813,7 @@ const user = { renderingId: 1 };
       describe('request on the resources getter with filters conditions', () => {
         const paramsBaseList = {
           ...baseParams,
-          fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
+          fields: { user: 'primaryprimaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
           page: { number: '1', size: '30' },
         };
 
@@ -1831,7 +1834,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseList,
-              filters: JSON.stringify({ field: 'id', operator: 'equal', value: 100 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'equal', value: 100 }),
             };
 
             try {
@@ -1849,7 +1852,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseCount,
-              filters: JSON.stringify({ field: 'id', operator: 'equal', value: 100 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'equal', value: 100 }),
             };
 
             try {
@@ -1869,7 +1872,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseList,
-              filters: JSON.stringify({ field: 'id', operator: 'greater_than', value: 101 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'greater_than', value: 101 }),
             };
 
             try {
@@ -1887,7 +1890,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseCount,
-              filters: JSON.stringify({ field: 'id', operator: 'greater_than', value: 101 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'greater_than', value: 101 }),
             };
 
             try {
@@ -1907,7 +1910,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseList,
-              filters: JSON.stringify({ field: 'id', operator: 'less_than', value: 104 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'less_than', value: 104 }),
             };
 
             try {
@@ -1925,7 +1928,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseCount,
-              filters: JSON.stringify({ field: 'id', operator: 'less_than', value: 104 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'less_than', value: 104 }),
             };
 
             try {
@@ -1945,7 +1948,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseList,
-              filters: JSON.stringify({ field: 'id', operator: 'not_equal', value: 100 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'not_equal', value: 100 }),
             };
 
             try {
@@ -1963,7 +1966,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseCount,
-              filters: JSON.stringify({ field: 'id', operator: 'not_equal', value: 100 }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'not_equal', value: 100 }),
             };
 
             try {
@@ -2583,11 +2586,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseList,
-              filters: JSON.stringify({
-                field: 'id',
-                operator: 'in',
-                value: [100, 101, 102],
-              }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'in', value: [100, 101, 102] }),
             };
 
             try {
@@ -2607,11 +2606,7 @@ const user = { renderingId: 1 };
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             const params = {
               ...paramsBaseList,
-              filters: JSON.stringify({
-                field: 'id',
-                operator: 'in',
-                value: [100, 101, 102],
-              }),
+              filters: JSON.stringify({ field: 'primaryId', operator: 'in', value: [100, 101, 102] }),
             };
 
             try {
@@ -2644,7 +2639,7 @@ const user = { renderingId: 1 };
                 value: 'Lumb',
               }],
             }, {
-              field: 'id',
+              field: 'primaryId',
               operator: 'greater_than',
               value: 12,
             }],
@@ -2689,7 +2684,7 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             ...baseParams,
-            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
+            fields: { user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
             page: { number: '2', size: '50' },
             filters: JSON.stringify({ field: 'username', operator: 'contains', value: 'hello' }),
             search: 'world',
@@ -2731,7 +2726,7 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             ...baseParams,
-            fields: { user: 'id', address: 'line,zipCode,city,country,user' },
+            fields: { user: 'primaryId', address: 'line,zipCode,city,country,user' },
             page: { number: '1', size: '10' },
             search: '1a11dc05-4e04-4d8f-958b-0a9f23a141a3',
             searchExtended: 1,
@@ -2773,10 +2768,10 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             ...baseParams,
-            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
+            fields: { user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
             page: { number: '2', size: '50' },
             filters: JSON.stringify({ field: 'username', operator: 'contains', value: 'hello' }),
-            sort: '-id',
+            sort: '-primaryId',
             search: 'world',
           };
 
@@ -2816,10 +2811,10 @@ const user = { renderingId: 1 };
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
             ...baseParams,
-            fields: { user: 'id,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
+            fields: { user: 'primaryId,firstName,lastName,username,password,createdAt,updatedAt,resetPasswordToken' },
             page: { number: '1', size: '50' },
-            sort: '-id',
-            segmentQuery: 'select * from users\nwhere id in (100, 102);',
+            sort: '-primaryId',
+            segmentQuery: 'select * from users limit 2;',
           };
 
           try {
@@ -2836,7 +2831,7 @@ const user = { renderingId: 1 };
           const { models } = initializeSequelize();
           const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
           const params = {
-            segmentQuery: 'select * from users\nwhere id in (100, 102);',
+            segmentQuery: 'select * from users limit 2',
             timezone: 'Europe/Paris',
           };
           try {
@@ -2866,7 +2861,7 @@ const user = { renderingId: 1 };
             expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
-            expect(result[0][0].user.dataValues).toHaveProperty('id');
+            expect(result[0][0].user.dataValues).toHaveProperty('primaryId');
             expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
           } finally {
             spy.mockRestore();
@@ -2889,8 +2884,8 @@ const user = { renderingId: 1 };
             const result = await new ResourcesGetter(models.address, null, params).perform();
             expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
+            expect(result[0][0].user.dataValues).toHaveProperty('primaryId');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
-            expect(result[0][0].user.dataValues).toHaveProperty('id');
             expect(result[0][0].user.dataValues).toHaveProperty('lastName');
           } finally {
             spy.mockRestore();
@@ -2991,7 +2986,7 @@ const user = { renderingId: 1 };
             associationName: 'addresses',
             fields: {
               address: 'line,zipCode,city,country',
-              user: 'id',
+              user: 'primaryId',
             },
             page: { number: '1', size: '20' },
           };
@@ -3006,7 +3001,7 @@ const user = { renderingId: 1 };
             expect(result[0]).not.toBeEmpty();
 
             const firstEntry = result[0][0];
-            expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['id']);
+            expect(Object.keys(firstEntry.user.dataValues)).toStrictEqual(['primaryId']);
           } finally {
             spy.mockRestore();
             connectionManager.closeConnection();
@@ -3111,7 +3106,7 @@ const user = { renderingId: 1 };
             associationName: 'addresses',
             fields: { address: 'line,zipCode,city,country,user' },
             page: { number: '1', size: '20' },
-            sort: '-user.id',
+            sort: '-user.primaryId',
           };
           try {
             const result = await new HasManyGetter(
@@ -3171,7 +3166,7 @@ const user = { renderingId: 1 };
               user,
             ).perform();
             expect(result[0]).not.toBeEmpty();
-            expect(result[0][0].user.dataValues).toHaveProperty('id');
+            expect(result[0][0].user.dataValues).toHaveProperty('primaryId');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
             expect(result[0][0].user.dataValues).toHaveProperty('lastName');
           } finally {
@@ -3202,7 +3197,7 @@ const user = { renderingId: 1 };
             expect(result[0]).not.toBeEmpty();
             expect(result[0][0]).toHaveProperty('user');
             expect(result[0][0].user.dataValues).toHaveProperty('firstName');
-            expect(result[0][0].user.dataValues).toHaveProperty('id');
+            expect(result[0][0].user.dataValues).toHaveProperty('primaryId');
             expect(result[0][0].user.dataValues).not.toHaveProperty('lastName');
           } finally {
             spy.mockRestore();
@@ -3226,7 +3221,7 @@ const user = { renderingId: 1 };
           },
           page: { number: '1', size: '20' },
           search: 'SF',
-          sort: '-user.id',
+          sort: '-user.primaryId',
         };
         try {
           const result = await new HasManyGetter(
@@ -3279,7 +3274,7 @@ const user = { renderingId: 1 };
           try {
             const record = await new ResourceGetter(models.user, params, user).perform();
             expect(record).not.toBeNull();
-            expect(record.id).toStrictEqual(100);
+            expect(record.primaryId).toStrictEqual(100);
             expect(record.firstName).toStrictEqual('Richard');
           } finally {
             spy.mockRestore();
