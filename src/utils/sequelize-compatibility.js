@@ -1,6 +1,5 @@
 import ObjectTools from './object-tools';
 import Operators from './operators';
-import { isVersionLessThan } from './orm';
 import QueryUtils from './query';
 
 /**
@@ -86,9 +85,13 @@ function normalizeInclude(model, include) {
 
   // Recurse
   if (include.include) {
-    include.include = include.include.map(
-      (childInclude) => normalizeInclude(include.model, childInclude),
-    );
+    if (Array.isArray(include.include)) {
+      include.include = include.include.map(
+        (childInclude) => normalizeInclude(include.model, childInclude),
+      );
+    } else {
+      include.include = [normalizeInclude(include.model, include.include)];
+    }
   }
 
   return include;
@@ -143,13 +146,9 @@ exports.postProcess = (model, rawOptions) => {
   const options = rawOptions;
   const operators = Operators.getInstance({ Sequelize: model.sequelize.constructor });
 
-  if (isVersionLessThan(model.sequelize.constructor, '5.0.0')) {
-    options.include = options.include.map((include) => normalizeInclude(model, include));
-    bubbleWheresInPlace(operators, options);
-    removeDuplicateAssociations(model, options.include);
-  } else {
-    bubbleWheresInPlace(operators, options);
-  }
+  options.include = options.include.map((include) => normalizeInclude(model, include));
+  bubbleWheresInPlace(operators, options);
+  removeDuplicateAssociations(model, options.include);
 
   return options;
 };

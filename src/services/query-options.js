@@ -189,7 +189,11 @@ class QueryOptions {
     }
 
     if (include) {
-      this._customerIncludes.push(...include);
+      if (Array.isArray(include)) {
+        this._customerIncludes.push(...include);
+      } else {
+        this._customerIncludes.push(include);
+      }
     }
 
     return helper.getFieldsSearched();

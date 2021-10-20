@@ -107,7 +107,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('shoud add attributes when both sides are defined', () => {
+    it('should add attributes when both sides are defined', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
@@ -122,7 +122,7 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
 
-    it('shoud drop attributes when either side is undefined', () => {
+    it('should drop attributes when either side is undefined', () => {
       expect.assertions(1);
 
       const options = postProcess(Model, {
@@ -231,6 +231,24 @@ describe('utils > sequelize-compatibility', () => {
           '$submodelAlias.subsubmodel1Alias.subsubTitle$': 'subsubtitle1',
           '$submodelAlias.subsubmodel2Alias.subsubTitle$': 'subsubtitle2',
         },
+      });
+    });
+
+
+    it('should add attributes when sub include is not an array', () => {
+      expect.assertions(1);
+
+      const options = postProcess(Model, {
+        include: [{ as: 'submodelAlias', attributes: ['id'], include: 'subsubmodel1Alias' }],
+      });
+
+      expect(options).toStrictEqual({
+        include: [{
+          as: 'submodelAlias',
+          model: SubModel,
+          attributes: ['id'],
+          include: [{ as: 'subsubmodel1Alias', model: SubSubModel1 }],
+        }],
       });
     });
   });
