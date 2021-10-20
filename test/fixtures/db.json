@@ -9,7 +9,7 @@
   {
     "model": "user",
     "data": {
-      "id": 100,
+      "primaryId": 100,
       "email": "richard@piedpiper.com",
       "firstName": "Richard",
       "lastName": "Hendricks",
@@ -32,7 +32,7 @@
       "id": 100,
       "city": "SF",
       "country": "USA",
-      "user": 100,
+      "userId": 100,
       "archivedAt": "2020-07-02 09:42:08.893+00"
     }
   },
@@ -42,7 +42,7 @@
       "id": 101,
       "city": "Paris",
       "country": "France",
-      "user": 100,
+      "userId": 100,
       "archivedAt": "2020-07-02 09:42:08.893+00"
     }
   },
@@ -51,7 +51,7 @@
     "data": {
       "id": 102,
       "city": "Hong Kong",
-      "user": 100,
+      "userId": 100,
       "archivedAt": "2020-07-02 09:42:08.893+00"
     }
   },
@@ -61,7 +61,7 @@
       "id": 103,
       "city": "London",
       "country": "United Kingdom",
-      "user": 100
+      "userId": 100
     }
   },
   {
@@ -75,7 +75,7 @@
   {
     "model": "user",
     "data": {
-      "id": 102,
+      "primaryId": 102,
       "email": "elrich@piedpiper.com",
       "firstName": "Elrich",
       "lastName": "Bachman",
@@ -88,7 +88,7 @@
   {
     "model": "user",
     "data": {
-      "id": 103,
+      "primaryId": 103,
       "email": "dinesh@piedpiper.com",
       "firstName": "Dinesh",
       "lastName": "Chugtai",
