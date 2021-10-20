@@ -68,6 +68,24 @@ describe('services > query-options', () => {
     const model = buildModelMock('postgres');
 
     describe('when search on smart field is async', () => {
+      describe('when promise reject', () => {
+        it('should display an error message', async () => {
+          expect.assertions(1);
+
+          const loggerErrorSpy = jest.spyOn(Interface.logger, 'error');
+
+          const errorThrown = new Error('unexpected error');
+          Interface.Schemas.schemas.actor.fields[0].search = async () =>
+            Promise.reject(errorThrown);
+
+          const options = new QueryOptions(model);
+          await options.search('search string', null);
+          expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField', errorThrown);
+
+          loggerErrorSpy.mockClear();
+        });
+      });
+
       it('should add the search query', async () => {
         expect.assertions(1);
 
