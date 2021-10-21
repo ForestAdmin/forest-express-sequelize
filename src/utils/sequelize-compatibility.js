@@ -133,8 +133,8 @@ function removeDuplicateAssociations(model, includeList) {
 
   // Recurse
   includeList.forEach((include) => {
-    if (include.include) {
-      const association = model.associations[include.as];
+    const association = model.associations[include.as];
+    if (include.include && association) {
       removeDuplicateAssociations(association.target, include.include);
     }
   });
