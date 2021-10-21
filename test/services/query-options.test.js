@@ -84,7 +84,7 @@ describe('services > query-options', () => {
 
           const options = new QueryOptions(model);
           await options.search('search string', null);
-          expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField', errorThrown);
+          expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField: ', errorThrown);
 
           loggerErrorSpy.mockClear();
           resetSchema();
@@ -122,7 +122,7 @@ describe('services > query-options', () => {
 
         const options = new QueryOptions(model);
         await options.search('search string', null);
-        expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField', errorThrown);
+        expect(loggerErrorSpy).toHaveBeenCalledWith('Cannot search properly on Smart Field smartField: ', errorThrown);
 
         loggerErrorSpy.mockClear();
         resetSchema();
