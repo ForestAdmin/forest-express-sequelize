@@ -252,4 +252,26 @@ describe('utils > sequelize-compatibility', () => {
       });
     });
   });
+
+  describe('postProcess -> removeDuplicateAssociations', () => {
+    describe('when include alias is not valid', () => {
+      it('should not throw an error', () => {
+        expect.assertions(1);
+
+        const include = [{ model: SubModel, as: 'notAValidAlias', include: SubModel }];
+
+        expect(() => postProcess(Model, { include })).not.toThrow();
+      });
+    });
+
+    describe('when the main model is reincluded', () => {
+      it('should not throw an error', () => {
+        expect.assertions(1);
+
+        const include = [{ model: Model, include: SubSubModel1 }];
+
+        expect(() => postProcess(Model, { include })).not.toThrow();
+      });
+    });
+  });
 });
