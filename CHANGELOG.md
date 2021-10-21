@@ -1,3 +1,10 @@
+## [8.4.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.4...v8.4.5) (2021-10-21)
+
+
+### Bug Fixes
+
+* nested include duplication in smart field search ([#863](https://github.com/ForestAdmin/forest-express-sequelize/issues/863)) ([d61da0c](https://github.com/ForestAdmin/forest-express-sequelize/commit/d61da0c2b9dbf337e26ac1f2d816855787023afe))
+
 ## [8.4.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.3...v8.4.4) (2021-10-20)
 
 
