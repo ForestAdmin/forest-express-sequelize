@@ -1,3 +1,10 @@
+## [8.4.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.6...v8.4.7) (2021-10-25)
+
+
+### Bug Fixes
+
+* add warning message when connections does not have any models ([#866](https://github.com/ForestAdmin/forest-express-sequelize/issues/866)) ([4c41bd7](https://github.com/ForestAdmin/forest-express-sequelize/commit/4c41bd765f156234053634e98df59c779c8ecd0e))
+
 ## [8.4.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.5...v8.4.6) (2021-10-25)
 
 
