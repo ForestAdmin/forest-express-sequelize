@@ -1,3 +1,10 @@
+## [8.4.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.5...v8.4.6) (2021-10-25)
+
+
+### Bug Fixes
+
+* **smart-actions:** skip scope validation for smart action on smart collection ([#865](https://github.com/ForestAdmin/forest-express-sequelize/issues/865)) ([785511b](https://github.com/ForestAdmin/forest-express-sequelize/commit/785511bfbc07ec3d0d72f74dd5444ff65447bc2b))
+
 ## [8.4.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.4...v8.4.5) (2021-10-21)
 
 
