@@ -9,7 +9,6 @@ on:
 
 env:
   TZ: 'Europe/Paris'
-  NODE_VERSION: 12.13.0
 
 jobs:
   lint:
@@ -24,7 +23,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v2
         with:
-          node-version: ${{ env.NODE_VERSION }}
+          node-version: 12.13.0
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
@@ -43,8 +42,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ env.NODE_VERSION }}
       - name: Cache node_modules
         uses: actions/cache@v2
         with:
