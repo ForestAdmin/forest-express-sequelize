@@ -9,6 +9,7 @@ on:
 
 env:
   TZ: 'Europe/Paris'
+  NODE_VERSION: 12.13.0
 
 jobs:
   lint:
@@ -21,7 +22,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
@@ -39,7 +42,9 @@ jobs:
     needs: [lint]
     steps:
       - uses: actions/checkout@v2
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
+        with:
+          node-version: ${{ env.NODE_VERSION }}
       - name: Cache node_modules
         uses: actions/cache@v2
         with:
@@ -65,9 +70,9 @@ jobs:
       - uses: actions/checkout@v2
         with:
           persist-credentials: false # GITHUB_TOKEN must not be set for the semantic release
-      - uses: actions/setup-node@v1
+      - uses: actions/setup-node@v2
         with:
-          node-version: 12.13.0
+          node-version: ${{ env.NODE_VERSION }}
       - uses: actions/cache@v2
         with:
           path: '**/node_modules'
