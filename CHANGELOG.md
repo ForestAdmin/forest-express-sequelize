@@ -1,3 +1,10 @@
+## [8.4.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.7...v8.4.8) (2021-11-30)
+
+
+### Bug Fixes
+
+* add searchFields type in the collection options ([#875](https://github.com/ForestAdmin/forest-express-sequelize/issues/875)) ([8a9a84a](https://github.com/ForestAdmin/forest-express-sequelize/commit/8a9a84a263741fc3ed1814eb954dec6ca8bb5626))
+
 ## [8.4.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.6...v8.4.7) (2021-10-25)
 
 
