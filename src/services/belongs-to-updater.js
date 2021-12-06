@@ -16,13 +16,14 @@ class BelongsToUpdater {
   //             issue: https://github.com/sequelize/sequelize/issues/6069
   async _getTargetKey(association) {
     const pk = this.data.data.id;
+    const targetKeyIsPrimaryKey = association.targetKey === association.target.primaryKeyAttribute;
     let targetKey = pk;
 
-    if (association.associationType === 'HasOne' || association.targetKey !== 'id') {
+    if (association.associationType === 'HasOne' || !targetKeyIsPrimaryKey) {
       const record = await associationRecord.get(association.target, pk);
       if (association.associationType === 'HasOne') {
         targetKey = record;
-      } else if (association.targetKey !== 'id') {
+      } else if (!targetKeyIsPrimaryKey) {
         // NOTICE: special use case with foreign key non pointing to a primary key
         targetKey = record[association.targetKey];
       }
