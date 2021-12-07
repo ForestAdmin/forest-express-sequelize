@@ -8,7 +8,7 @@ const databaseOptions = {
 };
 
 const sequelize = new Sequelize(
-  'postgres://forest:secret@localhost:5436/forest-express-sequelize-test',
+  'postgres://forest:secret@localhost:5437/forest-express-sequelize-test',
   databaseOptions,
 );
 
