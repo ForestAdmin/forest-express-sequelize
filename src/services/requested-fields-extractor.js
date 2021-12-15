@@ -61,8 +61,10 @@ function extractRequestedFields(requestedFields, modelOrAssociation, schemas) {
     ))
     .flat();
 
-  const modelFields = requestedFields[modelOrAssociation.name].split(',')
-    .filter((fieldName) => !requestedFields[fieldName]);
+  const modelFields = requestedFields[modelOrAssociation.name]
+    .split(',')
+    .filter((fieldName) =>
+      Object.prototype.hasOwnProperty.call(modelOrAssociation.rawAttributes, fieldName));
 
   const smartFields = extractRequestedSmartField(requestedFields, schemas[modelOrAssociation.name]);
 
