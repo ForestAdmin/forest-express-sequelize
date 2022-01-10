@@ -62,7 +62,7 @@
     "jest-extended": "0.11.5",
     "mysql2": "2.1.0",
     "onchange": "6.0.0",
-    "pg": "8.4.2",
+    "pg": "8.7.1",
     "semantic-release": "17.4.7",
     "semantic-release-npm-deprecate-old-versions": "1.3.2",
     "semantic-release-slack-bot": "2.1.1",
