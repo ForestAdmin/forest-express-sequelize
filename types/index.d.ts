@@ -161,6 +161,10 @@ export class PermissionMiddlewareCreator {
   smartAction(): RequestHandler;
 }
 
+// Optional middleware(s) related to the perf
+
+export const deactivateCountMiddleware: RequestHandler;
+
 // Everything related to Forest Charts
 
 export interface StatSerialized {
