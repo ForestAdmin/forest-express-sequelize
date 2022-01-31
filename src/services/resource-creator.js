@@ -20,7 +20,7 @@ class ResourceCreator {
     const primaryKey = this.body[name];
 
     let targetKey = primaryKey;
-    if (typeof primaryKey !== 'undefined' && association.targetKey !== 'id') {
+    if (primaryKey && association.targetKey !== association.target.primaryKeyAttribute) {
       const record = await associationRecord.get(association.target, primaryKey);
       targetKey = record[association.targetKey];
     }
