@@ -1,3 +1,10 @@
+## [8.4.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.8...v8.4.9) (2022-01-31)
+
+
+### Bug Fixes
+
+* return data of field who have the same name as model ([#880](https://github.com/ForestAdmin/forest-express-sequelize/issues/880)) ([cee9327](https://github.com/ForestAdmin/forest-express-sequelize/commit/cee9327ac9fb5dec1e2c6293a4955390db059ff8))
+
 ## [8.4.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.7...v8.4.8) (2021-11-30)
 
 
