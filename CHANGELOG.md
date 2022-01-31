@@ -1,3 +1,10 @@
+## [8.4.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.9...v8.4.10) (2022-01-31)
+
+
+### Bug Fixes
+
+* fix association with primary key different of 'id' ([#878](https://github.com/ForestAdmin/forest-express-sequelize/issues/878)) ([27bcac5](https://github.com/ForestAdmin/forest-express-sequelize/commit/27bcac53f9f657559531ba9e2d621dfd77bc6e8f))
+
 ## [8.4.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.8...v8.4.9) (2022-01-31)
 
 
