@@ -40,6 +40,7 @@ exports.Schemas = Interface.Schemas;
 exports.ResourcesRoute = Interface.ResourcesRoute;
 
 exports.PermissionMiddlewareCreator = Interface.PermissionMiddlewareCreator;
+exports.deactivateCountMiddleware = Interface.deactivateCountMiddleware;
 exports.RecordsCounter = Interface.RecordsCounter;
 exports.RecordsExporter = Interface.RecordsExporter;
 exports.RecordsGetter = Interface.RecordsGetter;
