@@ -1,3 +1,10 @@
+# [8.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.10...v8.5.0) (2022-02-08)
+
+
+### Features
+
+* **count:** add middleware to deactivate count ([#902](https://github.com/ForestAdmin/forest-express-sequelize/issues/902)) ([54f9b4e](https://github.com/ForestAdmin/forest-express-sequelize/commit/54f9b4eead06b57413dc414b72279ac0bb7d372d))
+
 ## [8.4.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.9...v8.4.10) (2022-01-31)
 
 
