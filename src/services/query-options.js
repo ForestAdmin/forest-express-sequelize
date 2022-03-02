@@ -74,7 +74,7 @@ class QueryOptions {
   get _sequelizeInclude() {
     const fields = [...this._requestedFields, ...this._requestedRelations, ...this._neededFields];
     const include = [
-      ...new QueryBuilder().getIncludes(this._model, fields.length ? fields : null),
+      ...new QueryBuilder().getIncludes(this._model, fields),
       ...this._customerIncludes,
     ];
 
@@ -83,7 +83,7 @@ class QueryOptions {
 
   /** Compute sequelize query `.order` property */
   get _sequelizeOrder() {
-    if (isMSSQL(this._model.sequelize) && this._sequelizeInclude?.length) {
+    if (isMSSQL(this._model.sequelize)) {
       // Work around sequelize bug: https://github.com/sequelize/sequelize/issues/11258
       const primaryKeys = Object.keys(this._model.primaryKeys);
       return this._order.filter((order) => !primaryKeys.includes(order[0]));
