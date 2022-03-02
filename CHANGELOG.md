@@ -1,3 +1,10 @@
+## [8.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.0...v8.5.1) (2022-03-02)
+
+
+### Bug Fixes
+
+* **count:** remove useless joins in basic count ([#900](https://github.com/ForestAdmin/forest-express-sequelize/issues/900)) ([86d30ef](https://github.com/ForestAdmin/forest-express-sequelize/commit/86d30ef2c74446de0f5e7e48d46c2f3d209a4c6b))
+
 # [8.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.10...v8.5.0) (2022-02-08)
 
 
