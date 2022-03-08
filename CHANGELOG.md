@@ -1,3 +1,10 @@
+## [8.5.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.1...v8.5.2) (2022-03-08)
+
+
+### Bug Fixes
+
+* **types:** serializers now take optional meta as second argument ([#922](https://github.com/ForestAdmin/forest-express-sequelize/issues/922)) ([f8c50cf](https://github.com/ForestAdmin/forest-express-sequelize/commit/f8c50cfac224a147015116fe093121b24ce38e1f))
+
 ## [8.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.0...v8.5.1) (2022-03-02)
 
 
