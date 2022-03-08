@@ -110,7 +110,7 @@ interface Meta {
 
 export class AbstractRecordTool<M extends Sequelize.Model> {
   constructor(model: Sequelize.ModelCtor<M>, user: User, query: Query)
-  serialize(records: M | M[], meta: Meta): Promise<RecordsSerialized>;
+  serialize(records: M | M[], meta?: Meta): Promise<RecordsSerialized>;
 }
 
 export class RecordGetter<M extends Sequelize.Model> extends AbstractRecordTool<M> {
@@ -150,7 +150,7 @@ export class RecordsRemover<M extends Sequelize.Model> extends AbstractRecordToo
 
 export class RecordSerializer {
   constructor(model: { name: string } | Sequelize.ModelCtor<any>, user?: User, query?: Query);
-  serialize(records: Record<string, any> | Record<string, any>[], meta: Meta): Promise<RecordsSerialized>;
+  serialize(records: Record<string, any> | Record<string, any>[], meta?: Meta): Promise<RecordsSerialized>;
 }
 
 // Everything related to Forest permissions
