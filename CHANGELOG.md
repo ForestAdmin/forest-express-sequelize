@@ -1,3 +1,10 @@
+## [8.5.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.2...v8.5.3) (2022-03-11)
+
+
+### Bug Fixes
+
+* prevent deactivate count middleware to throw ([#924](https://github.com/ForestAdmin/forest-express-sequelize/issues/924)) ([9e4cc38](https://github.com/ForestAdmin/forest-express-sequelize/commit/9e4cc38e4962d2a58deefae4df59b9182e0a4795))
+
 ## [8.5.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.1...v8.5.2) (2022-03-08)
 
 
