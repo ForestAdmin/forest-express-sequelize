@@ -1,3 +1,5 @@
+## [8.5.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.3...v8.5.4) (2022-04-19)
+
 ## [8.5.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.2...v8.5.3) (2022-03-11)
 
 
