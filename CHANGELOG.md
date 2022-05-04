@@ -1,3 +1,10 @@
+## [8.5.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.5...v8.5.6) (2022-05-04)
+
+
+### Bug Fixes
+
+* **security:** patch express-jwt to stable candidate ([#945](https://github.com/ForestAdmin/forest-express-sequelize/issues/945)) ([de715bc](https://github.com/ForestAdmin/forest-express-sequelize/commit/de715bc064d8e360c20307ab4bd566475a9f0ece))
+
 ## [8.5.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.4...v8.5.5) (2022-05-03)
 
 ## [8.5.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.3...v8.5.4) (2022-04-19)
