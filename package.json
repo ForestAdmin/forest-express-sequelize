@@ -41,7 +41,7 @@
     "@babel/plugin-proposal-optional-chaining": "7.14.5",
     "@babel/plugin-transform-arrow-functions": "7.14.5",
     "@babel/plugin-transform-runtime": "7.15.0",
-    "@babel/preset-env": "7.15.6",
+    "@babel/preset-env": "7.17.12",
     "@babel/register": "7.15.3",
     "@commitlint/cli": "11.0.0",
     "@commitlint/config-conventional": "11.0.0",
@@ -60,6 +60,7 @@
     "husky": "7.0.4",
     "jest": "26.6.3",
     "jest-extended": "0.11.5",
+    "lint-staged": "12.3.7",
     "mysql2": "2.1.0",
     "onchange": "6.0.0",
     "pg": "8.4.2",
@@ -68,14 +69,13 @@
     "semantic-release-slack-bot": "3.5.2",
     "sequelize": "5.21.3",
     "sequelize-fixtures": "1.1.1",
-    "simple-git": "1.65.0",
     "tedious": "11.0.8",
     "typescript": "4.3.2"
   },
   "scripts": {
     "build": "babel src --out-dir dist",
     "build:watch": "onchange 'src/**/*.js' 'node_modules/forest-express/dist/*' --no-exclude -i -- babel --source-maps inline --out-dir dist src",
-    "lint": "./node_modules/eslint/bin/eslint.js .eslint-bin src test types/index.d.ts",
+    "lint": "./node_modules/eslint/bin/eslint.js src test types/index.d.ts",
     "prepare": "husky install",
     "test": "jest",
     "test:coverage": "jest --coverage"
