@@ -28,6 +28,7 @@ node_modules
 
 # Build
 dist
+.eslintcache
 
 # VS Code
 *.code-workspace
