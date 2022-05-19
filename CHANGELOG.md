@@ -1,3 +1,10 @@
+## [8.5.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.6...v8.5.7) (2022-05-19)
+
+
+### Bug Fixes
+
+* **stripe:** crash early when stripe integration is misconfigured ([#955](https://github.com/ForestAdmin/forest-express-sequelize/issues/955)) ([d48bc1d](https://github.com/ForestAdmin/forest-express-sequelize/commit/d48bc1d3025bee5be24f3af14315268184751c68))
+
 ## [8.5.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.5...v8.5.6) (2022-05-04)
 
 
