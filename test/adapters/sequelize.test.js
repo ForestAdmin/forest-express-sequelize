@@ -1,12 +1,19 @@
 const Sequelize = require('sequelize');
 const getSchema = require('../../src/adapters/sequelize');
-const { sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax } = require('../databases');
+const {
+  sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax, sequelizeMariaDB,
+} = require('../databases');
 
 function getField(schema, name) {
   return schema.fields.find((field) => field.field === name);
 }
 
-[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((connectionManager) => {
+[
+  sequelizePostgres,
+  sequelizeMySQLMin,
+  sequelizeMySQLMax,
+  sequelizeMariaDB,
+].forEach((connectionManager) => {
   const sequelize = connectionManager.createConnection();
   const models = {};
   const sequelizeOptions = {
