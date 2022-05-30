@@ -3,7 +3,9 @@ const sequelizeFixtures = require('sequelize-fixtures');
 const Interface = require('forest-express');
 const { scopeManager } = require('forest-express');
 const SchemaAdapter = require('../src/adapters/sequelize');
-const { sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax } = require('./databases');
+const {
+  sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax, sequelizeMariaDB,
+} = require('./databases');
 const PieStatGetter = require('../src/services/pie-stat-getter');
 const LineStatGetter = require('../src/services/line-stat-getter');
 const ValueStatGetter = require('../src/services/value-stat-getter');
@@ -19,7 +21,12 @@ const HasManyDissociator = require('../src/services/has-many-dissociator');
 const baseParams = { timezone: 'Europe/Paris' };
 const user = { renderingId: 1 };
 
-[sequelizePostgres, sequelizeMySQLMin, sequelizeMySQLMax].forEach((connectionManager) => {
+[
+  sequelizePostgres,
+  sequelizeMySQLMin,
+  sequelizeMySQLMax,
+  sequelizeMariaDB,
+].forEach((connectionManager) => {
   function initializeSequelize() {
     const sequelize = connectionManager.createConnection();
     const models = {};
