@@ -1,3 +1,10 @@
+## [8.5.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.7...v8.5.8) (2022-06-06)
+
+
+### Bug Fixes
+
+* **types:** declare correctly user in requests ([#968](https://github.com/ForestAdmin/forest-express-sequelize/issues/968)) ([07de849](https://github.com/ForestAdmin/forest-express-sequelize/commit/07de849edc8ac7b2fd60da7809e3e48c16ff8b94))
+
 ## [8.5.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.6...v8.5.7) (2022-05-19)
 
 
