@@ -29,8 +29,21 @@ export interface DatabaseConfiguration {
 
 export function ensureAuthenticated(request: Request, response: Response, next: NextFunction): void;
 
+export interface UserTag {
+  key: string,
+  value: string,
+}
+
 export interface User {
+  email: string,
+  firstName: string,
+  lastName: string,
+  team: string,
+  role: string,
+  tags: UserTag[],
   renderingId: number;
+  iat: number,
+  exp: number,
 }
 
 export interface ForestRequest extends Request {
