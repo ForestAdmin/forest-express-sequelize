@@ -276,6 +276,7 @@ export interface SmartFieldOptions {
   isFilterable?: boolean;
   isReadOnly?: boolean;
   isRequired?: boolean;
+  isSortable?: boolean;
   reference?: string;
   enums?: FieldEnumsType;
   defaultValue?: any;
