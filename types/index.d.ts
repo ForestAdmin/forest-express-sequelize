@@ -319,8 +319,8 @@ export interface SmartActionChangeHook {
 }
 
 export interface SmartActionHooks {
-  load: SmartActionLoadHook;
-  change: Record<string, SmartActionChangeHook>;
+  load?: SmartActionLoadHook;
+  change?: Record<string, SmartActionChangeHook>;
 }
 
 export interface SmartActionOptions {
