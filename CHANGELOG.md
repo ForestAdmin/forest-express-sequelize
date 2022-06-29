@@ -1,3 +1,10 @@
+## [8.5.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.8...v8.5.9) (2022-06-29)
+
+
+### Bug Fixes
+
+* **types:** load and change hook are now optional on smart action ([#979](https://github.com/ForestAdmin/forest-express-sequelize/issues/979)) ([14a8ba8](https://github.com/ForestAdmin/forest-express-sequelize/commit/14a8ba8e6ff588cb235ca96fd3c042481874d846))
+
 ## [8.5.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.7...v8.5.8) (2022-06-06)
 
 
