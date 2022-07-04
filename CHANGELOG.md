@@ -1,3 +1,11 @@
+## [8.5.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.9...v8.5.10) (2022-07-04)
+
+
+### Bug Fixes
+
+* **security:** patch semantic-release dependency vulnerability ([#969](https://github.com/ForestAdmin/forest-express-sequelize/issues/969)) ([2a717b3](https://github.com/ForestAdmin/forest-express-sequelize/commit/2a717b3800eedc308d5c18aee1e1e381e8d6f14f))
+* **security:** patch semver-regex dependency vulnerability ([#966](https://github.com/ForestAdmin/forest-express-sequelize/issues/966)) ([ca7bad3](https://github.com/ForestAdmin/forest-express-sequelize/commit/ca7bad3a4222e0e306994ad0a163634c19baab78))
+
 ## [8.5.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.8...v8.5.9) (2022-06-29)
 
 
