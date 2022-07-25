@@ -1,3 +1,10 @@
+## [8.5.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.10...v8.5.11) (2022-07-25)
+
+
+### Bug Fixes
+
+* **security:**  upgrade moment to 2.29.4 to fix a vulnerability ([#986](https://github.com/ForestAdmin/forest-express-sequelize/issues/986)) ([50d1dc0](https://github.com/ForestAdmin/forest-express-sequelize/commit/50d1dc087e9ddc9ade7a1d707d886492ac853b3f))
+
 ## [8.5.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.9...v8.5.10) (2022-07-04)
 
 
