@@ -1,3 +1,10 @@
+## [8.5.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.11...v8.5.12) (2022-09-01)
+
+
+### Bug Fixes
+
+* **charts:** user with permissions level that allows charts creation or edition should always be allow to perform charts requests ([#1001](https://github.com/ForestAdmin/forest-express-sequelize/issues/1001)) ([230c753](https://github.com/ForestAdmin/forest-express-sequelize/commit/230c75312f7a2fee43bf8fcfb8e3dc3fe2537ad5))
+
 ## [8.5.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.10...v8.5.11) (2022-07-25)
 
 
