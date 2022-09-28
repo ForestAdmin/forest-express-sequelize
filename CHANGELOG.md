@@ -1,3 +1,10 @@
+## [8.5.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.12...v8.5.13) (2022-09-28)
+
+
+### Bug Fixes
+
+* **type:** add "isSortable" to SmartFieldOptions interface ([#1012](https://github.com/ForestAdmin/forest-express-sequelize/issues/1012)) ([6a50a53](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a50a53b7a2e95d0314a8c90c77a76fe6eca4f29))
+
 ## [8.5.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.11...v8.5.12) (2022-09-01)
 
 
