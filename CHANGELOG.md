@@ -1,3 +1,10 @@
+## [7.12.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.4...v7.12.5) (2022-10-11)
+
+
+### Bug Fixes
+
+* **has many:** fix link of has many ([#1017](https://github.com/ForestAdmin/forest-express-sequelize/issues/1017)) ([740c8ba](https://github.com/ForestAdmin/forest-express-sequelize/commit/740c8baddced5b984cc062eff8ed74663d034f28))
+
 ## [7.12.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.3...v7.12.4) (2022-09-01)
 
 
