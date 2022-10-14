@@ -26,14 +26,15 @@ async function getSequelizeOptionsForModel(model, user, timezone) {
  * @param {import('sequelize').Model} childModel
  * @param {import('sequelize').Model} parentModel
  * @param {{
- *  label_field: string;
- *  aggregate: string;
- *  aggregate_field: string;
+ *  labelFieldName: string;
+ *  aggregator: string;
+ *  aggregateFieldName: string;
+ *  limit: number;
  * }} params
  */
 function LeaderboardStatGetter(childModel, parentModel, params, user) {
-  const labelField = params.label_field;
-  const aggregate = params.aggregate.toUpperCase();
+  const labelField = params.labelFieldName;
+  const aggregate = params.aggregator.toUpperCase();
   const { limit } = params;
   const childSchema = Schemas.schemas[childModel.name];
   const parentSchema = Schemas.schemas[parentModel.name];
@@ -44,7 +45,7 @@ function LeaderboardStatGetter(childModel, parentModel, params, user) {
   );
 
   const aggregateField = getAggregateField({
-    aggregateField: params.aggregate_field,
+    aggregateField: params.aggregateFieldName,
     parentSchema,
     parentModel,
   });

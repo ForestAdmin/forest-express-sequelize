@@ -19,10 +19,10 @@ function PieStatGetter(model, params, options, user) {
   let associationSchema;
   let field;
 
-  if (params.group_by_field.indexOf(':') === -1) {
-    field = _.find(schema.fields, (currentField) => currentField.field === params.group_by_field);
+  if (params.groupByFieldName.indexOf(':') === -1) {
+    field = _.find(schema.fields, (currentField) => currentField.field === params.groupByFieldName);
   } else {
-    associationSplit = params.group_by_field.split(':');
+    associationSplit = params.groupByFieldName.split(':');
     associationCollection = model.associations[associationSplit[0]].target.name;
     [, associationField] = associationSplit;
     associationSchema = Schemas.schemas[associationCollection];
@@ -33,22 +33,22 @@ function PieStatGetter(model, params, options, user) {
   }
 
   function getGroupByField() {
-    if (params.group_by_field.includes(':')) {
-      const [associationName, fieldName] = params.group_by_field.split(':');
+    if (params.groupByFieldName.includes(':')) {
+      const [associationName, fieldName] = params.groupByFieldName.split(':');
       return `${associationName}.${Orm.getColumnName(associationSchema, fieldName)}`;
     }
-    return `${schema.name}.${Orm.getColumnName(schema, params.group_by_field)}`;
+    return `${schema.name}.${Orm.getColumnName(schema, params.groupByFieldName)}`;
   }
 
   const groupByField = getGroupByField();
 
   function getAggregate() {
-    return params.aggregate.toLowerCase();
+    return params.aggregator.toLowerCase();
   }
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
-    const fieldName = params.aggregate_field
+    const fieldName = params.aggregateFieldName
       || schema.primaryKeys[0]
       || schema.fields[0].field;
     return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
@@ -81,11 +81,11 @@ function PieStatGetter(model, params, options, user) {
   }
 
   this.perform = async () => {
-    const { filters, timezone } = params;
+    const { filter, timezone } = params;
     const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
-    await queryOptions.filterByConditionTree(filters, timezone);
+    await queryOptions.filterByConditionTree(filter, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
 
     const sequelizeOptions = {

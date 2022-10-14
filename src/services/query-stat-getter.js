@@ -1,4 +1,3 @@
-const LiveQueryChecker = require('./live-query-checker');
 
 function QueryStatGetter(params, opts) {
   const QUERY_OPTIONS_SELECT = { type: opts.Sequelize.QueryTypes.SELECT };
@@ -6,7 +5,6 @@ function QueryStatGetter(params, opts) {
   this.perform = function perform() {
     let rawQuery = params.query.trim();
 
-    new LiveQueryChecker().perform(rawQuery);
 
     if (params.record_id) {
       rawQuery = rawQuery.replace(new RegExp('\\?', 'g'), params.record_id);
