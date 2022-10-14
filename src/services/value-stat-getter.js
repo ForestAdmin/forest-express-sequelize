@@ -22,13 +22,13 @@ class ValueStatGetter {
 
   /** Function used to aggregate results (count, sum, ...) */
   get _aggregateFunction() {
-    return this._params.aggregate.toLowerCase();
+    return this._params.aggregator.toLowerCase();
   }
 
   /** Column name we're aggregating on */
   get _aggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
-    const fieldName = this._params.aggregate_field
+    const fieldName = this._params.aggregateFieldName
       || this._schema.primaryKeys[0]
       || this._schema.fields[0].field;
 
@@ -36,11 +36,11 @@ class ValueStatGetter {
   }
 
   async perform() {
-    const { filters, timezone } = this._params;
+    const { filter, timezone } = this._params;
     const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
 
     const queryOptions = new QueryOptions(this._model, { includeRelations: true });
-    await queryOptions.filterByConditionTree(filters, timezone);
+    await queryOptions.filterByConditionTree(filter, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
 
     // No attributes should be retrieved from relations for the group by to work.
@@ -74,13 +74,13 @@ class ValueStatGetter {
    * - when scopes use the same field as the filter
    */
   async _getCountPrevious(options) {
-    const { filters, timezone } = this._params;
-    if (!filters) {
+    const { filter, timezone } = this._params;
+    if (!filter) {
       return undefined;
     }
 
     const conditionsParser = new FiltersParser(this._schema, timezone, this._options);
-    const rawInterval = conditionsParser.getPreviousIntervalCondition(filters);
+    const rawInterval = conditionsParser.getPreviousIntervalCondition(filter);
     if (!rawInterval) {
       return undefined;
     }

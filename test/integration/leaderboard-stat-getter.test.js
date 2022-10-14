@@ -138,7 +138,7 @@ describe('integration > LeaderboardStatGetter', () => {
 
             const params = {
               label_field: 'firstName',
-              aggregate: 'count',
+              aggregator: 'count',
               limit: 10,
             };
 
@@ -170,8 +170,8 @@ describe('integration > LeaderboardStatGetter', () => {
 
             const params = {
               label_field: 'firstName',
-              aggregate: 'sum',
-              aggregate_field: 'sellingAmount',
+              aggregator: 'sum',
+              aggregateFieldName: 'sellingAmount',
               limit: 10,
             };
 
@@ -205,7 +205,7 @@ describe('integration > LeaderboardStatGetter', () => {
 
             const params = {
               label_field: 'firstName',
-              aggregate: 'count',
+              aggregator: 'count',
               limit: 10,
             };
 
@@ -237,8 +237,8 @@ describe('integration > LeaderboardStatGetter', () => {
 
             const params = {
               label_field: 'firstName',
-              aggregate: 'sum',
-              aggregate_field: 'objectiveScore',
+              aggregator: 'sum',
+              aggregateFieldName: 'objectiveScore',
               limit: 10,
             };
 
