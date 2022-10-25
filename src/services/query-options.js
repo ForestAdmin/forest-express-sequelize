@@ -6,7 +6,6 @@ import QueryUtils from '../utils/query';
 import SequelizeCompatibility from '../utils/sequelize-compatibility';
 import { ErrorHTTP422 } from './errors';
 import FiltersParser from './filters-parser';
-import LiveQueryChecker from './live-query-checker';
 import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
@@ -230,8 +229,6 @@ class QueryOptions {
 
     const primaryKey = _.values(this._model.primaryKeys)[0].field;
     const queryToFilterRecords = query.trim();
-
-    new LiveQueryChecker().perform(queryToFilterRecords);
 
     try {
       const options = { type: this._Sequelize.QueryTypes.SELECT };
