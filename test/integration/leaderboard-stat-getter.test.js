@@ -137,7 +137,7 @@ describe('integration > LeaderboardStatGetter', () => {
             const { models } = await setup(sequelize);
 
             const params = {
-              label_field: 'firstName',
+              labelFieldName: 'firstName',
               aggregator: 'count',
               limit: 10,
             };
@@ -169,7 +169,7 @@ describe('integration > LeaderboardStatGetter', () => {
             const { models } = await setup(sequelize);
 
             const params = {
-              label_field: 'firstName',
+              labelFieldName: 'firstName',
               aggregator: 'sum',
               aggregateFieldName: 'sellingAmount',
               limit: 10,
@@ -204,7 +204,7 @@ describe('integration > LeaderboardStatGetter', () => {
             const { models } = await setup(sequelize);
 
             const params = {
-              label_field: 'firstName',
+              labelFieldName: 'firstName',
               aggregator: 'count',
               limit: 10,
             };
@@ -236,7 +236,7 @@ describe('integration > LeaderboardStatGetter', () => {
             const { models } = await setup(sequelize);
 
             const params = {
-              label_field: 'firstName',
+              labelFieldName: 'firstName',
               aggregator: 'sum',
               aggregateFieldName: 'objectiveScore',
               limit: 10,
