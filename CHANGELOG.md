@@ -1,3 +1,10 @@
+## [8.5.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.13...v8.5.14) (2022-10-25)
+
+
+### Bug Fixes
+
+* **type:** add generic for SmartActionRequestBody ([#1024](https://github.com/ForestAdmin/forest-express-sequelize/issues/1024)) ([bcd16af](https://github.com/ForestAdmin/forest-express-sequelize/commit/bcd16af41f70d953258f8f5b745eab30e89d08bb))
+
 ## [8.5.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.12...v8.5.13) (2022-09-28)
 
 
