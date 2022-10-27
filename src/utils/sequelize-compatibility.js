@@ -1,6 +1,5 @@
 import ObjectTools from './object-tools';
 import Operators from './operators';
-import { isVersionLessThan } from './orm';
 import QueryUtils from './query';
 
 /**
@@ -20,11 +19,16 @@ function bubbleWheresInPlace(operators, options) {
     bubbleWheresInPlace(operators, include);
 
     if (include.where) {
-      const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => (
-        key[0] === '$' && key[key.length - 1] === '$'
-          ? `$${include.as}.${key.substring(1)}`
-          : `$${include.as}.${key}$`
-      ));
+      const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => {
+        // Targeting a nested field, simply nest it deeper.
+        if (key[0] === '$' && key[key.length - 1] === '$') {
+          return `$${include.as}.${key.substring(1)}`;
+        }
+
+        // Targeting a simple field.
+        // Try to resolve the column name, as sequelize does not allow using model aliases here.
+        return `$${include.as}.${include.model?.rawAttributes?.[key]?.field ?? key}$`;
+      });
 
       options.where = QueryUtils.mergeWhere(operators, options.where, newWhere);
       delete include.where;
@@ -81,9 +85,13 @@ function normalizeInclude(model, include) {
 
   // Recurse
   if (include.include) {
-    include.include = include.include.map(
-      (childInclude) => normalizeInclude(include.model, childInclude),
-    );
+    if (Array.isArray(include.include)) {
+      include.include = include.include.map(
+        (childInclude) => normalizeInclude(include.model, childInclude),
+      );
+    } else {
+      include.include = [normalizeInclude(include.model, include.include)];
+    }
   }
 
   return include;
@@ -125,8 +133,8 @@ function removeDuplicateAssociations(model, includeList) {
 
   // Recurse
   includeList.forEach((include) => {
-    if (include.include) {
-      const association = model.associations[include.as];
+    const association = model.associations[include.as];
+    if (include.include && association) {
       removeDuplicateAssociations(association.target, include.include);
     }
   });
@@ -138,13 +146,9 @@ exports.postProcess = (model, rawOptions) => {
   const options = rawOptions;
   const operators = Operators.getInstance({ Sequelize: model.sequelize.constructor });
 
-  if (isVersionLessThan(model.sequelize.constructor, '5.0.0')) {
-    options.include = options.include.map((include) => normalizeInclude(model, include));
-    bubbleWheresInPlace(operators, options);
-    removeDuplicateAssociations(model, options.include);
-  } else {
-    bubbleWheresInPlace(operators, options);
-  }
+  options.include = options.include.map((include) => normalizeInclude(model, include));
+  bubbleWheresInPlace(operators, options);
+  removeDuplicateAssociations(model, options.include);
 
   return options;
 };

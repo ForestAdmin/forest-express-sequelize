@@ -1,5 +1,6 @@
 import moment from 'moment';
 import Sequelize from 'sequelize';
+import { SchemaUtils } from 'forest-express';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
 import { NoMatchingOperatorError } from '../../src/services/errors';
@@ -48,47 +49,8 @@ describe('services > filters-parser', () => {
     { operator: OPERATORS.LTE, value: moment().subtract(1, 'week').endOf('isoweek').toDate() },
   ]);
 
-  describe('isSmartField', () => {
-    describe('on a unknown field', () => {
-      it('should return false', () => {
-        expect.assertions(1);
-        const schemaToTest = { fields: [] };
-
-        expect(defaultFiltersParser.isSmartField(schemaToTest, 'unknown')).toBeFalse();
-      });
-    });
-
-    describe('on a non smart field', () => {
-      it('should return false', () => {
-        expect.assertions(1);
-        const schemaToTest = {
-          fields: [{
-            field: 'name',
-            isVirtual: false,
-          }],
-        };
-
-        expect(defaultFiltersParser.isSmartField(schemaToTest, 'name')).toBeFalse();
-      });
-    });
-
-    describe('on a smart field', () => {
-      it('should return true', () => {
-        expect.assertions(1);
-        const schemaToTest = {
-          fields: [{
-            field: 'name',
-            isVirtual: true,
-          }],
-        };
-
-        expect(defaultFiltersParser.isSmartField(schemaToTest, 'name')).toBeTrue();
-      });
-    });
-  });
-
   describe('formatOperatorValue function', () => {
-    const values = [5, 'toto', null];
+    const values = [5, 'toto,tutu ', null];
 
     values.forEach((value) => {
       it(`should return the appropriate value (${typeof value})`, () => {
@@ -113,7 +75,11 @@ describe('services > filters-parser', () => {
             [OPERATORS.EQ]: '',
           }],
         });
-        expect(defaultFiltersParser.formatOperatorValue('in', value)).toStrictEqual({ [OPERATORS.IN]: value });
+        expect(defaultFiltersParser.formatOperatorValue('in', value)).toStrictEqual(
+          typeof value === 'string'
+            ? { [OPERATORS.IN]: value.split(',').map((elem) => elem.trim()) }
+            : { [OPERATORS.IN]: value },
+        );
       });
 
       it('should raise an error on unknown operator', () => {
@@ -174,72 +140,24 @@ describe('services > filters-parser', () => {
     });
 
     describe('on a smart field', () => {
-      describe('with filter method not defined', () => {
-        it('should throw an error', async () => {
-          expect.assertions(1);
+      it('should call formatOperatorValue', async () => {
+        expect.assertions(5);
 
-          schema.fields = [{
-            field: 'smart name',
-            type: 'String',
-            isVirtual: true,
-            get() {},
-          }];
+        const resultIsTextField = 'resultOfIsTextField';
+        jest.spyOn(defaultFiltersParser, 'isTextField').mockReturnValue(resultIsTextField);
 
-          await expect(defaultFiltersParser.formatCondition({
-            field: 'smart name',
-            operator: 'present',
-          })).rejects.toThrow('"filter" method missing on smart field "smart name"');
-        });
-      });
+        const formattedCondition = 'myFormattedCondition';
+        jest.spyOn(defaultFiltersParser, 'formatOperatorValue').mockReturnValue(formattedCondition);
 
-      describe('with filter method defined', () => {
-        describe('when filter method return null or undefined', () => {
-          it('should throw an error', async () => {
-            expect.assertions(1);
+        const condition = { field: 'power', operator: 'is', value: 'mine' };
+        expect(await defaultFiltersParser.formatCondition(condition, true))
+          .toStrictEqual(formattedCondition);
 
-            schema.fields = [{
-              field: 'smart name',
-              type: 'String',
-              isVirtual: true,
-              get() {},
-              filter() {},
-            }];
+        expect(defaultFiltersParser.isTextField).toHaveBeenCalledTimes(1);
+        expect(defaultFiltersParser.isTextField).toHaveBeenCalledWith('power');
 
-            await expect(defaultFiltersParser.formatCondition({
-              field: 'smart name',
-              operator: 'present',
-            })).rejects.toThrow('"filter" method on smart field "smart name" must return a condition');
-          });
-        });
-
-        describe('when filter method return a condition', () => {
-          it('should return the condition', async () => {
-            expect.assertions(4);
-
-            const where = { id: 1 };
-            schema.fields = [{
-              field: 'smart name',
-              type: 'String',
-              isVirtual: true,
-              get() {},
-              filter: jest.fn(() => where),
-            }];
-
-            const condition = {
-              field: 'smart name',
-              operator: 'present',
-            };
-            expect(await defaultFiltersParser.formatCondition(condition)).toStrictEqual(where);
-            expect(schema.fields[0].filter.mock.calls).toHaveLength(1);
-            expect(schema.fields[0].filter.mock.calls[0]).toHaveLength(1);
-            expect(schema.fields[0].filter.mock.calls[0][0]).toStrictEqual({
-              where: {
-                [OPERATORS.NE]: null,
-              },
-              condition,
-            });
-          });
-        });
+        expect(defaultFiltersParser.formatOperatorValue).toHaveBeenCalledTimes(1);
+        expect(defaultFiltersParser.formatOperatorValue).toHaveBeenCalledWith('is', 'mine', resultIsTextField);
       });
     });
   });
@@ -314,8 +232,13 @@ describe('services > filters-parser', () => {
 
       it('should not be null', async () => {
         expect.assertions(1);
+
+        const spy = jest.spyOn(SchemaUtils, 'isSmartField').mockReturnValue(false);
+
         expect(await filtersParser.perform(filters))
           .toStrictEqual({ '$car.brandName$': { [OPERATORS.LIKE]: 'Ferrari%' } });
+
+        spy.mockRestore();
       });
     });
   });

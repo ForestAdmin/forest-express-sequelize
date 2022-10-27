@@ -53,8 +53,7 @@ function QueryBuilder() {
           .map((name) => name.replace(`${association.as}.`, ''))
           .filter((fieldName) => targetFields.includes(fieldName));
 
-        if (!fieldNamesRequested
-        || fieldNamesRequested.includes(association.as)
+        if (fieldNamesRequested?.includes(association.as)
         || explicitAttributes.length) {
           // NOTICE: For performance reasons, we only request the keys
           //         as they're the only needed fields for the interface

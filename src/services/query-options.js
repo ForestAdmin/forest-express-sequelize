@@ -31,6 +31,20 @@ class QueryOptions {
       options.limit = this._limit;
     }
 
+    if (this._requestedFields.size && !this._hasRequestedSmartFields) {
+      // Restricting loaded fields on the root model is opt-in with sequelize to avoid
+      // side-effects as this was not supported historically and it would probably break
+      // smart fields.
+      // @see https://github.com/ForestAdmin/forest-express-sequelize/blob/7d7ad0/src/services/resources-getter.js#L142
+
+      const simpleSchemaFields = this._schema.fields
+        .filter((field) => !field.reference)
+        .map((field) => field.field);
+      options.attributes = [...this._requestedFields]
+        .filter((field) => simpleSchemaFields.includes(field));
+      options.attributes.push(...this._schema.primaryKeys);
+    }
+
     return SequelizeCompatibility.postProcess(this._model, options);
   }
 
@@ -42,7 +56,7 @@ class QueryOptions {
     return this._scopes;
   }
 
-  /** Compute sequelize where condition for sequelizeOptions getter. */
+  /** Compute sequelize query `.where` property */
   get _sequelizeWhere() {
     const operators = Operators.getInstance({ Sequelize: this._Sequelize });
 
@@ -56,25 +70,31 @@ class QueryOptions {
     }
   }
 
-  /** Compute includes for sequelizeOptions getter. */
+  /** Compute sequelize query `.include` property */
   get _sequelizeInclude() {
-    const fields = [...this._requestedFields, ...this._neededFields];
+    const fields = [...this._requestedFields, ...this._requestedRelations, ...this._neededFields];
     const include = [
-      ...new QueryBuilder().getIncludes(this._model, fields.length ? fields : null),
+      ...new QueryBuilder().getIncludes(this._model, fields),
       ...this._customerIncludes,
     ];
 
     return include.length ? include : null;
   }
 
+  /** Compute sequelize query `.order` property */
   get _sequelizeOrder() {
-    if (isMSSQL(this._model.sequelize) && this._sequelizeInclude?.length) {
-      // FIx a sequelize bug linked to this issue: https://github.com/sequelize/sequelize/issues/11258
+    if (isMSSQL(this._model.sequelize)) {
+      // Work around sequelize bug: https://github.com/sequelize/sequelize/issues/11258
       const primaryKeys = Object.keys(this._model.primaryKeys);
-      this._order = this._order.filter((order) => !primaryKeys.includes(order[0]));
+      return this._order.filter((order) => !primaryKeys.includes(order[0]));
     }
 
     return this._order;
+  }
+
+  get _hasRequestedSmartFields() {
+    return this._schema.fields
+      .some((field) => field.isVirtual && this._requestedFields.has(field.field));
   }
 
   /**
@@ -93,6 +113,7 @@ class QueryOptions {
 
     // Used to compute relations that will go in the final 'include'
     this._requestedFields = new Set();
+    this._requestedRelations = new Set();
     this._neededFields = new Set();
     this._scopes = []; // @see sequelizeScopes getter
 
@@ -106,7 +127,7 @@ class QueryOptions {
     if (this._options.includeRelations) {
       _.values(this._model.associations)
         .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
-        .forEach((association) => this._requestedFields.add(association.associationAccessor));
+        .forEach((association) => this._requestedRelations.add(association.associationAccessor));
     }
   }
 
@@ -114,6 +135,8 @@ class QueryOptions {
    * Add the required includes from a list of field names.
    * @param {string[]} fields Fields of HasOne and BelongTo relations are
    *  accepted (ie. 'book.name').
+   * @param {string[]} fields the output of the extractRequestedFields() util function
+   * @param {boolean} applyOnRootModel restrict fetched fields also on the root
    */
   async requireFields(fields) {
     if (fields) {
@@ -158,7 +181,7 @@ class QueryOptions {
     const fieldNames = this._requestedFields.size ? [...this._requestedFields] : null;
     const helper = new SearchBuilder(this._model, options, { search, searchExtended }, fieldNames);
 
-    const { conditions, include } = helper.performWithSmartFields(this._options.tableAlias);
+    const { conditions, include } = await helper.performWithSmartFields(this._options.tableAlias);
     if (conditions) {
       this._where.push(conditions);
     } else {
@@ -166,7 +189,11 @@ class QueryOptions {
     }
 
     if (include) {
-      this._customerIncludes.push(...include);
+      if (Array.isArray(include)) {
+        this._customerIncludes.push(...include);
+      } else {
+        this._customerIncludes.push(include);
+      }
     }
 
     return helper.getFieldsSearched();
@@ -201,7 +228,7 @@ class QueryOptions {
   async segmentQuery(query) {
     if (!query) return;
 
-    const [primaryKey] = _.keys(this._model.primaryKeys);
+    const primaryKey = _.values(this._model.primaryKeys)[0].field;
     const queryToFilterRecords = query.trim();
 
     new LiveQueryChecker().perform(queryToFilterRecords);

@@ -12,8 +12,11 @@ class HasManyGetter extends ResourcesGetter {
 
   async _getRecords() {
     const options = await this._buildQueryOptions();
-    const record = await this._parentModel.findOne(options);
-    return (record && record[this._params.associationName]) || [];
+    const parentRecord = await this._parentModel.findOne(options);
+    const records = parentRecord?.[this._params.associationName] ?? [];
+
+    new PrimaryKeysManager(this._model).annotateRecords(records);
+    return records;
   }
 
   async count() {
@@ -34,7 +37,7 @@ class HasManyGetter extends ResourcesGetter {
         as: associationName,
         scope: false,
         required: !!buildOptions.forCount, // Why?
-        ...pick(options, ['where', 'include']),
+        ...pick(options, ['attributes', 'where', 'include']),
       }],
     });
 

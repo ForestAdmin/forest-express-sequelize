@@ -27,6 +27,12 @@ function extractRequestedFieldsForAssociation(associationName, requestedFields, 
   return requestedFields.map((fieldName) => `${associationName}.${fieldName}`);
 }
 
+function extractRequestedSmartField(requestedFields, schema) {
+  const schemaSmartFields = schema.fields.filter(({ isVirtual }) => isVirtual);
+  return requestedFields[schema.name].split(',')
+    .filter((fieldName) => schemaSmartFields.some(({ field }) => field === fieldName));
+}
+
 /**
  * @param {Record<string, string>} requestedFields
  * @param {*} modelOrAssociation
@@ -55,12 +61,17 @@ function extractRequestedFields(requestedFields, modelOrAssociation, schemas) {
     ))
     .flat();
 
-  const modelFields = requestedFields[modelOrAssociation.name].split(',')
-    .filter((fieldName) => !requestedFields[fieldName]);
+  const modelFields = requestedFields[modelOrAssociation.name]
+    .split(',')
+    .filter((fieldName) =>
+      Object.prototype.hasOwnProperty.call(modelOrAssociation.rawAttributes, fieldName));
+
+  const smartFields = extractRequestedSmartField(requestedFields, schemas[modelOrAssociation.name]);
 
   return Array.from(new Set([
     ...primaryKeyArray,
     ...modelFields,
+    ...smartFields,
     ...allAssociationFields,
   ]));
 }

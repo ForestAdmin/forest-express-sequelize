@@ -8,7 +8,7 @@ const databaseOptions = {
 };
 
 const sequelize = new Sequelize(
-  'postgres://forest:secret@localhost:5436/forest-express-sequelize-test',
+  'postgres://forest:secret@localhost:5437/forest-express-sequelize-test',
   databaseOptions,
 );
 
@@ -38,10 +38,10 @@ describe('services > apimap-field-builder', () => {
       expect(uuid.field).toStrictEqual('uuid');
     });
 
-    it('should have a String type', () => {
+    it('should have a Uuid type', () => {
       expect.assertions(1);
       const { uuid } = initializeField(fieldDefinitions);
-      expect(uuid.type).toStrictEqual('String');
+      expect(uuid.type).toStrictEqual('Uuid');
     });
 
     it('should not be set as required', () => {

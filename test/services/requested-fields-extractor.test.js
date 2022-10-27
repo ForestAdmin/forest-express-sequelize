@@ -23,9 +23,24 @@ describe('services > requested-fields-extractor', () => {
       name: 'user',
       primaryKeys: { id: null, uid: null },
       associations: {},
+      rawAttributes: {
+        id: {},
+        uid: {},
+        name: {},
+      },
     };
 
-    const result = extractRequestedFields(fields, model);
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
 
     expect(result).toStrictEqual(['id', 'name']);
   });
@@ -41,11 +56,58 @@ describe('services > requested-fields-extractor', () => {
       name: 'user',
       primaryKeys: { id: null, uid: null },
       associations: {},
+      rawAttributes: {
+        id: {},
+        uid: {},
+        name: {},
+      },
     };
 
-    const result = extractRequestedFields(fields, model);
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
 
     expect(result).toStrictEqual(['id', 'name']);
+  });
+
+  it('should include field with same name as the model', () => {
+    expect.assertions(1);
+
+    const fields = {
+      user: 'id,user',
+    };
+
+    const model = {
+      name: 'user',
+      primaryKeys: { id: null },
+      associations: {},
+      rawAttributes: {
+        id: {},
+        user: {},
+      },
+    };
+
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'user',
+          isVirtual: false,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
+
+    expect(result).toStrictEqual(['id', 'user']);
   });
 
   it('should include all associations\' requested fields', () => {
@@ -67,10 +129,23 @@ describe('services > requested-fields-extractor', () => {
           },
         },
       },
+      rawAttributes: {
+        id: {},
+        uid: {},
+        name: {},
+      },
     };
 
     const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
       addresses: {
+        name: 'addresses',
         fields: [{
           field: 'street',
           isVirtual: false,
@@ -102,10 +177,24 @@ describe('services > requested-fields-extractor', () => {
           },
         },
       },
+      rawAttributes: {
+        id: {},
+        uid: {},
+        name: {},
+        account: {},
+      },
     };
 
     const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
       addresses: {
+        name: 'addresses',
         fields: [
           {
             field: 'street',
@@ -144,10 +233,24 @@ describe('services > requested-fields-extractor', () => {
           },
         },
       },
+      rawAttributes: {
+        id: {},
+        uid: {},
+        name: {},
+        account: {},
+      },
     };
 
     const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'name',
+          isVirtual: false,
+        }],
+      },
       addresses: {
+        name: 'addresses',
         fields: [
           {
             field: 'street',
@@ -164,6 +267,44 @@ describe('services > requested-fields-extractor', () => {
       'name',
       'account',
       'homeAddress',
+    ]);
+  });
+
+  it('should include requested smart field', () => {
+    expect.assertions(1);
+
+    const fields = {
+      user: 'smartField',
+    };
+
+    const model = {
+      name: 'user',
+      primaryKeys: { id: null, uid: null },
+      associations: {},
+      rawAttributes: {
+        id: {},
+        uid: {},
+      },
+    };
+
+    const schemas = {
+      user: {
+        name: 'user',
+        fields: [{
+          field: 'smartField',
+          isVirtual: true,
+        }, {
+          field: 'anotherSmartField',
+          isVirtual: true,
+        }],
+      },
+    };
+
+    const result = extractRequestedFields(fields, model, schemas);
+
+    expect(result).toStrictEqual([
+      'id',
+      'smartField',
     ]);
   });
 });

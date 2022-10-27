@@ -1,3 +1,441 @@
+## [8.5.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.13...v8.5.14) (2022-10-25)
+
+
+### Bug Fixes
+
+* **type:** add generic for SmartActionRequestBody ([#1024](https://github.com/ForestAdmin/forest-express-sequelize/issues/1024)) ([bcd16af](https://github.com/ForestAdmin/forest-express-sequelize/commit/bcd16af41f70d953258f8f5b745eab30e89d08bb))
+
+## [8.5.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.12...v8.5.13) (2022-09-28)
+
+
+### Bug Fixes
+
+* **type:** add "isSortable" to SmartFieldOptions interface ([#1012](https://github.com/ForestAdmin/forest-express-sequelize/issues/1012)) ([6a50a53](https://github.com/ForestAdmin/forest-express-sequelize/commit/6a50a53b7a2e95d0314a8c90c77a76fe6eca4f29))
+
+## [8.5.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.11...v8.5.12) (2022-09-01)
+
+
+### Bug Fixes
+
+* **charts:** user with permissions level that allows charts creation or edition should always be allow to perform charts requests ([#1001](https://github.com/ForestAdmin/forest-express-sequelize/issues/1001)) ([230c753](https://github.com/ForestAdmin/forest-express-sequelize/commit/230c75312f7a2fee43bf8fcfb8e3dc3fe2537ad5))
+
+## [8.5.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.10...v8.5.11) (2022-07-25)
+
+
+### Bug Fixes
+
+* **security:**  upgrade moment to 2.29.4 to fix a vulnerability ([#986](https://github.com/ForestAdmin/forest-express-sequelize/issues/986)) ([50d1dc0](https://github.com/ForestAdmin/forest-express-sequelize/commit/50d1dc087e9ddc9ade7a1d707d886492ac853b3f))
+
+## [8.5.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.9...v8.5.10) (2022-07-04)
+
+
+### Bug Fixes
+
+* **security:** patch semantic-release dependency vulnerability ([#969](https://github.com/ForestAdmin/forest-express-sequelize/issues/969)) ([2a717b3](https://github.com/ForestAdmin/forest-express-sequelize/commit/2a717b3800eedc308d5c18aee1e1e381e8d6f14f))
+* **security:** patch semver-regex dependency vulnerability ([#966](https://github.com/ForestAdmin/forest-express-sequelize/issues/966)) ([ca7bad3](https://github.com/ForestAdmin/forest-express-sequelize/commit/ca7bad3a4222e0e306994ad0a163634c19baab78))
+
+## [8.5.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.8...v8.5.9) (2022-06-29)
+
+
+### Bug Fixes
+
+* **types:** load and change hook are now optional on smart action ([#979](https://github.com/ForestAdmin/forest-express-sequelize/issues/979)) ([14a8ba8](https://github.com/ForestAdmin/forest-express-sequelize/commit/14a8ba8e6ff588cb235ca96fd3c042481874d846))
+
+## [8.5.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.7...v8.5.8) (2022-06-06)
+
+
+### Bug Fixes
+
+* **types:** declare correctly user in requests ([#968](https://github.com/ForestAdmin/forest-express-sequelize/issues/968)) ([07de849](https://github.com/ForestAdmin/forest-express-sequelize/commit/07de849edc8ac7b2fd60da7809e3e48c16ff8b94))
+
+## [8.5.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.6...v8.5.7) (2022-05-19)
+
+
+### Bug Fixes
+
+* **stripe:** crash early when stripe integration is misconfigured ([#955](https://github.com/ForestAdmin/forest-express-sequelize/issues/955)) ([d48bc1d](https://github.com/ForestAdmin/forest-express-sequelize/commit/d48bc1d3025bee5be24f3af14315268184751c68))
+
+## [8.5.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.5...v8.5.6) (2022-05-04)
+
+
+### Bug Fixes
+
+* **security:** patch express-jwt to stable candidate ([#945](https://github.com/ForestAdmin/forest-express-sequelize/issues/945)) ([de715bc](https://github.com/ForestAdmin/forest-express-sequelize/commit/de715bc064d8e360c20307ab4bd566475a9f0ece))
+
+## [8.5.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.4...v8.5.5) (2022-05-03)
+
+## [8.5.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.3...v8.5.4) (2022-04-19)
+
+## [8.5.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.2...v8.5.3) (2022-03-11)
+
+
+### Bug Fixes
+
+* prevent deactivate count middleware to throw ([#924](https://github.com/ForestAdmin/forest-express-sequelize/issues/924)) ([9e4cc38](https://github.com/ForestAdmin/forest-express-sequelize/commit/9e4cc38e4962d2a58deefae4df59b9182e0a4795))
+
+## [8.5.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.1...v8.5.2) (2022-03-08)
+
+
+### Bug Fixes
+
+* **types:** serializers now take optional meta as second argument ([#922](https://github.com/ForestAdmin/forest-express-sequelize/issues/922)) ([f8c50cf](https://github.com/ForestAdmin/forest-express-sequelize/commit/f8c50cfac224a147015116fe093121b24ce38e1f))
+
+## [8.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.0...v8.5.1) (2022-03-02)
+
+
+### Bug Fixes
+
+* **count:** remove useless joins in basic count ([#900](https://github.com/ForestAdmin/forest-express-sequelize/issues/900)) ([86d30ef](https://github.com/ForestAdmin/forest-express-sequelize/commit/86d30ef2c74446de0f5e7e48d46c2f3d209a4c6b))
+
+# [8.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.10...v8.5.0) (2022-02-08)
+
+
+### Features
+
+* **count:** add middleware to deactivate count ([#902](https://github.com/ForestAdmin/forest-express-sequelize/issues/902)) ([54f9b4e](https://github.com/ForestAdmin/forest-express-sequelize/commit/54f9b4eead06b57413dc414b72279ac0bb7d372d))
+
+## [8.4.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.9...v8.4.10) (2022-01-31)
+
+
+### Bug Fixes
+
+* fix association with primary key different of 'id' ([#878](https://github.com/ForestAdmin/forest-express-sequelize/issues/878)) ([27bcac5](https://github.com/ForestAdmin/forest-express-sequelize/commit/27bcac53f9f657559531ba9e2d621dfd77bc6e8f))
+
+## [8.4.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.8...v8.4.9) (2022-01-31)
+
+
+### Bug Fixes
+
+* return data of field who have the same name as model ([#880](https://github.com/ForestAdmin/forest-express-sequelize/issues/880)) ([cee9327](https://github.com/ForestAdmin/forest-express-sequelize/commit/cee9327ac9fb5dec1e2c6293a4955390db059ff8))
+
+## [8.4.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.7...v8.4.8) (2021-11-30)
+
+
+### Bug Fixes
+
+* add searchFields type in the collection options ([#875](https://github.com/ForestAdmin/forest-express-sequelize/issues/875)) ([8a9a84a](https://github.com/ForestAdmin/forest-express-sequelize/commit/8a9a84a263741fc3ed1814eb954dec6ca8bb5626))
+
+## [8.4.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.6...v8.4.7) (2021-10-25)
+
+
+### Bug Fixes
+
+* add warning message when connections does not have any models ([#866](https://github.com/ForestAdmin/forest-express-sequelize/issues/866)) ([4c41bd7](https://github.com/ForestAdmin/forest-express-sequelize/commit/4c41bd765f156234053634e98df59c779c8ecd0e))
+
+## [8.4.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.5...v8.4.6) (2021-10-25)
+
+
+### Bug Fixes
+
+* **smart-actions:** skip scope validation for smart action on smart collection ([#865](https://github.com/ForestAdmin/forest-express-sequelize/issues/865)) ([785511b](https://github.com/ForestAdmin/forest-express-sequelize/commit/785511bfbc07ec3d0d72f74dd5444ff65447bc2b))
+
+## [8.4.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.4...v8.4.5) (2021-10-21)
+
+
+### Bug Fixes
+
+* nested include duplication in smart field search ([#863](https://github.com/ForestAdmin/forest-express-sequelize/issues/863)) ([d61da0c](https://github.com/ForestAdmin/forest-express-sequelize/commit/d61da0c2b9dbf337e26ac1f2d816855787023afe))
+
+## [8.4.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.3...v8.4.4) (2021-10-20)
+
+
+### Bug Fixes
+
+* **segment query:** segment query returns no result when primary key is camelCased ([#859](https://github.com/ForestAdmin/forest-express-sequelize/issues/859)) ([7244a11](https://github.com/ForestAdmin/forest-express-sequelize/commit/7244a11acfe730830d7baa5d70c5d7dc6d14fe0e))
+
+## [8.4.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.2...v8.4.3) (2021-10-20)
+
+
+### Bug Fixes
+
+* **smart-field:** smart field should allow to request all fields ([#861](https://github.com/ForestAdmin/forest-express-sequelize/issues/861)) ([8f27c23](https://github.com/ForestAdmin/forest-express-sequelize/commit/8f27c236aa58501b426ec1fd0306b1b38e92bde1))
+
+## [8.4.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.1...v8.4.2) (2021-10-20)
+
+
+### Bug Fixes
+
+* **retrocompatibility:** handle sequelize includables on smart field search ([#850](https://github.com/ForestAdmin/forest-express-sequelize/issues/850)) ([114e88f](https://github.com/ForestAdmin/forest-express-sequelize/commit/114e88fc4ea008fff2cf8db1e72d638085b4d492))
+
+## [8.4.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.4.0...v8.4.1) (2021-10-20)
+
+
+### Bug Fixes
+
+* allow async search on smart field ([#860](https://github.com/ForestAdmin/forest-express-sequelize/issues/860)) ([a497af1](https://github.com/ForestAdmin/forest-express-sequelize/commit/a497af1f74cdabdb7682e7eec7ad08499f23755d))
+
+# [8.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.3...v8.4.0) (2021-10-19)
+
+
+### Features
+
+* **perf:** do not send schema to Forest when unchanged ([#858](https://github.com/ForestAdmin/forest-express-sequelize/issues/858)) ([fb81ea7](https://github.com/ForestAdmin/forest-express-sequelize/commit/fb81ea78ff0ea62fae62345a18f51783893b4694))
+
+## [8.3.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.2...v8.3.3) (2021-10-14)
+
+
+### Bug Fixes
+
+* **types:** add schemaDir property in LianaOptions type ([#853](https://github.com/ForestAdmin/forest-express-sequelize/issues/853)) ([f88aad0](https://github.com/ForestAdmin/forest-express-sequelize/commit/f88aad0935d94d40894583fc77decc3d6410935e))
+
+## [8.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.1...v8.3.2) (2021-10-07)
+
+
+### Bug Fixes
+
+* fix change hook types to allow asynchronous hook ([#847](https://github.com/ForestAdmin/forest-express-sequelize/issues/847)) ([63d4424](https://github.com/ForestAdmin/forest-express-sequelize/commit/63d44246e03fa44b075acc6ca24d9f9d8e54fcbc))
+
+## [8.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.3.0...v8.3.1) (2021-10-06)
+
+
+### Bug Fixes
+
+* **types:** update smart action hook return type ([#845](https://github.com/ForestAdmin/forest-express-sequelize/issues/845)) ([f6e7937](https://github.com/ForestAdmin/forest-express-sequelize/commit/f6e793763987a9f60e181432e6993d9997d91522))
+
+# [8.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.9...v8.3.0) (2021-09-30)
+
+
+### Features
+
+* **filter:** handle correctly uuid field type ([#835](https://github.com/ForestAdmin/forest-express-sequelize/issues/835)) ([92463c0](https://github.com/ForestAdmin/forest-express-sequelize/commit/92463c0adabfb1ca86eabeb18b14930995953caf))
+
+## [8.2.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.8...v8.2.9) (2021-09-29)
+
+
+### Bug Fixes
+
+* smart actions restricted to a segment using segment query should be visible ([#837](https://github.com/ForestAdmin/forest-express-sequelize/issues/837)) ([dc9707b](https://github.com/ForestAdmin/forest-express-sequelize/commit/dc9707b9422c909a0255d479d7b0a02e75c65895))
+
+## [8.2.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.7...v8.2.8) (2021-09-28)
+
+
+### Bug Fixes
+
+* **resources getter:** retrieve only the requested fields if no smart fields are requested ([#832](https://github.com/ForestAdmin/forest-express-sequelize/issues/832)) ([21cb24f](https://github.com/ForestAdmin/forest-express-sequelize/commit/21cb24f941217f432e544ff6ed38beed385ab525))
+
+## [8.2.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.6...v8.2.7) (2021-09-22)
+
+
+### Bug Fixes
+
+* **security:** patch babel vulnerabilities ([#824](https://github.com/ForestAdmin/forest-express-sequelize/issues/824)) ([9ca005c](https://github.com/ForestAdmin/forest-express-sequelize/commit/9ca005c5447d649f9b231c40ba587c308fbc92d5))
+
+## [8.2.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.5...v8.2.6) (2021-09-21)
+
+
+### Bug Fixes
+
+* **security:** patch dependencies of dependencies vulnerabilities ([#823](https://github.com/ForestAdmin/forest-express-sequelize/issues/823)) ([3befd2c](https://github.com/ForestAdmin/forest-express-sequelize/commit/3befd2c1997d0cec34a2f74d4cd0da5737d190c8))
+
+## [8.2.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.4...v8.2.5) (2021-09-21)
+
+
+### Bug Fixes
+
+* **security:** patch jose dependency vulnerability ([#692](https://github.com/ForestAdmin/forest-express-sequelize/issues/692)) ([e9e3b96](https://github.com/ForestAdmin/forest-express-sequelize/commit/e9e3b96b60558554cc274a816b9fe13a0024344f))
+* **security:** patch path-parse dependency vulnerabilities ([#796](https://github.com/ForestAdmin/forest-express-sequelize/issues/796)) ([caf63e4](https://github.com/ForestAdmin/forest-express-sequelize/commit/caf63e449fe6555234c3c9817769def1746de09e))
+* **security:** patch semantic-release-slack-bot vulnerabilities ([#812](https://github.com/ForestAdmin/forest-express-sequelize/issues/812)) ([a8d8c5d](https://github.com/ForestAdmin/forest-express-sequelize/commit/a8d8c5d6afc9f2139e212e21813e7a40eeafdc8b))
+* **security:** patch tmpl dependency vulnerabilities ([#809](https://github.com/ForestAdmin/forest-express-sequelize/issues/809)) ([20b15c5](https://github.com/ForestAdmin/forest-express-sequelize/commit/20b15c505453e80364003b3baaaeb3e044300088))
+
+## [8.2.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.3...v8.2.4) (2021-09-21)
+
+
+### Bug Fixes
+
+* **security:** patch dependencies of dependencies vulnerabilities ([#811](https://github.com/ForestAdmin/forest-express-sequelize/issues/811)) ([4980627](https://github.com/ForestAdmin/forest-express-sequelize/commit/49806275239a3618f7d607d980265a0c5e8a9407))
+
+## [8.2.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.2...v8.2.3) (2021-09-21)
+
+
+### Bug Fixes
+
+* **security:** patch semantic-release dependency vulnerabilities ([#810](https://github.com/ForestAdmin/forest-express-sequelize/issues/810)) ([305f69f](https://github.com/ForestAdmin/forest-express-sequelize/commit/305f69fcfc391f33087be4ff89061af611fe5a6f))
+
+## [8.2.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.1...v8.2.2) (2021-09-14)
+
+
+### Bug Fixes
+
+* **segments:** after fixing performance issue, some segments were ignored by delete and smart actions ([#808](https://github.com/ForestAdmin/forest-express-sequelize/issues/808)) ([8611f61](https://github.com/ForestAdmin/forest-express-sequelize/commit/8611f61e9193417ff77d52f65879d15641b7c2c8))
+
+## [8.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.2.0...v8.2.1) (2021-09-14)
+
+
+### Bug Fixes
+
+* **smart field:** fix filter on smart reference ([#807](https://github.com/ForestAdmin/forest-express-sequelize/issues/807)) ([41edb92](https://github.com/ForestAdmin/forest-express-sequelize/commit/41edb9269b60d18c88fbdbbe871adcd2e479c497))
+
+# [8.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.2...v8.2.0) (2021-09-10)
+
+
+### Features
+
+* **filter:** add "is in" filter ([#806](https://github.com/ForestAdmin/forest-express-sequelize/issues/806)) ([bb10856](https://github.com/ForestAdmin/forest-express-sequelize/commit/bb108567d0fa6b93982c39e5b5cca68468972536))
+
+## [8.1.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.1...v8.1.2) (2021-09-08)
+
+
+### Bug Fixes
+
+* **types:** fix typing errors and limitations ([#799](https://github.com/ForestAdmin/forest-express-sequelize/issues/799)) ([a594f78](https://github.com/ForestAdmin/forest-express-sequelize/commit/a594f7877994b9739db8c6b1f7526902be8d6f78))
+
+## [8.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.1.0...v8.1.1) (2021-09-02)
+
+
+### Performance Improvements
+
+* **bulk-actions:** improve performance when calling getIdsFromRequest ([#797](https://github.com/ForestAdmin/forest-express-sequelize/issues/797)) ([95ff02d](https://github.com/ForestAdmin/forest-express-sequelize/commit/95ff02da334a24d3bf65083fa4bf4b0e25a9d998))
+
+# [8.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.16...v8.1.0) (2021-08-26)
+
+
+### Features
+
+* include tags in the user data inside the request ([#802](https://github.com/ForestAdmin/forest-express-sequelize/issues/802)) ([70bff6a](https://github.com/ForestAdmin/forest-express-sequelize/commit/70bff6a9edd1a611fbf146ab79dd615273288dd4))
+
+## [8.0.16](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.15...v8.0.16) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch ws dependency vulnerability ([#775](https://github.com/ForestAdmin/forest-express-sequelize/issues/775)) ([17f8889](https://github.com/ForestAdmin/forest-express-sequelize/commit/17f88895780401c2ee94cb8a0accc0ada5b1acfd))
+
+## [8.0.15](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.14...v8.0.15) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch color-string dependency vulnerability ([#776](https://github.com/ForestAdmin/forest-express-sequelize/issues/776)) ([04a4221](https://github.com/ForestAdmin/forest-express-sequelize/commit/04a4221a8ce050356e589522d4274d1e64655566))
+
+## [8.0.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.13...v8.0.14) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch hosted-git-info dependency vulnerability ([#717](https://github.com/ForestAdmin/forest-express-sequelize/issues/717)) ([92ee9ed](https://github.com/ForestAdmin/forest-express-sequelize/commit/92ee9ed478bf3aa9abc8aef4dc01f0bee44914f6))
+
+## [8.0.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.12...v8.0.13) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch tar dependency vulnerabilities ([#793](https://github.com/ForestAdmin/forest-express-sequelize/issues/793)) ([6f6938a](https://github.com/ForestAdmin/forest-express-sequelize/commit/6f6938a116906f3114054c05b61e8f4ab71be1c2))
+
+## [8.0.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.11...v8.0.12) (2021-08-25)
+
+
+### Bug Fixes
+
+* **security:** patch handlebars dependency vulnerabilities (from 4.7.6 to 4.7.7) ([#716](https://github.com/ForestAdmin/forest-express-sequelize/issues/716)) ([2430587](https://github.com/ForestAdmin/forest-express-sequelize/commit/2430587f3db9f7ce3a61ab9c91b3c3857675a706))
+
+## [8.0.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.10...v8.0.11) (2021-08-25)
+
+
+### Bug Fixes
+
+* **charts:** objective charts now returns correct values ([#800](https://github.com/ForestAdmin/forest-express-sequelize/issues/800)) ([866e4ac](https://github.com/ForestAdmin/forest-express-sequelize/commit/866e4ac080d28761484f482ddb0f428df0c0e3a2))
+
+## [8.0.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.9...v8.0.10) (2021-08-18)
+
+
+### Bug Fixes
+
+* **related-data:** fail to display records using composite pks on related data ([#798](https://github.com/ForestAdmin/forest-express-sequelize/issues/798)) ([c168b9a](https://github.com/ForestAdmin/forest-express-sequelize/commit/c168b9a956ec3efccd3e6d8bdd4760250905d0c9))
+
+## [8.0.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.8...v8.0.9) (2021-08-09)
+
+
+### Bug Fixes
+
+* **queries:** query generation for camelCased fields on related data ([#792](https://github.com/ForestAdmin/forest-express-sequelize/issues/792)) ([a6fa9d5](https://github.com/ForestAdmin/forest-express-sequelize/commit/a6fa9d5d8e7eaa53d9c6cf125ebd9443a7f480f4))
+
+## [8.0.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.7...v8.0.8) (2021-08-05)
+
+
+### Bug Fixes
+
+* **exposed:** reduce number of mandatory parameters in records-getter and record-serializer ([#795](https://github.com/ForestAdmin/forest-express-sequelize/issues/795)) ([62eac98](https://github.com/ForestAdmin/forest-express-sequelize/commit/62eac98af760413f8c564a5a3e8f15b858314687))
+
+## [8.0.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.6...v8.0.7) (2021-08-04)
+
+
+### Bug Fixes
+
+* **types:** add missing RecordSerializer ([#794](https://github.com/ForestAdmin/forest-express-sequelize/issues/794)) ([4bf6b60](https://github.com/ForestAdmin/forest-express-sequelize/commit/4bf6b6045b5818cc31790d59e3f1e3cc6aa8852a))
+
+## [8.0.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.5...v8.0.6) (2021-08-02)
+
+
+### Bug Fixes
+
+* inverseOf computation with multiple associations is supported ([#788](https://github.com/ForestAdmin/forest-express-sequelize/issues/788)) ([7736d01](https://github.com/ForestAdmin/forest-express-sequelize/commit/7736d01322ee8adcbc1e933879079a2bf564b004))
+
+## [8.0.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.4...v8.0.5) (2021-07-27)
+
+
+### Bug Fixes
+
+* **update:** fix update record regression when using scopes ([#787](https://github.com/ForestAdmin/forest-express-sequelize/issues/787)) ([1acfa8d](https://github.com/ForestAdmin/forest-express-sequelize/commit/1acfa8da602e5278d3974f822eb5f586e00c7eff))
+
+## [8.0.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.3...v8.0.4) (2021-07-26)
+
+
+### Bug Fixes
+
+* **actions:** fix regression on the bulk delete action ([#786](https://github.com/ForestAdmin/forest-express-sequelize/issues/786)) ([f9bbdd8](https://github.com/ForestAdmin/forest-express-sequelize/commit/f9bbdd87a31f47b6a846f93aaa162d4585ced61e))
+
+## [8.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.2...v8.0.3) (2021-07-26)
+
+
+### Bug Fixes
+
+* do not modify query options object when applying workarounds for specific drivers ([#783](https://github.com/ForestAdmin/forest-express-sequelize/issues/783)) ([5989fda](https://github.com/ForestAdmin/forest-express-sequelize/commit/5989fda2135f26ca329756aeea68bec91992599e))
+
+## [8.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.1...v8.0.2) (2021-07-23)
+
+
+### Bug Fixes
+
+* fix display of week number in line chart ([#785](https://github.com/ForestAdmin/forest-express-sequelize/issues/785)) ([48d202d](https://github.com/ForestAdmin/forest-express-sequelize/commit/48d202d5954276a023728d8ef0a37c36ed378a68))
+
+## [8.0.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0...v8.0.1) (2021-07-22)
+
+
+### Bug Fixes
+
+* **related-data:** sequelize related data are not displayed ([#784](https://github.com/ForestAdmin/forest-express-sequelize/issues/784)) ([05b8ee3](https://github.com/ForestAdmin/forest-express-sequelize/commit/05b8ee330d16e5a47088501057dc4d6e121e0990))
+
+# [8.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v7.12.2...v8.0.0) (2021-07-19)
+
+
+### Bug Fixes
+
+* abstractRecord type ([#772](https://github.com/ForestAdmin/forest-express-sequelize/issues/772)) ([81492b9](https://github.com/ForestAdmin/forest-express-sequelize/commit/81492b91a59cdd645ceefbad4431a45a0308f198))
+* correctly get the IP address from the request headers ([2b5ed1d](https://github.com/ForestAdmin/forest-express-sequelize/commit/2b5ed1d99ee0219dba954b63a6579ab1d9b211b1))
+* fix types ([580ef41](https://github.com/ForestAdmin/forest-express-sequelize/commit/580ef4115c4b59820c05aafe7a90cc858cc623c6))
+
+
+### Features
+
+* allow hooks for global and bulk smart action ([#769](https://github.com/ForestAdmin/forest-express-sequelize/issues/769)) ([14c26cd](https://github.com/ForestAdmin/forest-express-sequelize/commit/14c26cde0c7841674e559a6d94f9a25dd4bb1fe4))
+* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([c46fd66](https://github.com/ForestAdmin/forest-express-sequelize/commit/c46fd664bf56840cafa03d0e444d97754fdc239a))
+* **browsing-context:** allow `Forest-Context-Url` header to give the current browser url of users ([#665](https://github.com/ForestAdmin/forest-express-sequelize/issues/665)) ([a61699a](https://github.com/ForestAdmin/forest-express-sequelize/commit/a61699ae2218c34508f00d2b9ac891107b9c5710))
+* **security:** secure segments queries ([#764](https://github.com/ForestAdmin/forest-express-sequelize/issues/764)) ([98d7f74](https://github.com/ForestAdmin/forest-express-sequelize/commit/98d7f74272d144d6182a2e4cc39750e9b07108b3))
+* **smart-action:** user can add dynamically field with hook on smart action form ([#742](https://github.com/ForestAdmin/forest-express-sequelize/issues/742)) ([228bb42](https://github.com/ForestAdmin/forest-express-sequelize/commit/228bb42aeb0ae13d352e7b053e243a80d0ddc078))
+
+
+* feat(scopes)!: enforce scopes restrictions on a wider range of requests (#731) ([da7d71d](https://github.com/ForestAdmin/forest-express-sequelize/commit/da7d71dbee2662aa21dc65bbd6d271086fd31acc)), closes [#731](https://github.com/ForestAdmin/forest-express-sequelize/issues/731)
+
+
+### BREAKING CHANGES
+
+* record is no longer send to the hook middleware & values option on smart action is no longer supported
+* **smart-action:** fields parameters on hook function is no longer a map of field, it is now an array.
+change hook is no longer choosen by the field name, field need to have hook defined inside it definition by addin a props hook.
+* the public API of forest-express has changed to include the parameters which are needed to evaluate scope filters. This includes PermissionMiddlewareCreator, all classes on the /exposed folder and most services. Many routes now require providing the current user timezone.
+* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+* **browsing-context:** users willing to use this header needs either to clean the allowed headers or to add this specific header in the CORS configuration
+
 # [8.0.0-beta.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.12...v8.0.0-beta.13) (2021-07-19)
 
 # [8.0.0-beta.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.0.0-beta.11...v8.0.0-beta.12) (2021-07-19)

@@ -1,4 +1,6 @@
-import { BaseFiltersParser, BaseOperatorDateParser, Schemas } from 'forest-express';
+import {
+  BaseFiltersParser, BaseOperatorDateParser, Schemas, SchemaUtils,
+} from 'forest-express';
 import Operators from '../utils/operators';
 import { NoMatchingOperatorError } from './errors';
 
@@ -9,27 +11,19 @@ function FiltersParser(modelSchema, timezone, options) {
   this.operatorDateParser = new BaseOperatorDateParser({ operators: this.OPERATORS, timezone });
 
   this.perform = async (filtersString) =>
-    BaseFiltersParser.perform(filtersString, this.formatAggregation, this.formatCondition);
+    BaseFiltersParser.perform(
+      filtersString, this.formatAggregation, this.formatCondition, modelSchema,
+    );
 
   this.formatAggregation = async (aggregator, formattedConditions) => {
     const aggregatorOperator = this.formatAggregatorOperator(aggregator);
     return { [aggregatorOperator]: formattedConditions };
   };
 
-  this.formatCondition = async (condition) => {
+  this.formatCondition = async (condition, isSmartField = false) => {
     const isTextField = this.isTextField(condition.field);
-    if (this.isSmartField(modelSchema, condition.field)) {
-      const fieldFound = modelSchema.fields.find((field) => field.field === condition.field);
-
-      if (!fieldFound.filter) throw new Error(`"filter" method missing on smart field "${fieldFound.field}"`);
-
-      const formattedCondition = fieldFound
-        .filter({
-          where: this.formatOperatorValue(condition.operator, condition.value, isTextField),
-          condition,
-        });
-      if (!formattedCondition) throw new Error(`"filter" method on smart field "${fieldFound.field}" must return a condition`);
-      return formattedCondition;
+    if (isSmartField) {
+      return this.formatOperatorValue(condition.operator, condition.value, isTextField);
     }
 
     const formattedField = this.formatField(condition.field);
@@ -94,7 +88,9 @@ function FiltersParser(modelSchema, timezone, options) {
       case 'includes_all':
         return { [this.OPERATORS.CONTAINS]: value };
       case 'in':
-        return { [this.OPERATORS.IN]: value };
+        return typeof value === 'string'
+          ? { [this.OPERATORS.IN]: value.split(',').map((elem) => elem.trim()) }
+          : { [this.OPERATORS.IN]: value };
       default:
         throw new NoMatchingOperatorError();
     }
@@ -115,22 +111,13 @@ function FiltersParser(modelSchema, timezone, options) {
         Schemas.schemas, modelSchema, associationName, fieldName,
       );
       if (associationSchema) {
-        return this.getFieldTypeFromSchema(associationSchema, field) === 'String';
+        return SchemaUtils.getFieldType(associationSchema, field) === 'String';
       }
       return false;
     }
-    return this.getFieldTypeFromSchema(modelSchema, field) === 'String';
+    return SchemaUtils.getFieldType(modelSchema, field) === 'String';
   };
 
-  this.isSmartField = (schema, fieldName) => {
-    const fieldFound = schema.fields.find((field) => field.field === fieldName);
-    return !!fieldFound && !!fieldFound.isVirtual;
-  };
-
-  this.getFieldTypeFromSchema = (schema, fieldName) => {
-    const fieldFound = schema.fields.find((field) => field.field === fieldName);
-    return fieldFound && fieldFound.type;
-  };
 
   // NOTICE: Look for a previous interval condition matching the following:
   //         - If the filter is a simple condition at the root the check is done right away.
