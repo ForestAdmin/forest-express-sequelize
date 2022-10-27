@@ -1,6 +1,6 @@
 import moment from 'moment';
 import Sequelize from 'sequelize';
-import { SchemaUtils } from 'forest-express';
+import { Schemas, SchemaUtils } from 'forest-express';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
 import { NoMatchingOperatorError } from '../../src/services/errors';
@@ -227,6 +227,7 @@ describe('services > filters-parser', () => {
       const schemaWithFields = {
         fields: [{ field: 'car', reference: 'car.id' }],
       };
+      Schemas.schemas = { car: { fields: [{ field: 'id', type: 'Number' }] } };
       const filters = { field: 'car:brandName', operator: 'starts_with', value: 'Ferrari' };
       const filtersParser = new FiltersParser(schemaWithFields, timezone, sequelizeOptions);
 
@@ -235,7 +236,6 @@ describe('services > filters-parser', () => {
 
         const spy = jest.spyOn(SchemaUtils, 'isSmartField').mockReturnValue(false);
 
-        console.log('Peforming filter');
         expect(await filtersParser.perform(filters))
           .toStrictEqual({ '$car.brandName$': { [OPERATORS.LIKE]: 'Ferrari%' } });
 
