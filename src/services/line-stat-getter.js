@@ -7,18 +7,18 @@ import QueryOptions from './query-options';
 
 function LineStatGetter(model, params, options, user) {
   const schema = Schemas.schemas[model.name];
-  const timeRange = params.time_range.toLowerCase();
+  const timeRange = params.timeRange.toLowerCase();
 
   function getAggregateField() {
     // NOTICE: As MySQL cannot support COUNT(table_name.*) syntax, fieldName cannot be '*'.
-    const fieldName = params.aggregate_field
+    const fieldName = params.aggregateFieldName
       || schema.primaryKeys[0]
       || schema.fields[0].field;
     return `${schema.name}.${Orm.getColumnName(schema, fieldName)}`;
   }
 
   function getGroupByDateField() {
-    return `${schema.name}.${Orm.getColumnName(schema, params.group_by_date_field)}`;
+    return `${schema.name}.${Orm.getColumnName(schema, params.groupByFieldName)}`;
   }
 
   const groupByDateField = getGroupByDateField();
@@ -133,7 +133,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
         'to_char',
         options.Sequelize.fn(
           'date_trunc',
-          params.time_range,
+          params.timeRange,
           options.Sequelize.literal(`"${getGroupByDateField().replace('.', '"."')}" at time zone '${params.timezone}'`),
         ),
         'YYYY-MM-DD 00:00:00',
@@ -181,7 +181,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   function getAggregate() {
     return [
       options.Sequelize.fn(
-        params.aggregate.toLowerCase(),
+        params.aggregator.toLowerCase(),
         options.Sequelize.col(getAggregateField()),
       ),
       'value',
@@ -197,11 +197,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   this.perform = async () => {
-    const { filters, timezone } = params;
+    const { filter, timezone } = params;
     const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
-    await queryOptions.filterByConditionTree(filters, timezone);
+    await queryOptions.filterByConditionTree(filter, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
 
     const sequelizeOptions = {
