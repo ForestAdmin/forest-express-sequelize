@@ -1,3 +1,17 @@
+# [9.0.0-beta.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.14...v9.0.0-beta.1) (2022-10-28)
+
+
+### Bug Fixes
+
+* **security:** validate that smart action approvals are launched with the same parameters than the initial trigger ([#1026](https://github.com/ForestAdmin/forest-express-sequelize/issues/1026)) ([928865e](https://github.com/ForestAdmin/forest-express-sequelize/commit/928865e9299d1ef9680e9b33ce33ecd8f4c9d077))
+
+
+### BREAKING CHANGES
+
+* **security:** drop support of projects that are not using roles
+    
+Co-authored-by: Guillaume Gautreau <guillaumeg@forestadmin.com>, Morgan Perre <morganperre@gmail.com>
+
 ## [8.5.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.13...v8.5.14) (2022-10-25)
 
 
