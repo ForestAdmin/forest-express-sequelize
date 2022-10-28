@@ -1,3 +1,10 @@
+# [9.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0-beta.1...v9.0.0-beta.2) (2022-10-28)
+
+
+### Bug Fixes
+
+* **chart:** improve security on chart and rename charts' properties ([#1027](https://github.com/ForestAdmin/forest-express-sequelize/issues/1027)) ([2e4c54e](https://github.com/ForestAdmin/forest-express-sequelize/commit/2e4c54e4b66295451e97c873b3cfa3043e1864e3))
+
 # [9.0.0-beta.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.14...v9.0.0-beta.1) (2022-10-28)
 
 
