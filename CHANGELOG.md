@@ -1,3 +1,10 @@
+# [9.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0-beta.2...v9.0.0-beta.3) (2022-11-02)
+
+
+### Features
+
+* **chart:** add support for context variables used by Workspaces ([#1029](https://github.com/ForestAdmin/forest-express-sequelize/issues/1029)) ([dc3009a](https://github.com/ForestAdmin/forest-express-sequelize/commit/dc3009acf395292cf28a8d7b481d36f78bb9d829))
+
 # [9.0.0-beta.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0-beta.1...v9.0.0-beta.2) (2022-10-28)
 
 
