@@ -4,10 +4,8 @@ function QueryStatGetter(params, opts) {
     let rawQuery = params.query.trim();
     const bind = params.contextVariables || {};
 
-
-    if (params.record_id && !rawQuery.includes('$$recordId')) {
-      rawQuery = rawQuery.replace(/\\?/g, '$$$$recordId');
-      bind.recordId = params.record_id;
+    if (bind.recordId && !rawQuery.includes('$recordId')) {
+      rawQuery = rawQuery.replace(/\?/g, '$recordId');
     }
 
     // WARNING: Choosing the first connection might generate issues if the model
