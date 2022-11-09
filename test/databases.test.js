@@ -17,6 +17,7 @@ const BelongsToUpdater = require('../src/services/belongs-to-updater');
 const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
 const HasManyDissociator = require('../src/services/has-many-dissociator');
+const QueryStatGetter = require('../src/services/query-stat-getter');
 
 const baseParams = { timezone: 'Europe/Paris' };
 const user = { renderingId: 1 };
@@ -793,6 +794,28 @@ const user = { renderingId: 1 };
           expect(stat.value).toStrictEqual({ countCurrent: 4, countPrevious: undefined });
         } finally {
           spy.mockRestore();
+          connectionManager.closeConnection();
+        }
+      });
+    });
+
+    describe('stats > query stat getter', () => {
+      it('should give correct answer with recordId filtering', async () => {
+        expect.assertions(2);
+        const { options } = initializeSequelize();
+
+        try {
+          const contextVariables = { recordId: 102 };
+          // eslint-disable-next-line jest/no-if
+          const escapeQuote = connectionManager === sequelizePostgres ? '"' : '`';
+          const stat = await new QueryStatGetter({
+            contextVariables,
+            query: `SELECT count(*) as value FROM ${escapeQuote}users${escapeQuote} WHERE ${escapeQuote}primaryId${escapeQuote} != ?`,
+          }, options).perform();
+
+          expect(stat).toHaveLength(1);
+          expect(`${stat[0].value}`).toStrictEqual('2');
+        } finally {
           connectionManager.closeConnection();
         }
       });
