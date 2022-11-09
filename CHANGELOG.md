@@ -1,3 +1,24 @@
+# [9.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.14...v9.0.0) (2022-11-09)
+
+
+### Bug Fixes
+
+* **chart:** improve security on chart and rename charts' properties ([#1027](https://github.com/ForestAdmin/forest-express-sequelize/issues/1027)) ([2e4c54e](https://github.com/ForestAdmin/forest-express-sequelize/commit/2e4c54e4b66295451e97c873b3cfa3043e1864e3))
+* **security:** validate that smart action approvals are launched with the same parameters than the initial trigger ([#1026](https://github.com/ForestAdmin/forest-express-sequelize/issues/1026)) ([928865e](https://github.com/ForestAdmin/forest-express-sequelize/commit/928865e9299d1ef9680e9b33ce33ecd8f4c9d077))
+
+
+### Features
+
+* **chart:** add support for context variables inside SQL query ([#1028](https://github.com/ForestAdmin/forest-express-sequelize/issues/1028)) ([6bf678e](https://github.com/ForestAdmin/forest-express-sequelize/commit/6bf678ead766a202908c0bf8f5376e9c45d9ef6f))
+* **chart:** add support for context variables used by Workspaces ([#1029](https://github.com/ForestAdmin/forest-express-sequelize/issues/1029)) ([dc3009a](https://github.com/ForestAdmin/forest-express-sequelize/commit/dc3009acf395292cf28a8d7b481d36f78bb9d829))
+
+
+### BREAKING CHANGES
+
+* **security:** drop support of projects that are not using roles
+    
+Co-authored-by: Guillaume Gautreau <guillaumeg@forestadmin.com>, Morgan Perre <morganperre@gmail.com>
+
 # [9.0.0-beta.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0-beta.3...v9.0.0-beta.4) (2022-11-09)
 
 
