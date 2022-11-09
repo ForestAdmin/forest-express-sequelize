@@ -1,6 +1,6 @@
 import moment from 'moment';
 import Sequelize from 'sequelize';
-import { SchemaUtils } from 'forest-express';
+import { Schemas, SchemaUtils } from 'forest-express';
 import FiltersParser from '../../src/services/filters-parser';
 import Operators from '../../src/utils/operators';
 import { NoMatchingOperatorError } from '../../src/services/errors';
@@ -227,6 +227,7 @@ describe('services > filters-parser', () => {
       const schemaWithFields = {
         fields: [{ field: 'car', reference: 'car.id' }],
       };
+      Schemas.schemas = { car: { fields: [{ field: 'id', type: 'Number' }] } };
       const filters = '{ "field": "car:brandName", "operator": "starts_with", "value": "Ferrari" }';
       const filtersParser = new FiltersParser(schemaWithFields, timezone, sequelizeOptions);
 
@@ -246,10 +247,10 @@ describe('services > filters-parser', () => {
   describe('getPreviousIntervalCondition function', () => {
     describe('working scenarii', () => {
       describe('with \'and\' aggregator + flat conditions + 1 previous interval', () => {
-        const aggregator = JSON.stringify({
+        const aggregator = {
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
-        });
+        };
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should generate the right condition', () => {
@@ -260,7 +261,7 @@ describe('services > filters-parser', () => {
       });
 
       describe('with no aggregator + flat conditions + 1 previous interval', () => {
-        const aggregator = JSON.stringify(defaultDateCondition);
+        const aggregator = defaultDateCondition;
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should generate the right condition', () => {
@@ -273,10 +274,10 @@ describe('services > filters-parser', () => {
 
     describe('not working scenarii', () => {
       describe('with \'and\' aggregator + flat conditions + 2 previous intervals', () => {
-        const aggregator = JSON.stringify({
+        const aggregator = {
           aggregator: 'and',
           conditions: [defaultCondition, defaultDateCondition, defaultDateCondition],
-        });
+        };
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
@@ -286,10 +287,10 @@ describe('services > filters-parser', () => {
       });
 
       describe('with \'or\' aggregator + flat conditions + 1 previous interval', () => {
-        const aggregator = JSON.stringify({
+        const aggregator = {
           aggregator: 'or',
           conditions: [defaultCondition, defaultCondition2, defaultDateCondition],
-        });
+        };
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
@@ -299,10 +300,10 @@ describe('services > filters-parser', () => {
       });
 
       describe('with \'and\' aggregator + flat conditions + 0 previous interval', () => {
-        const aggregator = JSON.stringify({
+        const aggregator = {
           aggregator: 'and',
           conditions: [defaultCondition, defaultCondition2],
-        });
+        };
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
@@ -312,10 +313,10 @@ describe('services > filters-parser', () => {
       });
 
       describe('with \'and\' aggregator + nested conditions + 1 previous interval', () => {
-        const aggregator = JSON.stringify({
+        const aggregator = {
           aggregator: 'and',
           conditions: [{ aggregator: 'or', conditions: [defaultCondition, defaultCondition2] }, defaultDateCondition],
-        });
+        };
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {
@@ -325,7 +326,7 @@ describe('services > filters-parser', () => {
       });
 
       describe('with no aggregator + flat conditions + 0 previous interval', () => {
-        const aggregator = JSON.stringify(defaultCondition);
+        const aggregator = defaultCondition;
         const filtersParser = new FiltersParser(schema, timezone, sequelizeOptions);
 
         it('should not generate conditions', () => {

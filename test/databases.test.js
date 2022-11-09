@@ -17,6 +17,7 @@ const BelongsToUpdater = require('../src/services/belongs-to-updater');
 const ResourceRemover = require('../src/services/resource-remover');
 const HasManyGetter = require('../src/services/has-many-getter');
 const HasManyDissociator = require('../src/services/has-many-dissociator');
+const QueryStatGetter = require('../src/services/query-stat-getter');
 
 const baseParams = { timezone: 'Europe/Paris' };
 const user = { renderingId: 1 };
@@ -552,11 +553,11 @@ const user = { renderingId: 1 };
               const stat = await new PieStatGetter(models.user, {
                 ...baseParams,
                 type: 'Pie',
-                collection: 'user',
-                group_by_field: 'firstName',
-                aggregate: 'Count',
-                time_range: null,
-                filters: null,
+                sourceCollectionName: 'user',
+                groupByFieldName: 'firstName',
+                aggregator: 'Count',
+                timeRange: null,
+                filter: null,
               }, options, user).perform();
               expect(stat.value).toHaveLength(3);
             } finally {
@@ -575,11 +576,11 @@ const user = { renderingId: 1 };
               const stat = await new PieStatGetter(models.addressWithUserAlias, {
                 ...baseParams,
                 type: 'Pie',
-                collection: 'addressWithUserAlias',
-                group_by_field: 'userAlias:primaryId',
-                aggregate: 'Count',
-                time_range: null,
-                filters: null,
+                sourceCollectionName: 'addressWithUserAlias',
+                groupByFieldName: 'userAlias:primaryId',
+                aggregator: 'Count',
+                timeRange: null,
+                filter: null,
               }, options, user).perform();
               expect(stat.value).toBeEmpty();
             } finally {
@@ -601,11 +602,11 @@ const user = { renderingId: 1 };
             const stat = await new LineStatGetter(models.user, {
               ...baseParams,
               type: 'Line',
-              collection: 'user',
-              group_by_date_field: 'createdAt',
-              aggregate: 'Count',
-              time_range: 'Day',
-              filters: null,
+              sourceCollectionName: 'user',
+              groupByFieldName: 'createdAt',
+              aggregator: 'Count',
+              timeRange: 'Day',
+              filter: null,
             }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
@@ -624,11 +625,11 @@ const user = { renderingId: 1 };
             const stat = await new LineStatGetter(models.user, {
               ...baseParams,
               type: 'Line',
-              collection: 'user',
-              group_by_date_field: 'createdAt',
-              aggregate: 'Count',
-              time_range: 'Week',
-              filters: null,
+              sourceCollectionName: 'user',
+              groupByFieldName: 'createdAt',
+              aggregator: 'Count',
+              timeRange: 'Week',
+              filter: null,
             }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
@@ -647,11 +648,11 @@ const user = { renderingId: 1 };
             const stat = await new LineStatGetter(models.user, {
               ...baseParams,
               type: 'Line',
-              collection: 'user',
-              group_by_date_field: 'createdAt',
-              aggregate: 'Count',
-              time_range: 'Month',
-              filters: null,
+              sourceCollectionName: 'user',
+              groupByFieldName: 'createdAt',
+              aggregator: 'Count',
+              timeRange: 'Month',
+              filter: null,
             }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
@@ -670,11 +671,11 @@ const user = { renderingId: 1 };
             const stat = await new LineStatGetter(models.user, {
               ...baseParams,
               type: 'Line',
-              collection: 'user',
-              group_by_date_field: 'createdAt',
-              aggregate: 'Count',
-              time_range: 'Year',
-              filters: null,
+              sourceCollectionName: 'user',
+              groupByFieldName: 'createdAt',
+              aggregator: 'Count',
+              timeRange: 'Year',
+              filter: null,
             }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
@@ -693,11 +694,11 @@ const user = { renderingId: 1 };
             const stat = await new LineStatGetter(models.address, {
               ...baseParams,
               type: 'Line',
-              collection: 'address',
-              group_by_date_field: 'createdAt',
-              aggregate: 'Count',
-              time_range: 'Year',
-              filters: JSON.stringify({ field: 'user:primaryId', operator: 'equal', value: 100 }),
+              sourceCollectionName: 'address',
+              groupByFieldName: 'createdAt',
+              aggregator: 'Count',
+              timeRange: 'Year',
+              filter: { field: 'user:primaryId', operator: 'equal', value: 100 },
             }, options, user).perform();
             expect(stat.value).toHaveLength(1);
           } finally {
@@ -718,8 +719,8 @@ const user = { renderingId: 1 };
           const stat = await new ValueStatGetter(models.user, {
             ...baseParams,
             type: 'Value',
-            aggregate: 'Sum',
-            aggregate_field: 'primaryId',
+            aggregator: 'Sum',
+            aggregateFieldName: 'primaryId',
           }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: undefined });
@@ -738,9 +739,9 @@ const user = { renderingId: 1 };
           const stat = await new ValueStatGetter(models.user, {
             ...baseParams,
             type: 'Value',
-            aggregate: 'Sum',
-            aggregate_field: 'primaryId',
-            filters: '{"field":"createdAt","operator":"previous_month_to_date","value":null}',
+            aggregator: 'Sum',
+            aggregateFieldName: 'primaryId',
+            filter: '{"field":"createdAt","operator":"previous_month_to_date","value":null}',
           }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 305, countPrevious: 0 });
@@ -759,9 +760,9 @@ const user = { renderingId: 1 };
           const stat = await new ValueStatGetter(models.user, {
             ...baseParams,
             type: 'Value',
-            aggregate: 'Sum',
-            aggregate_field: 'primaryId',
-            filters: JSON.stringify({
+            aggregator: 'Sum',
+            aggregateFieldName: 'primaryId',
+            filter: JSON.stringify({
               aggregator: 'and',
               conditions: [
                 { field: 'createdAt', operator: 'previous_month_to_date', value: null },
@@ -786,13 +787,35 @@ const user = { renderingId: 1 };
           const stat = await new ValueStatGetter(models.address, {
             ...baseParams,
             type: 'Value',
-            aggregate: 'Count',
-            filters: '{"field":"user:primaryId","operator":"greater_than","value":0}',
+            aggregator: 'Count',
+            filter: { field: 'user:primaryId', operator: 'greater_than', value: 0 },
           }, options, user).perform();
 
           expect(stat.value).toStrictEqual({ countCurrent: 4, countPrevious: undefined });
         } finally {
           spy.mockRestore();
+          connectionManager.closeConnection();
+        }
+      });
+    });
+
+    describe('stats > query stat getter', () => {
+      it('should give correct answer with recordId filtering', async () => {
+        expect.assertions(2);
+        const { options } = initializeSequelize();
+
+        try {
+          const contextVariables = { recordId: 102 };
+          // eslint-disable-next-line jest/no-if
+          const escapeQuote = connectionManager === sequelizePostgres ? '"' : '`';
+          const stat = await new QueryStatGetter({
+            contextVariables,
+            query: `SELECT count(*) as value FROM ${escapeQuote}users${escapeQuote} WHERE ${escapeQuote}primaryId${escapeQuote} != ?`,
+          }, options).perform();
+
+          expect(stat).toHaveLength(1);
+          expect(`${stat[0].value}`).toStrictEqual('2');
+        } finally {
           connectionManager.closeConnection();
         }
       });
