@@ -1,3 +1,10 @@
+# [9.0.0-beta.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0-beta.3...v9.0.0-beta.4) (2022-11-09)
+
+
+### Features
+
+* **chart:** add support for context variables inside SQL query ([#1028](https://github.com/ForestAdmin/forest-express-sequelize/issues/1028)) ([6bf678e](https://github.com/ForestAdmin/forest-express-sequelize/commit/6bf678ead766a202908c0bf8f5376e9c45d9ef6f))
+
 # [9.0.0-beta.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0-beta.2...v9.0.0-beta.3) (2022-11-02)
 
 
