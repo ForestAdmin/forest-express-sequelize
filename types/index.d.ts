@@ -213,16 +213,6 @@ export interface Filter {
   value: string;
 }
 
-export enum Aggregator {
-  AND = 'and',
-  OR = 'or'
-}
-
-export interface AggregatedFilters {
-  aggregator: Aggregator;
-  conditions: Filter[];
-}
-
 export interface Query {
   timezone?: string;
   search?: string;
