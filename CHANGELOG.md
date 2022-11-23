@@ -1,3 +1,10 @@
+## [9.0.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0...v9.0.1) (2022-11-23)
+
+
+### Bug Fixes
+
+* **types:** remove unused and incorrect exported type related to aggregation ([#1041](https://github.com/ForestAdmin/forest-express-sequelize/issues/1041)) ([9091a67](https://github.com/ForestAdmin/forest-express-sequelize/commit/9091a6714bc0716b21f309059e8e7fccfb9bc987))
+
 # [9.0.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v8.5.14...v9.0.0) (2022-11-09)
 
 
