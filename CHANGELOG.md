@@ -1,3 +1,10 @@
+## [9.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.1...v9.0.2) (2022-11-25)
+
+
+### Bug Fixes
+
+* **type:** add promise return for `SmartFieldFilterer` ([#1043](https://github.com/ForestAdmin/forest-express-sequelize/issues/1043)) ([6d0b7d1](https://github.com/ForestAdmin/forest-express-sequelize/commit/6d0b7d10c4f453822d2f5d3db2104e25ac11544a))
+
 ## [9.0.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.0...v9.0.1) (2022-11-23)
 
 
