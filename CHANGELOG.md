@@ -1,3 +1,10 @@
+## [9.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.2...v9.0.3) (2022-11-28)
+
+
+### Bug Fixes
+
+* **type:** add FilterOperator enum ([#1040](https://github.com/ForestAdmin/forest-express-sequelize/issues/1040)) ([17b47d9](https://github.com/ForestAdmin/forest-express-sequelize/commit/17b47d9611fa16b0dc421f8cce37f64e894b954b))
+
 ## [9.0.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.1...v9.0.2) (2022-11-25)
 
 
