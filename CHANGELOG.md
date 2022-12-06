@@ -1,3 +1,10 @@
+## [9.0.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.3...v9.0.4) (2022-12-06)
+
+
+### Bug Fixes
+
+* add attribute reverse list word by upgrading forest-express ([#1046](https://github.com/ForestAdmin/forest-express-sequelize/issues/1046)) ([a43b1c0](https://github.com/ForestAdmin/forest-express-sequelize/commit/a43b1c0efc15fb86a04e5fc44add6c37360d6cd0))
+
 ## [9.0.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.2...v9.0.3) (2022-11-28)
 
 
