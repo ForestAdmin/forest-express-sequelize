@@ -1,3 +1,10 @@
+## [9.0.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.5...v9.0.6) (2022-12-21)
+
+
+### Bug Fixes
+
+* **typing:** remove invalid enum from typing file ([#1050](https://github.com/ForestAdmin/forest-express-sequelize/issues/1050)) ([f9ba5c5](https://github.com/ForestAdmin/forest-express-sequelize/commit/f9ba5c5026f73d5e1e7a909bf65b91737c614715))
+
 ## [9.0.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.4...v9.0.5) (2022-12-12)
 
 ## [9.0.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.3...v9.0.4) (2022-12-06)
