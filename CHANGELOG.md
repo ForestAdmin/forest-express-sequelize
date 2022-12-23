@@ -1,3 +1,10 @@
+## [9.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.1.0...v9.1.1) (2022-12-23)
+
+
+### Bug Fixes
+
+* revert "feat(smart-actions): add support for data-based conditions on smart action trigger, approval requirement and authorization to approve" ([#1053](https://github.com/ForestAdmin/forest-express-sequelize/issues/1053)) ([7c091cf](https://github.com/ForestAdmin/forest-express-sequelize/commit/7c091cfc9855c27d1e36e00ce4f75e21020cda4a))
+
 # [9.1.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.0.6...v9.1.0) (2022-12-23)
 
 
