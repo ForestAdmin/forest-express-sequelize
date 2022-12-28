@@ -1,3 +1,10 @@
+# [9.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.1.1...v9.2.0) (2022-12-28)
+
+
+### Features
+
+* **smart-actions:** allow to define data-based conditions on approval requests ([#1054](https://github.com/ForestAdmin/forest-express-sequelize/issues/1054)) ([c740b09](https://github.com/ForestAdmin/forest-express-sequelize/commit/c740b09aae2ab4afef7dd6543ca7e923b6fc63f1))
+
 ## [9.1.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.1.0...v9.1.1) (2022-12-23)
 
 
