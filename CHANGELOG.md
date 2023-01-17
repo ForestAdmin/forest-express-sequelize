@@ -1,3 +1,10 @@
+## [9.2.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.0...v9.2.1) (2023-01-17)
+
+
+### Bug Fixes
+
+* **security:** patch xmldom dependency vulnerability ([#1060](https://github.com/ForestAdmin/forest-express-sequelize/issues/1060)) ([24cdb3f](https://github.com/ForestAdmin/forest-express-sequelize/commit/24cdb3f773f20c3be7ffcdf7a945694f20ea6663))
+
 # [9.2.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.1.1...v9.2.0) (2022-12-28)
 
 
