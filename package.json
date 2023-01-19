@@ -67,7 +67,7 @@
     "semantic-release": "19.0.3",
     "semantic-release-npm-deprecate-old-versions": "1.3.2",
     "semantic-release-slack-bot": "3.5.2",
-    "sequelize": "5.21.3",
+    "sequelize": "6.28.0",
     "sequelize-fixtures": "1.1.1",
     "tedious": "11.0.8",
     "typescript": "4.3.2"
