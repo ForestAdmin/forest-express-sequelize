@@ -1,3 +1,10 @@
+## [9.2.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.3...v9.2.4) (2023-01-20)
+
+
+### Bug Fixes
+
+* revert forest-express instable dependency ([#1066](https://github.com/ForestAdmin/forest-express-sequelize/issues/1066)) ([a1739ff](https://github.com/ForestAdmin/forest-express-sequelize/commit/a1739ff4593409648acf5b54d9f214ce88c92ce3))
+
 ## [9.2.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.2...v9.2.3) (2023-01-19)
 
 
