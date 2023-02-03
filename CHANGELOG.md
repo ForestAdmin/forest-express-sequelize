@@ -1,3 +1,10 @@
+## [9.2.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.5...v9.2.6) (2023-02-03)
+
+
+### Bug Fixes
+
+* **security:** patch http-cache-semantics dependencies vulnerabilities ([#1070](https://github.com/ForestAdmin/forest-express-sequelize/issues/1070)) ([a5f5d4c](https://github.com/ForestAdmin/forest-express-sequelize/commit/a5f5d4c8012dadcd2876ee41afa02d78e706fea3))
+
 ## [9.2.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.4...v9.2.5) (2023-01-24)
 
 
