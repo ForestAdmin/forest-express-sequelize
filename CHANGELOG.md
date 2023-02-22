@@ -1,3 +1,10 @@
+## [9.2.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.6...v9.2.7) (2023-02-22)
+
+
+### Bug Fixes
+
+* **middlewares:** users should be able to execute a smart action on a smart collection ([#1073](https://github.com/ForestAdmin/forest-express-sequelize/issues/1073)) ([b74498f](https://github.com/ForestAdmin/forest-express-sequelize/commit/b74498f1cb5bb071e2386a812691bb24f1009757))
+
 ## [9.2.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.5...v9.2.6) (2023-02-03)
 
 
