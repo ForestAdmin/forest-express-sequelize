@@ -4958,7 +4958,7 @@ glob-parent@^5.0.0, glob-parent@^5.1.2, glob-parent@~5.1.2:
   dependencies:
     is-glob "^4.0.1"
 
-glob@^7.0.0, glob@^7.1.1, glob@^7.1.2, glob@^7.1.4:
+glob@^7.0.0, glob@^7.1.1, glob@^7.1.2, glob@^7.1.3, glob@^7.1.4, glob@^7.1.6:
   version "7.2.3"
   resolved "https://registry.yarnpkg.com/glob/-/glob-7.2.3.tgz#b8df0fb802bbfa8e89bd1d938b4e16578ed44f2b"
   integrity sha512-nFR0zLpU2YCaRxwoCJvL6UvCH2JFyFVIvwTLsIf21AuHlMskA1hhTdk+LlYJtOlYt9v6dvszD2BGRqBL+iQK9Q==
@@ -4967,18 +4967,6 @@ glob@^7.0.0, glob@^7.1.1, glob@^7.1.2, glob@^7.1.4:
     inflight "^1.0.4"
     inherits "2"
     minimatch "^3.1.1"
-    once "^1.3.0"
-    path-is-absolute "^1.0.0"
-
-glob@^7.1.3, glob@^7.1.6:
-  version "7.2.0"
-  resolved "https://registry.yarnpkg.com/glob/-/glob-7.2.0.tgz#d15535af7732e02e948f4c41628bd910293f6023"
-  integrity sha512-lmLf6gtyrPq8tTjSmrO94wBeQbFR3HbLHbuyD69wuyQkImp2hWqMGB47OX65FBkPffO641IP9jWa1z4ivqG26Q==
-  dependencies:
-    fs.realpath "^1.0.0"
-    inflight "^1.0.4"
-    inherits "2"
-    minimatch "^3.0.4"
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
@@ -9246,10 +9234,10 @@ seq-queue@^0.0.5:
   resolved "https://registry.yarnpkg.com/seq-queue/-/seq-queue-0.0.5.tgz#d56812e1c017a6e4e7c3e3a37a1da6d78dd3c93e"
   integrity sha1-1WgS4cAXpuTnw+Ojeh2m143TyT4=
 
-sequelize-fixtures@1.1.1:
-  version "1.1.1"
-  resolved "https://registry.yarnpkg.com/sequelize-fixtures/-/sequelize-fixtures-1.1.1.tgz#287cdbdc73c27ab1ba5e3b41849dd71be800bdd1"
-  integrity sha512-/uLE5osIpMgGtPRB1G7qV1xn6TxXZahVkqeP8Q6b4uSDwhLJDLiSxopAwPso7oYVgS7nMQIvDBzM7eZyWeInPw==
+sequelize-fixtures@1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/sequelize-fixtures/-/sequelize-fixtures-1.2.0.tgz#378fe93cbfd3b032ae7c4d4ebd80f933dcfb8b7c"
+  integrity sha512-kZtCBv1XaZw/zRXXfwLWI6TVUNdpfD4Pyeaws6ZFvzRag+VUZXpPrHwa01OffhSZ2KmWS8RafxlUWVENP1QoVw==
   dependencies:
     bluebird "^2.4.2"
     glob "~7.0.5"
