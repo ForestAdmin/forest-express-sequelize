@@ -1,3 +1,10 @@
+## [9.2.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.9...v9.2.10) (2023-05-24)
+
+
+### Bug Fixes
+
+* **init-options:** liana options should be taken into account correctly ([#1081](https://github.com/ForestAdmin/forest-express-sequelize/issues/1081)) ([29dadc2](https://github.com/ForestAdmin/forest-express-sequelize/commit/29dadc270cf7ad420ef1130904d18945219715dc))
+
 ## [9.2.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.8...v9.2.9) (2023-03-03)
 
 
