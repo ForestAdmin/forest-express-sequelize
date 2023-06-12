@@ -1,3 +1,10 @@
+# [9.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.10...v9.3.0) (2023-06-12)
+
+
+### Features
+
+* **events-subscription:** allow to instantly refresh permissions when they change ([#1082](https://github.com/ForestAdmin/forest-express-sequelize/issues/1082)) ([5cd9cd5](https://github.com/ForestAdmin/forest-express-sequelize/commit/5cd9cd5be163226ad6c7610395521db97620a196))
+
 ## [9.2.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.9...v9.2.10) (2023-05-24)
 
 
