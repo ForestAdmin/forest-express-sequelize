@@ -1,3 +1,10 @@
+## [9.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.0...v9.3.1) (2023-06-16)
+
+
+### Bug Fixes
+
+* **security:** patch dottie dependency vulnerabilities ([#1083](https://github.com/ForestAdmin/forest-express-sequelize/issues/1083)) ([b0a1341](https://github.com/ForestAdmin/forest-express-sequelize/commit/b0a134185c792f6b8845c5fcd1d657cfd7129a0d))
+
 # [9.3.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.2.10...v9.3.0) (2023-06-12)
 
 
