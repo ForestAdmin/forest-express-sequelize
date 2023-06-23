@@ -1,3 +1,10 @@
+## [9.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.1...v9.3.2) (2023-06-23)
+
+
+### Bug Fixes
+
+* **security:** patch semver dependency vulnerabilities ([#1085](https://github.com/ForestAdmin/forest-express-sequelize/issues/1085)) ([b281e9f](https://github.com/ForestAdmin/forest-express-sequelize/commit/b281e9fe5c6096137d428bf09f98bff5bd6d0335))
+
 ## [9.3.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.0...v9.3.1) (2023-06-16)
 
 
