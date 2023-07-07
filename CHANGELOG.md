@@ -1,3 +1,10 @@
+## [9.3.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.2...v9.3.3) (2023-07-07)
+
+
+### Bug Fixes
+
+* **event-source:** gracefully close the app on exit by removing server events subscription ([#1087](https://github.com/ForestAdmin/forest-express-sequelize/issues/1087)) ([ea6270f](https://github.com/ForestAdmin/forest-express-sequelize/commit/ea6270fc66f5152549f58893d5fe2daecc7f11cd))
+
 ## [9.3.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.1...v9.3.2) (2023-06-23)
 
 
