@@ -1,3 +1,12 @@
+## [9.3.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.3...v9.3.4) (2023-08-04)
+
+
+### Bug Fixes
+
+* **security:** patch semver dependency vulnerabilities ([#1091](https://github.com/ForestAdmin/forest-express-sequelize/issues/1091)) ([eba5db8](https://github.com/ForestAdmin/forest-express-sequelize/commit/eba5db80eeb9d160982d3e75b155897f4a1fb32a))
+* **security:** patch tough-cookie dependency vulnerabilities ([#1090](https://github.com/ForestAdmin/forest-express-sequelize/issues/1090)) ([142cbc9](https://github.com/ForestAdmin/forest-express-sequelize/commit/142cbc9276760b00e3804905bd59b3b207800ba6))
+* **security:** patch word-wrap dependency vulnerabilities ([#1089](https://github.com/ForestAdmin/forest-express-sequelize/issues/1089)) ([8b3acff](https://github.com/ForestAdmin/forest-express-sequelize/commit/8b3acff8adad2bb6a875241b9a396e478ca96c6a))
+
 ## [9.3.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.2...v9.3.3) (2023-07-07)
 
 
