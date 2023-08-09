@@ -1,3 +1,10 @@
+## [9.3.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.4...v9.3.5) (2023-08-09)
+
+
+### Bug Fixes
+
+* warn in the console when NODE_ENV prevents from updating the schema ([#1092](https://github.com/ForestAdmin/forest-express-sequelize/issues/1092)) ([c07e7b9](https://github.com/ForestAdmin/forest-express-sequelize/commit/c07e7b994a7e966e51d061e1e8030cf0e4d1da88))
+
 ## [9.3.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.3...v9.3.4) (2023-08-04)
 
 
