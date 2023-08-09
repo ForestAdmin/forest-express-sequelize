@@ -42,8 +42,8 @@ class ConnectionManager {
  * @type {Record<string, ConnectionManager>}
  */
 module.exports = {
-  sequelizePostgres: new ConnectionManager('Postgresql 9.4', 'postgres://forest:secret@localhost:5437/forest-express-sequelize-test'),
-  sequelizeMySQLMin: new ConnectionManager('MySQL 5.6', 'mysql://forest:secret@localhost:8998/forest-express-sequelize-test'),
-  sequelizeMySQLMax: new ConnectionManager('MySQL 8.0', 'mysql://forest:secret@localhost:8999/forest-express-sequelize-test'),
-  sequelizeMariaDB: new ConnectionManager('MariaDB 10', 'mysql://forest:secret@localhost:9000/forest-express-sequelize-test'),
+  sequelizePostgres: new ConnectionManager('Postgresql 9.4', 'postgres://forest:secret@127.0.0.1:5437/forest-express-sequelize-test'),
+  sequelizeMySQLMin: new ConnectionManager('MySQL 5.6', 'mysql://forest:secret@127.0.0.1:8998/forest-express-sequelize-test'),
+  sequelizeMySQLMax: new ConnectionManager('MySQL 8.0', 'mysql://forest:secret@127.0.0.1:8999/forest-express-sequelize-test'),
+  sequelizeMariaDB: new ConnectionManager('MariaDB 10', 'mysql://forest:secret@127.0.0.1:9000/forest-express-sequelize-test'),
 };
