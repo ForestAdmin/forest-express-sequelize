@@ -1,3 +1,10 @@
+## [9.3.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.5...v9.3.6) (2023-10-23)
+
+
+### Bug Fixes
+
+* **security:** patch @babel/traverse dependency vulnerabilities ([#1096](https://github.com/ForestAdmin/forest-express-sequelize/issues/1096)) ([ab56a46](https://github.com/ForestAdmin/forest-express-sequelize/commit/ab56a4680eaa236db1c7fdfdf268e8f5677538b4))
+
 ## [9.3.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.4...v9.3.5) (2023-08-09)
 
 
