@@ -1,3 +1,10 @@
+## [9.3.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.7...v9.3.8) (2023-11-08)
+
+
+### Bug Fixes
+
+* **serialiser:** serialiser does not compute hidden smart fields anymore ([#1098](https://github.com/ForestAdmin/forest-express-sequelize/issues/1098)) ([b1d394e](https://github.com/ForestAdmin/forest-express-sequelize/commit/b1d394ef2f8f27765433aee71d9abaca456a2055))
+
 ## [9.3.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.6...v9.3.7) (2023-10-23)
 
 
