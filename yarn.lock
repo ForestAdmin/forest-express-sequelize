@@ -1358,15 +1358,14 @@
   resolved "https://registry.yarnpkg.com/@forestadmin/context/-/context-1.31.0.tgz#b4b5a3b589e52d337a1f45807db22c2860e640a7"
   integrity sha512-RQkDBkq+6ySMv+YNezz9VWSyCsqD7fj/+bXrXhQ6lJ62nbRUIUheH7ApvXwfnwFR1u55oT6Yhar11t6DaiE9Ig==
 
-"@forestadmin/forestadmin-client@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@forestadmin/forestadmin-client/-/forestadmin-client-1.2.1.tgz#5ee07fa73096ae55880d1d19cae449c4fb182ba6"
-  integrity sha512-4ZvvERcH2IDsWOWrmN0SBx88aFvfj6vJt1xTGIrwXkGY/agod7TH5kn9XqbYtmyOxLApmwrd5+08Bq6t4mDKug==
+"@forestadmin/forestadmin-client@1.25.1":
+  version "1.25.1"
+  resolved "https://registry.yarnpkg.com/@forestadmin/forestadmin-client/-/forestadmin-client-1.25.1.tgz#1fcc1adccaee5da42a0a47e1a40c8b72fe7a8cf7"
+  integrity sha512-ReGXq+/g7FyQoELWANPrTxSNjbzkCJMnVWb2tbm3wlm8zTEa/KuKQra5Z22rwONCWM2YgwHbRw+wQ47ZK80DBA==
   dependencies:
     eventsource "2.0.2"
     json-api-serializer "^2.6.6"
     jsonwebtoken "^9.0.0"
-    lru-cache "^7.14.1"
     object-hash "^3.0.0"
     openid-client "^5.3.1"
     superagent "^8.0.6"
@@ -4901,14 +4900,14 @@ for-in@^1.0.2:
   resolved "https://registry.yarnpkg.com/for-in/-/for-in-1.0.2.tgz#81068d295a8142ec0ac726c6e2200c30fb6d5e80"
   integrity sha512-7EwmXrOjyL+ChxMhmG5lnW9MPt1aIeZEwKhQzoBUdTV0N3zuwWDZYVJatDvZ2OyzPUvdIAZDsCetk3coyMfcnQ==
 
-forest-express@10.2.10:
-  version "10.2.10"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-10.2.10.tgz#bcfabcacaa043b8b290fa7870e51dc4031336729"
-  integrity sha512-Gzb0qGxcpfO2+E5rUH07y+AJ5qpjrtaA8BdA3P/uPHHPV9q0yGoHREUG6bA4wQM2V4qQNDicJNftmYl68A1DBw==
+forest-express@10.2.11:
+  version "10.2.11"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-10.2.11.tgz#b6a8bad91fd5dccde0db140002dce3e4b19eb5e6"
+  integrity sha512-uaPJX/hyWNl3/udvdUcwJKDijccqie1aqkmAdxGs0tLmzdl967i1WjrCMEOJtypLBWfwoFo47UsktrD/SAKs6w==
   dependencies:
     "@babel/runtime" "7.19.0"
     "@forestadmin/context" "1.31.0"
-    "@forestadmin/forestadmin-client" "1.2.1"
+    "@forestadmin/forestadmin-client" "1.25.1"
     base32-encode "1.1.1"
     bitwise-xor "0.0.0"
     bluebird "3.7.1"
@@ -7217,7 +7216,7 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-lru-cache@^7.14.1, lru-cache@^7.4.4, lru-cache@^7.5.1, lru-cache@^7.7.1:
+lru-cache@^7.4.4, lru-cache@^7.5.1, lru-cache@^7.7.1:
   version "7.14.1"
   resolved "https://registry.yarnpkg.com/lru-cache/-/lru-cache-7.14.1.tgz#8da8d2f5f59827edb388e63e459ac23d6d408fea"
   integrity sha512-ysxwsnTKdAx96aTRdhDOCQfDgbHnt8SK0KY8SEjO0wHinhWOFTESbjVCMPbU1uGXg/ch4lifqx0wfjOawU2+WA==
