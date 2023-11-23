@@ -1,3 +1,10 @@
+## [9.3.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.8...v9.3.9) (2023-11-23)
+
+
+### Bug Fixes
+
+* user receives 403 on newly created segment query ([#1100](https://github.com/ForestAdmin/forest-express-sequelize/issues/1100)) ([3a65e59](https://github.com/ForestAdmin/forest-express-sequelize/commit/3a65e59bfcc9fa29cb096c93da7e7431b9c344f0))
+
 ## [9.3.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.7...v9.3.8) (2023-11-08)
 
 
