@@ -1,3 +1,10 @@
+## [9.3.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.10...v9.3.11) (2024-01-26)
+
+
+### Bug Fixes
+
+* **security:** patch lodash.set dependency vulnerabilities ([#1102](https://github.com/ForestAdmin/forest-express-sequelize/issues/1102)) ([8f9ad0f](https://github.com/ForestAdmin/forest-express-sequelize/commit/8f9ad0f3ac5a6f163e3e20a0fde3e99137d43f4a))
+
 ## [9.3.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.9...v9.3.10) (2024-01-12)
 
 
