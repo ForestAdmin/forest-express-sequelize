@@ -1,3 +1,10 @@
+## [9.3.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.11...v9.3.12) (2024-02-22)
+
+
+### Bug Fixes
+
+* **security:** patch ip dependency vulnerabilities ([#1104](https://github.com/ForestAdmin/forest-express-sequelize/issues/1104)) ([668ffb8](https://github.com/ForestAdmin/forest-express-sequelize/commit/668ffb8f110e52298fe40fb88cbcd9e4dfe5221c))
+
 ## [9.3.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.10...v9.3.11) (2024-01-26)
 
 
