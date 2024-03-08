@@ -1,3 +1,10 @@
+## [9.3.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.12...v9.3.13) (2024-03-08)
+
+
+### Bug Fixes
+
+* bump tedious dependency to fix vulnerability ([#1105](https://github.com/ForestAdmin/forest-express-sequelize/issues/1105)) ([837ac03](https://github.com/ForestAdmin/forest-express-sequelize/commit/837ac032fdcc045ff76908588e307c54952bd105))
+
 ## [9.3.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.11...v9.3.12) (2024-02-22)
 
 
