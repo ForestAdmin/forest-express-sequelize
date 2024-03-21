@@ -31,11 +31,18 @@ class ResourceUpdater {
       }
     }
 
-    return new ResourceGetter(
-      this._model,
-      { ...this._params, recordId: this._params.recordId },
-      this._user,
-    ).perform();
+    try {
+      return await new ResourceGetter(
+        this._model,
+        { ...this._params, recordId: this._params.recordId },
+        this._user,
+      ).perform();
+    } catch (error) {
+      if (error.statusCode === 404 && scopeFilters) {
+        return record;
+      }
+      throw error;
+    }
   }
 }
 
