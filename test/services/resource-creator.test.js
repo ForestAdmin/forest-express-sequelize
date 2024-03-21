@@ -1,7 +1,8 @@
-import Interface from 'forest-express';
+import Interface, { scopeManager } from 'forest-express';
 import Sequelize from 'sequelize';
 import associationRecord from '../../src/utils/association-record';
 import ResourceCreator from '../../src/services/resource-creator';
+import ResourceGetter from '../../src/services/resource-getter';
 
 describe('services > resource-creator', () => {
   const user = { renderingId: 1 };
@@ -39,6 +40,32 @@ describe('services > resource-creator', () => {
 
     return { Actor, Author, Film };
   };
+
+  describe('perform', () => {
+    describe('when the getter does not found the record', () => {
+      it('should throw a 404 error', async () => {
+        expect.assertions(1);
+
+        const { Film } = buildModelMock();
+        const record = { dataValues: { id: 1, title: 'The Godfather' } };
+
+        const error = new Error('Record not found');
+        error.statusCode = 404;
+        jest
+          .spyOn(ResourceGetter.prototype, 'perform')
+          .mockRejectedValue(error);
+
+        jest.spyOn(Film.prototype, 'save').mockReturnValue(record);
+        jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue({});
+
+        const body = { actor: 2 };
+
+        const resourceCreator = new ResourceCreator(Film, params, body, user);
+        const result = await resourceCreator.perform();
+        expect(result).toStrictEqual(record);
+      });
+    });
+  });
 
   describe('_getTargetKey', () => {
     describe('when association does not have entry in body', () => {
