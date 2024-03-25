@@ -93,7 +93,7 @@ class ResourceCreator {
     try {
       return await new ResourceGetter(
         this.model,
-        { ...this.params, recordId: record.dataValues[this.schema.idField] },
+        { ...this.params, recordId: record[this.schema.idField] },
         this.user,
       ).perform();
     } catch (error) {
