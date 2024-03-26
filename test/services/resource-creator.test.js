@@ -43,7 +43,7 @@ describe('services > resource-creator', () => {
 
   describe('perform', () => {
     describe('when the getter does not found the record', () => {
-      it('should throw a 404 error', async () => {
+      it('should catch the 404 error and return the record', async () => {
         expect.assertions(1);
 
         const { Film } = buildModelMock();

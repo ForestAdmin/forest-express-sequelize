@@ -1,5 +1,6 @@
 import { scopeManager } from 'forest-express';
 import Sequelize from 'sequelize';
+import createError from 'http-errors';
 import ResourceUpdater from '../../src/services/resource-updater';
 import ResourceGetter from '../../src/services/resource-getter';
 import QueryOptions from '../../src/services/query-options';
@@ -42,6 +43,7 @@ describe('services > resources-updater', () => {
 
       jest.spyOn(record, 'validate');
       jest.spyOn(record, 'save');
+
       const error = new Error('Record not found');
       error.statusCode = 404;
       jest
@@ -51,11 +53,29 @@ describe('services > resources-updater', () => {
       jest.spyOn(QueryOptions.prototype, 'filterByConditionTree').mockResolvedValue();
 
       const resourceUpdater = new ResourceUpdater(Film, params, { name: 'new name' }, user);
-
       jest.spyOn(resourceUpdater._model, 'findOne').mockReturnValue(record);
+
       const result = await resourceUpdater.perform();
 
       expect(result).toStrictEqual(record);
+    });
+  });
+
+  describe('when it update with a scope but the record does not exist', () => {
+    it('should throw 404', async () => {
+      expect.assertions(1);
+
+      const { Film } = buildModelMock();
+      jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue({ aggregator: 'and', conditions: [{ field: 'name', operator: 'contains', value: 'Scope value' }] });
+
+      const record = null;
+
+      jest.spyOn(QueryOptions.prototype, 'filterByConditionTree').mockResolvedValue();
+
+      const resourceUpdater = new ResourceUpdater(Film, { ...params, recordId: 2 }, { name: 'new name' }, user);
+      jest.spyOn(resourceUpdater._model, 'findOne').mockReturnValue(record);
+
+      await expect(resourceUpdater.perform()).rejects.toThrow(createError(404, 'The film #2 does not exist.'));
     });
   });
 });
