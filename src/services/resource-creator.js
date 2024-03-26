@@ -68,6 +68,12 @@ class ResourceCreator {
     // handleAssociationsBeforeSave
     await this._handleSave(recordCreated, this._makePromisesBeforeSave);
 
+    const scopeFilters = await Interface.scopeManager.getScopeForUser(
+      this.user,
+      this.model.name,
+      true,
+    );
+
     // saveInstance (validate then save)
     try {
       await recordCreated.validate();
@@ -84,12 +90,18 @@ class ResourceCreator {
     // appendCompositePrimary
     new PrimaryKeysManager(this.model).annotateRecords([record]);
 
-    // return makeResourceGetter()
-    return new ResourceGetter(
-      this.model,
-      { ...this.params, recordId: record[this.schema.idField] },
-      this.user,
-    ).perform();
+    try {
+      return await new ResourceGetter(
+        this.model,
+        { ...this.params, recordId: record[this.schema.idField] },
+        this.user,
+      ).perform();
+    } catch (error) {
+      if (error.statusCode === 404 && scopeFilters) {
+        return record;
+      }
+      throw error;
+    }
   }
 }
 
