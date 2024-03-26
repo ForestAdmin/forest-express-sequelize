@@ -65,6 +65,29 @@ describe('services > resource-creator', () => {
         expect(result).toStrictEqual(record);
       });
     });
+
+    describe('when there is a scope and ResourcesGetter throw an error', () => {
+      it('should throw the error', async () => {
+        expect.assertions(1);
+
+        const { Film } = buildModelMock();
+        const record = { dataValues: { id: 1, title: 'The Godfather' } };
+
+        const error = new Error('Unauthorized');
+        error.statusCode = 401;
+        jest
+          .spyOn(ResourceGetter.prototype, 'perform')
+          .mockRejectedValue(error);
+
+        jest.spyOn(Film.prototype, 'save').mockReturnValue(record);
+        jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue({});
+
+        const body = { actor: 2 };
+
+        const resourceCreator = new ResourceCreator(Film, params, body, user);
+        await expect(resourceCreator.perform()).rejects.toThrow(error);
+      });
+    });
   });
 
   describe('_getTargetKey', () => {

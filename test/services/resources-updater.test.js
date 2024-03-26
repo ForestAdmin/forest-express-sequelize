@@ -78,4 +78,31 @@ describe('services > resources-updater', () => {
       await expect(resourceUpdater.perform()).rejects.toThrow(createError(404, 'The film #2 does not exist.'));
     });
   });
+
+  describe('when there is a scope and ResourcesGetter throw an error', () => {
+    it('should throw the error', async () => {
+      expect.assertions(1);
+
+      const { Film } = buildModelMock();
+      jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue({ aggregator: 'and', conditions: [{ field: 'name', operator: 'contains', value: 'Scope value' }] });
+
+      const record = { dataValues: { id: 1, title: 'The Godfather' }, validate: () => {}, save: () => {} };
+
+      jest.spyOn(record, 'validate');
+      jest.spyOn(record, 'save');
+
+      const error = new Error('Unauthorized');
+      error.statusCode = 401;
+      jest
+        .spyOn(ResourceGetter.prototype, 'perform')
+        .mockRejectedValue(error);
+
+      jest.spyOn(QueryOptions.prototype, 'filterByConditionTree').mockResolvedValue();
+
+      const resourceUpdater = new ResourceUpdater(Film, { ...params, recordId: 2 }, { name: 'new name' }, user);
+      jest.spyOn(resourceUpdater._model, 'findOne').mockReturnValue(record);
+
+      await expect(resourceUpdater.perform()).rejects.toThrow(error);
+    });
+  });
 });
