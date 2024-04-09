@@ -1,3 +1,10 @@
+## [9.3.16](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.15...v9.3.16) (2024-04-09)
+
+
+### Bug Fixes
+
+* typo in an error message when users are not authorized to perform an action ([#1109](https://github.com/ForestAdmin/forest-express-sequelize/issues/1109)) ([dcb4f12](https://github.com/ForestAdmin/forest-express-sequelize/commit/dcb4f127986694e5624bf5b37c87fdac6a5993aa))
+
 ## [9.3.15](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.14...v9.3.15) (2024-04-04)
 
 
