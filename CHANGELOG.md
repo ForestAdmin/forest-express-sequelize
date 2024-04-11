@@ -1,3 +1,10 @@
+## [9.3.17](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.16...v9.3.17) (2024-04-11)
+
+
+### Bug Fixes
+
+* typo in error message ([#1110](https://github.com/ForestAdmin/forest-express-sequelize/issues/1110)) ([1a63256](https://github.com/ForestAdmin/forest-express-sequelize/commit/1a632565e2e6df46efa5481501c5ddd24fed6053))
+
 ## [9.3.16](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.15...v9.3.16) (2024-04-09)
 
 
