@@ -1,3 +1,10 @@
+## [9.3.18](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.17...v9.3.18) (2024-04-12)
+
+
+### Bug Fixes
+
+* **security:** patch tar dependency vulnerabilities ([#1111](https://github.com/ForestAdmin/forest-express-sequelize/issues/1111)) ([a30d7cc](https://github.com/ForestAdmin/forest-express-sequelize/commit/a30d7cc9a682417b86cf23c87504eef610a6ed06))
+
 ## [9.3.17](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.16...v9.3.17) (2024-04-11)
 
 
