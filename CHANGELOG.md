@@ -1,3 +1,10 @@
+## [9.3.19](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.18...v9.3.19) (2024-04-15)
+
+
+### Bug Fixes
+
+* **security:** patch mysql2 dependency vulnerabilities ([#1112](https://github.com/ForestAdmin/forest-express-sequelize/issues/1112)) ([aa23fd2](https://github.com/ForestAdmin/forest-express-sequelize/commit/aa23fd200ff18a00bd05f8b8571fdd02e8dcd648))
+
 ## [9.3.18](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.17...v9.3.18) (2024-04-12)
 
 
