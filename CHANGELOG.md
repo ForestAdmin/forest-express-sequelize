@@ -1,3 +1,10 @@
+## [9.3.21](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.20...v9.3.21) (2024-05-17)
+
+
+### Performance Improvements
+
+* improve memory usage when exporting ([#1114](https://github.com/ForestAdmin/forest-express-sequelize/issues/1114)) ([cc17621](https://github.com/ForestAdmin/forest-express-sequelize/commit/cc17621c961405d52bfcc05cb36242e88f6d72e3))
+
 ## [9.3.20](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.19...v9.3.20) (2024-04-25)
 
 
