@@ -1,3 +1,10 @@
+## [9.3.22](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.21...v9.3.22) (2024-05-24)
+
+
+### Bug Fixes
+
+* create and update with a scope when it is not found ([#1107](https://github.com/ForestAdmin/forest-express-sequelize/issues/1107)) ([9a138c7](https://github.com/ForestAdmin/forest-express-sequelize/commit/9a138c77e857d2ad756e32145f89b4d769b2b3cc))
+
 ## [9.3.21](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.20...v9.3.21) (2024-05-17)
 
 
