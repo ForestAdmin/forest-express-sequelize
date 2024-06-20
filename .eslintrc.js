@@ -8,12 +8,14 @@ module.exports = {
   plugins: [
     'sonarjs',
   ],
-  ignorePatterns: [
-    'dist/**'
-  ],
   env: {
     node: true,
   },
+  ignorePatterns: [
+    'dist/**',
+    '.eslintrc.js',
+    'jest.config.js'
+  ],
   rules: {
     'implicit-arrow-linebreak': 0,
     'import/no-extraneous-dependencies': [
