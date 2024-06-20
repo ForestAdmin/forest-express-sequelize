@@ -1,3 +1,10 @@
+## [9.3.24](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.23...v9.3.24) (2024-06-20)
+
+
+### Bug Fixes
+
+* **security:** patch ws dependency vulnerabilities ([#1118](https://github.com/ForestAdmin/forest-express-sequelize/issues/1118)) ([9188e34](https://github.com/ForestAdmin/forest-express-sequelize/commit/9188e34abd081b287a855043a20fd278da926f99))
+
 ## [9.3.23](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.22...v9.3.23) (2024-06-09)
 
 
