@@ -1,3 +1,10 @@
+## [9.3.26](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.25...v9.3.26) (2024-09-05)
+
+
+### Bug Fixes
+
+* **security:** patch micromatch dependency vulnerabilities ([#1120](https://github.com/ForestAdmin/forest-express-sequelize/issues/1120)) ([2111281](https://github.com/ForestAdmin/forest-express-sequelize/commit/2111281d17886f43f91ac440df1a908cf745dea4))
+
 ## [9.3.25](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.24...v9.3.25) (2024-06-20)
 
 
