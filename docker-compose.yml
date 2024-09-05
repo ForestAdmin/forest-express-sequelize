@@ -1,8 +1,8 @@
-postgres :
-  image : postgres:9.4.5
-  container_name : forest_express_sequelize_postgres
-  ports :
-    - "5437:5432"
+postgres:
+  image: postgres:12.19
+  container_name: forest_express_sequelize_postgres
+  ports:
+    - '5437:5432'
   environment:
     - POSTGRES_DB=forest-express-sequelize-test
     - POSTGRES_USER=forest
@@ -16,8 +16,8 @@ mysql_min:
     MYSQL_DATABASE: forest-express-sequelize-test
     MYSQL_USER: forest
     MYSQL_PASSWORD: secret
-  ports :
-    - "8998:3306"
+  ports:
+    - '8998:3306'
 
 mysql_max:
   image: mysql:8.0
@@ -27,8 +27,8 @@ mysql_max:
     MYSQL_DATABASE: forest-express-sequelize-test
     MYSQL_USER: forest
     MYSQL_PASSWORD: secret
-  ports :
-    - "8999:3306"
+  ports:
+    - '8999:3306'
 
 maria_db:
   image: mariadb:10
@@ -38,5 +38,5 @@ maria_db:
     MYSQL_DATABASE: forest-express-sequelize-test
     MYSQL_USER: forest
     MYSQL_PASSWORD: secret
-  ports :
-    - "9000:3306"
+  ports:
+    - '9000:3306'
