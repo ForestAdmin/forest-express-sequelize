@@ -1,3 +1,10 @@
+## [9.3.28](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.27...v9.3.28) (2024-09-12)
+
+
+### Bug Fixes
+
+* **security:** patch body-parser dependency vulnerabilities ([#1122](https://github.com/ForestAdmin/forest-express-sequelize/issues/1122)) ([11cb7ab](https://github.com/ForestAdmin/forest-express-sequelize/commit/11cb7ab43c434116c61ddd3dbdabad57c718fd6c))
+
 ## [9.3.27](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.26...v9.3.27) (2024-09-12)
 
 
