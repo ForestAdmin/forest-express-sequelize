@@ -1,3 +1,10 @@
+## [9.4.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.4.0...v9.4.1) (2024-10-17)
+
+
+### Bug Fixes
+
+* **security:** patch cookie dependency vulnerabilities ([#1124](https://github.com/ForestAdmin/forest-express-sequelize/issues/1124)) ([a8a9339](https://github.com/ForestAdmin/forest-express-sequelize/commit/a8a933965b0dda06fcba7756456c54b596a05800))
+
 # [9.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.28...v9.4.0) (2024-10-17)
 
 
