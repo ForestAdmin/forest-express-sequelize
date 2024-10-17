@@ -1,3 +1,10 @@
+# [9.4.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.28...v9.4.0) (2024-10-17)
+
+
+### Features
+
+* support action form layout description and button labels ([#1123](https://github.com/ForestAdmin/forest-express-sequelize/issues/1123)) ([4ee65bd](https://github.com/ForestAdmin/forest-express-sequelize/commit/4ee65bd7c012b26ea5270968f83d9b2ac1b32068))
+
 ## [9.3.28](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.3.27...v9.3.28) (2024-09-12)
 
 
