@@ -1,3 +1,10 @@
+## [9.4.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.4.1...v9.4.2) (2024-11-05)
+
+
+### Bug Fixes
+
+* **actions:** add missing fields to actions options interface ([#1126](https://github.com/ForestAdmin/forest-express-sequelize/issues/1126)) ([c0a0af4](https://github.com/ForestAdmin/forest-express-sequelize/commit/c0a0af4d2f5da7cfce43916bd84805e5361483e8))
+
 ## [9.4.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.4.0...v9.4.1) (2024-10-17)
 
 
