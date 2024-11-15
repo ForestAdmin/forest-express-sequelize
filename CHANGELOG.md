@@ -1,3 +1,10 @@
+# [9.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.4.2...v9.5.0) (2024-11-15)
+
+
+### Features
+
+* improve timeout logs ([#1128](https://github.com/ForestAdmin/forest-express-sequelize/issues/1128)) ([390c689](https://github.com/ForestAdmin/forest-express-sequelize/commit/390c689db11d0b759539c61a1ad6f8c738e66a9b))
+
 ## [9.4.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.4.1...v9.4.2) (2024-11-05)
 
 
