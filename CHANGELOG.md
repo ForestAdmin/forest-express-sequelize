@@ -1,3 +1,11 @@
+## [9.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.0...v9.5.1) (2024-11-22)
+
+
+### Bug Fixes
+
+* **security:** patch cross-spawn dependency vulnerabilities ([#1130](https://github.com/ForestAdmin/forest-express-sequelize/issues/1130)) ([c9a3209](https://github.com/ForestAdmin/forest-express-sequelize/commit/c9a3209413e109be5d8c32a7c46db53cb6b8e0f2))
+* **security:** patch micromatch dependency vulnerabilities ([#1129](https://github.com/ForestAdmin/forest-express-sequelize/issues/1129)) ([806f4bf](https://github.com/ForestAdmin/forest-express-sequelize/commit/806f4bfc11dd2fe5c8ffadb1af0ede6c67e0735b))
+
 # [9.5.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.4.2...v9.5.0) (2024-11-15)
 
 
