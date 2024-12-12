@@ -1,3 +1,10 @@
+## [9.5.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.1...v9.5.2) (2024-12-12)
+
+
+### Bug Fixes
+
+* **security:** patch path-to-regexp dependency vulnerabilities ([#1131](https://github.com/ForestAdmin/forest-express-sequelize/issues/1131)) ([7a593a1](https://github.com/ForestAdmin/forest-express-sequelize/commit/7a593a1fad53f25d0cf01243bb9415eb23b418b1))
+
 ## [9.5.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.0...v9.5.1) (2024-11-22)
 
 
