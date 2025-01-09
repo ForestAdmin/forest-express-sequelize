@@ -1,3 +1,10 @@
+## [9.5.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.2...v9.5.3) (2025-01-09)
+
+
+### Bug Fixes
+
+* upgrade FE to fix permission cache issue ([#1133](https://github.com/ForestAdmin/forest-express-sequelize/issues/1133)) ([9ab218e](https://github.com/ForestAdmin/forest-express-sequelize/commit/9ab218e4f4e9b223e9eef834f4afd12aab18a283))
+
 ## [9.5.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.1...v9.5.2) (2024-12-12)
 
 
