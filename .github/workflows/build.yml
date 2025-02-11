@@ -52,7 +52,7 @@ jobs:
       - name: Start docker container
         run: docker compose up -d; sleep 20
       - name: Send coverage
-        uses: paambaati/codeclimate-action@84cea27117a473d605400ca3a97fcef7e433e2d6
+        uses: paambaati/codeclimate-action@v2.7.4
         env:
           CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
         with:
