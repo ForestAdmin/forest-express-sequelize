@@ -145,7 +145,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   function getFormat() {
     switch (timeRange) {
       case 'day': return 'DD/MM/YYYY';
-      case 'week': return '[W]W-YYYY';
+      case 'week': return '[W]W-GGGG';
       case 'month': return 'MMM YY';
       case 'year': return 'YYYY';
       default: return null;
