@@ -1,3 +1,10 @@
+## [9.5.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.4...v9.5.5) (2025-02-11)
+
+
+### Bug Fixes
+
+* **charts:** handle last week of the year properly during format ([#1136](https://github.com/ForestAdmin/forest-express-sequelize/issues/1136)) ([6d6c7e1](https://github.com/ForestAdmin/forest-express-sequelize/commit/6d6c7e1d26e013cb59462bfda92c1760c0e5a162))
+
 ## [9.5.4](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.3...v9.5.4) (2025-01-29)
 
 
