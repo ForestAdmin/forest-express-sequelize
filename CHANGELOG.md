@@ -1,3 +1,10 @@
+## [9.5.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.5...v9.5.6) (2025-03-28)
+
+
+### Bug Fixes
+
+* **vulnerability:** bump openid-client ([#1138](https://github.com/ForestAdmin/forest-express-sequelize/issues/1138)) ([73708b5](https://github.com/ForestAdmin/forest-express-sequelize/commit/73708b5d2fce92dead93c6016d8411d0ff526203))
+
 ## [9.5.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.4...v9.5.5) (2025-02-11)
 
 
