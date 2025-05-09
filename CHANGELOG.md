@@ -1,3 +1,10 @@
+# [9.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.6...v9.6.0) (2025-05-09)
+
+
+### Features
+
+* **typings:** add support for action_intent_params in smart action hooks ([#1137](https://github.com/ForestAdmin/forest-express-sequelize/issues/1137)) ([40546fd](https://github.com/ForestAdmin/forest-express-sequelize/commit/40546fdb51bf9e5e7e09acdc171d50c5c0742142))
+
 ## [9.5.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.5...v9.5.6) (2025-03-28)
 
 
