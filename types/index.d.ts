@@ -333,6 +333,7 @@ export interface SmartActionOptions {
   fields?: SmartActionField[];
   download?: boolean;
   endpoint?: string;
+  baseUrl?: string;
   httpMethod?: string;
   hooks?: SmartActionHooks;
   description?: string;
