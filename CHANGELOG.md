@@ -1,3 +1,10 @@
+## [9.6.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.0...v9.6.1) (2025-09-04)
+
+
+### Bug Fixes
+
+* upgrade FE for timeout to 30sec ([#1139](https://github.com/ForestAdmin/forest-express-sequelize/issues/1139)) ([42c4c8a](https://github.com/ForestAdmin/forest-express-sequelize/commit/42c4c8a66e2a052b40a004334b29c2f76ed62c05))
+
 # [9.6.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.5.6...v9.6.0) (2025-05-09)
 
 
