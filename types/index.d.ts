@@ -1,4 +1,4 @@
-import { Application, NextFunction, Request, RequestHandler, Response } from 'express';
+import { Application, NextFunction, Request, RequestHandler, Response, Router } from 'express';
 import * as Sequelize from 'sequelize';
 
 // Everything related to Forest initialization
@@ -12,6 +12,7 @@ export interface LianaOptions {
   excludedModels?: string[];
   configDir?: string;
   schemaDir?: string;
+  expressParentApp?: Router;
 }
 
 export function init(options: LianaOptions): Promise<Application>;
