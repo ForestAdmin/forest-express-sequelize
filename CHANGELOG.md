@@ -1,3 +1,10 @@
+## [9.6.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.1...v9.6.2) (2026-02-03)
+
+
+### Bug Fixes
+
+* upgrade FE to fix smart action load hook fields transmition ([#1141](https://github.com/ForestAdmin/forest-express-sequelize/issues/1141)) ([809b19c](https://github.com/ForestAdmin/forest-express-sequelize/commit/809b19cebb7ef316877ce9498835e86f335aa47b))
+
 ## [9.6.1](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.0...v9.6.1) (2025-09-04)
 
 
