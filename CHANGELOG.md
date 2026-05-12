@@ -1,3 +1,10 @@
+## [9.6.3](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.2...v9.6.3) (2026-05-12)
+
+
+### Bug Fixes
+
+* **resources-remover:** support scopes targeting relation fields ([#1142](https://github.com/ForestAdmin/forest-express-sequelize/issues/1142)) ([5717ab8](https://github.com/ForestAdmin/forest-express-sequelize/commit/5717ab811746ea95c1d8a423dcdf26809c027092))
+
 ## [9.6.2](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.1...v9.6.2) (2026-02-03)
 
 
