@@ -1,3 +1,10 @@
+## [9.6.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.6...v9.6.7) (2026-07-23)
+
+
+### Bug Fixes
+
+* bump FE to fix vulnerabilities ([#1147](https://github.com/ForestAdmin/forest-express-sequelize/issues/1147)) ([1e0ae4a](https://github.com/ForestAdmin/forest-express-sequelize/commit/1e0ae4a07f2f4686fbe89ad031c4e42b1e0201e6))
+
 ## [9.6.6](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.5...v9.6.6) (2026-06-26)
 
 ## [9.6.5](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.4...v9.6.5) (2026-06-24)
