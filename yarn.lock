@@ -5484,10 +5484,10 @@ for-each@^0.3.5:
   dependencies:
     is-callable "^1.2.7"
 
-forest-express@10.9.1:
-  version "10.9.1"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-10.9.1.tgz#a7dcdb0b32ad114f9eb281eb19da1a8646ca4397"
-  integrity sha512-HFjXDq9ODUjcD0KeSyj9EDOHw4r6BEwBgywN66NQhwlT3VJPZa4buvDq/0MhSxEicpo4NoOKT477Olxo/OaROg==
+forest-express@10.9.2:
+  version "10.9.2"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-10.9.2.tgz#3781dbb0431fda178c08ac7c1c84af4e93a3c5d8"
+  integrity sha512-oMgAlBx08ekD9XBiTWcajJYDb3fenDXlj/GJZ/nHhU8lx7EHsAkaSyRWp8CDleTyrbmVzWH0AcTZcXFPt1psjA==
   dependencies:
     "@babel/runtime" "7.19.0"
     "@forestadmin/context" "1.42.11"
