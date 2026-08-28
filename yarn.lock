@@ -5484,10 +5484,10 @@ for-each@^0.3.5:
   dependencies:
     is-callable "^1.2.7"
 
-forest-express@10.9.2:
-  version "10.9.2"
-  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-10.9.2.tgz#3781dbb0431fda178c08ac7c1c84af4e93a3c5d8"
-  integrity sha512-oMgAlBx08ekD9XBiTWcajJYDb3fenDXlj/GJZ/nHhU8lx7EHsAkaSyRWp8CDleTyrbmVzWH0AcTZcXFPt1psjA==
+forest-express@10.9.3:
+  version "10.9.3"
+  resolved "https://registry.yarnpkg.com/forest-express/-/forest-express-10.9.3.tgz#1cf7141d86c5a9f2e77c07f900357867f2d9fe2d"
+  integrity sha512-APVBt2gZ0Vo+LKec2gt97wgocWphYyTDNnGFcv7oHuxf6OR17eNc3OGUcMqFwB5ndjA6eXwOWzBN2l00rLENUg==
   dependencies:
     "@babel/runtime" "7.19.0"
     "@forestadmin/context" "1.42.11"
@@ -5507,7 +5507,7 @@ forest-express@10.9.2:
     ipaddr.js "2.0.0"
     jsonapi-serializer "3.6.5"
     jsonwebtoken "9.0.0"
-    lodash "4.17.21"
+    lodash "4.18.1"
     moment "2.29.4"
     moment-timezone "0.5.40"
     object-hash "^3.0.0"
@@ -7793,11 +7793,6 @@ lodash.upperfirst@^4.3.1:
   version "4.3.1"
   resolved "https://registry.yarnpkg.com/lodash.upperfirst/-/lodash.upperfirst-4.3.1.tgz#1365edf431480481ef0d1c68957a5ed99d49f7ce"
   integrity sha512-sReKOYJIJf74dhJONhU4e0/shzi1trVbSWDOhKYE5XV2O+H7Sb2Dihwuc7xWxVl+DgFPyTqIN3zMfT9cq5iWDg==
-
-lodash@4.17.21:
-  version "4.17.21"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
-  integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
 lodash@4.18.1, lodash@^4.16.3, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.21, lodash@^4.17.4:
   version "4.18.1"
