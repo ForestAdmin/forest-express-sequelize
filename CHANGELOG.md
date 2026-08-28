@@ -1,3 +1,5 @@
+## [9.6.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.9...v9.6.10) (2026-08-28)
+
 ## [9.6.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.8...v9.6.9) (2026-08-28)
 
 
