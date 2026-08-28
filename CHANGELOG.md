@@ -1,3 +1,10 @@
+## [9.6.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.8...v9.6.9) (2026-08-28)
+
+
+### Bug Fixes
+
+* lodash template code injection vulnerability (CVE-2026-4800) ([#1149](https://github.com/ForestAdmin/forest-express-sequelize/issues/1149)) ([a3f25af](https://github.com/ForestAdmin/forest-express-sequelize/commit/a3f25afa018cc917f4399e02765ddbfe7ff6c369))
+
 ## [9.6.8](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.7...v9.6.8) (2026-07-28)
 
 ## [9.6.7](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.6...v9.6.7) (2026-07-23)
