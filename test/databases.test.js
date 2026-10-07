@@ -1210,6 +1210,30 @@ const user = { renderingId: 1 };
         });
       });
 
+      describe('request on the resources getter with several comma-separated sorts', () => {
+        it('should order by each sort in turn', async () => {
+          expect.assertions(1);
+          const { models } = initializeSequelize();
+          const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+          const params = {
+            ...baseParams,
+            fields: { user: 'primaryId,age' },
+            sort: 'age,-primaryId',
+            page: { number: '1', size: '30' },
+          };
+          try {
+            const [records] = await new ResourcesGetter(models.user, null, params, user).perform();
+            const fixtureIds = records
+              .map((record) => record.primaryId)
+              .filter((primaryId) => [100, 102, 103].includes(primaryId));
+            expect(fixtureIds).toStrictEqual([102, 103, 100]);
+          } finally {
+            spy.mockRestore();
+            connectionManager.closeConnection();
+          }
+        });
+      });
+
       describe('request on the resources getter with a sort on the primary key', () => {
         it('should return the records for the specified page', async () => {
           expect.assertions(1);

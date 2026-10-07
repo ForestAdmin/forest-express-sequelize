@@ -64,6 +64,33 @@ describe('services > query-options', () => {
           await options.sort('-id');
           expect(options.sequelizeOptions.order).toStrictEqual([['id', 'DESC']]);
         });
+
+        it('should apply every comma-separated sort, in order, each with its own direction', async () => {
+          expect.assertions(1);
+          const options = new QueryOptions(model);
+          await options.sort('movieId,-id');
+          expect(options.sequelizeOptions.order).toStrictEqual([['movieId', 'ASC'], ['id', 'DESC']]);
+        });
+
+        it('should join the association of a sort on a relation that is not the first one', async () => {
+          expect.assertions(2);
+          const options = new QueryOptions(model);
+          await options.sort('id,-movie.id');
+          const { order, include } = options.sequelizeOptions;
+          expect(order).toStrictEqual([['id', 'ASC'], ['movie', 'id', 'DESC']]);
+          expect(include).toStrictEqual([expect.objectContaining({ as: 'movie' })]);
+        });
+      });
+    });
+
+    describe('with mssql and several sorts', () => {
+      const model = buildModelMock('mssql');
+
+      it('should only drop the primary key from the sorts', async () => {
+        expect.assertions(1);
+        const options = new QueryOptions(model);
+        await options.sort('movieId,-id');
+        expect(options.sequelizeOptions.order).toStrictEqual([['movieId', 'ASC']]);
       });
     });
   });

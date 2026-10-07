@@ -244,25 +244,27 @@ class QueryOptions {
   }
 
   /**
-   * Apply sort instructions from a sort string in the form 'field', '-field' or 'field.subfield'.
-   * Multiple sorts are not supported
+   * Apply sort instructions from a sort string in the form 'field', '-field' or 'field.subfield',
+   * several of them comma-separated: 'field,-otherField'.
    * @param {string} sortString a sort string
    */
   async sort(sortString) {
     if (!sortString) return;
 
-    const [sortField, order] = sortString[0] === '-'
-      ? [sortString.substring(1), 'DESC']
-      : [sortString, 'ASC'];
+    sortString.split(',').filter(Boolean).forEach((sortChunk) => {
+      const [sortField, order] = sortChunk[0] === '-'
+        ? [sortChunk.substring(1), 'DESC']
+        : [sortChunk, 'ASC'];
 
-    if (sortField.includes('.')) {
-      // Sort on the belongsTo displayed field
-      const [associationName, fieldName] = sortField.split('.');
-      this._order.push([associationName, fieldName, order]);
-      this._neededFields.add(sortField);
-    } else {
-      this._order.push([sortField, order]);
-    }
+      if (sortField.includes('.')) {
+        // Sort on the belongsTo displayed field
+        const [associationName, fieldName] = sortField.split('.');
+        this._order.push([associationName, fieldName, order]);
+        this._neededFields.add(sortField);
+      } else {
+        this._order.push([sortField, order]);
+      }
+    });
   }
 
   /**
