@@ -1,3 +1,10 @@
+## [9.6.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.10...v9.6.11) (2026-10-07)
+
+
+### Bug Fixes
+
+* **sort:** apply every comma-separated sort field ([#1151](https://github.com/ForestAdmin/forest-express-sequelize/issues/1151)) ([89b5f88](https://github.com/ForestAdmin/forest-express-sequelize/commit/89b5f88a4231976b01843ed3030adb2af1410fba))
+
 ## [9.6.10](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.9...v9.6.10) (2026-08-28)
 
 ## [9.6.9](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.8...v9.6.9) (2026-08-28)
