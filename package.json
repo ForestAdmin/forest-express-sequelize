@@ -9,7 +9,7 @@
     "Arnaud Valensi <arnaud.valensi@gmail.com>",
     "Vincent Molinié <molinie.vincent@gmail.com>"
   ],
-  "license": "GPL-3.0",
+  "license": "Apache-2.0",
   "homepage": "http://www.forestadmin.com",
   "keywords": [
     "forest",
