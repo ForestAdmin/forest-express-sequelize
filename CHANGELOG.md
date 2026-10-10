@@ -1,3 +1,10 @@
+## [9.6.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.11...v9.6.12) (2026-10-10)
+
+
+### Bug Fixes
+
+* **license:** relicense from GPL-3.0 to Apache-2.0 ([#1152](https://github.com/ForestAdmin/forest-express-sequelize/issues/1152)) ([edd652c](https://github.com/ForestAdmin/forest-express-sequelize/commit/edd652c8d303c6c7a9de175b3e5813e68662b47a))
+
 ## [9.6.11](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.10...v9.6.11) (2026-10-07)
 
 
