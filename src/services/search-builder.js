@@ -74,16 +74,17 @@ function SearchBuilder(model, opts, params, fieldNamesRequested) {
     // Retrocompatibility: customers which implement search on smart fields are expected to
     // inject their conditions at .where[Op.and][0][Op.or].push(searchCondition)
     // https://docs.forestadmin.com/documentation/reference-guide/fields/create-and-manage-smart-fields
-    const query = {
+    let query = {
       include: [],
       where: { [OPERATORS.AND]: [this.perform(associationName)] },
     };
 
     const fieldsWithSearch = schema.fields.filter((field) => field.search);
+
     await Promise.all(
       fieldsWithSearch.map(async (field) => {
         try {
-          await field.search(query, params.search);
+          query = await field.search(query, params.search);
         } catch (error) {
           const errorMessage = `Cannot search properly on Smart Field ${field.field}: `;
           Interface.logger.error(errorMessage, error);
