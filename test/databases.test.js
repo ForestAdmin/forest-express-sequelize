@@ -711,14 +711,14 @@ const user = { renderingId: 1 };
       });
 
       if (connectionManager === sequelizePostgres) {
-        describe('a line chart with a timezone that is not a zone name', () => {
+        describe('a line chart with a malformed timezone', () => {
           it('should be refused with an invalid parameter error', async () => {
             expect.assertions(1);
             const { models, options } = initializeSequelize();
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             try {
               await expect(new LineStatGetter(models.user, {
-                timezone: 'Europe/Atlantis',
+                timezone: 'Europe Paris',
                 type: 'Line',
                 sourceCollectionName: 'user',
                 groupByFieldName: 'createdAt',
