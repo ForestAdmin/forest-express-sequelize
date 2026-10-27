@@ -21,7 +21,7 @@ describe('services > line-stat-getter', () => {
           name: 'user',
           idField: 'id',
           primaryKeys: ['id'],
-          fields: [{ field: 'id' }, { field: 'createdAt' }],
+          fields: [{ field: 'id', type: 'Number' }, { field: 'createdAt', type: 'Date' }],
         },
       },
     };
@@ -98,6 +98,28 @@ describe('services > line-stat-getter', () => {
         ).rejects.toThrow(message);
         expect(findAll).not.toHaveBeenCalled();
       });
+    });
+
+    it('answers "Missing timezone" with a 400 status when a date filter comes without timezone', async () => {
+      expect.assertions(2);
+      const { model, findAll } = setup('postgres');
+      const filter = { field: 'createdAt', operator: 'today', value: null };
+
+      await expect(
+        new LineStatGetter(model, lineParams({ filter }), { Sequelize }, user).perform(),
+      ).rejects.toMatchObject({ message: 'Missing timezone', status: 400 });
+      expect(findAll).not.toHaveBeenCalled();
+    });
+
+    it('answers "Missing timezone" with a 400 status when a date scope comes without timezone', async () => {
+      expect.assertions(2);
+      const { model, findAll } = setup('postgres');
+      scopeManager.getScopeForUser.mockResolvedValue({ field: 'createdAt', operator: 'today', value: null });
+
+      await expect(
+        new LineStatGetter(model, lineParams({}), { Sequelize }, user).perform(),
+      ).rejects.toMatchObject({ message: 'Missing timezone', status: 400 });
+      expect(findAll).not.toHaveBeenCalled();
     });
 
     it('answers an invalid timezone with a 400 status', async () => {

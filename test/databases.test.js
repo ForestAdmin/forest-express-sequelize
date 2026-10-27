@@ -687,7 +687,7 @@ const user = { renderingId: 1 };
 
       describe('a line chart per day in each time zone the front sends', () => {
         ['Europe/Paris', 'America/New_York', 'UTC', 'Etc/GMT+2'].forEach((timezone) => {
-          it(`should return the points grouped in the ${timezone} time zone`, async () => {
+          it(`should return a single daily point with the ${timezone} time zone`, async () => {
             expect.assertions(1);
             const { models, options } = initializeSequelize();
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);

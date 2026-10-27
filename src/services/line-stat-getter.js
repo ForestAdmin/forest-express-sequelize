@@ -145,7 +145,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     return timezone;
   }
 
-  function getGroupByDateInterval() {
+  function isTimezoneInQuery() {
+    return !isMySQL(model.sequelize) && !isMSSQL(model.sequelize) && !isSQLite(model.sequelize);
+  }
+
+  function getGroupByDateInterval(timezone) {
     if (isMySQL(model.sequelize)) {
       return [getGroupByDateFieldFormatedForMySQL(timeRange), 'date'];
     }
@@ -163,7 +167,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
           params.timeRange,
           options.Sequelize.fn(
             'timezone',
-            getTimezoneName(),
+            timezone,
             options.Sequelize.literal(`"${groupByDateField.replace('.', '"."')}"`),
           ),
         ),
@@ -228,7 +232,8 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   this.perform = async () => {
-    const { filter, timezone } = params;
+    const { filter } = params;
+    const timezone = isTimezoneInQuery() ? getTimezoneName() : params.timezone;
     const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
@@ -237,7 +242,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
 
     const sequelizeOptions = {
       ...queryOptions.sequelizeOptions,
-      attributes: [getGroupByDateInterval(), getAggregate()],
+      attributes: [getGroupByDateInterval(timezone), getAggregate()],
       group: getGroupBy(),
       order: getOrder(),
       raw: true,
