@@ -1,8 +1,9 @@
 import { Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
-import moment from 'moment';
+import moment from 'moment-timezone';
 import { isMSSQL, isMySQL, isSQLite } from '../utils/database';
 import Orm from '../utils/orm';
+import { InvalidParameterError } from './errors';
 import QueryOptions from './query-options';
 
 function LineStatGetter(model, params, options, user) {
@@ -118,6 +119,14 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     }
   }
 
+  function getTimezoneName() {
+    const { timezone } = params;
+    if (typeof timezone !== 'string' || !moment.tz.zone(timezone)) {
+      throw new InvalidParameterError('The timezone must be an IANA time zone name, such as "Europe/Paris".');
+    }
+    return timezone;
+  }
+
   function getGroupByDateInterval() {
     if (isMySQL(model.sequelize)) {
       return [getGroupByDateFieldFormatedForMySQL(timeRange), 'date'];
@@ -134,7 +143,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
         options.Sequelize.fn(
           'date_trunc',
           params.timeRange,
-          options.Sequelize.literal(`"${getGroupByDateField().replace('.', '"."')}" at time zone '${params.timezone}'`),
+          options.Sequelize.fn(
+            'timezone',
+            getTimezoneName(),
+            options.Sequelize.literal(`"${groupByDateField.replace('.', '"."')}"`),
+          ),
         ),
         'YYYY-MM-DD 00:00:00',
       ),
