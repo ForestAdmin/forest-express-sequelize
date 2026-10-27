@@ -1,12 +1,12 @@
 import { Schemas, scopeManager } from 'forest-express';
+import createError from 'http-errors';
 import _ from 'lodash';
 import moment from 'moment';
 import { isMSSQL, isMySQL, isSQLite } from '../utils/database';
 import Orm from '../utils/orm';
-import { InvalidParameterError } from './errors';
 import QueryOptions from './query-options';
 
-const TIMEZONE_NAME_FORMAT = /^[A-Za-z0-9_+\-/]{1,64}$/;
+const VALID_TIMEZONES = new Set();
 
 function LineStatGetter(model, params, options, user) {
   const schema = Schemas.schemas[model.name];
@@ -122,10 +122,26 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   function getTimezoneName() {
-    const { timezone } = params;
-    if (typeof timezone !== 'string' || !TIMEZONE_NAME_FORMAT.test(timezone)) {
-      throw new InvalidParameterError('The timezone must be an IANA time zone name, such as "Europe/Paris".');
+    const timezone = params.timezone?.toString();
+
+    if (!timezone) {
+      throw createError(400, 'Missing timezone');
     }
+
+    if (!VALID_TIMEZONES.has(timezone)) {
+      if (!Intl || !Intl.DateTimeFormat().resolvedOptions().timeZone) {
+        throw new Error('Time zones are not available in this environment');
+      }
+
+      try {
+        Intl.DateTimeFormat('en-US', { timeZone: timezone });
+      } catch {
+        throw createError(400, `Invalid timezone: "${timezone}"`);
+      }
+
+      VALID_TIMEZONES.add(timezone);
+    }
+
     return timezone;
   }
 

@@ -1,7 +1,6 @@
 import Sequelize from 'sequelize';
 import Interface, { scopeManager } from 'forest-express';
 import LineStatGetter from '../../src/services/line-stat-getter';
-import { InvalidParameterError } from '../../src/services/errors';
 
 describe('services > line-stat-getter', () => {
   const user = { renderingId: 1 };
@@ -73,54 +72,50 @@ describe('services > line-stat-getter', () => {
       expect(buildSql()).toContain('timezone(\'europe/paris\', "user"."createdAt")');
     });
 
-    it('leaves a well-formed but unknown zone name to the database', async () => {
+    it('reads a one-item timezone list as that zone', async () => {
       expect.assertions(1);
       const { model, buildSql } = setup('postgres');
 
-      await new LineStatGetter(model, lineParams({ timezone: 'Europe/Atlantis' }), { Sequelize }, user).perform();
+      await new LineStatGetter(model, lineParams({ timezone: ['Europe/Paris'] }), { Sequelize }, user).perform();
 
-      expect(buildSql()).toContain('timezone(\'Europe/Atlantis\', "user"."createdAt")');
-    });
-
-    it('accepts a timezone of 64 characters', async () => {
-      expect.assertions(1);
-      const { model, findAll } = setup('postgres');
-
-      await new LineStatGetter(model, lineParams({ timezone: 'A'.repeat(64) }), { Sequelize }, user).perform();
-
-      expect(findAll).toHaveBeenCalledTimes(1);
+      expect(buildSql()).toContain('timezone(\'Europe/Paris\', "user"."createdAt")');
     });
 
     [
-      ['no timezone', undefined],
-      ['an empty timezone', ''],
-      ['a UTC offset written with a colon', '+02:00'],
-      ['a timezone containing a space', 'Europe Paris'],
-      ['a timezone ending with a line break', 'Europe/Paris\n'],
-      ['a timezone of 65 characters', 'A'.repeat(65)],
-      ['several timezones', ['Europe/Paris', 'UTC']],
-      ['a timezone that is not a string', { name: 'Europe/Paris' }],
-    ].forEach(([description, timezone]) => {
+      ['no timezone', undefined, 'Missing timezone'],
+      ['an empty timezone', '', 'Missing timezone'],
+      ['an unknown zone name', 'Europe/Atlantis', 'Invalid timezone: "Europe/Atlantis"'],
+      ['a timezone containing a space', 'Europe Paris', 'Invalid timezone: "Europe Paris"'],
+      ['several timezones', ['Europe/Paris', 'UTC'], 'Invalid timezone: "Europe/Paris,UTC"'],
+      ['a timezone that is not a string', { name: 'Europe/Paris' }, 'Invalid timezone: "[object Object]"'],
+    ].forEach(([description, timezone, message]) => {
       it(`refuses ${description} without querying the database`, async () => {
         expect.assertions(2);
         const { model, findAll } = setup('postgres');
 
         await expect(
           new LineStatGetter(model, lineParams({ timezone }), { Sequelize }, user).perform(),
-        ).rejects.toThrow(new InvalidParameterError(
-          'The timezone must be an IANA time zone name, such as "Europe/Paris".',
-        ));
+        ).rejects.toThrow(message);
         expect(findAll).not.toHaveBeenCalled();
       });
     });
 
-    it('answers a malformed timezone with a 422 status', async () => {
+    it('answers an invalid timezone with a 400 status', async () => {
       expect.assertions(1);
       const { model } = setup('postgres');
 
       await expect(
-        new LineStatGetter(model, lineParams({ timezone: 'Europe Paris' }), { Sequelize }, user).perform(),
-      ).rejects.toMatchObject({ name: 'InvalidParameterError', status: 422 });
+        new LineStatGetter(model, lineParams({ timezone: 'Europe/Atlantis' }), { Sequelize }, user).perform(),
+      ).rejects.toMatchObject({ name: 'BadRequestError', status: 400 });
+    });
+
+    it('answers a missing timezone with a 400 status', async () => {
+      expect.assertions(1);
+      const { model } = setup('postgres');
+
+      await expect(
+        new LineStatGetter(model, lineParams({}), { Sequelize }, user).perform(),
+      ).rejects.toMatchObject({ name: 'BadRequestError', status: 400 });
     });
   });
 

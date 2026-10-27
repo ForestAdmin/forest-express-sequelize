@@ -711,14 +711,14 @@ const user = { renderingId: 1 };
       });
 
       if (connectionManager === sequelizePostgres) {
-        describe('a line chart with a malformed timezone', () => {
-          it('should be refused with an invalid parameter error', async () => {
+        describe('a line chart with an unknown timezone', () => {
+          it('should be refused with a bad request error', async () => {
             expect.assertions(1);
             const { models, options } = initializeSequelize();
             const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
             try {
               await expect(new LineStatGetter(models.user, {
-                timezone: 'Europe Paris',
+                timezone: 'Europe/Atlantis',
                 type: 'Line',
                 sourceCollectionName: 'user',
                 groupByFieldName: 'createdAt',
@@ -726,8 +726,8 @@ const user = { renderingId: 1 };
                 timeRange: 'Day',
                 filter: null,
               }, options, user).perform()).rejects.toMatchObject({
-                name: 'InvalidParameterError',
-                status: 422,
+                name: 'BadRequestError',
+                status: 400,
               });
             } finally {
               spy.mockRestore();
