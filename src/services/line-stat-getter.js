@@ -1,9 +1,32 @@
 import { Schemas, scopeManager } from 'forest-express';
+import createError from 'http-errors';
 import _ from 'lodash';
 import moment from 'moment';
 import { isMSSQL, isMySQL, isSQLite } from '../utils/database';
 import Orm from '../utils/orm';
 import QueryOptions from './query-options';
+
+const ALLOWED_AGGREGATORS = new Set(['count', 'sum', 'avg', 'min', 'max']);
+
+function describeInput(value) {
+  return typeof value === 'string' ? JSON.stringify(value) : typeof value;
+}
+
+function assertValidGroupByField(schema, groupByFieldName) {
+  const schemaField = typeof groupByFieldName === 'string'
+    && !groupByFieldName.includes(':')
+    && schema.fields.find((field) => field.field === groupByFieldName);
+
+  if (!schemaField || schemaField.isVirtual || schemaField.reference) {
+    throw createError(400, `Invalid group by field ${describeInput(groupByFieldName)}`);
+  }
+}
+
+function assertValidAggregator(aggregator) {
+  if (typeof aggregator !== 'string' || !ALLOWED_AGGREGATORS.has(aggregator.toLowerCase())) {
+    throw createError(400, `Invalid aggregator ${describeInput(aggregator)}`);
+  }
+}
 
 function LineStatGetter(model, params, options, user) {
   const schema = Schemas.schemas[model.name];
@@ -18,6 +41,7 @@ function LineStatGetter(model, params, options, user) {
   }
 
   function getGroupByDateField() {
+    if (typeof params.groupByFieldName !== 'string') return null;
     return `${schema.name}.${Orm.getColumnName(schema, params.groupByFieldName)}`;
   }
 
@@ -197,6 +221,9 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
   }
 
   this.perform = async () => {
+    assertValidGroupByField(schema, params.groupByFieldName);
+    assertValidAggregator(params.aggregator);
+
     const { filter, timezone } = params;
     const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
