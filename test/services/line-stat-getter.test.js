@@ -72,6 +72,20 @@ describe('services > line-stat-getter', () => {
       expect(buildSql()).toContain('timezone(\'europe/paris\', "user"."createdAt")');
     });
 
+    it('groups the dates in the requested zone on a host whose own zone Intl cannot name', async () => {
+      expect.assertions(1);
+      const { model, buildSql } = setup('postgres');
+      const { DateTimeFormat } = Intl;
+      // Node reports no host zone when started with TZ=UTC0 or TZ=:/etc/localtime.
+      jest.spyOn(Intl, 'DateTimeFormat').mockImplementation((...args) => (args.length
+        ? new DateTimeFormat(...args)
+        : { resolvedOptions: () => ({ timeZone: undefined }) }));
+
+      await new LineStatGetter(model, lineParams({ timezone: 'Asia/Tokyo' }), { Sequelize }, user).perform();
+
+      expect(buildSql()).toContain('timezone(\'Asia/Tokyo\', "user"."createdAt")');
+    });
+
     it('reads a one-item timezone list as that zone', async () => {
       expect.assertions(1);
       const { model, buildSql } = setup('postgres');

@@ -152,10 +152,6 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     }
 
     if (!VALID_TIMEZONES.has(timezone)) {
-      if (!Intl || !Intl.DateTimeFormat().resolvedOptions().timeZone) {
-        throw new Error('Time zones are not available in this environment');
-      }
-
       try {
         Intl.DateTimeFormat('en-US', { timeZone: timezone });
       } catch {
