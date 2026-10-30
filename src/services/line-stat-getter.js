@@ -28,6 +28,8 @@ function assertValidAggregator(aggregator) {
   }
 }
 
+const VALID_TIMEZONES = new Set();
+
 function LineStatGetter(model, params, options, user) {
   const schema = Schemas.schemas[model.name];
   const timeRange = params.timeRange.toLowerCase();
@@ -142,7 +144,31 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     }
   }
 
-  function getGroupByDateInterval() {
+  function getTimezoneName() {
+    const timezone = params.timezone?.toString();
+
+    if (!timezone) {
+      throw createError(400, 'Missing timezone');
+    }
+
+    if (!VALID_TIMEZONES.has(timezone)) {
+      try {
+        Intl.DateTimeFormat('en-US', { timeZone: timezone });
+      } catch {
+        throw createError(400, `Invalid timezone: "${timezone}"`);
+      }
+
+      VALID_TIMEZONES.add(timezone);
+    }
+
+    return timezone;
+  }
+
+  function isTimezoneInQuery() {
+    return !isMySQL(model.sequelize) && !isMSSQL(model.sequelize) && !isSQLite(model.sequelize);
+  }
+
+  function getGroupByDateInterval(timezone) {
     if (isMySQL(model.sequelize)) {
       return [getGroupByDateFieldFormatedForMySQL(timeRange), 'date'];
     }
@@ -158,7 +184,11 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
         options.Sequelize.fn(
           'date_trunc',
           params.timeRange,
-          options.Sequelize.literal(`"${getGroupByDateField().replace('.', '"."')}" at time zone '${params.timezone}'`),
+          options.Sequelize.fn(
+            'timezone',
+            timezone,
+            options.Sequelize.literal(`"${groupByDateField.replace('.', '"."')}"`),
+          ),
         ),
         'YYYY-MM-DD 00:00:00',
       ),
@@ -224,7 +254,8 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     assertValidGroupByField(schema, params.groupByFieldName);
     assertValidAggregator(params.aggregator);
 
-    const { filter, timezone } = params;
+    const { filter } = params;
+    const timezone = isTimezoneInQuery() ? getTimezoneName() : params.timezone;
     const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
@@ -233,7 +264,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
 
     const sequelizeOptions = {
       ...queryOptions.sequelizeOptions,
-      attributes: [getGroupByDateInterval(), getAggregate()],
+      attributes: [getGroupByDateInterval(timezone), getAggregate()],
       group: getGroupBy(),
       order: getOrder(),
       raw: true,

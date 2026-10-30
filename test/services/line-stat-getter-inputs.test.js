@@ -174,10 +174,10 @@ describe('services > line-stat-getter > chart inputs', () => {
     });
 
     [
-      ['postgres', 'Day', 'to_char(date_trunc(\'Day\', "user"."createdAt" at time zone '
-        + '\'Europe/Paris\'), \'YYYY-MM-DD 00:00:00\') AS "date"'],
-      ['postgres', 'Week', 'to_char(date_trunc(\'Week\', "user"."createdAt" at time zone '
-        + '\'Europe/Paris\'), \'YYYY-MM-DD 00:00:00\') AS "date"'],
+      ['postgres', 'Day', 'to_char(date_trunc(\'Day\', timezone(\'Europe/Paris\', '
+        + '"user"."createdAt")), \'YYYY-MM-DD 00:00:00\') AS "date"'],
+      ['postgres', 'Week', 'to_char(date_trunc(\'Week\', timezone(\'Europe/Paris\', '
+        + '"user"."createdAt")), \'YYYY-MM-DD 00:00:00\') AS "date"'],
       ['mysql', 'Day', 'DATE_FORMAT(`user`.`createdAt`, \'%Y-%m-%d 00:00:00\') AS `date`'],
       ['mysql', 'Week', 'DATE_FORMAT(DATE_SUB(`user`.`createdAt`, INTERVAL '
         + '((7 + WEEKDAY(`user`.`createdAt`)) % 7) DAY), \'%Y-%m-%d 00:00:00\') AS `date`'],

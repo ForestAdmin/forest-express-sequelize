@@ -685,6 +685,80 @@ const user = { renderingId: 1 };
         });
       });
 
+      describe('a line chart per day in each time zone the front sends', () => {
+        ['Europe/Paris', 'America/New_York', 'UTC', 'Etc/GMT+2'].forEach((timezone) => {
+          it(`should return a single daily point with the ${timezone} time zone`, async () => {
+            expect.assertions(1);
+            const { models, options } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            try {
+              const stat = await new LineStatGetter(models.user, {
+                timezone,
+                type: 'Line',
+                sourceCollectionName: 'user',
+                groupByFieldName: 'createdAt',
+                aggregator: 'Count',
+                timeRange: 'Day',
+                filter: null,
+              }, options, user).perform();
+              expect(stat.value).toHaveLength(1);
+            } finally {
+              spy.mockRestore();
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      });
+
+      if (connectionManager === sequelizePostgres) {
+        describe('a line chart with an unknown timezone', () => {
+          it('should be refused with a bad request error', async () => {
+            expect.assertions(1);
+            const { models, options } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            try {
+              await expect(new LineStatGetter(models.user, {
+                timezone: 'Europe/Atlantis',
+                type: 'Line',
+                sourceCollectionName: 'user',
+                groupByFieldName: 'createdAt',
+                aggregator: 'Count',
+                timeRange: 'Day',
+                filter: null,
+              }, options, user).perform()).rejects.toMatchObject({
+                name: 'BadRequestError',
+                status: 400,
+              });
+            } finally {
+              spy.mockRestore();
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      } else {
+        describe('a line chart without timezone', () => {
+          it('should still return the points', async () => {
+            expect.assertions(1);
+            const { models, options } = initializeSequelize();
+            const spy = jest.spyOn(scopeManager, 'getScopeForUser').mockReturnValue(null);
+            try {
+              const stat = await new LineStatGetter(models.user, {
+                type: 'Line',
+                sourceCollectionName: 'user',
+                groupByFieldName: 'createdAt',
+                aggregator: 'Count',
+                timeRange: 'Day',
+                filter: null,
+              }, options, user).perform();
+              expect(stat.value).toHaveLength(1);
+            } finally {
+              spy.mockRestore();
+              connectionManager.closeConnection();
+            }
+          });
+        });
+      }
+
       describe('chart with a filter', () => {
         it('should generate a valid SQL query', async () => {
           expect.assertions(1);
