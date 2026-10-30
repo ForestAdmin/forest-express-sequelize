@@ -1,3 +1,10 @@
+## [9.6.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.13...v9.6.14) (2026-10-30)
+
+
+### Bug Fixes
+
+* **line-chart:** validate the line chart timezone and pass it as a value ([#1154](https://github.com/ForestAdmin/forest-express-sequelize/issues/1154)) ([61b3269](https://github.com/ForestAdmin/forest-express-sequelize/commit/61b3269355e105fba65373fb12d03dcd47b94d25))
+
 ## [9.6.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.12...v9.6.13) (2026-10-28)
 
 
