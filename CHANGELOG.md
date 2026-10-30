@@ -1,3 +1,10 @@
+## [9.6.15](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.14...v9.6.15) (2026-10-30)
+
+
+### Bug Fixes
+
+* **deps:** bump forest-express to 10.9.7 ([#1156](https://github.com/ForestAdmin/forest-express-sequelize/issues/1156)) ([49609dc](https://github.com/ForestAdmin/forest-express-sequelize/commit/49609dc1187bba7529206696f06463c48a6d839e))
+
 ## [9.6.14](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.13...v9.6.14) (2026-10-30)
 
 
