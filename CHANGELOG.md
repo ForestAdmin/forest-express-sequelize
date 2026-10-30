@@ -1,3 +1,10 @@
+## [9.6.13](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.12...v9.6.13) (2026-10-28)
+
+
+### Bug Fixes
+
+* **line-chart:** validate the group by field and aggregator of line charts ([#1155](https://github.com/ForestAdmin/forest-express-sequelize/issues/1155)) ([e709c10](https://github.com/ForestAdmin/forest-express-sequelize/commit/e709c1066b26d19aa4ee9262ce8904d9b79bd288))
+
 ## [9.6.12](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.11...v9.6.12) (2026-10-10)
 
 
