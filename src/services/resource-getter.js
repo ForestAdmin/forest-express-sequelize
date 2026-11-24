@@ -2,6 +2,7 @@ import { scopeManager } from 'forest-express';
 import createError from 'http-errors';
 import PrimaryKeysManager from './primary-keys-manager';
 import QueryOptions from './query-options';
+import redactRelatedRecords from './related-record-scopes';
 
 class ResourceGetter {
   constructor(model, params, user) {
@@ -24,6 +25,7 @@ class ResourceGetter {
     }
 
     new PrimaryKeysManager(this._model).annotateRecords([record]);
+    await redactRelatedRecords(this._model, [record], this._user, timezone);
     return record;
   }
 }

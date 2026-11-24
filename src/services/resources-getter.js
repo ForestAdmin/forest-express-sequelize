@@ -2,6 +2,7 @@ import { Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import PrimaryKeysManager from './primary-keys-manager';
 import QueryOptions from './query-options';
+import redactRelatedRecords from './related-record-scopes';
 import extractRequestedFields from './requested-fields-extractor';
 
 class ResourcesGetter {
@@ -35,7 +36,7 @@ class ResourcesGetter {
     const [model, options] = await this._buildQueryOptions();
     const records = await model.findAll(options);
     new PrimaryKeysManager(this._model).annotateRecords(records);
-    return records;
+    return redactRelatedRecords(this._model, records, this._user, this._params.timezone);
   }
 
   /** Get list of fields descriptors which are used when searching (for frontend highlighting). */

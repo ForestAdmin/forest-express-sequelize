@@ -2,6 +2,7 @@ import { pick } from 'lodash';
 import SequelizeCompatibility from '../utils/sequelize-compatibility';
 import PrimaryKeysManager from './primary-keys-manager';
 import ResourcesGetter from './resources-getter';
+import redactRelatedRecords from './related-record-scopes';
 
 class HasManyGetter extends ResourcesGetter {
   constructor(model, association, lianaOptions, params, user) {
@@ -16,7 +17,7 @@ class HasManyGetter extends ResourcesGetter {
     const records = parentRecord?.[this._params.associationName] ?? [];
 
     new PrimaryKeysManager(this._model).annotateRecords(records);
-    return records;
+    return redactRelatedRecords(this._model, records, this._user, this._params.timezone);
   }
 
   async count() {
