@@ -5,11 +5,12 @@ import QueryOptions from './query-options';
 import ResourceGetter from './resource-getter';
 
 class ResourceUpdater {
-  constructor(model, params, newRecord, user) {
+  constructor(model, params, newRecord, user, options = {}) {
     this._model = model.unscoped();
     this._params = params;
     this._newRecord = newRecord;
     this._user = user;
+    this._options = options;
   }
 
   async perform() {
@@ -39,6 +40,7 @@ class ResourceUpdater {
         this._model,
         { ...this._params, recordId: this._params.recordId },
         this._user,
+        this._options,
       ).perform();
     } catch (error) {
       if (error.statusCode === 404 && scopeFilters) {

@@ -1,7 +1,9 @@
 import Sequelize from 'sequelize';
 import Interface, { scopeManager } from 'forest-express';
 import HasManyGetter from '../../src/services/has-many-getter';
+import redactRelatedRecords from '../../src/services/related-record-scopes';
 import ResourceGetter from '../../src/services/resource-getter';
+import ResourceUpdater from '../../src/services/resource-updater';
 import ResourcesExporter from '../../src/services/resources-exporter';
 import ResourcesGetter from '../../src/services/resources-getter';
 
@@ -156,6 +158,93 @@ describe('services > related record scopes', () => {
 
     expect(relatedIds(records)).toStrictEqual([[1, 10, 20], [2, 11, 21], [3, null, 20]]);
     expect(Account.findAll).not.toHaveBeenCalled();
+    jest.restoreAllMocks();
+  });
+
+  describe('when the caller asks for the related records as stored', () => {
+    it('serves them unchanged on list', async () => {
+      expect.hasAssertions();
+      setup({ flagged: ['accounts'] });
+      jest.spyOn(Card, 'findAll').mockResolvedValue(buildCards());
+
+      const [records] = await new ResourcesGetter(
+        Card, {}, { timezone, fields }, user, { redactRelatedRecords: false },
+      ).perform();
+
+      expect(relatedIds(records)).toStrictEqual([[1, 10, 20], [2, 11, 21], [3, null, 20]]);
+      expect(Account.findAll).not.toHaveBeenCalled();
+      jest.restoreAllMocks();
+    });
+
+    it('serves them unchanged on get', async () => {
+      expect.hasAssertions();
+      setup({ flagged: ['accounts'] });
+      jest.spyOn(Card, 'findOne').mockResolvedValue(buildCards()[1]);
+
+      const record = await new ResourceGetter(
+        Card, { recordId: 2, timezone }, user, { redactRelatedRecords: false },
+      ).perform();
+
+      expect(relatedIds([record])).toStrictEqual([[2, 11, 21]]);
+      jest.restoreAllMocks();
+    });
+  });
+
+  describe('when the scope of a related collection cannot be checked', () => {
+    it('serves that related record empty instead of failing the request', async () => {
+      expect.hasAssertions();
+      setup({ flagged: ['accounts'] });
+      scopeManager.scopeAppliesToRelatedRecords.mockRejectedValue(new Error('server unreachable'));
+      jest.spyOn(Card, 'findOne').mockResolvedValue(buildCards()[0]);
+
+      const record = await new ResourceGetter(Card, { recordId: 1, timezone }, user).perform();
+
+      expect(relatedIds([record])).toStrictEqual([[1, null, null]]);
+      jest.restoreAllMocks();
+    });
+
+    it('still answers an update that was saved', async () => {
+      expect.hasAssertions();
+      setup({ flagged: ['accounts'] });
+      Account.findAll.mockRejectedValue(new Error('invalid scope'));
+      const [saved] = buildCards();
+      jest.spyOn(saved, 'validate').mockResolvedValue();
+      jest.spyOn(saved, 'save').mockResolvedValue(saved);
+      jest.spyOn(Card, 'findOne').mockResolvedValue(saved);
+
+      const record = await new ResourceUpdater(
+        Card, { recordId: 1, timezone }, { panLast4: '1234' }, user,
+      ).perform();
+
+      expect(saved.save).toHaveBeenCalledTimes(1);
+      expect(relatedIds([record])).toStrictEqual([[1, null, 20]]);
+      jest.restoreAllMocks();
+    });
+  });
+
+  it('matches a related record with a composite primary key on its raw key values', async () => {
+    expect.hasAssertions();
+    const Slot = sequelize.define('slots', {
+      label: { type: Sequelize.STRING, primaryKey: true },
+      startsAt: { type: Sequelize.DATE, primaryKey: true },
+    });
+    const Booking = sequelize.define('bookings', {});
+    Booking.belongsTo(Slot, { as: 'slot', foreignKey: 'slotLabel', targetKey: 'label' });
+    const startsAt = new Date('2026-01-01T09:00:00Z');
+    const bookings = [
+      { id: 1, slot: { label: 'a|b', startsAt } },
+      { id: 2, slot: { label: 'c', startsAt } },
+    ].map((values) => Booking.build(values, { include: [{ model: Slot, as: 'slot' }] }));
+    jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(true);
+    jest.spyOn(scopeManager, 'getScopeForUser').mockResolvedValue(null);
+    jest.spyOn(Slot, 'findAll').mockResolvedValue([Slot.build({ label: 'a|b', startsAt })]);
+
+    await redactRelatedRecords(Booking, bookings, user, timezone);
+
+    expect(bookings.map((booking) => booking.slot?.label ?? null)).toStrictEqual(['a|b', null]);
+    expect(Slot.findAll.mock.calls[0][0].where).toStrictEqual({
+      [Sequelize.Op.or]: [{ label: 'a|b', startsAt }, { label: 'c', startsAt }],
+    });
     jest.restoreAllMocks();
   });
 });
