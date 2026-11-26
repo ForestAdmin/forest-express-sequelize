@@ -22,6 +22,9 @@ const QueryStatGetter = require('../src/services/query-stat-getter');
 const baseParams = { timezone: 'Europe/Paris' };
 const user = { renderingId: 1 };
 
+// No server answers here: these tests run with no scope applying to related records.
+jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false);
+
 [
   sequelizePostgres,
   sequelizeMySQLMin,

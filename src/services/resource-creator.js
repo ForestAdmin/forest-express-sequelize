@@ -8,12 +8,13 @@ const associationRecord = require('../utils/association-record');
 const isPrimaryKeyAForeignKey = require('../utils/is-primary-key-a-foreign-key');
 
 class ResourceCreator {
-  constructor(model, params, body, user) {
+  constructor(model, params, body, user, options = {}) {
     this.model = model;
     this.params = params;
     this.body = body;
     this.schema = Interface.Schemas.schemas[model.name];
     this.user = user;
+    this.options = options;
   }
 
   async _getTargetKey(name, association) {
@@ -95,6 +96,7 @@ class ResourceCreator {
         this.model,
         { ...this.params, recordId: record[this.schema.idField] },
         this.user,
+        this.options,
       ).perform();
     } catch (error) {
       if (error.statusCode === 404 && scopeFilters) {

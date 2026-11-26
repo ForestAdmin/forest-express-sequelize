@@ -2,14 +2,24 @@ import { Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import PrimaryKeysManager from './primary-keys-manager';
 import QueryOptions from './query-options';
+import redactRelatedRecords from './related-record-scopes';
 import extractRequestedFields from './requested-fields-extractor';
 
 class ResourcesGetter {
-  constructor(model, lianaOptions, params, user) {
+  constructor(
+    model,
+    lianaOptions,
+    params,
+    user,
+    { redactRelatedRecords: redactRelated = true } = {},
+  ) {
     // lianaOptions is kept for compatibility with forest-express-mongoose
     this._model = model.unscoped();
     this._params = params;
     this._user = user;
+    // Code calling the getter itself, such as a smart action, reads related records as stored: only
+    // what the agent serves is emptied.
+    this._redact = redactRelated;
   }
 
   async perform() {
@@ -35,7 +45,8 @@ class ResourcesGetter {
     const [model, options] = await this._buildQueryOptions();
     const records = await model.findAll(options);
     new PrimaryKeysManager(this._model).annotateRecords(records);
-    return records;
+    if (!this._redact) return records;
+    return redactRelatedRecords(this._model, records, this._user, this._params.timezone);
   }
 
   /** Get list of fields descriptors which are used when searching (for frontend highlighting). */
