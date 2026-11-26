@@ -1,3 +1,10 @@
+# [9.7.0](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.16...v9.7.0) (2026-11-26)
+
+
+### Features
+
+* **scopes:** apply a related collection's scope when the server flags it ([#1158](https://github.com/ForestAdmin/forest-express-sequelize/issues/1158)) ([98dd0e6](https://github.com/ForestAdmin/forest-express-sequelize/commit/98dd0e66f5a9844f3a867b77cd4be0c169e93c71))
+
 ## [9.6.16](https://github.com/ForestAdmin/forest-express-sequelize/compare/v9.6.15...v9.6.16) (2026-11-03)
 
 
