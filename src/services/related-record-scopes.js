@@ -1,5 +1,5 @@
 import { pick } from 'lodash';
-import { logger, scopeManager } from 'forest-express';
+import { logger } from 'forest-express';
 import Operators from '../utils/operators';
 import QueryUtils from '../utils/query';
 import QueryOptions from './query-options';
@@ -29,10 +29,9 @@ async function redactRelatedRecords(model, records, user, timezone) {
     let visibleKeys;
 
     try {
-      // A forest-express release without the lookup reads as not flagged.
-      if (!await scopeManager.scopeAppliesToRelatedRecords?.(user, target.name)) return;
-      // Without a primary key the loaded records cannot be matched: they are served as before.
-      if (!primaryKeys.length) return;
+      // Not flagged, or without a primary key to match the loaded records: served as stored.
+      const scope = await QueryOptions.getRelatedScope(target, user, timezone);
+      if (!scope) return;
 
       const operators = Operators.getInstance({ Sequelize: target.sequelize.constructor });
       // Built from the raw key values, so composite keys need no packing into strings.
@@ -40,15 +39,9 @@ async function redactRelatedRecords(model, records, user, timezone) {
         ? { [primaryKeys[0]]: [...new Set(loaded.map((record) => record[as][primaryKeys[0]]))] }
         : { [operators.OR]: loaded.map((record) => pick(record[as], primaryKeys)) };
 
-      const queryOptions = new QueryOptions(target);
-      await queryOptions.filterByConditionTree(
-        await scopeManager.getScopeForUser(user, target.name, true),
-        timezone,
-      );
-      const { where, include } = queryOptions.sequelizeOptions;
       const visible = await target.unscoped().findAll({
-        where: QueryUtils.mergeWhere(operators, idsWhere, where),
-        include,
+        where: QueryUtils.mergeWhere(operators, idsWhere, scope.where),
+        ...(scope.include && { include: scope.include }),
         attributes: primaryKeys,
       });
       visibleKeys = new Set(visible.map(keyOf));

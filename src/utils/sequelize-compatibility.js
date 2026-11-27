@@ -3,6 +3,12 @@ import Operators from './operators';
 import QueryUtils from './query';
 
 /**
+ * Holds the condition of an include's join: it restricts which related record joins, never which
+ * rows are returned. The include's own `where` is bubbled up as usual, then replaced by it.
+ */
+const JOIN_CONDITION = Symbol('joinCondition');
+
+/**
  * Extract all where conditions along the include tree, and bubbles them up to the top in-place.
  * This allows to work around a sequelize quirk that cause nested 'where' to fail when they
  * refer to relation fields from an intermediary include (ie '$book.id$').
@@ -18,7 +24,8 @@ function bubbleWheresInPlace(operators, options) {
   parentIncludeList.forEach((include) => {
     bubbleWheresInPlace(operators, include);
 
-    if (include.where) {
+    // Already the join condition when the include is processed a second time.
+    if (include.where && include.where !== include[JOIN_CONDITION]) {
       const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => {
         // Targeting a nested field, simply nest it deeper.
         if (key[0] === '$' && key[key.length - 1] === '$') {
@@ -33,6 +40,8 @@ function bubbleWheresInPlace(operators, options) {
       options.where = QueryUtils.mergeWhere(operators, options.where, newWhere);
       delete include.where;
     }
+
+    if (include[JOIN_CONDITION]) include.where = include[JOIN_CONDITION];
   });
 }
 
@@ -139,6 +148,8 @@ function removeDuplicateAssociations(model, includeList) {
     }
   });
 }
+
+exports.JOIN_CONDITION = JOIN_CONDITION;
 
 exports.postProcess = (model, rawOptions) => {
   if (!rawOptions.include) return rawOptions;

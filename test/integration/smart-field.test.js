@@ -13,6 +13,9 @@ function rot13(s) {
 
 const user = { renderingId: 1 };
 
+// No server answers here: these tests run with no scope applying to related records.
+jest.spyOn(Interface.scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false);
+
 async function setup(sequelize) {
   Interface.Schemas = { schemas: {} };
 

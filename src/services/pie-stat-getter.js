@@ -85,8 +85,10 @@ function PieStatGetter(model, params, options, user) {
     const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
+    await queryOptions.applyRelatedScopes(user, timezone);
+    if (associationSplit) await queryOptions.excludeHiddenRelated(associationSplit[0]);
     await queryOptions.filterByConditionTree(filter, timezone);
-    await queryOptions.filterByConditionTree(scopeFilters, timezone);
+    await queryOptions.filterByScope(scopeFilters, timezone);
 
     const sequelizeOptions = {
       ...queryOptions.sequelizeOptions,
