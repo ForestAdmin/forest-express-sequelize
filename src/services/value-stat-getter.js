@@ -42,7 +42,7 @@ class ValueStatGetter {
     const queryOptions = new QueryOptions(this._model, { includeRelations: true });
     await queryOptions.applyRelatedScopes(this._user, timezone);
     await queryOptions.filterByConditionTree(filter, timezone);
-    await queryOptions.filterByConditionTree(scopeFilters, timezone);
+    await queryOptions.filterByScope(scopeFilters, timezone);
 
     // No attributes should be retrieved from relations for the group by to work.
     const options = queryOptions.sequelizeOptions;

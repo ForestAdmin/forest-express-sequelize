@@ -10,6 +10,51 @@ import PrimaryKeysManager from './primary-keys-manager';
 import QueryBuilder from './query-builder';
 import SearchBuilder from './search-builder';
 
+const TO_ONE = ['HasOne', 'BelongsTo'];
+
+/**
+ * The SELECT that model.findAll(options) would run, as SQL to nest in another query. It goes
+ * through the steps findAll takes before generating its SQL, so includes and paranoid models read
+ * as they do in a list. Included models select no column of their own.
+ */
+function selectSql(model, options) {
+  const withoutAttributes = (includes) => includes?.map((include) => ({
+    ...include,
+    attributes: [],
+    ...(include.include && { include: withoutAttributes(include.include) }),
+  }));
+  const selectOptions = { ...options, include: withoutAttributes(options.include), raw: true };
+  if (!selectOptions.include) delete selectOptions.include;
+
+  model._conformIncludes(selectOptions, model);
+  model._expandIncludeAll(selectOptions);
+  if (selectOptions.include) {
+    selectOptions.hasJoin = true;
+    model._validateIncludedElements(selectOptions);
+  }
+  model.sequelize.constructor.Utils.mapFinderOptions(selectOptions, model);
+  model._paranoidClause(model, selectOptions);
+
+  const generator = model.sequelize.getQueryInterface().queryGenerator;
+  return generator.selectQuery(model.getTableName(), selectOptions, model).replace(/;\s*$/, '');
+}
+
+/**
+ * A condition matching the records of model that the query options select, by primary key, so
+ * conditions written for one join can be applied from another.
+ * @param {string} label what the condition is, named in the error
+ */
+function primaryKeyIn(model, { where, include }, label) {
+  const keys = model.primaryKeyAttributes;
+  if (keys.length !== 1) {
+    throw new Error(`${label} cannot be applied: it filters through a relation, which needs ${model.name} to have a single primary key.`);
+  }
+
+  const { IN } = Operators.getInstance({ Sequelize: model.sequelize.constructor });
+  const sql = selectSql(model, { where, include, attributes: keys });
+  return { [keys[0]]: { [IN]: model.sequelize.literal(`(${sql})`) } };
+}
+
 /**
  * Sequelize query options generator which is configured using forest admin concepts (filters,
  * search, segments, ...).
@@ -76,16 +121,19 @@ class QueryOptions {
       ...new QueryBuilder().getIncludes(this._model, fields),
       ...this._customerIncludes,
     ].map((relation) => {
-      const scope = this._relatedScopes[relation.as];
-      if (!scope) return relation;
+      // Includes added by smart field searches may name the model alone.
+      const as = relation.as ?? _.values(this._model.associations)
+        .find((association) => association.target === (relation.model ?? relation))?.as;
+      const where = this._relatedScopes[as];
+      if (!where) return relation;
 
       // Not required: a related record the scope hides joins as empty, and its row is kept.
       return {
-        ...relation,
-        where: scope.where,
+        ...(relation.model ? relation : { model: relation }),
+        as,
+        where,
         required: false,
         [SequelizeCompatibility.JOIN_CONDITION]: true,
-        ...(scope.include && { include: [...(relation.include ?? []), ...scope.include] }),
       };
     });
 
@@ -138,7 +186,7 @@ class QueryOptions {
 
     if (this._options.includeRelations) {
       _.values(this._model.associations)
-        .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType))
+        .filter((association) => TO_ONE.includes(association.associationType))
         .forEach((association) => this._requestedRelations.add(association.associationAccessor));
     }
   }
@@ -189,20 +237,65 @@ class QueryOptions {
    */
   async applyRelatedScopes(user, timezone) {
     const associations = _.values(this._model.associations)
-      .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType));
+      .filter((association) => TO_ONE.includes(association.associationType));
 
     await Promise.all(associations.map(async ({ as, target }) => {
-      // A forest-express release without the lookup reads as not flagged.
-      if (!await scopeManager.scopeAppliesToRelatedRecords?.(user, target.name)) return;
+      const scope = await QueryOptions.getRelatedScope(target, user, timezone);
+      if (!scope?.where) return;
 
-      const scopeOptions = new QueryOptions(target);
-      await scopeOptions.filterByConditionTree(
-        await scopeManager.getScopeForUser(user, target.name, true),
-        timezone,
-      );
-      const { where, include } = scopeOptions.sequelizeOptions;
-      if (where) this._relatedScopes[as] = { where, include };
+      // A scope going through relations of its own is checked by key: nested in this join, its
+      // conditions would name the wrong aliases.
+      this._relatedScopes[as] = scope.include
+        ? primaryKeyIn(target, scope, `The scope of ${target.name}`)
+        : scope.where;
     }));
+  }
+
+  /**
+   * The scope that hides related records of a collection, when the server flags it as applying
+   * to related records. A collection without a primary key has its related records served as
+   * stored, so it has none.
+   * @param {sequelize.model} model the related collection
+   * @param {*} user the user the scope is resolved for
+   * @param {string} timezone timezone of the user (required if the scope filters on dates)
+   * @returns {Promise<{where, include}|null>} the scope as Sequelize options, null when none
+   */
+  static async getRelatedScope(model, user, timezone) {
+    // A forest-express release without the lookup reads as not flagged.
+    if (!await scopeManager.scopeAppliesToRelatedRecords?.(user, model.name)) return null;
+    if (!model.primaryKeyAttributes.length) return null;
+
+    const scopeOptions = new QueryOptions(model);
+    await scopeOptions.filterByConditionTree(
+      await scopeManager.getScopeForUser(user, model.name, true),
+      timezone,
+    );
+    const { where, include } = scopeOptions.sequelizeOptions;
+    return { where, include };
+  }
+
+  /**
+   * Apply the collection's own scope. Its conditions on related fields compare the related
+   * records as stored, which the join applyRelatedScopes restricted no longer holds, so a scope
+   * touching such a relation is checked by key.
+   * @param {*} scope the scope's condition tree
+   * @param {string} timezone timezone of the user (required if filtering on dates)
+   */
+  async filterByScope(scope, timezone) {
+    const touchesHiddenRelated = scope && !_.isEmpty(this._relatedScopes) && (
+      await new FiltersParser(this._schema, timezone, { Sequelize: this._Sequelize })
+        .getAssociations(scope)
+    ).some((as) => this._relatedScopes[as]);
+    if (!touchesHiddenRelated) {
+      await this.filterByConditionTree(scope, timezone);
+      return;
+    }
+
+    const stored = new QueryOptions(this._model);
+    await stored.filterByConditionTree(scope, timezone);
+    this._where.push(
+      primaryKeyIn(this._model, stored.sequelizeOptions, `The scope of ${this._model.name}`),
+    );
   }
 
   /**
@@ -214,21 +307,22 @@ class QueryOptions {
     if (!this._relatedScopes[as]) return;
 
     const association = this._model.associations[as];
-    const [targetColumn, rootColumn] = association.associationType === 'BelongsTo'
-      ? [association.targetKeyField, association.identifierField]
-      : [association.identifierField, association.sourceKeyField];
-    const generator = this._model.sequelize.getQueryInterface().queryGenerator;
-    const quote = (name) => generator.quoteIdentifier(name);
-    const related = quote('forest_related');
-    const table = generator.quoteTable(association.target.getTableName());
-    const rootKey = `${quote(this._model.name)}.${quote(rootColumn)}`;
-    const joinedOn = `${related}.${quote(targetColumn)} = ${rootKey}`;
+    const { target } = association;
+    const [targetKey, rootColumn] = association.associationType === 'BelongsTo'
+      ? [association.targetKey, association.identifierField]
+      : [association.foreignKey, association.sourceKeyField];
     const operators = Operators.getInstance({ Sequelize: this._Sequelize });
+    // Under its own alias, so the condition reaches this query's row even when both are one table.
+    const related = selectSql(target, {
+      attributes: [targetKey],
+      where: { [targetKey]: { [operators.EQ]: this._Sequelize.col(`${this._model.name}.${rootColumn}`) } },
+      tableAs: 'forest_related',
+    });
 
     this._where.push({
       [operators.OR]: [
-        { [`$${as}.${association.target.primaryKeyAttribute}$`]: { [operators.NE]: null } },
-        this._Sequelize.literal(`NOT EXISTS (SELECT 1 FROM ${table} AS ${related} WHERE ${joinedOn})`),
+        { [`$${as}.${target.primaryKeyField}$`]: { [operators.NE]: null } },
+        this._Sequelize.literal(`NOT EXISTS (${related})`),
       ],
     });
   }

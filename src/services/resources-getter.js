@@ -79,7 +79,7 @@ class ResourcesGetter {
     if (this._redact) await queryOptions.applyRelatedScopes(this._user, timezone);
     await queryOptions.search(search, searchExtended);
     await queryOptions.filterByConditionTree(filters, timezone);
-    await queryOptions.filterByConditionTree(scopeFilters, timezone);
+    await queryOptions.filterByScope(scopeFilters, timezone);
     await queryOptions.segment(segment);
     await queryOptions.segmentQuery(segmentQuery);
 

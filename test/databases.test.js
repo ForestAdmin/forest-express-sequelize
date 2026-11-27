@@ -3678,12 +3678,13 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
       const firstNameIs = (value) => ({ field: 'user:firstName', operator: 'equal', value });
       const byFirstName = (value) => JSON.stringify(firstNameIs(value));
 
-      // Each test runs with the user scope applying to related records, and restores it after.
-      async function withRelatedScopes(run, scope = userScope) {
+      // Each test runs with the scopes given, those of the flagged collections applying to related
+      // records, and restores them after.
+      async function withRelatedScopes(run, scopes = { user: userScope }, flagged = ['user']) {
         const scopeSpy = jest.spyOn(scopeManager, 'getScopeForUser')
-          .mockImplementation(async (_user, name) => (name === 'user' ? scope : null));
+          .mockImplementation(async (_user, name) => scopes[name] ?? null);
         scopeManager.scopeAppliesToRelatedRecords
-          .mockImplementation(async (_user, name) => name === 'user');
+          .mockImplementation(async (_user, name) => flagged.includes(name));
 
         try {
           const { sequelize, models, options } = initializeSequelize();
@@ -3752,6 +3753,25 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
         expect(ids(records)).toStrictEqual([]);
       }));
 
+      it('does not match a hidden related value through a smart field search', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        // A smart field searching through the relation, its include naming the model alone.
+        Interface.Schemas.schemas.address.fields.push({
+          field: 'owner',
+          type: 'String',
+          isVirtual: true,
+          search(query, search) {
+            query.include.push({ model: models.user });
+            query.where[Sequelize.Op.and][0][Sequelize.Op.or].push({ '$user.firstName$': search });
+          },
+        });
+        const params = { ...baseParams, fields: { address: 'id,city' }, search: 'Zed' };
+
+        const [records] = await new ResourcesGetter(models.address, null, params, user).perform();
+
+        expect(ids(records)).toStrictEqual([]);
+      }));
+
       it('reads related values as stored for code calling the getter itself', () => withRelatedScopes(async ({ models }) => {
         expect.assertions(1);
         const params = { ...listParams, filters: byFirstName('Zed') };
@@ -3776,7 +3796,7 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
 
         expect(ids(records)).toStrictEqual([]);
         expect(count).toBe(0);
-      }, { ...userScope, value: 102 }));
+      }, { user: { ...userScope, value: 102 } }));
 
       it('leaves records whose related record is hidden out of a pie grouped on its field', () => withRelatedScopes(async ({ models, options }) => {
         expect.assertions(1);
@@ -3823,6 +3843,100 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
 
         expect(stat.value).toStrictEqual([]);
       }));
+
+      it('filters on related values as stored when their scope does not apply to related records', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        const params = { ...listParams, filters: byFirstName('Zed') };
+
+        const [records] = await new ResourcesGetter(models.address, null, params, user).perform();
+
+        expect(ids(records)).toStrictEqual([211]);
+      }, { user: userScope }, []));
+
+      it('applies the scope of the listed collection to related values as stored', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+
+        const [records] = await new ResourcesGetter(models.address, null, listParams, user)
+          .perform();
+        const count = await new ResourcesGetter(models.address, null, listParams, user).count();
+
+        expect(ids(records)).toStrictEqual([211]);
+        expect(count).toBe(1);
+      }, { user: userScope, address: firstNameIs('Zed') }));
+
+      it('refuses a scope through a hidden relation on a collection without a single primary key', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        models.log.belongsTo(models.user, { foreignKey: 'stack', as: 'user' });
+
+        await expect(new ResourcesGetter(models.log, null, listParams, user).count())
+          .rejects.toThrow('The scope of log cannot be applied');
+      }, { user: userScope, log: firstNameIs('Zed') }));
+
+      it('hides related records by a scope going through their own relations', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const [gold, silver] = await models.member.bulkCreate([{ name: 'Ann' }, { name: 'Bob' }]);
+        await models.membership.bulkCreate([
+          { type: 'gold', memberId: gold.id }, { type: 'silver', memberId: silver.id },
+        ]);
+        const [, bobsFriend] = await models.friend.bulkCreate([
+          { name: 'Cid', memberId: gold.id }, { name: 'Dee', memberId: silver.id },
+        ]);
+        const friendsBy = async (operator, value) => {
+          const params = {
+            ...baseParams,
+            fields: { friend: 'id,name,member', member: 'name' },
+            filters: JSON.stringify({ field: 'member:name', operator, value }),
+          };
+          const [records] = await new ResourcesGetter(models.friend, null, params, user).perform();
+          return ids(records);
+        };
+
+        expect(await friendsBy('equal', 'Bob')).toStrictEqual([]);
+        expect(await friendsBy('blank', null)).toStrictEqual([bobsFriend.id]);
+      }, { member: { field: 'membership:type', operator: 'equal', value: 'gold' } }, ['member']));
+
+      it('leaves records whose hasOne related record is hidden out of a pie grouped on its field', () => withRelatedScopes(async ({ models, options }) => {
+        expect.assertions(1);
+        const members = await models.member.bulkCreate([{ name: 'Ann' }, { name: 'Bob' }, { name: 'Cid' }]);
+        await models.membership.bulkCreate([
+          { type: 'gold', memberId: members[0].id }, { type: 'silver', memberId: members[1].id },
+        ]);
+
+        const stat = await new PieStatGetter(models.member, {
+          ...baseParams,
+          type: 'Pie',
+          sourceCollectionName: 'member',
+          groupByFieldName: 'membership:type',
+          aggregator: 'Count',
+          filter: null,
+        }, options, user).perform();
+
+        expect(stat.value.map(({ key, value }) => [key, Number(value)]).sort())
+          .toStrictEqual([['gold', 1], ['null', 1]]);
+      }, { membership: { field: 'type', operator: 'equal', value: 'gold' } }, ['membership']));
+
+      it('leaves records out of a pie by a hidden related record keyed on a mapped column', () => withRelatedScopes(async ({ models, options }) => {
+        expect.assertions(1);
+        const customers = await models.customer.bulkCreate([{ name: 'a' }, { name: 'b' }, { name: 'c' }]);
+        await models.picture.bulkCreate([
+          { customerId: customers[0].id, customerIdKey: customers[0].id, name: 'shown' },
+          { customerId: customers[1].id, customerIdKey: customers[1].id, name: 'hidden' },
+        ]);
+        // The shared schema names customer 'owner', which a count cannot reach.
+        Interface.Schemas.schemas.customer.name = 'customer';
+
+        const stat = await new PieStatGetter(models.customer, {
+          ...baseParams,
+          type: 'Pie',
+          sourceCollectionName: 'customer',
+          groupByFieldName: 'picture:name',
+          aggregator: 'Count',
+          filter: null,
+        }, options, user).perform();
+
+        expect(stat.value.map(({ key, value }) => [key, Number(value)]).sort())
+          .toStrictEqual([['null', 1], ['shown', 1]]);
+      }, { picture: { field: 'name', operator: 'equal', value: 'shown' } }, ['picture']));
     });
   });
 });
