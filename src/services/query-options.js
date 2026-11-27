@@ -23,7 +23,13 @@ function selectSql(model, options) {
     attributes: [],
     ...(include.include && { include: withoutAttributes(include.include) }),
   }));
-  const selectOptions = { ...options, include: withoutAttributes(options.include), raw: true };
+  const selectOptions = {
+    ...options,
+    // The joins read the root alias from `as`, the columns from `tableAs`.
+    ...(options.tableAs && { as: options.tableAs }),
+    include: withoutAttributes(options.include),
+    raw: true,
+  };
   if (!selectOptions.include) delete selectOptions.include;
 
   model._conformIncludes(selectOptions, model);
@@ -40,19 +46,40 @@ function selectSql(model, options) {
 }
 
 /**
- * A condition matching the records of model that the query options select, by primary key, so
+ * A condition matching the rows of model that the query options select, by primary key, so
  * conditions written for one join can be applied from another.
- * @param {string} label what the condition is, named in the error
+ * @param {string} alias the alias model has in the query the condition goes into
+ * @returns {*} the condition, or null when model has no primary key to match on, or when its
+ *  composite key would be matched through aliases the query minifies
  */
-function primaryKeyIn(model, { where, include }, label) {
+function primaryKeyCondition(model, { where, include }, alias) {
   const keys = model.primaryKeyAttributes;
-  if (keys.length !== 1) {
-    throw new Error(`${label} cannot be applied: it filters through a relation, which needs ${model.name} to have a single primary key.`);
-  }
+  const { sequelize } = model;
+  const { AND, EQ, IN } = Operators.getInstance({ Sequelize: sequelize.constructor });
 
-  const { IN } = Operators.getInstance({ Sequelize: model.sequelize.constructor });
-  const sql = selectSql(model, { where, include, attributes: keys });
-  return { [keys[0]]: { [IN]: model.sequelize.literal(`(${sql})`) } };
+  if (keys.length === 1) {
+    const sql = selectSql(model, { where, include, attributes: keys });
+    return { [keys[0]]: { [IN]: sequelize.literal(`(${sql})`) } };
+  }
+  if (!keys.length || sequelize.options.minifyAliases) return null;
+
+  // A join of the subquery under the enclosing row's alias would hide that row from it.
+  const aliases = (includes, prefix = '') => (includes ?? []).flatMap((relation) => [
+    `${prefix}${relation.as}`, ...aliases(relation.include, `${prefix}${relation.as}->`),
+  ]);
+  if (aliases(include).includes(alias)) return null;
+
+  // Under its own alias, so each key column compares with the row of the enclosing query.
+  const sameKey = keys.map((key) => ({
+    [key]: { [EQ]: sequelize.col(`${alias}.${model.rawAttributes[key].field}`) },
+  }));
+  const sql = selectSql(model, {
+    where: { [AND]: [where, ...sameKey].filter(Boolean) },
+    include,
+    attributes: keys,
+    tableAs: 'forest_scoped',
+  });
+  return { [AND]: [sequelize.literal(`EXISTS (${sql})`)] };
 }
 
 /**
@@ -121,15 +148,17 @@ class QueryOptions {
       ...new QueryBuilder().getIncludes(this._model, fields),
       ...this._customerIncludes,
     ].map((relation) => {
-      // Includes added by smart field searches may name the model alone.
-      const as = relation.as ?? _.values(this._model.associations)
-        .find((association) => association.target === (relation.model ?? relation))?.as;
+      // Includes added by smart field searches may name the association or the model alone.
+      const as = relation.as ?? relation.association?.as ?? (
+        typeof relation.association === 'string' ? relation.association : _.values(this._model.associations)
+          .find((association) => association.target === (relation.model ?? relation))?.as
+      );
       const where = this._relatedScopes[as];
       if (!where) return relation;
 
       // Not required: a related record the scope hides joins as empty, and its row is kept.
       return {
-        ...(relation.model ? relation : { model: relation }),
+        ...(relation.model || relation.association ? relation : { model: relation }),
         as,
         where,
         required: false,
@@ -242,12 +271,17 @@ class QueryOptions {
     await Promise.all(associations.map(async ({ as, target }) => {
       const scope = await QueryOptions.getRelatedScope(target, user, timezone);
       if (!scope?.where) return;
+      if (!scope.include) {
+        this._relatedScopes[as] = scope.where;
+        return;
+      }
 
       // A scope going through relations of its own is checked by key: nested in this join, its
-      // conditions would name the wrong aliases.
-      this._relatedScopes[as] = scope.include
-        ? primaryKeyIn(target, scope, `The scope of ${target.name}`)
-        : scope.where;
+      // conditions would name the wrong aliases. Where no key can be matched, the relation is
+      // filtered on as stored.
+      const alias = this._options.tableAlias ? `${this._options.tableAlias}->${as}` : as;
+      const condition = primaryKeyCondition(target, scope, alias);
+      if (condition) this._relatedScopes[as] = condition;
     }));
   }
 
@@ -277,25 +311,33 @@ class QueryOptions {
   /**
    * Apply the collection's own scope. Its conditions on related fields compare the related
    * records as stored, which the join applyRelatedScopes restricted no longer holds, so a scope
-   * touching such a relation is checked by key.
+   * touching such a relation is checked by key. Where no key can be matched, those relations are
+   * filtered on as stored instead.
    * @param {*} scope the scope's condition tree
    * @param {string} timezone timezone of the user (required if filtering on dates)
    */
   async filterByScope(scope, timezone) {
-    const touchesHiddenRelated = scope && !_.isEmpty(this._relatedScopes) && (
-      await new FiltersParser(this._schema, timezone, { Sequelize: this._Sequelize })
-        .getAssociations(scope)
-    ).some((as) => this._relatedScopes[as]);
-    if (!touchesHiddenRelated) {
+    const hiddenRelated = scope && !_.isEmpty(this._relatedScopes)
+      ? (await new FiltersParser(this._schema, timezone, { Sequelize: this._Sequelize })
+        .getAssociations(scope)).filter((as) => this._relatedScopes[as])
+      : [];
+    if (!hiddenRelated.length) {
       await this.filterByConditionTree(scope, timezone);
       return;
     }
 
     const stored = new QueryOptions(this._model);
     await stored.filterByConditionTree(scope, timezone);
-    this._where.push(
-      primaryKeyIn(this._model, stored.sequelizeOptions, `The scope of ${this._model.name}`),
+    const condition = primaryKeyCondition(
+      this._model, stored.sequelizeOptions, this._options.tableAlias ?? this._model.name,
     );
+    if (condition) {
+      this._where.push(condition);
+      return;
+    }
+
+    hiddenRelated.forEach((as) => delete this._relatedScopes[as]);
+    await this.filterByConditionTree(scope, timezone);
   }
 
   /**

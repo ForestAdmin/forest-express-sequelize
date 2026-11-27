@@ -3753,15 +3753,15 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
         expect(ids(records)).toStrictEqual([]);
       }));
 
-      it('does not match a hidden related value through a smart field search', () => withRelatedScopes(async ({ models }) => {
+      it.each(['model', 'association'])('does not match a hidden related value through a smart field search including the relation by %s', (form) => withRelatedScopes(async ({ models }) => {
         expect.assertions(1);
-        // A smart field searching through the relation, its include naming the model alone.
+        // A smart field searching through the relation, its include naming no alias.
         Interface.Schemas.schemas.address.fields.push({
           field: 'owner',
           type: 'String',
           isVirtual: true,
           search(query, search) {
-            query.include.push({ model: models.user });
+            query.include.push(form === 'model' ? { model: models.user } : { association: 'user' });
             query.where[Sequelize.Op.and][0][Sequelize.Op.or].push({ '$user.firstName$': search });
           },
         });
@@ -3814,6 +3814,208 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
           .toStrictEqual([['Richard', 4], ['null', 1]]);
       }));
 
+      // Cards have a composite primary key and belong to a user. Wallets belong to a card by one of
+      // its key columns, and both are listed from their user.
+      async function defineCards(models) {
+        const { sequelize } = models.user;
+        const card = sequelize.define('card', {
+          a: { type: Sequelize.INTEGER, primaryKey: true },
+          b: { type: Sequelize.INTEGER, primaryKey: true },
+          label: { type: Sequelize.STRING },
+          userId: { type: Sequelize.INTEGER },
+        });
+        const wallet = sequelize.define('wallet', {
+          name: { type: Sequelize.STRING },
+          cardA: { type: Sequelize.INTEGER },
+          ownerId: { type: Sequelize.INTEGER },
+        });
+        card.belongsTo(models.user, { foreignKey: 'userId', constraints: false });
+        models.user.hasMany(card, { foreignKey: 'userId', constraints: false });
+        wallet.belongsTo(card, { foreignKey: 'cardA', targetKey: 'a', constraints: false });
+        models.user.hasMany(wallet, { foreignKey: 'ownerId', constraints: false });
+        await card.sync({ force: true });
+        await wallet.sync({ force: true });
+
+        Interface.Schemas.schemas.card = {
+          name: 'card',
+          idField: 'forestCompositePrimary',
+          primaryKeys: ['a', 'b'],
+          isCompositePrimary: true,
+          fields: [
+            { field: 'a', type: 'Number' },
+            { field: 'b', type: 'Number' },
+            { field: 'label', type: 'String' },
+            { field: 'user', type: 'Number', reference: 'user.primaryId' },
+          ],
+        };
+        Interface.Schemas.schemas.wallet = {
+          name: 'wallet',
+          idField: 'id',
+          primaryKeys: ['id'],
+          isCompositePrimary: false,
+          fields: [
+            { field: 'id', type: 'Number' },
+            { field: 'name', type: 'String' },
+            { field: 'card', type: 'Number', reference: 'card.a' },
+          ],
+        };
+
+        // Card 'one' belongs to Abe, 'two' to Zed, 'three' to nobody. Wallets 1 to 3 hold them,
+        // wallet 4 holds none.
+        await card.bulkCreate([
+          {
+            a: 1, b: 1, label: 'one', userId: 200,
+          },
+          {
+            a: 2, b: 1, label: 'two', userId: 201,
+          },
+          { a: 3, b: 1, label: 'three' },
+        ]);
+        await wallet.bulkCreate([
+          { id: 1, cardA: 1, ownerId: 100 },
+          { id: 2, cardA: 2, ownerId: 100 },
+          { id: 3, cardA: 3, ownerId: 100 },
+          { id: 4, ownerId: 100 },
+        ]);
+        return { card, wallet };
+      }
+      const labels = (records) => records.map((record) => record.label).sort();
+      const labelIs = (value) => JSON.stringify({ field: 'card:label', operator: 'equal', value });
+      const labelBlank = JSON.stringify({ field: 'card:label', operator: 'blank', value: null });
+      // The card scope goes through the card's own relation: it keeps Abe's card only.
+      const cardScope = firstNameIs('Abe');
+
+      it('applies the scope of a collection with a composite key to related values as stored', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const { card } = await defineCards(models);
+        const params = { ...baseParams, fields: { card: 'a,b,label,user', user: 'firstName' } };
+
+        const [records] = await new ResourcesGetter(card, null, params, user).perform();
+        const count = await new ResourcesGetter(card, null, params, user).count();
+
+        expect(labels(records)).toStrictEqual(['two']);
+        expect(count).toBe(1);
+      }, { user: userScope, card: firstNameIs('Zed') }));
+
+      it('does not list a record with a composite key by a hidden related value its scope allows', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        const { card } = await defineCards(models);
+        const params = { ...baseParams, filters: byFirstName('Zed') };
+
+        const [records] = await new ResourcesGetter(card, null, params, user).perform();
+
+        expect(labels(records)).toStrictEqual([]);
+      }, { user: userScope, card: firstNameIs('Zed') }));
+
+      it('does not let the scope of a collection with a composite key match a hidden related record as blank', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const { card } = await defineCards(models);
+
+        const [records] = await new ResourcesGetter(card, null, baseParams, user).perform();
+        const count = await new ResourcesGetter(card, null, baseParams, user).count();
+
+        expect(labels(records)).toStrictEqual(['three']);
+        expect(count).toBe(1);
+      }, {
+        user: userScope,
+        card: { field: 'user:firstName', operator: 'blank', value: null },
+      }));
+
+      it('applies the scope of records with a composite key listed from a record to related values as stored', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const { card } = await defineCards(models);
+        const params = { ...baseParams, recordId: '201', associationName: 'cards' };
+
+        const [records] = await new HasManyGetter(models.user, card, null, params, user).perform();
+        const count = await new HasManyGetter(models.user, card, null, params, user).count();
+
+        expect(labels(records)).toStrictEqual(['two']);
+        expect(count).toBe(1);
+      }, { user: userScope, card: firstNameIs('Zed') }));
+
+      it('hides related records with a composite key by a scope going through their own relations', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(3);
+        const { wallet } = await defineCards(models);
+        const walletsBy = async (filters) => {
+          const params = { ...baseParams, fields: { wallet: 'id,card', card: 'label' }, filters };
+          const [records] = await new ResourcesGetter(wallet, null, params, user).perform();
+          return ids(records).sort();
+        };
+
+        expect(await walletsBy(labelIs('one'))).toStrictEqual([1]);
+        expect(await walletsBy(labelIs('two'))).toStrictEqual([]);
+        expect(await walletsBy(labelBlank)).toStrictEqual([2, 3, 4]);
+      }, { card: cardScope }, ['card']));
+
+      it('hides related records with a composite key in records listed from a record', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(3);
+        const { wallet } = await defineCards(models);
+        const walletsBy = async (filters) => {
+          const params = {
+            ...baseParams, recordId: '100', associationName: 'wallets', filters,
+          };
+          const [records] = await new HasManyGetter(models.user, wallet, null, params, user)
+            .perform();
+          return ids(records).sort();
+        };
+
+        expect(await walletsBy(labelIs('one'))).toStrictEqual([1]);
+        expect(await walletsBy(labelIs('two'))).toStrictEqual([]);
+        expect(await walletsBy(labelBlank)).toStrictEqual([2, 3, 4]);
+      }, { card: cardScope }, ['card']));
+
+      it('leaves records whose related record with a composite key is hidden out of a pie', () => withRelatedScopes(async ({ models, options }) => {
+        expect.assertions(1);
+        const { wallet } = await defineCards(models);
+
+        const stat = await new PieStatGetter(wallet, {
+          ...baseParams,
+          type: 'Pie',
+          sourceCollectionName: 'wallet',
+          groupByFieldName: 'card:label',
+          aggregator: 'Count',
+          filter: null,
+        }, options, user).perform();
+
+        expect(stat.value.map(({ key, value }) => [key, Number(value)]).sort())
+          .toStrictEqual([['null', 1], ['one', 1]]);
+      }, { card: cardScope }, ['card']));
+
+      it('filters on related values with a composite key as stored when their scope joins a relation under the same alias', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        const { card, wallet } = await defineCards(models);
+        // A relation of card named card: in the subquery, its join would hide the wallet's card.
+        card.belongsTo(models.user, { foreignKey: 'userId', as: 'card', constraints: false });
+        Interface.Schemas.schemas.card.fields.push(
+          { field: 'card', type: 'Number', reference: 'user.primaryId' },
+        );
+        const params = {
+          ...baseParams, fields: { wallet: 'id,card', card: 'label' }, filters: labelIs('two'),
+        };
+
+        const [records] = await new ResourcesGetter(wallet, null, params, user).perform();
+
+        expect(ids(records)).toStrictEqual([2]);
+      }, { card: { field: 'card:firstName', operator: 'equal', value: 'Abe' } }, ['card']));
+
+      it('filters on related values with a composite key as stored when the query minifies its aliases', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        const { wallet } = await defineCards(models);
+        const params = {
+          ...baseParams, fields: { wallet: 'id,card', card: 'label' }, filters: labelIs('two'),
+        };
+        // The connection is shared with the other tests.
+        models.user.sequelize.options.minifyAliases = true;
+        let records;
+        try {
+          [records] = await new ResourcesGetter(wallet, null, params, user).perform();
+        } finally {
+          models.user.sequelize.options.minifyAliases = false;
+        }
+
+        expect(ids(records)).toStrictEqual([2]);
+      }, { card: cardScope }, ['card']));
+
       it('does not count a record by a hidden related value in a value chart', () => withRelatedScopes(async ({ models, options }) => {
         expect.assertions(1);
 
@@ -3864,13 +4066,32 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
         expect(count).toBe(1);
       }, { user: userScope, address: firstNameIs('Zed') }));
 
-      it('refuses a scope through a hidden relation on a collection without a single primary key', () => withRelatedScopes(async ({ models }) => {
-        expect.assertions(1);
-        models.log.belongsTo(models.user, { foreignKey: 'stack', as: 'user' });
+      it('does not let the scope of the listed collection match a hidden related record as blank', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
 
-        await expect(new ResourcesGetter(models.log, null, listParams, user).count())
-          .rejects.toThrow('The scope of log cannot be applied');
-      }, { user: userScope, log: firstNameIs('Zed') }));
+        const [records] = await new ResourcesGetter(models.address, null, listParams, user)
+          .perform();
+        const count = await new ResourcesGetter(models.address, null, listParams, user).count();
+
+        expect(ids(records)).toStrictEqual([104]);
+        expect(count).toBe(1);
+      }, {
+        user: userScope,
+        address: { field: 'user:firstName', operator: 'blank', value: null },
+      }));
+
+      it('applies the scope of related records listed from a record to related values as stored', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const params = { ...listParams, recordId: '100', associationName: 'addresses' };
+
+        const [records] = await new HasManyGetter(models.user, models.address, null, params, user)
+          .perform();
+        const count = await new HasManyGetter(models.user, models.address, null, params, user)
+          .count();
+
+        expect(ids(records).sort()).toStrictEqual([100, 101, 102, 103]);
+        expect(count).toBe(4);
+      }, { user: { ...userScope, value: 102 }, address: firstNameIs('Richard') }));
 
       it('hides related records by a scope going through their own relations', () => withRelatedScopes(async ({ models }) => {
         expect.assertions(2);
@@ -3898,6 +4119,8 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
       it('leaves records whose hasOne related record is hidden out of a pie grouped on its field', () => withRelatedScopes(async ({ models, options }) => {
         expect.assertions(1);
         const members = await models.member.bulkCreate([{ name: 'Ann' }, { name: 'Bob' }, { name: 'Cid' }]);
+        // Membership ids differ from member ids, so only the hasOne key pair can join them.
+        await models.membership.bulkCreate([{ type: 'none' }, { type: 'none' }, { type: 'none' }]);
         await models.membership.bulkCreate([
           { type: 'gold', memberId: members[0].id }, { type: 'silver', memberId: members[1].id },
         ]);
@@ -3937,6 +4160,45 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
         expect(stat.value.map(({ key, value }) => [key, Number(value)]).sort())
           .toStrictEqual([['null', 1], ['shown', 1]]);
       }, { picture: { field: 'name', operator: 'equal', value: 'shown' } }, ['picture']));
+
+      it('keeps records whose related record is soft-deleted in the empty group of a pie', () => withRelatedScopes(async ({ models, options }) => {
+        expect.assertions(1);
+        const { sequelize } = models.user;
+        const tag = sequelize.define('tag', { name: Sequelize.STRING }, { paranoid: true });
+        const sticker = sequelize.define('sticker', { tagId: Sequelize.INTEGER });
+        sticker.belongsTo(tag, { constraints: false });
+        await sticker.drop();
+        await tag.sync({ force: true });
+        await sticker.sync({ force: true });
+        const schemaOf = (name, fields) => ({
+          name, idField: 'id', primaryKeys: ['id'], isCompositePrimary: false, fields,
+        });
+        Interface.Schemas.schemas.tag = schemaOf('tag', [
+          { field: 'id', type: 'Number' }, { field: 'name', type: 'String' },
+        ]);
+        Interface.Schemas.schemas.sticker = schemaOf('sticker', [
+          { field: 'id', type: 'Number' }, { field: 'tag', type: 'Number', reference: 'tag.id' },
+        ]);
+        const [shown, hidden, gone] = await tag.bulkCreate([
+          { name: 'shown' }, { name: 'hidden' }, { name: 'gone' },
+        ]);
+        await gone.destroy();
+        await sticker.bulkCreate([
+          { tagId: shown.id }, { tagId: hidden.id }, { tagId: gone.id }, { tagId: null },
+        ]);
+
+        const stat = await new PieStatGetter(sticker, {
+          ...baseParams,
+          type: 'Pie',
+          sourceCollectionName: 'sticker',
+          groupByFieldName: 'tag:name',
+          aggregator: 'Count',
+          filter: null,
+        }, options, user).perform();
+
+        expect(stat.value.map(({ key, value }) => [key, Number(value)]).sort())
+          .toStrictEqual([['null', 2], ['shown', 1]]);
+      }, { tag: { field: 'name', operator: 'equal', value: 'shown' } }, ['tag']));
     });
   });
 });
