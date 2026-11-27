@@ -3,8 +3,8 @@ import Operators from './operators';
 import QueryUtils from './query';
 
 /**
- * Marks an include whose `where` belongs to its join: it restricts which related record joins,
- * never which rows are returned, so it is not bubbled up.
+ * Holds the condition of an include's join: it restricts which related record joins, never which
+ * rows are returned. The include's own `where` is bubbled up as usual, then replaced by it.
  */
 const JOIN_CONDITION = Symbol('joinCondition');
 
@@ -24,7 +24,8 @@ function bubbleWheresInPlace(operators, options) {
   parentIncludeList.forEach((include) => {
     bubbleWheresInPlace(operators, include);
 
-    if (include.where && !include[JOIN_CONDITION]) {
+    // Already the join condition when the include is processed a second time.
+    if (include.where && include.where !== include[JOIN_CONDITION]) {
       const newWhere = ObjectTools.mapKeysDeep(include.where, (key) => {
         // Targeting a nested field, simply nest it deeper.
         if (key[0] === '$' && key[key.length - 1] === '$') {
@@ -39,6 +40,8 @@ function bubbleWheresInPlace(operators, options) {
       options.where = QueryUtils.mergeWhere(operators, options.where, newWhere);
       delete include.where;
     }
+
+    if (include[JOIN_CONDITION]) include.where = include[JOIN_CONDITION];
   });
 }
 

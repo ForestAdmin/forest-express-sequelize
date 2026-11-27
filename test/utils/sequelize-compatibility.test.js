@@ -112,7 +112,7 @@ describe('utils > sequelize-compatibility', () => {
 
       const options = postProcess(Model, {
         include: [{
-          as: 'submodelAlias', where: { id: 1 }, required: false, [JOIN_CONDITION]: true,
+          as: 'submodelAlias', required: false, [JOIN_CONDITION]: { id: 1 },
         }],
         where: { id: 1 },
       });
@@ -123,10 +123,33 @@ describe('utils > sequelize-compatibility', () => {
           model: SubModel,
           where: { id: 1 },
           required: false,
-          [JOIN_CONDITION]: true,
+          [JOIN_CONDITION]: { id: 1 },
         }],
         where: { id: 1 },
       });
+    });
+
+    it('bubbles up the where condition of an include beside its join condition, once', () => {
+      expect.assertions(2);
+
+      const options = postProcess(Model, {
+        include: [{
+          as: 'submodelAlias', where: { id: 2 }, required: false, [JOIN_CONDITION]: { id: 1 },
+        }],
+      });
+      const expected = {
+        include: [{
+          as: 'submodelAlias',
+          model: SubModel,
+          where: { id: 1 },
+          required: false,
+          [JOIN_CONDITION]: { id: 1 },
+        }],
+        where: { '$submodelAlias.id$': 2 },
+      };
+
+      expect(options).toStrictEqual(expected);
+      expect(postProcess(Model, options)).toStrictEqual(expected);
     });
 
     it('should add attributes when both sides are defined', () => {

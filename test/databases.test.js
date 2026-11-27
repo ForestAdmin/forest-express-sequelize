@@ -3772,6 +3772,24 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
         expect(ids(records)).toStrictEqual([]);
       }));
 
+      it('keeps filtering rows by the condition of a smart field search include on a hidden relation', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        // A smart field search keeping the addresses of Hendricks users.
+        Interface.Schemas.schemas.address.fields.push({
+          field: 'owner',
+          type: 'String',
+          isVirtual: true,
+          search(query) {
+            query.include.push({ model: models.user, where: { lastName: 'Hendricks' } });
+          },
+        });
+        const params = { ...baseParams, fields: { address: 'id,city' }, search: 'London' };
+
+        const [records] = await new ResourcesGetter(models.address, null, params, user).perform();
+
+        expect(ids(records)).toStrictEqual([103]);
+      }));
+
       it('reads related values as stored for code calling the getter itself', () => withRelatedScopes(async ({ models }) => {
         expect.assertions(1);
         const params = { ...listParams, filters: byFirstName('Zed') };

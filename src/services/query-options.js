@@ -156,13 +156,13 @@ class QueryOptions {
       const where = this._relatedScopes[as];
       if (!where) return relation;
 
-      // Not required: a related record the scope hides joins as empty, and its row is kept.
+      // Not required: a related record the scope hides joins as empty, and its row is kept. A
+      // condition the include brings still filters the rows.
       return {
         ...(relation.model || relation.association ? relation : { model: relation }),
         as,
-        where,
         required: false,
-        [SequelizeCompatibility.JOIN_CONDITION]: true,
+        [SequelizeCompatibility.JOIN_CONDITION]: where,
       };
     });
 
