@@ -40,6 +40,7 @@ class ValueStatGetter {
     const scopeFilters = await scopeManager.getScopeForUser(this._user, this._model.name, true);
 
     const queryOptions = new QueryOptions(this._model, { includeRelations: true });
+    await queryOptions.applyRelatedScopes(this._user, timezone);
     await queryOptions.filterByConditionTree(filter, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
 

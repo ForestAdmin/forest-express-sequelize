@@ -1,4 +1,4 @@
-const { postProcess } = require('../../src/utils/sequelize-compatibility');
+const { JOIN_CONDITION, postProcess } = require('../../src/utils/sequelize-compatibility');
 
 const sequelize = { constructor: { version: '4.44.4' } };
 const Model = {
@@ -104,6 +104,28 @@ describe('utils > sequelize-compatibility', () => {
       expect(options).toStrictEqual({
         include: [{ as: 'submodelAlias', model: SubModel }],
         where: { id: 1, '$submodelAlias.id$': 1 },
+      });
+    });
+
+    it('keeps the where condition of an include marked as a join condition on that include', () => {
+      expect.assertions(1);
+
+      const options = postProcess(Model, {
+        include: [{
+          as: 'submodelAlias', where: { id: 1 }, required: false, [JOIN_CONDITION]: true,
+        }],
+        where: { id: 1 },
+      });
+
+      expect(options).toStrictEqual({
+        include: [{
+          as: 'submodelAlias',
+          model: SubModel,
+          where: { id: 1 },
+          required: false,
+          [JOIN_CONDITION]: true,
+        }],
+        where: { id: 1 },
       });
     });
 

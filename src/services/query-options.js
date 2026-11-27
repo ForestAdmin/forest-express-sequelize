@@ -1,4 +1,4 @@
-import { logger, Schemas } from 'forest-express';
+import { logger, Schemas, scopeManager } from 'forest-express';
 import _ from 'lodash';
 import { isMSSQL } from '../utils/database';
 import Operators from '../utils/operators';
@@ -75,7 +75,19 @@ class QueryOptions {
     const include = [
       ...new QueryBuilder().getIncludes(this._model, fields),
       ...this._customerIncludes,
-    ];
+    ].map((relation) => {
+      const scope = this._relatedScopes[relation.as];
+      if (!scope) return relation;
+
+      // Not required: a related record the scope hides joins as empty, and its row is kept.
+      return {
+        ...relation,
+        where: scope.where,
+        required: false,
+        [SequelizeCompatibility.JOIN_CONDITION]: true,
+        ...(scope.include && { include: [...(relation.include ?? []), ...scope.include] }),
+      };
+    });
 
     return include.length ? include : null;
   }
@@ -122,6 +134,7 @@ class QueryOptions {
     this._offset = undefined;
     this._limit = undefined;
     this._customerIncludes = [];
+    this._relatedScopes = {}; // @see applyRelatedScopes
 
     if (this._options.includeRelations) {
       _.values(this._model.associations)
@@ -166,6 +179,58 @@ class QueryOptions {
 
     const associations = await filterParser.getAssociations(filters);
     associations.forEach((association) => this._neededFields.add(association));
+  }
+
+  /**
+   * Join each to-one related collection whose scope applies to related records through that
+   * scope, so a related record it hides reads as empty in filters, sorts and searches.
+   * @param {*} user the user the scopes are resolved for
+   * @param {string} timezone timezone of the user (required if a scope filters on dates)
+   */
+  async applyRelatedScopes(user, timezone) {
+    const associations = _.values(this._model.associations)
+      .filter((association) => ['HasOne', 'BelongsTo'].includes(association.associationType));
+
+    await Promise.all(associations.map(async ({ as, target }) => {
+      // A forest-express release without the lookup reads as not flagged.
+      if (!await scopeManager.scopeAppliesToRelatedRecords?.(user, target.name)) return;
+
+      const scopeOptions = new QueryOptions(target);
+      await scopeOptions.filterByConditionTree(
+        await scopeManager.getScopeForUser(user, target.name, true),
+        timezone,
+      );
+      const { where, include } = scopeOptions.sequelizeOptions;
+      if (where) this._relatedScopes[as] = { where, include };
+    }));
+  }
+
+  /**
+   * Leave out the rows whose related record exists but is hidden by its scope, so a chart
+   * grouping on its fields does not count them as empty. Rows with no related record are kept.
+   * @param {string} as name of a to-one association that applyRelatedScopes joined
+   */
+  async excludeHiddenRelated(as) {
+    if (!this._relatedScopes[as]) return;
+
+    const association = this._model.associations[as];
+    const [targetColumn, rootColumn] = association.associationType === 'BelongsTo'
+      ? [association.targetKeyField, association.identifierField]
+      : [association.identifierField, association.sourceKeyField];
+    const generator = this._model.sequelize.getQueryInterface().queryGenerator;
+    const quote = (name) => generator.quoteIdentifier(name);
+    const related = quote('forest_related');
+    const table = generator.quoteTable(association.target.getTableName());
+    const rootKey = `${quote(this._model.name)}.${quote(rootColumn)}`;
+    const joinedOn = `${related}.${quote(targetColumn)} = ${rootKey}`;
+    const operators = Operators.getInstance({ Sequelize: this._Sequelize });
+
+    this._where.push({
+      [operators.OR]: [
+        { [`$${as}.${association.target.primaryKeyAttribute}$`]: { [operators.NE]: null } },
+        this._Sequelize.literal(`NOT EXISTS (SELECT 1 FROM ${table} AS ${related} WHERE ${joinedOn})`),
+      ],
+    });
   }
 
   /**

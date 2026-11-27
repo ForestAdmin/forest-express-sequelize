@@ -3665,5 +3665,164 @@ jest.spyOn(scopeManager, 'scopeAppliesToRelatedRecords').mockResolvedValue(false
         });
       });
     });
+
+    describe('scopes applying to related records', () => {
+      // The user scope keeps user 100 only: users 200 and 201 are hidden from addresses.
+      const userScope = { field: 'primaryId', operator: 'equal', value: 100 };
+      const listParams = {
+        ...baseParams,
+        fields: { address: 'id,city,user', user: 'firstName' },
+        page: { number: '1', size: '30' },
+      };
+      const ids = (records) => records.map((record) => Number(record.id));
+      const firstNameIs = (value) => ({ field: 'user:firstName', operator: 'equal', value });
+      const byFirstName = (value) => JSON.stringify(firstNameIs(value));
+
+      // Each test runs with the user scope applying to related records, and restores it after.
+      async function withRelatedScopes(run, scope = userScope) {
+        const scopeSpy = jest.spyOn(scopeManager, 'getScopeForUser')
+          .mockImplementation(async (_user, name) => (name === 'user' ? scope : null));
+        scopeManager.scopeAppliesToRelatedRecords
+          .mockImplementation(async (_user, name) => name === 'user');
+
+        try {
+          const { sequelize, models, options } = initializeSequelize();
+          await sequelize.sync({ force: true });
+          await sequelizeFixtures.loadFile('test/fixtures/db.json', models, { log: () => { } });
+          await models.user.bulkCreate([
+            { primaryId: 200, firstName: 'Abe' },
+            { primaryId: 201, firstName: 'Zed' },
+          ]);
+          await models.address.bulkCreate([
+            { id: 210, city: 'Lyon', userId: 200 },
+            { id: 211, city: 'Nice', userId: 201 },
+          ]);
+          await run({ models, options });
+        } finally {
+          scopeSpy.mockRestore();
+          scopeManager.scopeAppliesToRelatedRecords.mockResolvedValue(false);
+          connectionManager.closeConnection();
+        }
+      }
+
+      it('does not list nor count a record by a hidden related value', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const params = { ...listParams, filters: byFirstName('Zed') };
+
+        const [records] = await new ResourcesGetter(models.address, null, params, user).perform();
+        const count = await new ResourcesGetter(models.address, null, params, user).count();
+
+        expect(ids(records)).toStrictEqual([]);
+        expect(count).toBe(0);
+      }));
+
+      it('lists and counts a record whose related record is hidden as having a blank one', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const params = {
+          ...listParams,
+          filters: JSON.stringify({ field: 'user:firstName', operator: 'blank', value: null }),
+        };
+
+        const [records] = await new ResourcesGetter(models.address, null, params, user).perform();
+        const count = await new ResourcesGetter(models.address, null, params, user).count();
+
+        expect(ids(records).sort()).toStrictEqual([104, 210, 211]);
+        expect(count).toBe(3);
+      }));
+
+      it.each(['user.firstName', '-user.firstName'])('sorts records whose related record is hidden with the empty ones on %s', (sort) => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        const params = { ...listParams, sort };
+
+        const [records] = await new ResourcesGetter(models.address, null, params, user).perform();
+        const emptyPositions = ids(records)
+          .map((id, position) => ([104, 210, 211].includes(id) ? position : null))
+          .filter((position) => position !== null);
+
+        // Contiguous: the hidden names do not order them among the visible ones.
+        expect(emptyPositions[2] - emptyPositions[0]).toBe(2);
+      }));
+
+      it('does not match a hidden related value in an extended search', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        const params = { ...listParams, search: 'Zed', searchExtended: '1' };
+
+        const [records] = await new ResourcesGetter(models.address, null, params, user).perform();
+
+        expect(ids(records)).toStrictEqual([]);
+      }));
+
+      it('reads related values as stored for code calling the getter itself', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(1);
+        const params = { ...listParams, filters: byFirstName('Zed') };
+
+        const [records] = await new ResourcesGetter(
+          models.address, null, params, user, { redactRelatedRecords: false },
+        ).perform();
+
+        expect(ids(records)).toStrictEqual([211]);
+      }));
+
+      it('does not list the related records of a record by a hidden value of theirs', () => withRelatedScopes(async ({ models }) => {
+        expect.assertions(2);
+        const params = {
+          ...listParams, recordId: '100', associationName: 'addresses', filters: byFirstName('Richard'),
+        };
+
+        const [records] = await new HasManyGetter(models.user, models.address, null, params, user)
+          .perform();
+        const count = await new HasManyGetter(models.user, models.address, null, params, user)
+          .count();
+
+        expect(ids(records)).toStrictEqual([]);
+        expect(count).toBe(0);
+      }, { ...userScope, value: 102 }));
+
+      it('leaves records whose related record is hidden out of a pie grouped on its field', () => withRelatedScopes(async ({ models, options }) => {
+        expect.assertions(1);
+
+        const stat = await new PieStatGetter(models.address, {
+          ...baseParams,
+          type: 'Pie',
+          sourceCollectionName: 'address',
+          groupByFieldName: 'user:firstName',
+          aggregator: 'Count',
+          filter: null,
+        }, options, user).perform();
+
+        expect(stat.value.map(({ key, value }) => [key, Number(value)]))
+          .toStrictEqual([['Richard', 4], ['null', 1]]);
+      }));
+
+      it('does not count a record by a hidden related value in a value chart', () => withRelatedScopes(async ({ models, options }) => {
+        expect.assertions(1);
+
+        const stat = await new ValueStatGetter(models.address, {
+          ...baseParams,
+          type: 'Value',
+          sourceCollectionName: 'address',
+          aggregator: 'Count',
+          filter: firstNameIs('Zed'),
+        }, options, user).perform();
+
+        expect(stat.value.countCurrent).toBe(0);
+      }));
+
+      it('does not count a record by a hidden related value in a line chart', () => withRelatedScopes(async ({ models, options }) => {
+        expect.assertions(1);
+
+        const stat = await new LineStatGetter(models.address, {
+          ...baseParams,
+          type: 'Line',
+          sourceCollectionName: 'address',
+          groupByFieldName: 'createdAt',
+          timeRange: 'Day',
+          aggregator: 'Count',
+          filter: firstNameIs('Zed'),
+        }, options, user).perform();
+
+        expect(stat.value).toStrictEqual([]);
+      }));
+    });
   });
 });

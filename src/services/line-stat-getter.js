@@ -259,6 +259,7 @@ ${groupByDateFieldFormated}), 'yyyy-MM-dd 00:00:00')`);
     const scopeFilters = await scopeManager.getScopeForUser(user, model.name, true);
 
     const queryOptions = new QueryOptions(model, { includeRelations: true });
+    await queryOptions.applyRelatedScopes(user, timezone);
     await queryOptions.filterByConditionTree(filter, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
 

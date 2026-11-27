@@ -75,6 +75,8 @@ class ResourcesGetter {
       includeRelations: searchExtended,
     });
     if (!forCount) await queryOptions.requireFields(requestedFields);
+    // Code calling the getter itself filters on related records as stored, as it reads them.
+    if (this._redact) await queryOptions.applyRelatedScopes(this._user, timezone);
     await queryOptions.search(search, searchExtended);
     await queryOptions.filterByConditionTree(filters, timezone);
     await queryOptions.filterByConditionTree(scopeFilters, timezone);
